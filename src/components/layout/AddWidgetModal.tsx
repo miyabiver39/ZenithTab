@@ -37,6 +37,13 @@ export const AddWidgetModal: React.FC = () => {
       color: 'text-sky-400 bg-sky-400/10 border-sky-400/20',
     },
     {
+      type: 'shortcuts',
+      title: t.widgets.shortcuts.title,
+      description: t.widgets.shortcuts.desc,
+      icon: Globe,
+      color: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
+    },
+    {
       type: 'clock',
       title: t.widgets.clock.title,
       description: t.widgets.clock.desc,

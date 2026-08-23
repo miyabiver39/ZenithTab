@@ -14,6 +14,7 @@ import { wallpaperService } from '../services/wallpaperService';
 interface DashboardState {
   isInitialized: boolean;
   isEditMode: boolean;
+  isAppDrawerOpen: boolean;
   activeSettingsModal: 'settings' | 'addWidget' | 'editWidget' | null;
   editingWidgetId: string | null;
 
@@ -25,6 +26,7 @@ interface DashboardState {
   // Actions
   initialize: () => Promise<void>;
   setEditMode: (isEditMode: boolean) => void;
+  toggleAppDrawer: (open?: boolean) => void;
   openSettingsModal: (type: 'settings' | 'addWidget' | 'editWidget', widgetId?: string) => void;
   closeSettingsModal: () => void;
 
@@ -44,6 +46,7 @@ interface DashboardState {
 
 const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: number; minH: number }> = {
   search: { w: 8, h: 1, minW: 4, minH: 1 },
+  shortcuts: { w: 6, h: 3, minW: 3, minH: 2 },
   clock: { w: 4, h: 2, minW: 2, minH: 2 },
   weather: { w: 4, h: 2, minW: 3, minH: 2 },
   bookmarks: { w: 4, h: 4, minW: 3, minH: 3 },
@@ -54,11 +57,29 @@ const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: num
   notes: { w: 4, h: 4, minW: 3, minH: 2 },
 };
 
+export const DEFAULT_SHORTCUTS = [
+  { id: 'app-chatgpt', title: 'ChatGPT', url: 'https://chatgpt.com', category: 'AI & Tools' },
+  { id: 'app-github', title: 'GitHub', url: 'https://github.com', category: 'Development' },
+  { id: 'app-youtube', title: 'YouTube', url: 'https://youtube.com', category: 'Media' },
+  { id: 'app-gmail', title: 'Gmail', url: 'https://mail.google.com', category: 'Productivity' },
+  { id: 'app-notion', title: 'Notion', url: 'https://notion.so', category: 'Productivity' },
+  { id: 'app-twitter', title: 'X (Twitter)', url: 'https://x.com', category: 'Social' },
+  { id: 'app-figma', title: 'Figma', url: 'https://figma.com', category: 'Design' },
+  { id: 'app-spotify', title: 'Spotify', url: 'https://open.spotify.com', category: 'Media' },
+  { id: 'app-reddit', title: 'Reddit', url: 'https://reddit.com', category: 'Social' },
+];
+
 const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
   search: {
     defaultEngine: 'google',
     showEngineSelector: true,
     openInNewTab: true,
+  },
+  shortcuts: {
+    items: DEFAULT_SHORTCUTS,
+    columns: 4,
+    openInNewTab: true,
+    viewMode: 'grid',
   },
   clock: {
     style: 'digital',
@@ -115,6 +136,7 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
 export const useDashboardStore = create<DashboardState>((set, get) => ({
   isInitialized: false,
   isEditMode: false,
+  isAppDrawerOpen: false,
   activeSettingsModal: null,
   editingWidgetId: null,
 
@@ -122,6 +144,9 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   layouts: DEFAULT_LAYOUTS,
   wallpaper: DEFAULT_WALLPAPER,
   appearance: DEFAULT_APPEARANCE,
+
+  toggleAppDrawer: (open) =>
+    set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
 
   initialize: async () => {
     try {

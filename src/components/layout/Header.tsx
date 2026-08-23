@@ -10,6 +10,7 @@ export const Header: React.FC = () => {
     setEditMode,
     openSettingsModal,
     rotateWallpaper,
+    toggleAppDrawer,
   } = useDashboardStore();
 
   const { t } = useTranslation();
@@ -50,6 +51,15 @@ export const Header: React.FC = () => {
 
       {/* Control Actions */}
       <div className="flex items-center gap-2">
+        <button
+          onClick={() => toggleAppDrawer(true)}
+          className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95 flex items-center gap-1.5 px-3 text-xs font-medium"
+          title={t.appDrawer.title}
+        >
+          <LayoutGrid size={14} className="text-sky-400" />
+          <span className="hidden sm:inline">{t.appDrawer.title}</span>
+        </button>
+
         <button
           onClick={rotateWallpaper}
           className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95"

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Globe, Code2, Video, Sparkles, Terminal, Mail, Plus } from 'lucide-react';
+import { Globe, Code2, Video, Sparkles, Terminal, Mail, Plus, LayoutGrid } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDashboardStore';
 
 export const Dock: React.FC = () => {
-  const { appearance, openSettingsModal } = useDashboardStore();
+  const { appearance, openSettingsModal, toggleAppDrawer } = useDashboardStore();
 
   if (appearance.dockPosition === 'hidden') {
     return null;
@@ -47,8 +47,19 @@ export const Dock: React.FC = () => {
         <div className="w-[1px] h-5 bg-white/10 mx-1" />
 
         <button
-          onClick={() => openSettingsModal('addWidget')}
+          onClick={() => toggleAppDrawer(true)}
           className="p-2.5 rounded-xl text-sky-400 hover:text-sky-300 hover:bg-sky-500/10 transition-all hover:scale-110 active:scale-95 group relative flex items-center justify-center"
+          title="App Drawer"
+        >
+          <LayoutGrid size={18} />
+          <span className="absolute -top-8 px-2 py-0.5 rounded-md bg-slate-900/90 text-[10px] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow border border-white/10 whitespace-nowrap">
+            App Drawer
+          </span>
+        </button>
+
+        <button
+          onClick={() => openSettingsModal('addWidget')}
+          className="p-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-95 group relative flex items-center justify-center"
           title="Add Widget"
         >
           <Plus size={18} />

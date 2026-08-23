@@ -9,7 +9,8 @@ export type WidgetType =
   | 'notes'
   | 'search'
   | 'pomodoro'
-  | 'todo';
+  | 'todo'
+  | 'shortcuts';
 
 export interface BaseWidgetConfig {
   title?: string;
@@ -91,6 +92,22 @@ export interface TodoWidgetConfig extends BaseWidgetConfig {
   items: TodoItem[];
 }
 
+export interface ShortcutItem {
+  id: string;
+  title: string;
+  url: string;
+  iconUrl?: string;
+  iconColor?: string;
+  category?: string;
+}
+
+export interface ShortcutsWidgetConfig extends BaseWidgetConfig {
+  items: ShortcutItem[];
+  columns: number;
+  openInNewTab: boolean;
+  viewMode: 'grid' | 'compact';
+}
+
 export type WidgetConfig =
   | { type: 'clock'; config: ClockWidgetConfig }
   | { type: 'weather'; config: WeatherWidgetConfig }
@@ -100,7 +117,8 @@ export type WidgetConfig =
   | { type: 'notes'; config: QuickNotesWidgetConfig }
   | { type: 'search'; config: SearchWidgetConfig }
   | { type: 'pomodoro'; config: PomodoroWidgetConfig }
-  | { type: 'todo'; config: TodoWidgetConfig };
+  | { type: 'todo'; config: TodoWidgetConfig }
+  | { type: 'shortcuts'; config: ShortcutsWidgetConfig };
 
 export interface DashboardWidget {
   id: string;

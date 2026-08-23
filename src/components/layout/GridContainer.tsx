@@ -11,6 +11,7 @@ import { QuickNotesWidget } from '../widgets/QuickNotesWidget/QuickNotesWidget';
 import { SearchWidget } from '../widgets/SearchWidget/SearchWidget';
 import { PomodoroWidget } from '../widgets/PomodoroWidget/PomodoroWidget';
 import { TodoWidget } from '../widgets/TodoWidget/TodoWidget';
+import { ShortcutsWidget } from '../widgets/ShortcutsWidget/ShortcutsWidget';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -32,6 +33,8 @@ export const GridContainer: React.FC = () => {
     switch (widget.type) {
       case 'search':
         return <SearchWidget config={widget.config} />;
+      case 'shortcuts':
+        return <ShortcutsWidget widgetId={widget.id} config={widget.config} />;
       case 'clock':
         return <ClockWidget config={widget.config} />;
       case 'weather':
