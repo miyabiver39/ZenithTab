@@ -1,7 +1,7 @@
 {
   "name": "zenith-tab",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "High-Performance, Infinitely Customizable New Tab Dashboard with Widgets, Bookmarks, RSS and Dynamic Wallpapers.",
   "scripts": {
