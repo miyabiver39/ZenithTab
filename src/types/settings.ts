@@ -15,6 +15,7 @@ export interface WallpaperSettings {
 }
 
 export interface AppearanceSettings {
+  language: 'auto' | 'en' | 'ja' | 'zh-CN' | 'es' | 'fr' | 'de' | 'ko';
   theme: 'dark' | 'light' | 'system';
   glassBlur: number; // in px
   glassOpacity: number; // 0.1 to 0.95

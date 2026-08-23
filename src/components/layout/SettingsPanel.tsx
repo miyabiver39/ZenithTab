@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Image, Palette, Download, Upload, RotateCcw } from 'lucide-react';
+import { Image, Palette, Download, Upload, RotateCcw, Languages } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { WallpaperCategory } from '../../types/settings';
 import { wallpaperService, GRADIENT_PRESETS } from '../../services/wallpaperService';
+import { useTranslation, SupportedLanguage } from '../../i18n/i18n';
 
 export const SettingsPanel: React.FC = () => {
   const {
@@ -19,7 +20,8 @@ export const SettingsPanel: React.FC = () => {
     importConfig,
   } = useDashboardStore();
 
-  const [activeTab, setActiveTab] = useState<'wallpaper' | 'appearance' | 'backup'>('wallpaper');
+  const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<'wallpaper' | 'appearance' | 'language' | 'backup'>('wallpaper');
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const wallpaperUploadRef = useRef<HTMLInputElement>(null);
@@ -27,12 +29,23 @@ export const SettingsPanel: React.FC = () => {
   const isOpen = activeSettingsModal === 'settings';
 
   const wallpaperCategories: Array<{ id: WallpaperCategory; label: string }> = [
-    { id: 'space', label: 'Deep Space' },
-    { id: 'nature', label: 'Nature & Earth' },
-    { id: 'minimal', label: 'Minimalist' },
-    { id: 'architecture', label: 'Architecture' },
-    { id: 'abstract', label: 'Abstract 3D' },
-    { id: 'cyberpunk', label: 'Cyberpunk & Neon' },
+    { id: 'space', label: t.categories.space },
+    { id: 'nature', label: t.categories.nature },
+    { id: 'minimal', label: t.categories.minimal },
+    { id: 'architecture', label: t.categories.architecture },
+    { id: 'abstract', label: t.categories.abstract },
+    { id: 'cyberpunk', label: t.categories.cyberpunk },
+  ];
+
+  const languageOptions: Array<{ code: SupportedLanguage; label: string; nativeName: string }> = [
+    { code: 'auto', label: 'Auto (Browser Language)', nativeName: '自動 (ブラウザ言語)' },
+    { code: 'ja', label: 'Japanese', nativeName: '日本語' },
+    { code: 'en', label: 'English', nativeName: 'English (US)' },
+    { code: 'zh-CN', label: 'Chinese (Simplified)', nativeName: '简体中文' },
+    { code: 'es', label: 'Spanish', nativeName: 'Español' },
+    { code: 'fr', label: 'French', nativeName: 'Français' },
+    { code: 'de', label: 'German', nativeName: 'Deutsch' },
+    { code: 'ko', label: 'Korean', nativeName: '한국어' },
   ];
 
   const handleCustomWallpaperUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,53 +83,65 @@ export const SettingsPanel: React.FC = () => {
       const content = event.target?.result as string;
       const success = await importConfig(content);
       if (success) {
-        setImportStatus('Configuration imported successfully!');
+        setImportStatus(t.settings.importSuccess);
         setTimeout(() => setImportStatus(null), 3000);
       } else {
-        setImportStatus('Failed to import invalid configuration file.');
+        setImportStatus(t.settings.importFail);
       }
     };
     reader.readAsText(file);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeSettingsModal} title="ZenithTab Settings" maxWidth="2xl">
+    <Modal isOpen={isOpen} onClose={closeSettingsModal} title={t.settings.modalTitle} maxWidth="2xl">
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-1 pb-4 border-b border-white/10 select-none">
+      <div className="flex items-center gap-1 pb-4 border-b border-white/10 select-none overflow-x-auto custom-scrollbar">
         <button
           onClick={() => setActiveTab('wallpaper')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === 'wallpaper'
               ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
               : 'text-slate-400 hover:text-white hover:bg-white/5'
           }`}
         >
           <Image size={15} />
-          <span>Dynamic Wallpaper</span>
+          <span>{t.settings.tabs.wallpaper}</span>
         </button>
 
         <button
           onClick={() => setActiveTab('appearance')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === 'appearance'
               ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
               : 'text-slate-400 hover:text-white hover:bg-white/5'
           }`}
         >
           <Palette size={15} />
-          <span>Glass & Appearance</span>
+          <span>{t.settings.tabs.appearance}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('language')}
+          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+            activeTab === 'language'
+              ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
+              : 'text-slate-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <Languages size={15} />
+          <span>{t.settings.tabs.language}</span>
         </button>
 
         <button
           onClick={() => setActiveTab('backup')}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === 'backup'
               ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
               : 'text-slate-400 hover:text-white hover:bg-white/5'
           }`}
         >
           <Download size={15} />
-          <span>Backup & Sync</span>
+          <span>{t.settings.tabs.backup}</span>
         </button>
       </div>
 
@@ -127,13 +152,13 @@ export const SettingsPanel: React.FC = () => {
             {/* Wallpaper Sources */}
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-2">
-                Wallpaper Source
+                {t.settings.wallpaperSource}
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { key: 'unsplash', label: 'Unsplash HD' },
-                  { key: 'gradient', label: 'Dynamic Gradient' },
-                  { key: 'custom', label: 'Custom Upload' },
+                  { key: 'gradient', label: 'Gradient' },
+                  { key: 'custom', label: 'Custom File' },
                 ].map((src) => (
                   <button
                     key={src.key}
@@ -164,7 +189,7 @@ export const SettingsPanel: React.FC = () => {
             {wallpaper.source === 'unsplash' && (
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-2">
-                  Unsplash Theme Category
+                  {t.settings.unsplashTheme}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {wallpaperCategories.map((cat) => (
@@ -195,7 +220,7 @@ export const SettingsPanel: React.FC = () => {
             {wallpaper.source === 'gradient' && (
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-2">
-                  Gradient Presets
+                  {t.settings.gradientPresets}
                 </label>
                 <div className="grid grid-cols-5 gap-2">
                   {GRADIENT_PRESETS.map((grad, index) => (
@@ -218,7 +243,7 @@ export const SettingsPanel: React.FC = () => {
             {wallpaper.source === 'custom' && (
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-2">
-                  Upload Wallpaper Image
+                  {t.settings.uploadWallpaper}
                 </label>
                 <input
                   type="file"
@@ -234,7 +259,7 @@ export const SettingsPanel: React.FC = () => {
                   className="gap-2"
                 >
                   <Upload size={14} />
-                  <span>Choose Local Image File</span>
+                  <span>{t.settings.chooseImage}</span>
                 </Button>
               </div>
             )}
@@ -243,7 +268,7 @@ export const SettingsPanel: React.FC = () => {
             <div className="space-y-4 pt-2 border-t border-white/10">
               <div>
                 <div className="flex justify-between text-xs text-slate-300 mb-1">
-                  <span>Wallpaper Blur</span>
+                  <span>{t.settings.wallpaperBlur}</span>
                   <span className="font-mono text-slate-400">{wallpaper.blur}px</span>
                 </div>
                 <input
@@ -258,7 +283,7 @@ export const SettingsPanel: React.FC = () => {
 
               <div>
                 <div className="flex justify-between text-xs text-slate-300 mb-1">
-                  <span>Wallpaper Brightness</span>
+                  <span>{t.settings.wallpaperBrightness}</span>
                   <span className="font-mono text-slate-400">
                     {Math.round(wallpaper.brightness * 100)}%
                   </span>
@@ -275,7 +300,7 @@ export const SettingsPanel: React.FC = () => {
 
               <div>
                 <div className="flex justify-between text-xs text-slate-300 mb-1">
-                  <span>Dark Overlay Tint</span>
+                  <span>{t.settings.overlayTint}</span>
                   <span className="font-mono text-slate-400">
                     {Math.round(wallpaper.overlayOpacity * 100)}%
                   </span>
@@ -298,7 +323,7 @@ export const SettingsPanel: React.FC = () => {
             {/* Dock Position */}
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-2">
-                Quick Dock Position
+                {t.settings.quickDockPos}
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
@@ -325,7 +350,7 @@ export const SettingsPanel: React.FC = () => {
             {/* Corner Radius */}
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-2">
-                Widget Corner Rounding
+                {t.settings.widgetCornerRounding}
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[
@@ -353,7 +378,7 @@ export const SettingsPanel: React.FC = () => {
             {/* Glassmorphism Blur Slider */}
             <div>
               <div className="flex justify-between text-xs text-slate-300 mb-1">
-                <span>Glassmorphism Frosted Blur</span>
+                <span>{t.settings.glassBlur}</span>
                 <span className="font-mono text-slate-400">{appearance.glassBlur}px</span>
               </div>
               <input
@@ -368,23 +393,55 @@ export const SettingsPanel: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'language' && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-3">
+                {t.settings.languageSelect}
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {languageOptions.map((opt) => (
+                  <button
+                    key={opt.code}
+                    type="button"
+                    onClick={() => updateAppearance({ language: opt.code })}
+                    className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+                      (appearance.language || 'auto') === opt.code
+                        ? 'bg-sky-500/20 border-sky-400 text-sky-200 shadow-md shadow-sky-500/10'
+                        : 'bg-slate-800/40 border-white/10 text-slate-300 hover:bg-slate-800/80 hover:border-white/20'
+                    }`}
+                  >
+                    <div>
+                      <div className="text-xs font-semibold text-white">{opt.nativeName}</div>
+                      <div className="text-[10px] text-slate-400">{opt.label}</div>
+                    </div>
+                    {(appearance.language || 'auto') === opt.code && (
+                      <span className="text-xs text-sky-400 font-bold">✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'backup' && (
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-2">
-              <h4 className="text-xs font-semibold text-white">Export & Backup Configuration</h4>
+              <h4 className="text-xs font-semibold text-white">{t.settings.exportTitle}</h4>
               <p className="text-xs text-slate-400">
-                Download a JSON backup of your current widgets, grid layout, wallpapers, and appearance.
+                {t.settings.exportDesc}
               </p>
               <Button variant="secondary" size="sm" onClick={handleExport} className="gap-2 mt-2">
                 <Download size={14} />
-                <span>Export Configuration JSON</span>
+                <span>{t.settings.exportBtn}</span>
               </Button>
             </div>
 
             <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-2">
-              <h4 className="text-xs font-semibold text-white">Import Configuration</h4>
+              <h4 className="text-xs font-semibold text-white">{t.settings.importTitle}</h4>
               <p className="text-xs text-slate-400">
-                Restore widgets and layouts from a previously exported JSON backup file.
+                {t.settings.importDesc}
               </p>
               <input
                 type="file"
@@ -400,7 +457,7 @@ export const SettingsPanel: React.FC = () => {
                 className="gap-2 mt-2"
               >
                 <Upload size={14} />
-                <span>Import JSON File</span>
+                <span>{t.settings.importBtn}</span>
               </Button>
               {importStatus && (
                 <p className="text-xs text-sky-400 font-medium mt-1">{importStatus}</p>
@@ -408,22 +465,22 @@ export const SettingsPanel: React.FC = () => {
             </div>
 
             <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 space-y-2">
-              <h4 className="text-xs font-semibold text-rose-300">Reset to Defaults</h4>
+              <h4 className="text-xs font-semibold text-rose-300">{t.settings.resetTitle}</h4>
               <p className="text-xs text-slate-400">
-                Restore default widgets, layouts, and appearance settings. This cannot be undone.
+                {t.settings.resetDesc}
               </p>
               <Button
                 variant="danger"
                 size="sm"
                 onClick={() => {
-                  if (confirm('Are you sure you want to reset all widgets and settings to default?')) {
+                  if (confirm(t.settings.resetConfirm)) {
                     resetToDefault();
                   }
                 }}
                 className="gap-2 mt-2"
               >
                 <RotateCcw size={14} />
-                <span>Reset All to Defaults</span>
+                <span>{t.settings.resetBtn}</span>
               </Button>
             </div>
           </div>
@@ -433,7 +490,7 @@ export const SettingsPanel: React.FC = () => {
       {/* Footer */}
       <div className="flex items-center justify-end pt-4 border-t border-white/10">
         <Button variant="primary" size="sm" onClick={closeSettingsModal}>
-          Done
+          {t.common.done}
         </Button>
       </div>
     </Modal>

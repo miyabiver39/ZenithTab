@@ -1,15 +1,41 @@
-import React from 'react';
-import { Cloud, CloudRain, CloudSun, Sun, Snowflake, Wind, Droplets } from 'lucide-react';
+import React, { useState } from 'react';
+import { Cloud, CloudRain, CloudSun, Sun, Snowflake, Wind, Droplets, MapPin, RefreshCw } from 'lucide-react';
 import { WeatherWidgetConfig } from '../../../types/widget';
 import { useWeather } from '../../../hooks/useWeather';
+import { weatherService } from '../../../services/weatherService';
+import { useDashboardStore } from '../../../store/useDashboardStore';
+import { useTranslation } from '../../../i18n/i18n';
 
 interface WeatherWidgetProps {
+  widgetId?: string;
   config: WeatherWidgetConfig;
 }
 
-export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ config }) => {
+export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }) => {
   const { city = 'Tokyo', latitude = 35.6762, longitude = 139.6503, unit = 'celsius', showForecast = true } = config;
-  const { weather, isLoading, error } = useWeather(latitude, longitude, city);
+  const { weather, isLoading, error, refresh } = useWeather(latitude, longitude, city);
+  const { updateWidgetConfig } = useDashboardStore();
+  const { t } = useTranslation();
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleDetectLocation = async () => {
+    setIsLocating(true);
+    try {
+      const location = await weatherService.detectUserLocation();
+      if (widgetId) {
+        updateWidgetConfig(widgetId, {
+          city: location.city,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+      }
+      refresh();
+    } catch (err) {
+      console.warn('Geolocation detection failed:', err);
+    } finally {
+      setIsLocating(false);
+    }
+  };
 
   const getWeatherIcon = (code: number, isDay = true, size = 28) => {
     if (code === 0) {
@@ -39,7 +65,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ config }) => {
   if (isLoading && !weather) {
     return (
       <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs animate-pulse">
-        Loading weather...
+        {t.widgets.weather.loading}
       </div>
     );
   }
@@ -47,7 +73,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ config }) => {
   if (error && !weather) {
     return (
       <div className="w-full h-full flex items-center justify-center text-rose-400 text-xs text-center p-2">
-        Weather info unavailable
+        {t.widgets.weather.unavailable}
       </div>
     );
   }
@@ -67,8 +93,16 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ config }) => {
               </span>
               <span className="text-sm font-semibold text-slate-300">{unitSymbol}</span>
             </div>
-            <div className="text-xs font-medium text-slate-300 truncate max-w-[120px]">
-              {weather?.city || city}
+            <div className="flex items-center gap-1 text-xs font-medium text-slate-300">
+              <button
+                onClick={handleDetectLocation}
+                disabled={isLocating}
+                className="flex items-center gap-1 hover:text-sky-300 transition-colors group"
+                title={t.widgets.weather.detectLocation}
+              >
+                <MapPin size={12} className={`text-sky-400 ${isLocating ? 'animate-bounce' : ''}`} />
+                <span className="truncate max-w-[120px]">{isLocating ? t.widgets.weather.detecting : (weather?.city || city)}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -76,7 +110,16 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ config }) => {
         {/* Details */}
         {current && (
           <div className="text-right text-[11px] text-slate-300 space-y-0.5">
-            <div className="font-medium text-slate-200">{current.condition}</div>
+            <div className="flex items-center justify-end gap-1.5 font-medium text-slate-200">
+              <span>{current.condition}</span>
+              <button
+                onClick={refresh}
+                className="text-slate-400 hover:text-white p-0.5 rounded transition-colors"
+                title="Refresh"
+              >
+                <RefreshCw size={11} className={isLoading ? 'animate-spin' : ''} />
+              </button>
+            </div>
             <div className="flex items-center justify-end gap-1 text-slate-400">
               <Wind size={12} />
               <span>{current.windSpeed} km/h</span>

@@ -3,6 +3,7 @@ import { Folder, ChevronRight, ExternalLink, Search, Globe } from 'lucide-react'
 import { BookmarkWidgetConfig } from '../../../types/widget';
 import { BookmarkItem } from '../../../types/bookmark';
 import { useBookmarks } from '../../../hooks/useBookmarks';
+import { useTranslation } from '../../../i18n/i18n';
 
 interface BookmarkWidgetProps {
   config: BookmarkWidgetConfig;
@@ -11,6 +12,7 @@ interface BookmarkWidgetProps {
 export const BookmarkWidget: React.FC<BookmarkWidgetProps> = ({ config }) => {
   const { viewMode = 'grid', showFavicons = true } = config;
   const { bookmarks, searchResults, searchQuery, searchBookmarks, isLoading } = useBookmarks();
+  const { t } = useTranslation();
 
   // Navigation state: path of folder items traversed
   const [folderPath, setFolderPath] = useState<BookmarkItem[]>([]);
@@ -36,7 +38,7 @@ export const BookmarkWidget: React.FC<BookmarkWidgetProps> = ({ config }) => {
   if (isLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
-        Loading bookmarks...
+        {t.common.loading}
       </div>
     );
   }
@@ -52,7 +54,7 @@ export const BookmarkWidget: React.FC<BookmarkWidgetProps> = ({ config }) => {
             type="text"
             value={searchQuery}
             onChange={(e) => searchBookmarks(e.target.value)}
-            placeholder="Search bookmarks..."
+            placeholder={t.widgets.bookmarks.searchPlaceholder}
             className="w-full pl-8 pr-3 py-1 bg-slate-800/40 border border-white/10 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
           />
         </div>
@@ -64,7 +66,7 @@ export const BookmarkWidget: React.FC<BookmarkWidgetProps> = ({ config }) => {
               onClick={() => navigateToBreadcrumb(-1)}
               className="hover:text-white hover:underline transition-colors"
             >
-              All
+              {t.widgets.bookmarks.all}
             </button>
             {folderPath.map((folder, index) => (
               <React.Fragment key={folder.id}>
@@ -87,7 +89,7 @@ export const BookmarkWidget: React.FC<BookmarkWidgetProps> = ({ config }) => {
       <div className="flex-1 overflow-y-auto mt-2 pr-1 custom-scrollbar">
         {displayedItems.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400">
-            {searchQuery ? 'No bookmarks found' : 'Folder is empty'}
+            {searchQuery ? t.widgets.bookmarks.notFound : t.widgets.bookmarks.empty}
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">

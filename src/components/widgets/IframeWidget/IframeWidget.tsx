@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ExternalLink, Globe } from 'lucide-react';
 import { IframeWidgetConfig } from '../../../types/widget';
 import { getFaviconUrl } from '../../../utils/favicon';
+import { useTranslation } from '../../../i18n/i18n';
 
 interface IframeWidgetProps {
   config: IframeWidgetConfig;
@@ -11,6 +12,7 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
   const { url = 'https://developer.mozilla.org', title = 'Web Tool', allowScroll = true } = config;
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   const hostname = url ? new URL(url).hostname : '';
   const faviconUrl = getFaviconUrl(url);
@@ -29,7 +31,7 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
           </div>
           <h3 className="text-sm font-semibold text-white mb-1">{title || hostname}</h3>
           <p className="text-xs text-slate-400 max-w-xs mb-4">
-            This website restricts embedding inside frames via security policies (CSP / X-Frame-Options).
+            {t.widgets.iframe.restrictedDesc}
           </p>
           <div className="flex items-center gap-2">
             <a
@@ -38,7 +40,7 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-medium transition-colors shadow-lg shadow-sky-500/25"
             >
-              <span>Open in New Tab</span>
+              <span>{t.widgets.iframe.openNewTab}</span>
               <ExternalLink size={13} />
             </a>
             <button
@@ -48,7 +50,7 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
               }}
               className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-medium transition-colors"
             >
-              Retry
+              {t.common.retry}
             </button>
           </div>
         </div>
@@ -56,7 +58,7 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
         <>
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-10 text-xs text-slate-400">
-              Loading preview...
+              {t.widgets.iframe.loadingPreview}
             </div>
           )}
 
@@ -79,7 +81,7 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="absolute bottom-2 right-2 p-1.5 bg-slate-900/80 hover:bg-slate-900 text-slate-300 hover:text-white rounded-lg border border-white/10 shadow-lg backdrop-blur-md transition-all z-20"
-            title="Open website directly"
+            title={t.widgets.iframe.openNewTab}
           >
             <ExternalLink size={12} />
           </a>

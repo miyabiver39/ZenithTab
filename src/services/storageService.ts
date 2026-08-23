@@ -22,6 +22,7 @@ export const DEFAULT_WALLPAPER: WallpaperSettings = {
 };
 
 export const DEFAULT_APPEARANCE: AppearanceSettings = {
+  language: 'auto',
   theme: 'dark',
   glassBlur: 16,
   glassOpacity: 0.45,
@@ -32,6 +33,17 @@ export const DEFAULT_APPEARANCE: AppearanceSettings = {
 
 export const DEFAULT_WIDGETS: DashboardWidget[] = [
   {
+    id: 'widget-search-1',
+    type: 'search',
+    title: 'Search',
+    config: {
+      defaultEngine: 'google',
+      showEngineSelector: true,
+      openInNewTab: true,
+    },
+    layout: { i: 'widget-search-1', x: 2, y: 0, w: 8, h: 1, minW: 4, minH: 1 },
+  },
+  {
     id: 'widget-clock-1',
     type: 'clock',
     title: 'Clock',
@@ -41,7 +53,7 @@ export const DEFAULT_WIDGETS: DashboardWidget[] = [
       showDate: true,
       is24Hour: true,
     },
-    layout: { i: 'widget-clock-1', x: 0, y: 0, w: 4, h: 2, minW: 2, minH: 2 },
+    layout: { i: 'widget-clock-1', x: 0, y: 1, w: 4, h: 2, minW: 2, minH: 2 },
   },
   {
     id: 'widget-weather-1',
@@ -54,7 +66,19 @@ export const DEFAULT_WIDGETS: DashboardWidget[] = [
       unit: 'celsius',
       showForecast: true,
     },
-    layout: { i: 'widget-weather-1', x: 4, y: 0, w: 4, h: 2, minW: 3, minH: 2 },
+    layout: { i: 'widget-weather-1', x: 4, y: 1, w: 4, h: 2, minW: 3, minH: 2 },
+  },
+  {
+    id: 'widget-pomodoro-1',
+    type: 'pomodoro',
+    title: 'Focus Timer',
+    config: {
+      focusDurationMinutes: 25,
+      shortBreakDurationMinutes: 5,
+      longBreakDurationMinutes: 15,
+      autoStartBreaks: false,
+    },
+    layout: { i: 'widget-pomodoro-1', x: 8, y: 1, w: 4, h: 2, minW: 3, minH: 2 },
   },
   {
     id: 'widget-bookmarks-1',
@@ -65,7 +89,7 @@ export const DEFAULT_WIDGETS: DashboardWidget[] = [
       showFavicons: true,
       columns: 4,
     },
-    layout: { i: 'widget-bookmarks-1', x: 8, y: 0, w: 4, h: 4, minW: 3, minH: 3 },
+    layout: { i: 'widget-bookmarks-1', x: 0, y: 3, w: 4, h: 4, minW: 3, minH: 3 },
   },
   {
     id: 'widget-rss-1',
@@ -81,18 +105,19 @@ export const DEFAULT_WIDGETS: DashboardWidget[] = [
       showDate: true,
       showDescription: true,
     },
-    layout: { i: 'widget-rss-1', x: 0, y: 2, w: 4, h: 4, minW: 3, minH: 3 },
+    layout: { i: 'widget-rss-1', x: 4, y: 3, w: 4, h: 4, minW: 3, minH: 3 },
   },
   {
-    id: 'widget-notes-1',
-    type: 'notes',
-    title: 'Quick Notes',
+    id: 'widget-todo-1',
+    type: 'todo',
+    title: 'Todo List',
     config: {
-      content: '# Welcome to ZenithTab 🌌\n\n- [x] High-performance Dashboard\n- [ ] Customize your widgets\n- [ ] Explore bookmarks and RSS feeds\n\n*Click the Edit icon on top right to adjust layout!*',
-      fontSize: 'base',
-      fontFamily: 'sans',
+      items: [
+        { id: '1', text: 'Explore ZenithTab settings', completed: false, createdAt: Date.now() },
+        { id: '2', text: 'Customize widgets & wallpapers', completed: true, createdAt: Date.now() - 1000 },
+      ],
     },
-    layout: { i: 'widget-notes-1', x: 4, y: 2, w: 4, h: 4, minW: 3, minH: 3 },
+    layout: { i: 'widget-todo-1', x: 8, y: 3, w: 4, h: 4, minW: 3, minH: 2 },
   },
 ];
 

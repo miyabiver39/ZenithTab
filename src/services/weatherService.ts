@@ -32,13 +32,105 @@ const WMO_CODES: Record<number, string> = {
   99: 'Thunderstorm with heavy hail',
 };
 
+export interface GeolocationResult {
+  latitude: number;
+  longitude: number;
+  city: string;
+  country?: string;
+}
+
 export const weatherService = {
   getConditionName(code: number): string {
     return WMO_CODES[code] || 'Clear';
   },
 
+  async detectUserLocation(): Promise<GeolocationResult> {
+    return new Promise((resolve, reject) => {
+      if (typeof navigator === 'undefined' || !navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by this browser.'));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          try {
+            // Reverse geocode or fetch district/city name via Open-Meteo or reverse API
+            const geoRes = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`,
+              {
+                headers: {
+                  'Accept-Language': navigator.language || 'en',
+                  'User-Agent': 'ZenithTab-Dashboard/1.0',
+                },
+              }
+            );
+
+            if (geoRes.ok) {
+              const geoData = await geoRes.json();
+              const address = geoData.address || {};
+              const city =
+                address.city ||
+                address.town ||
+                address.village ||
+                address.suburb ||
+                address.county ||
+                address.state ||
+                'Current Location';
+
+              resolve({
+                latitude: Number(lat.toFixed(4)),
+                longitude: Number(lon.toFixed(4)),
+                city,
+                country: address.country,
+              });
+              return;
+            }
+          } catch {
+            // Ignore reverse geocode failure and return coordinates
+          }
+
+          resolve({
+            latitude: Number(lat.toFixed(4)),
+            longitude: Number(lon.toFixed(4)),
+            city: 'Local District',
+          });
+        },
+        (error) => {
+          reject(error);
+        },
+        {
+          timeout: 10000,
+          enableHighAccuracy: false,
+        }
+      );
+    });
+  },
+
+  async searchCities(query: string): Promise<Array<{ name: string; latitude: number; longitude: number; country?: string; admin1?: string }>> {
+    if (!query.trim()) return [];
+    try {
+      const res = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=${navigator.language || 'en'}&format=json`
+      );
+      if (!res.ok) return [];
+      const data = await res.json();
+      return (data.results || []).map((r: any) => ({
+        name: r.name,
+        latitude: r.latitude,
+        longitude: r.longitude,
+        country: r.country,
+        admin1: r.admin1,
+      }));
+    } catch {
+      return [];
+    }
+  },
+
   async fetchWeather(lat = 35.6762, lon = 139.6503, city = 'Tokyo'): Promise<WeatherData> {
-    const cacheKey = `${WEATHER_CACHE_KEY}_${lat}_${lon}`;
+    const cacheKey = `${WEATHER_CACHE_KEY}_${lat.toFixed(2)}_${lon.toFixed(2)}`;
     const cached = await storageGet<WeatherData>(cacheKey);
     const now = Date.now();
 
@@ -89,7 +181,7 @@ export const weatherService = {
 
       if (cached) return cached;
 
-      // Fallback mock weather data
+      // Fallback weather data
       return {
         city,
         current: {

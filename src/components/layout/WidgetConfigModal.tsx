@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { MapPin } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { rssService } from '../../services/rssService';
+import { weatherService } from '../../services/weatherService';
+import { useTranslation } from '../../i18n/i18n';
 
 export const WidgetConfigModal: React.FC = () => {
   const {
@@ -14,11 +17,13 @@ export const WidgetConfigModal: React.FC = () => {
     updateWidgetConfig,
   } = useDashboardStore();
 
+  const { t, activeLanguageCode } = useTranslation();
   const isOpen = activeSettingsModal === 'editWidget' && !!editingWidgetId;
   const targetWidget = widgets.find((w) => w.id === editingWidgetId);
 
   const [title, setTitle] = useState('');
   const [config, setConfig] = useState<Record<string, any>>({});
+  const [isLocating, setIsLocating] = useState(false);
 
   useEffect(() => {
     if (targetWidget) {
@@ -29,13 +34,30 @@ export const WidgetConfigModal: React.FC = () => {
 
   if (!targetWidget) return null;
 
+  const handleDetectLocation = async () => {
+    setIsLocating(true);
+    try {
+      const location = await weatherService.detectUserLocation();
+      setConfig((prev) => ({
+        ...prev,
+        city: location.city,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      }));
+    } catch (err) {
+      console.warn('Geolocation detection failed in modal:', err);
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingWidgetId) return;
 
     // Custom formatting for Google News
     if (targetWidget.type === 'rss' && config.isGoogleNews && config.searchQuery) {
-      config.feedUrl = rssService.buildGoogleNewsRssUrl(config.searchQuery);
+      config.feedUrl = rssService.buildGoogleNewsRssUrl(config.searchQuery, activeLanguageCode, activeLanguageCode === 'ja' ? 'JP' : 'US');
     }
 
     updateWidgetConfig(editingWidgetId, config, title);
@@ -43,11 +65,46 @@ export const WidgetConfigModal: React.FC = () => {
 
   const renderConfigFields = () => {
     switch (targetWidget.type) {
+      case 'search':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">Default Search Engine</label>
+              <div className="grid grid-cols-3 gap-2">
+                {['google', 'duckduckgo', 'bing', 'github', 'youtube', 'chatgpt'].map((eng) => (
+                  <button
+                    key={eng}
+                    type="button"
+                    onClick={() => setConfig({ ...config, defaultEngine: eng })}
+                    className={`py-2 px-3 rounded-lg text-xs font-medium border capitalize transition-all ${
+                      config.defaultEngine === eng
+                        ? 'bg-sky-500/20 border-sky-400 text-sky-200 shadow'
+                        : 'bg-slate-800/50 border-white/10 text-slate-300 hover:bg-slate-800'
+                    }`}
+                  >
+                    {eng}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between py-1">
+              <span className="text-xs text-slate-300">Open Search Results in New Tab</span>
+              <input
+                type="checkbox"
+                checked={config.openInNewTab !== false}
+                onChange={(e) => setConfig({ ...config, openInNewTab: e.target.checked })}
+                className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"
+              />
+            </div>
+          </div>
+        );
+
       case 'clock':
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Clock Style</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">{t.widgets.clock.style}</label>
               <div className="grid grid-cols-3 gap-2">
                 {['digital', 'analog', 'minimal'].map((st) => (
                   <button
@@ -67,7 +124,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">24-Hour Format</span>
+              <span className="text-xs text-slate-300">{t.widgets.clock.is24Hour}</span>
               <input
                 type="checkbox"
                 checked={!!config.is24Hour}
@@ -77,7 +134,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">Show Seconds</span>
+              <span className="text-xs text-slate-300">{t.widgets.clock.showSeconds}</span>
               <input
                 type="checkbox"
                 checked={!!config.showSeconds}
@@ -87,7 +144,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">Show Date</span>
+              <span className="text-xs text-slate-300">{t.widgets.clock.showDate}</span>
               <input
                 type="checkbox"
                 checked={!!config.showDate}
@@ -97,7 +154,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <Input
-              label="Timezone (Optional)"
+              label={t.widgets.clock.timezone}
               value={config.timezone || ''}
               onChange={(e) => setConfig({ ...config, timezone: e.target.value })}
               placeholder="e.g. Asia/Tokyo, America/New_York, UTC"
@@ -108,16 +165,31 @@ export const WidgetConfigModal: React.FC = () => {
       case 'weather':
         return (
           <div className="space-y-4">
-            <Input
-              label="City Name"
-              value={config.city || ''}
-              onChange={(e) => setConfig({ ...config, city: e.target.value })}
-              placeholder="e.g. Tokyo, San Francisco, London"
-            />
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <Input
+                  label={t.widgets.weather.city}
+                  value={config.city || ''}
+                  onChange={(e) => setConfig({ ...config, city: e.target.value })}
+                  placeholder="e.g. Tokyo, Shinjuku, San Francisco, London"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handleDetectLocation}
+                disabled={isLocating}
+                className="gap-1.5 text-xs whitespace-nowrap mb-0.5"
+              >
+                <MapPin size={13} className={isLocating ? 'animate-bounce text-sky-400' : ''} />
+                <span>{isLocating ? t.widgets.weather.detecting : t.widgets.weather.detectLocation}</span>
+              </Button>
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <Input
-                label="Latitude (Optional)"
+                label={t.widgets.weather.latitude}
                 type="number"
                 step="any"
                 value={config.latitude || ''}
@@ -125,7 +197,7 @@ export const WidgetConfigModal: React.FC = () => {
                 placeholder="35.6762"
               />
               <Input
-                label="Longitude (Optional)"
+                label={t.widgets.weather.longitude}
                 type="number"
                 step="any"
                 value={config.longitude || ''}
@@ -135,11 +207,11 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Temperature Unit</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">{t.widgets.weather.unit}</label>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { key: 'celsius', label: 'Celsius (°C)' },
-                  { key: 'fahrenheit', label: 'Fahrenheit (°F)' },
+                  { key: 'celsius', label: t.widgets.weather.celsius },
+                  { key: 'fahrenheit', label: t.widgets.weather.fahrenheit },
                 ].map((unit) => (
                   <button
                     key={unit.key}
@@ -158,7 +230,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">Show 3-Day Forecast</span>
+              <span className="text-xs text-slate-300">{t.widgets.weather.showForecast}</span>
               <input
                 type="checkbox"
                 checked={!!config.showForecast}
@@ -169,11 +241,41 @@ export const WidgetConfigModal: React.FC = () => {
           </div>
         );
 
+      case 'pomodoro':
+        return (
+          <div className="space-y-4">
+            <Input
+              label="Focus Duration (Minutes)"
+              type="number"
+              min="1"
+              max="120"
+              value={config.focusDurationMinutes || 25}
+              onChange={(e) => setConfig({ ...config, focusDurationMinutes: parseInt(e.target.value) || 25 })}
+            />
+            <Input
+              label="Short Break Duration (Minutes)"
+              type="number"
+              min="1"
+              max="30"
+              value={config.shortBreakDurationMinutes || 5}
+              onChange={(e) => setConfig({ ...config, shortBreakDurationMinutes: parseInt(e.target.value) || 5 })}
+            />
+            <Input
+              label="Long Break Duration (Minutes)"
+              type="number"
+              min="1"
+              max="60"
+              value={config.longBreakDurationMinutes || 15}
+              onChange={(e) => setConfig({ ...config, longBreakDurationMinutes: parseInt(e.target.value) || 15 })}
+            />
+          </div>
+        );
+
       case 'bookmarks':
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">View Mode</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">{t.widgets.bookmarks.viewMode}</label>
               <div className="grid grid-cols-2 gap-2">
                 {['grid', 'list'].map((mode) => (
                   <button
@@ -193,7 +295,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">Show Favicons</span>
+              <span className="text-xs text-slate-300">{t.widgets.bookmarks.showFavicons}</span>
               <input
                 type="checkbox"
                 checked={!!config.showFavicons}
@@ -209,8 +311,8 @@ export const WidgetConfigModal: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between py-1">
               <div>
-                <div className="text-xs font-medium text-slate-200">Google News Keyword Feed</div>
-                <div className="text-[11px] text-slate-400">Search keywords to generate auto RSS feed</div>
+                <div className="text-xs font-medium text-slate-200">{t.widgets.rss.googleNewsFeed}</div>
+                <div className="text-[11px] text-slate-400">{t.widgets.rss.googleNewsSub}</div>
               </div>
               <input
                 type="checkbox"
@@ -222,14 +324,14 @@ export const WidgetConfigModal: React.FC = () => {
 
             {config.isGoogleNews ? (
               <Input
-                label="Google News Search Query"
+                label={t.widgets.rss.searchPlaceholder}
                 value={config.searchQuery || ''}
                 onChange={(e) => setConfig({ ...config, searchQuery: e.target.value })}
                 placeholder="e.g. artificial intelligence, technology, web dev"
               />
             ) : (
               <Input
-                label="Custom RSS/Atom Feed URL"
+                label={t.widgets.rss.customUrl}
                 value={config.feedUrl || ''}
                 onChange={(e) => setConfig({ ...config, feedUrl: e.target.value })}
                 placeholder="https://example.com/feed.xml"
@@ -237,7 +339,7 @@ export const WidgetConfigModal: React.FC = () => {
             )}
 
             <Input
-              label="Max Articles to Display"
+              label={t.widgets.rss.maxItems}
               type="number"
               min="3"
               max="25"
@@ -246,7 +348,7 @@ export const WidgetConfigModal: React.FC = () => {
             />
 
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">Show Article Thumbnail</span>
+              <span className="text-xs text-slate-300">{t.widgets.rss.showThumbnails}</span>
               <input
                 type="checkbox"
                 checked={!!config.showThumbnail}
@@ -256,7 +358,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">Show Article Snippet</span>
+              <span className="text-xs text-slate-300">{t.widgets.rss.showSnippet}</span>
               <input
                 type="checkbox"
                 checked={!!config.showDescription}
@@ -271,13 +373,13 @@ export const WidgetConfigModal: React.FC = () => {
         return (
           <div className="space-y-4">
             <Input
-              label="Target Website URL"
+              label={t.widgets.iframe.targetUrl}
               value={config.url || ''}
               onChange={(e) => setConfig({ ...config, url: e.target.value })}
               placeholder="https://example.com"
             />
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs text-slate-300">Allow Scroll inside Frame</span>
+              <span className="text-xs text-slate-300">{t.widgets.iframe.allowScroll}</span>
               <input
                 type="checkbox"
                 checked={!!config.allowScroll}
@@ -292,7 +394,7 @@ export const WidgetConfigModal: React.FC = () => {
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Font Size</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">{t.widgets.notes.fontSize}</label>
               <div className="grid grid-cols-3 gap-2">
                 {['sm', 'base', 'lg'].map((sz) => (
                   <button
@@ -312,7 +414,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Font Style</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">{t.widgets.notes.fontStyle}</label>
               <div className="grid grid-cols-3 gap-2">
                 {['sans', 'mono', 'serif'].map((fam) => (
                   <button
@@ -352,10 +454,10 @@ export const WidgetConfigModal: React.FC = () => {
 
         <div className="flex items-center justify-end gap-2 pt-4 border-t border-white/10">
           <Button type="button" variant="ghost" size="sm" onClick={closeSettingsModal}>
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button type="submit" variant="primary" size="sm">
-            Save Changes
+            {t.common.saveChanges}
           </Button>
         </div>
       </form>

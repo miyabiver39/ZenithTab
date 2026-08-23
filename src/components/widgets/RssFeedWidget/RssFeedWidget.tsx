@@ -5,6 +5,7 @@ import { useRssFeed } from '../../../hooks/useRssFeed';
 import { formatRelativeTime } from '../../../utils/date';
 import { rssService } from '../../../services/rssService';
 import { useDashboardStore } from '../../../store/useDashboardStore';
+import { useTranslation } from '../../../i18n/i18n';
 
 interface RssFeedWidgetProps {
   widgetId: string;
@@ -24,12 +25,14 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
   } = config;
 
   const { updateWidgetConfig } = useDashboardStore();
+  const { t, activeLanguageCode } = useTranslation();
   const [searchInput, setSearchInput] = useState(searchQuery);
   const [isSearching, setIsSearching] = useState(false);
 
-  const effectiveFeedUrl = isGoogleNews && searchQuery
-    ? rssService.buildGoogleNewsRssUrl(searchQuery)
-    : feedUrl;
+  const effectiveFeedUrl =
+    isGoogleNews && searchQuery
+      ? rssService.buildGoogleNewsRssUrl(searchQuery, activeLanguageCode, activeLanguageCode === 'ja' ? 'JP' : 'US')
+      : feedUrl;
 
   const { items, isLoading, error, refresh } = useRssFeed(effectiveFeedUrl, refreshIntervalMinutes);
 
@@ -37,7 +40,7 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
     e.preventDefault();
     if (!searchInput.trim()) return;
 
-    const newUrl = rssService.buildGoogleNewsRssUrl(searchInput.trim());
+    const newUrl = rssService.buildGoogleNewsRssUrl(searchInput.trim(), activeLanguageCode, activeLanguageCode === 'ja' ? 'JP' : 'US');
     updateWidgetConfig(
       widgetId,
       {
@@ -60,7 +63,7 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Google News search query..."
+              placeholder={t.widgets.rss.searchPlaceholder}
               autoFocus
               className="flex-1 px-2.5 py-1 bg-slate-800/40 border border-white/10 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
             />
@@ -68,14 +71,14 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
               type="submit"
               className="text-xs px-2 py-1 bg-sky-500 hover:bg-sky-400 text-white rounded-lg transition-colors"
             >
-              Set
+              {t.common.save}
             </button>
             <button
               type="button"
               onClick={() => setIsSearching(false)}
               className="text-xs px-2 py-1 text-slate-400 hover:text-white rounded-lg transition-colors"
             >
-              Cancel
+              {t.common.cancel}
             </button>
           </form>
         ) : (
@@ -83,7 +86,7 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
             <div className="flex items-center gap-1.5 overflow-hidden">
               <Newspaper size={14} className="text-sky-400 flex-shrink-0" />
               <span className="text-[11px] text-slate-400 truncate">
-                {isGoogleNews && searchQuery ? `Google News: "${searchQuery}"` : 'Live Feed'}
+                {isGoogleNews && searchQuery ? `Google News: "${searchQuery}"` : t.widgets.rss.liveFeed}
               </span>
             </div>
             <div className="flex items-center gap-1">
@@ -111,16 +114,16 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
       <div className="flex-1 overflow-y-auto mt-2 pr-1 custom-scrollbar">
         {isLoading && items.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400 animate-pulse">
-            Fetching news feed...
+            {t.widgets.rss.fetching}
           </div>
         ) : error && items.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-4 text-xs text-slate-400">
-            <p className="text-rose-400 font-medium mb-1">Failed to load feed</p>
+            <p className="text-rose-400 font-medium mb-1">{t.widgets.rss.failed}</p>
             <p className="text-[11px] text-slate-400">{error}</p>
           </div>
         ) : items.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400">
-            No articles found
+            {t.widgets.rss.empty}
           </div>
         ) : (
           <div className="divide-y divide-white/5 space-y-2">

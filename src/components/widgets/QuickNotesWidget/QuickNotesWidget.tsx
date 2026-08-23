@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { QuickNotesWidgetConfig } from '../../../types/widget';
 import { useDashboardStore } from '../../../store/useDashboardStore';
+import { useTranslation } from '../../../i18n/i18n';
 import { cn } from '../../../utils/cn';
 
 interface QuickNotesWidgetProps {
@@ -11,6 +12,7 @@ interface QuickNotesWidgetProps {
 export const QuickNotesWidget: React.FC<QuickNotesWidgetProps> = ({ widgetId, config }) => {
   const { content = '', fontSize = 'base', fontFamily = 'sans' } = config;
   const { updateWidgetConfig } = useDashboardStore();
+  const { t } = useTranslation();
   const [text, setText] = useState(content);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -48,7 +50,7 @@ export const QuickNotesWidget: React.FC<QuickNotesWidgetProps> = ({ widgetId, co
       <textarea
         value={text}
         onChange={handleChange}
-        placeholder="Type quick notes, markdown, tasks..."
+        placeholder={t.widgets.notes.placeholder}
         className={cn(
           'w-full h-full p-2 bg-transparent resize-none focus:outline-none text-slate-100 placeholder-slate-500 custom-scrollbar',
           fontSizes,

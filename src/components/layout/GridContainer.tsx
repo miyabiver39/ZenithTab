@@ -8,6 +8,9 @@ import { BookmarkWidget } from '../widgets/BookmarkWidget/BookmarkWidget';
 import { RssFeedWidget } from '../widgets/RssFeedWidget/RssFeedWidget';
 import { IframeWidget } from '../widgets/IframeWidget/IframeWidget';
 import { QuickNotesWidget } from '../widgets/QuickNotesWidget/QuickNotesWidget';
+import { SearchWidget } from '../widgets/SearchWidget/SearchWidget';
+import { PomodoroWidget } from '../widgets/PomodoroWidget/PomodoroWidget';
+import { TodoWidget } from '../widgets/TodoWidget/TodoWidget';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -27,14 +30,20 @@ export const GridContainer: React.FC = () => {
 
   const renderWidgetContent = (widget: any) => {
     switch (widget.type) {
+      case 'search':
+        return <SearchWidget config={widget.config} />;
       case 'clock':
         return <ClockWidget config={widget.config} />;
       case 'weather':
-        return <WeatherWidget config={widget.config} />;
+        return <WeatherWidget widgetId={widget.id} config={widget.config} />;
       case 'bookmarks':
         return <BookmarkWidget config={widget.config} />;
       case 'rss':
         return <RssFeedWidget widgetId={widget.id} config={widget.config} />;
+      case 'pomodoro':
+        return <PomodoroWidget config={widget.config} />;
+      case 'todo':
+        return <TodoWidget widgetId={widget.id} config={widget.config} />;
       case 'iframe':
         return <IframeWidget config={widget.config} />;
       case 'notes':

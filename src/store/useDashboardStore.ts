@@ -43,15 +43,23 @@ interface DashboardState {
 }
 
 const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: number; minH: number }> = {
+  search: { w: 8, h: 1, minW: 4, minH: 1 },
   clock: { w: 4, h: 2, minW: 2, minH: 2 },
   weather: { w: 4, h: 2, minW: 3, minH: 2 },
   bookmarks: { w: 4, h: 4, minW: 3, minH: 3 },
   rss: { w: 4, h: 4, minW: 3, minH: 3 },
+  pomodoro: { w: 4, h: 3, minW: 3, minH: 2 },
+  todo: { w: 4, h: 3, minW: 3, minH: 2 },
   iframe: { w: 6, h: 4, minW: 3, minH: 3 },
   notes: { w: 4, h: 4, minW: 3, minH: 2 },
 };
 
 const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
+  search: {
+    defaultEngine: 'google',
+    showEngineSelector: true,
+    openInNewTab: true,
+  },
   clock: {
     style: 'digital',
     showSeconds: true,
@@ -79,6 +87,18 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
     showThumbnail: true,
     showDate: true,
     showDescription: true,
+  },
+  pomodoro: {
+    focusDurationMinutes: 25,
+    shortBreakDurationMinutes: 5,
+    longBreakDurationMinutes: 15,
+    autoStartBreaks: false,
+  },
+  todo: {
+    items: [
+      { id: '1', text: 'Explore ZenithTab settings', completed: false, createdAt: Date.now() },
+      { id: '2', text: 'Customize widgets & wallpapers', completed: true, createdAt: Date.now() - 1000 },
+    ],
   },
   iframe: {
     url: 'https://developer.mozilla.org',
