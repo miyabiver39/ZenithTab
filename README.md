@@ -27,8 +27,8 @@
 ### Developer / Local Installation
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/miyabiver39/ZenthTab.git
-   cd ZenthTab
+   git clone https://github.com/miyabiver39/ZenithTab.git
+   cd ZenithTab
    ```
 2. **Install dependencies:**
    ```bash
