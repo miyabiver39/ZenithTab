@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "ZenithTab - Custom New Tab Dashboard",
+  "version": "1.0.0",
+  "description": "High-Performance, Infinitely Customizable New Tab Dashboard with Widgets, Bookmarks, RSS and Dynamic Wallpapers.",
+  "permissions": [
+    "storage",
+    "bookmarks",
+    "alarms",
+    "favicon"
+  ],
+  "host_permissions": [
+    "https://*/*"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "background": {
+    "service_worker": "src/background/service-worker.ts",
+    "type": "module"
+  },
+  "icons": {
+    "16": "public/icons/icon16.png",
+    "48": "public/icons/icon48.png",
+    "128": "public/icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}
