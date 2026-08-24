@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ClockWidgetConfig } from '../../../types/widget';
 import { formatDate, formatTime } from '../../../utils/date';
+import { useTranslation } from '../../../i18n/i18n';
 
 interface ClockWidgetProps {
   config: ClockWidgetConfig;
@@ -8,6 +9,7 @@ interface ClockWidgetProps {
 
 export const ClockWidget: React.FC<ClockWidgetProps> = ({ config }) => {
   const [time, setTime] = useState(new Date());
+  const { activeLanguageCode } = useTranslation();
 
   const {
     style = 'digital',
@@ -75,7 +77,7 @@ export const ClockWidget: React.FC<ClockWidgetProps> = ({ config }) => {
 
         {showDate && (
           <div className="mt-2 text-xs font-medium text-slate-300">
-            {formatDate(time, timezone)}
+            {formatDate(time, timezone, activeLanguageCode)}
           </div>
         )}
       </div>
@@ -83,8 +85,8 @@ export const ClockWidget: React.FC<ClockWidgetProps> = ({ config }) => {
   }
 
   // Digital or Minimal
-  const timeFormatted = formatTime(time, is24Hour, showSeconds, timezone);
-  const dateFormatted = formatDate(time, timezone);
+  const timeFormatted = formatTime(time, is24Hour, showSeconds, timezone, activeLanguageCode);
+  const dateFormatted = formatDate(time, timezone, activeLanguageCode);
 
   return (
     <div

@@ -47,4 +47,16 @@ describe('i18n Localization Engine', () => {
       expect(missing, `${code} に不足しているキー: ${missing.join(', ')}`).toEqual([]);
     }
   });
+
+  it('ロケールに応じた日付・時刻フォーマットが動作すること', async () => {
+    const { formatDate } = await import('../../src/utils/date');
+    const testDate = new Date('2026-08-25T12:00:00Z');
+    const jaDate = formatDate(testDate, 'UTC', 'ja');
+    const enDate = formatDate(testDate, 'UTC', 'en');
+
+    expect(jaDate).toContain('2026');
+    expect(enDate).toContain('2026');
+    expect(enDate).toContain('Aug');
+    expect(enDate).toContain('Tuesday');
+  });
 });

@@ -1,4 +1,26 @@
-export function formatTime(date: Date, is24Hour = true, showSeconds = true, timezone?: string): string {
+export function getIntlLocale(langCode?: string): string | undefined {
+  if (!langCode || langCode === 'auto') return undefined;
+  const map: Record<string, string> = {
+    ja: 'ja-JP',
+    en: 'en-US',
+    'zh-CN': 'zh-CN',
+    zh: 'zh-CN',
+    es: 'es-ES',
+    fr: 'fr-FR',
+    de: 'de-DE',
+    ko: 'ko-KR',
+  };
+  return map[langCode] || langCode;
+}
+
+export function formatTime(
+  date: Date,
+  is24Hour = true,
+  showSeconds = true,
+  timezone?: string,
+  locale?: string
+): string {
+  const intlLocale = getIntlLocale(locale);
   const options: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
@@ -6,10 +28,11 @@ export function formatTime(date: Date, is24Hour = true, showSeconds = true, time
     hour12: !is24Hour,
     timeZone: timezone || undefined,
   };
-  return new Intl.DateTimeFormat(undefined, options).format(date);
+  return new Intl.DateTimeFormat(intlLocale, options).format(date);
 }
 
-export function formatDate(date: Date, timezone?: string): string {
+export function formatDate(date: Date, timezone?: string, locale?: string): string {
+  const intlLocale = getIntlLocale(locale);
   const options: Intl.DateTimeFormatOptions = {
     weekday: 'long',
     year: 'numeric',
@@ -17,7 +40,7 @@ export function formatDate(date: Date, timezone?: string): string {
     day: 'numeric',
     timeZone: timezone || undefined,
   };
-  return new Intl.DateTimeFormat(undefined, options).format(date);
+  return new Intl.DateTimeFormat(intlLocale, options).format(date);
 }
 
 export function formatRelativeTime(dateStringOrTimestamp?: string | number): string {
