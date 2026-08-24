@@ -62,7 +62,13 @@
   will-change: transform;
 }
 
+/* React Grid Layout resize handles (Only visible during Layout Edit Mode) */
 .react-grid-item > .react-resizable-handle {
+  display: none !important;
+}
+
+.layout.is-editing .react-grid-item > .react-resizable-handle {
+  display: block !important;
   position: absolute;
   width: 20px;
   height: 20px;
@@ -72,18 +78,18 @@
   z-index: 20;
 }
 
-.react-grid-item > .react-resizable-handle::after {
+.layout.is-editing .react-grid-item > .react-resizable-handle::after {
   content: "";
   position: absolute;
   right: 5px;
   bottom: 5px;
   width: 7px;
   height: 7px;
-  border-right: 2px solid rgba(255, 255, 255, 0.35);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+  border-right: 2px solid rgba(56, 189, 248, 0.6);
+  border-bottom: 2px solid rgba(56, 189, 248, 0.6);
   border-radius: 1px;
 }
 
-.react-grid-item:hover > .react-resizable-handle::after {
-  border-color: rgba(56, 189, 248, 0.8);
+.layout.is-editing .react-grid-item:hover > .react-resizable-handle::after {
+  border-color: rgba(56, 189, 248, 1);
 }

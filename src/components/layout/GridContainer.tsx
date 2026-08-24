@@ -12,6 +12,7 @@ import { SearchWidget } from '../widgets/SearchWidget/SearchWidget';
 import { PomodoroWidget } from '../widgets/PomodoroWidget/PomodoroWidget';
 import { TodoWidget } from '../widgets/TodoWidget/TodoWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget/ShortcutsWidget';
+import { cn } from '../../utils/cn';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -63,7 +64,7 @@ export const GridContainer: React.FC = () => {
   return (
     <div className="w-full flex-1 px-4 sm:px-6 pb-24 max-w-[1920px] mx-auto">
       <ResponsiveGridLayout
-        className="layout"
+        className={cn('layout', isEditMode && 'is-editing')}
         layouts={layouts}
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
