@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RefreshCw, ExternalLink, Newspaper, Search } from 'lucide-react';
+import { RefreshCw, ExternalLink, Newspaper, Search, ShieldCheck } from 'lucide-react';
 import { RssFeedWidgetConfig } from '../../../types/widget';
 import { useRssFeed } from '../../../hooks/useRssFeed';
 import { formatRelativeTime } from '../../../utils/date';
@@ -34,7 +34,10 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
       ? rssService.buildGoogleNewsRssUrl(searchQuery, activeLanguageCode, activeLanguageCode === 'ja' ? 'JP' : 'US')
       : feedUrl;
 
-  const { items, isLoading, error, refresh } = useRssFeed(effectiveFeedUrl, refreshIntervalMinutes);
+  const { items, isLoading, error, needsPermission, grantAccess, refresh } = useRssFeed(
+    effectiveFeedUrl,
+    refreshIntervalMinutes
+  );
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,7 +115,19 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto mt-2 pr-1 custom-scrollbar">
-        {isLoading && items.length === 0 ? (
+        {needsPermission && items.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center p-4 gap-2">
+            <ShieldCheck size={20} className="text-sky-400" />
+            <p className="text-[11px] text-slate-300 leading-relaxed">{t.widgets.rss.permissionNeeded}</p>
+            <button
+              type="button"
+              onClick={grantAccess}
+              className="text-xs px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded-lg transition-colors font-medium"
+            >
+              {t.widgets.rss.grantAccess}
+            </button>
+          </div>
+        ) : isLoading && items.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400 animate-pulse">
             {t.widgets.rss.fetching}
           </div>

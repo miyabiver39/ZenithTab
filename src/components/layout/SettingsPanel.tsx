@@ -53,7 +53,9 @@ export const SettingsPanel: React.FC = () => {
     if (!file) return;
 
     try {
-      const dataUrl = await wallpaperService.convertFileToDataUrl(file);
+      // Downscaled + re-encoded so a large photo cannot exhaust the
+      // chrome.storage.local quota.
+      const dataUrl = await wallpaperService.prepareUploadedWallpaper(file);
       updateWallpaper({
         source: 'custom',
         currentWallpaperUrl: dataUrl,

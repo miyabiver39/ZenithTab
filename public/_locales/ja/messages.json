@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "ZenithTab - 新しいタブのダッシュボード",
+    "description": "Extension name shown in the Chrome Web Store and the extensions page."
+  },
+  "extDescription": {
+    "message": "ウィジェットを自由に配置できる新しいタブのダッシュボード。ブックマーク、RSS、天気、ダイナミック壁紙に対応。",
+    "description": "Short store description, shown under the extension name."
+  }
+}

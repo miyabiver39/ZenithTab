@@ -96,9 +96,18 @@ if (typeof global.chrome === 'undefined') {
         hasListener: () => false,
       }
     },
+    permissions: {
+      contains: () => Promise.resolve(true),
+      request: () => Promise.resolve(true),
+      remove: () => Promise.resolve(true),
+      getAll: () => Promise.resolve({ permissions: [], origins: [] }),
+    },
     runtime: {
       id: 'mock-extension-id',
       getURL: (path: string) => `chrome-extension://mock-extension-id/${path}`,
+      // Deliberately not the real version: tests assert on shape, not on a
+      // number that changes with every release.
+      getManifest: () => ({ version: '9.9.9', name: 'ZenithTab (test)' }),
       lastError: undefined,
     }
   };

@@ -5,7 +5,8 @@ import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { rssService } from '../../services/rssService';
-import { weatherService } from '../../services/weatherService';
+import { weatherService, GeolocationFailure } from '../../services/weatherService';
+import { requestHostPermission } from '../../utils/permissions';
 import { useTranslation } from '../../i18n/i18n';
 
 export const WidgetConfigModal: React.FC = () => {
@@ -24,6 +25,7 @@ export const WidgetConfigModal: React.FC = () => {
   const [title, setTitle] = useState('');
   const [config, setConfig] = useState<Record<string, any>>({});
   const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (targetWidget) {
@@ -36,6 +38,7 @@ export const WidgetConfigModal: React.FC = () => {
 
   const handleDetectLocation = async () => {
     setIsLocating(true);
+    setLocationError(null);
     try {
       const location = await weatherService.detectUserLocation();
       setConfig((prev) => ({
@@ -45,7 +48,8 @@ export const WidgetConfigModal: React.FC = () => {
         longitude: location.longitude,
       }));
     } catch (err) {
-      console.warn('Geolocation detection failed in modal:', err);
+      const reason = err instanceof GeolocationFailure ? err.reason : 'unavailable';
+      setLocationError(reason === 'denied' ? t.widgets.weather.locationDenied : t.widgets.weather.locationFailed);
     } finally {
       setIsLocating(false);
     }
@@ -58,6 +62,13 @@ export const WidgetConfigModal: React.FC = () => {
     // Custom formatting for Google News
     if (targetWidget.type === 'rss' && config.isGoogleNews && config.searchQuery) {
       config.feedUrl = rssService.buildGoogleNewsRssUrl(config.searchQuery, activeLanguageCode, activeLanguageCode === 'ja' ? 'JP' : 'US');
+    }
+
+    // A custom feed lives outside our granted hosts. Ask for its origin right
+    // here, while the submit gesture is still in scope — Chrome refuses to show
+    // the prompt from anywhere else.
+    if (targetWidget.type === 'rss' && !config.isGoogleNews && config.feedUrl) {
+      void requestHostPermission(config.feedUrl);
     }
 
     updateWidgetConfig(editingWidgetId, config, title);
@@ -210,6 +221,10 @@ export const WidgetConfigModal: React.FC = () => {
               </Button>
             </div>
 
+            {locationError && (
+              <p className="text-[11px] text-amber-300/90 leading-relaxed -mt-1">{locationError}</p>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
               <Input
                 label={t.widgets.weather.latitude}
@@ -353,12 +368,15 @@ export const WidgetConfigModal: React.FC = () => {
                 placeholder="e.g. artificial intelligence, technology, web dev"
               />
             ) : (
-              <Input
-                label={t.widgets.rss.customUrl}
-                value={config.feedUrl || ''}
-                onChange={(e) => setConfig({ ...config, feedUrl: e.target.value })}
-                placeholder="https://example.com/feed.xml"
-              />
+              <div className="space-y-1.5">
+                <Input
+                  label={t.widgets.rss.customUrl}
+                  value={config.feedUrl || ''}
+                  onChange={(e) => setConfig({ ...config, feedUrl: e.target.value })}
+                  placeholder="https://example.com/feed.xml"
+                />
+                <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.rss.permissionHint}</p>
+              </div>
             )}
 
             <Input

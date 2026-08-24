@@ -47,6 +47,8 @@ export const de: typeof en = {
       unit: 'Temperatureinheit',
       showForecast: '3-Tage-Vorhersage anzeigen',
       unavailable: 'Wetterdaten nicht verfügbar',
+      locationDenied: 'Der Standortzugriff wurde abgelehnt. Du kannst die Stadt manuell festlegen.',
+      locationFailed: 'Dein Standort konnte nicht ermittelt werden. Versuche es erneut oder lege die Stadt manuell fest.',
       loading: 'Wetterdaten werden geladen...',
       celsius: 'Celsius (°C)',
       fahrenheit: 'Fahrenheit (°F)',
@@ -77,6 +79,9 @@ export const de: typeof en = {
       failed: 'Fehler beim Laden des Feeds',
       empty: 'Keine Artikel vorhanden',
       liveFeed: 'Live-Feed',
+      permissionNeeded: 'ZenithTab benötigt deine Erlaubnis, diesen Feed zu lesen.',
+      grantAccess: 'Diesen Feed erlauben',
+      permissionHint: 'Beim Speichern fragt Chrome nach der Berechtigung für die Website dieses Feeds. ZenithTab fragt nur nach Feeds, die du selbst hinzufügst.',
     },
     iframe: {
       title: 'Web-Einbettung',

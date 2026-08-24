@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "ZenithTab - Neuer-Tab-Dashboard",
+    "description": "Extension name shown in the Chrome Web Store and the extensions page."
+  },
+  "extDescription": {
+    "message": "Anpassbares Neuer-Tab-Dashboard mit verschiebbaren Widgets, Lesezeichen, RSS-Feeds, Wetter und dynamischen Hintergründen.",
+    "description": "Short store description, shown under the extension name."
+  }
+}

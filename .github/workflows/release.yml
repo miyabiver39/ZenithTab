@@ -19,13 +19,14 @@ jobs:
       - run: npm ci
       - run: npm run test:run
       - run: npm run build
-      - name: Zip dist package
-        run: |
-          cd dist
-          zip -r ../zenith-tab-${{ github.ref_name }}.zip ./*
+      # `npm run package` verifies dist/ and then writes the archive with a
+      # dependency-free zip writer, so CI and a local Windows machine produce
+      # byte-comparable packages.
+      - name: Package extension
+        run: npm run package
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: zenith-tab-${{ github.ref_name }}.zip
+          files: release/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

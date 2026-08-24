@@ -2,25 +2,38 @@ import { parseRssXml } from '../utils/rssParser';
 import { STORAGE_KEYS } from '../services/storageService';
 import { DashboardWidget } from '../types/widget';
 import { RssFeedData } from '../types/rss';
+import { hasHostPermission } from '../utils/permissions';
 
 const RSS_ALARM_NAME = 'zenith-refresh-rss';
 const ALARM_INTERVAL_MINUTES = 30;
+const FETCH_TIMEOUT_MS = 15000;
 
-// Setup alarms on installation
+/** Verbose logging is developer-only noise; keep the shipped worker quiet. */
+const DEBUG = import.meta.env?.DEV ?? false;
+const log = (...args: unknown[]) => {
+  if (DEBUG) console.log('[ZenithTab]', ...args);
+};
+
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('[ZenithTab] Extension installed/updated. Initializing background tasks.');
+  log('Extension installed/updated. Initializing background tasks.');
   chrome.alarms.create(RSS_ALARM_NAME, {
     periodInMinutes: ALARM_INTERVAL_MINUTES,
   });
 });
 
-// Periodic RSS Background Synchronization
+// Periodic RSS background synchronization
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === RSS_ALARM_NAME) {
-    console.log('[ZenithTab] Alarm triggered: Refreshing RSS feeds...');
+    log('Alarm triggered: refreshing RSS feeds.');
     await refreshAllConfiguredFeeds();
   }
 });
+
+function fetchWithTimeout(input: string, init: RequestInit = {}, timeoutMs = FETCH_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(timer));
+}
 
 async function refreshAllConfiguredFeeds() {
   try {
@@ -42,11 +55,20 @@ async function refreshAllConfiguredFeeds() {
     );
 
     const now = Date.now();
+    let refreshed = 0;
 
     await Promise.all(
       feedUrls.map(async (url) => {
+        // Background refresh can never prompt, so silently skip any feed whose
+        // origin the user has not granted yet. The widget shows an explicit
+        // "Allow this feed" button in the foreground instead.
+        if (!(await hasHostPermission(url))) {
+          log(`Skipping ${url} — origin not granted.`);
+          return;
+        }
+
         try {
-          const response = await fetch(url, {
+          const response = await fetchWithTimeout(url, {
             headers: {
               Accept: 'application/rss+xml, application/xml, text/xml, application/atom+xml, */*',
             },
@@ -60,24 +82,28 @@ async function refreshAllConfiguredFeeds() {
               lastUpdated: now,
               items,
             };
+            refreshed += 1;
           }
         } catch (error) {
-          console.warn(`[ZenithTab Service Worker] Failed background fetch for ${url}:`, error);
+          console.warn(`[ZenithTab] Background fetch failed for ${url}:`, error);
         }
       })
     );
 
-    await chrome.storage.local.set({ [STORAGE_KEYS.RSS_CACHE]: cacheStore });
-    console.log(`[ZenithTab] Successfully refreshed ${feedUrls.length} feeds in background.`);
+    if (refreshed > 0) {
+      await chrome.storage.local.set({ [STORAGE_KEYS.RSS_CACHE]: cacheStore });
+    }
+    log(`Refreshed ${refreshed} of ${feedUrls.length} feeds in background.`);
   } catch (error) {
-    console.error('[ZenithTab Service Worker] Error in background feed refresh:', error);
+    console.error('[ZenithTab] Error in background feed refresh:', error);
   }
 }
 
-// Support messaging from tab
+// Support messaging from the new tab page
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === 'REFRESH_FEEDS_NOW') {
+  if (message?.type === 'REFRESH_FEEDS_NOW') {
     refreshAllConfiguredFeeds().then(() => sendResponse({ success: true }));
     return true;
   }
+  return undefined;
 });

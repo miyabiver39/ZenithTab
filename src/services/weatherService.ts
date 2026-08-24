@@ -2,7 +2,13 @@ import { WeatherData } from '../types/weather';
 import { storageGet, storageSet } from '../utils/storage';
 
 const WEATHER_CACHE_KEY = 'zenith_weather_cache';
+const GEOCODE_CACHE_KEY = 'zenith_reverse_geocode_cache';
 const CACHE_TTL_MS = 1000 * 60 * 30; // 30 mins
+// Reverse-geocoded place names effectively never change, so we cache them for a
+// long time. This keeps us well inside the Nominatim usage policy (occasional,
+// user-initiated single requests rather than systematic querying).
+const GEOCODE_CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
+const REQUEST_TIMEOUT_MS = 10000;
 
 // WMO Weather interpretation codes (WW)
 const WMO_CODES: Record<number, string> = {
@@ -39,80 +45,134 @@ export interface GeolocationResult {
   country?: string;
 }
 
+export type GeolocationFailureReason = 'denied' | 'unavailable' | 'timeout' | 'unsupported';
+
+export class GeolocationFailure extends Error {
+  reason: GeolocationFailureReason;
+
+  constructor(reason: GeolocationFailureReason, message: string) {
+    super(message);
+    this.name = 'GeolocationFailure';
+    this.reason = reason;
+  }
+}
+
+interface CachedPlaceName {
+  city: string;
+  country?: string;
+  cachedAt: number;
+}
+
+function fetchWithTimeout(input: string, init: RequestInit = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
+/** Rounded to ~1km so nearby detections reuse the same cached place name. */
+function placeCacheKey(lat: number, lon: number): string {
+  return `${lat.toFixed(2)},${lon.toFixed(2)}`;
+}
+
 export const weatherService = {
   getConditionName(code: number): string {
     return WMO_CODES[code] || 'Clear';
   },
 
+  /**
+   * Resolves a coordinate pair to a human-readable place name.
+   * Results are cached for 30 days so a given user hits the geocoding service
+   * at most a handful of times, and only after an explicit click.
+   */
+  async reverseGeocode(lat: number, lon: number): Promise<{ city: string; country?: string }> {
+    const key = placeCacheKey(lat, lon);
+    const cacheStore = (await storageGet<Record<string, CachedPlaceName>>(GEOCODE_CACHE_KEY, {})) || {};
+    const cached = cacheStore[key];
+
+    if (cached && Date.now() - cached.cachedAt < GEOCODE_CACHE_TTL_MS) {
+      return { city: cached.city, country: cached.country };
+    }
+
+    // NOTE: `User-Agent` is a forbidden header for fetch() and is silently
+    // dropped by the browser, so we do not attempt to set it. Chrome sends the
+    // extension origin, which is what identifies us upstream.
+    const response = await fetchWithTimeout(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`,
+      {
+        headers: {
+          'Accept-Language': navigator.language || 'en',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Reverse geocoding failed: ${response.status}`);
+    }
+
+    const geoData = await response.json();
+    const address = geoData.address || {};
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.suburb ||
+      address.county ||
+      address.state ||
+      'Current Location';
+
+    cacheStore[key] = { city, country: address.country, cachedAt: Date.now() };
+    await storageSet(GEOCODE_CACHE_KEY, cacheStore);
+
+    return { city, country: address.country };
+  },
+
+  /**
+   * Requests the user's coordinates. Requires the `geolocation` permission in
+   * manifest.json — extension pages cannot show a permission prompt, so without
+   * the declared permission Chrome rejects the request outright.
+   */
   async detectUserLocation(): Promise<GeolocationResult> {
-    return new Promise((resolve, reject) => {
+    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
       if (typeof navigator === 'undefined' || !navigator.geolocation) {
-        reject(new Error('Geolocation is not supported by this browser.'));
+        reject(new GeolocationFailure('unsupported', 'Geolocation is not supported in this context.'));
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-
-          try {
-            // Reverse geocode or fetch district/city name via Open-Meteo or reverse API
-            const geoRes = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`,
-              {
-                headers: {
-                  'Accept-Language': navigator.language || 'en',
-                  'User-Agent': 'ZenithTab-Dashboard/1.0',
-                },
-              }
-            );
-
-            if (geoRes.ok) {
-              const geoData = await geoRes.json();
-              const address = geoData.address || {};
-              const city =
-                address.city ||
-                address.town ||
-                address.village ||
-                address.suburb ||
-                address.county ||
-                address.state ||
-                'Current Location';
-
-              resolve({
-                latitude: Number(lat.toFixed(4)),
-                longitude: Number(lon.toFixed(4)),
-                city,
-                country: address.country,
-              });
-              return;
-            }
-          } catch {
-            // Ignore reverse geocode failure and return coordinates
-          }
-
-          resolve({
-            latitude: Number(lat.toFixed(4)),
-            longitude: Number(lon.toFixed(4)),
-            city: 'Local District',
-          });
-        },
+        resolve,
         (error) => {
-          reject(error);
+          const reason: GeolocationFailureReason =
+            error.code === error.PERMISSION_DENIED
+              ? 'denied'
+              : error.code === error.TIMEOUT
+                ? 'timeout'
+                : 'unavailable';
+          reject(new GeolocationFailure(reason, error.message || 'Failed to determine location.'));
         },
         {
-          timeout: 10000,
+          timeout: REQUEST_TIMEOUT_MS,
           enableHighAccuracy: false,
+          maximumAge: 1000 * 60 * 10,
         }
       );
     });
+
+    const latitude = Number(position.coords.latitude.toFixed(4));
+    const longitude = Number(position.coords.longitude.toFixed(4));
+
+    try {
+      const { city, country } = await this.reverseGeocode(latitude, longitude);
+      return { latitude, longitude, city, country };
+    } catch {
+      // Coordinates alone are enough to show the forecast; the label is cosmetic.
+      return { latitude, longitude, city: 'Current Location' };
+    }
   },
 
   async searchCities(query: string): Promise<Array<{ name: string; latitude: number; longitude: number; country?: string; admin1?: string }>> {
     if (!query.trim()) return [];
     try {
-      const res = await fetch(
+      const res = await fetchWithTimeout(
         `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=${navigator.language || 'en'}&format=json`
       );
       if (!res.ok) return [];
@@ -141,7 +201,7 @@ export const weatherService = {
     try {
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4`;
 
-      const response = await fetch(url);
+      const response = await fetchWithTimeout(url);
       if (!response.ok) {
         throw new Error(`Weather API error: ${response.status}`);
       }
@@ -149,6 +209,10 @@ export const weatherService = {
       const data = await response.json();
       const current = data.current;
       const daily = data.daily;
+
+      if (!current || !daily?.time) {
+        throw new Error('Weather API returned an unexpected payload.');
+      }
 
       const forecast = daily.time.map((date: string, i: number) => ({
         date,
@@ -179,28 +243,12 @@ export const weatherService = {
     } catch (error) {
       console.error('Failed to fetch weather from Open-Meteo:', error);
 
+      // A stale reading is still a real reading, so it is safe to show.
       if (cached) return cached;
 
-      // Fallback weather data
-      return {
-        city,
-        current: {
-          temperature: 22,
-          apparentTemperature: 21,
-          weatherCode: 0,
-          condition: 'Clear sky',
-          isDay: true,
-          windSpeed: 8,
-          humidity: 55,
-          time: new Date().toISOString(),
-        },
-        forecast: [
-          { date: 'Today', maxTemp: 24, minTemp: 18, weatherCode: 0, condition: 'Clear' },
-          { date: 'Tomorrow', maxTemp: 25, minTemp: 19, weatherCode: 1, condition: 'Mainly clear' },
-          { date: 'Day 3', maxTemp: 22, minTemp: 17, weatherCode: 2, condition: 'Partly cloudy' },
-        ],
-        lastUpdated: now,
-      };
+      // Never fabricate a forecast: surface the failure so the widget can show
+      // an explicit "unavailable" state instead of plausible-looking fiction.
+      throw error instanceof Error ? error : new Error('Failed to fetch weather.');
     }
   },
 };

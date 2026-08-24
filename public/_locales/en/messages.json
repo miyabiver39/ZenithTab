@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "ZenithTab - New Tab Dashboard",
+    "description": "Extension name shown in the Chrome Web Store and the extensions page."
+  },
+  "extDescription": {
+    "message": "A customizable new tab dashboard with drag-and-drop widgets, bookmarks, RSS feeds, weather and dynamic wallpapers.",
+    "description": "Short store description, shown under the extension name."
+  }
+}

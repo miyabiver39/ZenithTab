@@ -45,6 +45,8 @@ export const ja = {
       unit: '温度単位',
       showForecast: '3日間の週間予報を表示',
       unavailable: '天気情報を取得できませんでした',
+      locationDenied: '位置情報の利用が許可されませんでした。都市名を手動で設定することもできます。',
+      locationFailed: '現在地を取得できませんでした。もう一度試すか、都市名を手動で設定してください。',
       loading: '天気を取得中...',
       celsius: '摂氏 (°C)',
       fahrenheit: '華氏 (°F)',
@@ -75,6 +77,9 @@ export const ja = {
       failed: 'フィードの取得に失敗しました',
       empty: '記事がありません',
       liveFeed: '最新フィード',
+      permissionNeeded: 'このフィードを読み込むには許可が必要です。',
+      grantAccess: 'このフィードを許可',
+      permissionHint: '保存時に、このフィードのサイトへのアクセス許可をChromeが確認します。ZenithTabはあなたが追加したフィード以外にはアクセスしません。',
     },
     iframe: {
       title: 'Web埋め込み',

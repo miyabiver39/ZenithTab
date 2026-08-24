@@ -45,6 +45,8 @@ export const en = {
       unit: 'Temperature Unit',
       showForecast: 'Show 3-Day Forecast',
       unavailable: 'Weather info unavailable',
+      locationDenied: 'Location access was denied. You can still set a city manually.',
+      locationFailed: 'Could not determine your location. Try again or set a city manually.',
       loading: 'Loading weather...',
       celsius: 'Celsius (°C)',
       fahrenheit: 'Fahrenheit (°F)',
@@ -75,6 +77,9 @@ export const en = {
       failed: 'Failed to load feed',
       empty: 'No articles found',
       liveFeed: 'Live Feed',
+      permissionNeeded: 'ZenithTab needs your permission to read this feed.',
+      grantAccess: 'Allow this feed',
+      permissionHint: 'When you save, Chrome will ask permission for this feed’s site. ZenithTab only ever requests the feeds you add yourself.',
     },
     iframe: {
       title: 'Web Embed',

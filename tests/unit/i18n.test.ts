@@ -30,4 +30,21 @@ describe('i18n Localization Engine', () => {
     const lang = detectBrowserLanguage();
     expect(typeof lang).toBe('string');
   });
+
+  it('全ロケールが英語版と同一のキー構造を持つこと', () => {
+    const collectKeys = (obj: any, prefix = ''): string[] =>
+      Object.entries(obj).flatMap(([key, value]) =>
+        value && typeof value === 'object' && !Array.isArray(value)
+          ? collectKeys(value, `${prefix}${key}.`)
+          : [`${prefix}${key}`]
+      );
+
+    const reference = collectKeys(LOCALES.en).sort();
+
+    for (const [code, locale] of Object.entries(LOCALES)) {
+      const keys = collectKeys(locale).sort();
+      const missing = reference.filter((k) => !keys.includes(k));
+      expect(missing, `${code} に不足しているキー: ${missing.join(', ')}`).toEqual([]);
+    }
+  });
 });

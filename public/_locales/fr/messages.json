@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "ZenithTab - Tableau de Bord Nouvel Onglet",
+    "description": "Extension name shown in the Chrome Web Store and the extensions page."
+  },
+  "extDescription": {
+    "message": "Tableau de bord personnalisable pour le nouvel onglet : widgets, favoris, flux RSS, météo et fonds dynamiques.",
+    "description": "Short store description, shown under the extension name."
+  }
+}

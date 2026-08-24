@@ -47,6 +47,8 @@ export const zh: typeof en = {
       unit: '温度单位',
       showForecast: '显示3天预报',
       unavailable: '无法获取天气信息',
+      locationDenied: '位置权限被拒绝。你仍可以手动设置城市。',
+      locationFailed: '无法获取当前位置。请重试或手动设置城市。',
       loading: '正在获取天气...',
       celsius: '摄氏度 (°C)',
       fahrenheit: '华氏度 (°F)',
@@ -77,6 +79,9 @@ export const zh: typeof en = {
       failed: '获取失败',
       empty: '暂无文章',
       liveFeed: '最新资讯',
+      permissionNeeded: '读取该订阅源需要你的授权。',
+      grantAccess: '允许该订阅源',
+      permissionHint: '保存时 Chrome 会询问该订阅源站点的访问权限。ZenithTab 只会请求你自己添加的订阅源。',
     },
     iframe: {
       title: '网页嵌入',

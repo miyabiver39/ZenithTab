@@ -47,6 +47,8 @@ export const fr: typeof en = {
       unit: 'Unité de température',
       showForecast: 'Prévisions sur 3 jours',
       unavailable: 'Météo indisponible',
+      locationDenied: 'L’accès à la localisation a été refusé. Vous pouvez définir une ville manuellement.',
+      locationFailed: 'Impossible de déterminer votre position. Réessayez ou définissez une ville manuellement.',
       loading: 'Chargement météo...',
       celsius: 'Celsius (°C)',
       fahrenheit: 'Fahrenheit (°F)',
@@ -77,6 +79,9 @@ export const fr: typeof en = {
       failed: 'Échec du chargement du flux',
       empty: 'Aucun article trouvé',
       liveFeed: 'Flux en direct',
+      permissionNeeded: 'ZenithTab a besoin de votre autorisation pour lire ce flux.',
+      grantAccess: 'Autoriser ce flux',
+      permissionHint: 'À l’enregistrement, Chrome demandera l’autorisation pour le site de ce flux. ZenithTab ne demande que les flux que vous ajoutez.',
     },
     iframe: {
       title: 'Intégration Web',

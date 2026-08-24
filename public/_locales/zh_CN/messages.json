@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "ZenithTab - 新标签页仪表板",
+    "description": "Extension name shown in the Chrome Web Store and the extensions page."
+  },
+  "extDescription": {
+    "message": "可自由拖放组件的新标签页仪表板，支持书签、RSS 订阅、天气和动态壁纸。",
+    "description": "Short store description, shown under the extension name."
+  }
+}

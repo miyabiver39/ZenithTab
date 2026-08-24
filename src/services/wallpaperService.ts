@@ -1,5 +1,8 @@
 import { WallpaperCategory } from '../types/settings';
 
+/** Widest edge we keep for a user-uploaded wallpaper, in CSS pixels. */
+const MAX_WALLPAPER_WIDTH = 2560;
+
 export const WALLPAPER_COLLECTIONS: Record<WallpaperCategory, string[]> = {
   space: [
     'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=2560&q=80',
@@ -25,8 +28,8 @@ export const WALLPAPER_COLLECTIONS: Record<WallpaperCategory, string[]> = {
   ],
   abstract: [
     'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=2560&q=80',
-    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=2560&q=80',
     'https://images.unsplash.com/photo-1604076913837-52ab5629fba9?auto=format&fit=crop&w=2560&q=80',
+    'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=2560&q=80',
   ],
   cyberpunk: [
     'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=2560&q=80',
@@ -61,5 +64,40 @@ export const wallpaperService = {
       reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
     });
+  },
+
+  /**
+   * Prepares an uploaded image for storage.
+   *
+   * chrome.storage.local caps out at ~10MB and a base64 data URL is roughly a
+   * third larger than the file it encodes, so a raw 4K photo can blow the quota
+   * on its own. We downscale to at most `maxWidth` and re-encode as JPEG, which
+   * keeps a full-screen wallpaper comfortably under a megabyte while staying
+   * visually indistinguishable behind the blur and overlay.
+   *
+   * Falls back to the untouched data URL if the browser cannot decode the file.
+   */
+  async prepareUploadedWallpaper(file: File, maxWidth = MAX_WALLPAPER_WIDTH, quality = 0.82): Promise<string> {
+    try {
+      const bitmap = await createImageBitmap(file);
+      const scale = Math.min(1, maxWidth / bitmap.width);
+      const width = Math.round(bitmap.width * scale);
+      const height = Math.round(bitmap.height * scale);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas 2D context unavailable.');
+
+      ctx.drawImage(bitmap, 0, 0, width, height);
+      bitmap.close();
+
+      return canvas.toDataURL('image/jpeg', quality);
+    } catch (error) {
+      console.warn('[ZenithTab] Could not downscale wallpaper, storing original:', error);
+      return this.convertFileToDataUrl(file);
+    }
   },
 };

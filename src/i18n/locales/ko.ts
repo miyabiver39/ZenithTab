@@ -47,6 +47,8 @@ export const ko: typeof en = {
       unit: '온도 단위',
       showForecast: '3일 예보 표시',
       unavailable: '날씨 정보를 가져올 수 없습니다',
+      locationDenied: '위치 권한이 거부되었습니다. 도시를 직접 설정할 수 있습니다.',
+      locationFailed: '현재 위치를 확인할 수 없습니다. 다시 시도하거나 도시를 직접 설정하세요.',
       loading: '날씨 불러오는 중...',
       celsius: '섭씨 (°C)',
       fahrenheit: '화씨 (°F)',
@@ -77,6 +79,9 @@ export const ko: typeof en = {
       failed: '피드 불러오기 실패',
       empty: '기사가 없습니다',
       liveFeed: '실시간 피드',
+      permissionNeeded: '이 피드를 읽으려면 권한이 필요합니다.',
+      grantAccess: '이 피드 허용',
+      permissionHint: '저장하면 Chrome이 이 피드 사이트의 접근 권한을 확인합니다. ZenithTab은 직접 추가한 피드에만 접근합니다.',
     },
     iframe: {
       title: '웹 임베드',

@@ -2,6 +2,63 @@ import { DashboardWidget, ResponsiveLayouts } from '../types/widget';
 import { WallpaperSettings, AppearanceSettings, DashboardExportData } from '../types/settings';
 import { storageGet, storageSet } from '../utils/storage';
 
+/** The running extension version, so exports carry the version that produced them. */
+function currentVersion(): string {
+  try {
+    if (typeof chrome !== 'undefined' && chrome.runtime?.getManifest) {
+      return chrome.runtime.getManifest().version || '0.0.0';
+    }
+  } catch {
+    // Outside the extension context (unit tests, dev server) there is no manifest.
+  }
+  return '0.0.0';
+}
+
+/**
+ * Import guard. A config file is user-supplied data that ends up rendered as
+ * links and embedded frames, so every URL it carries is re-validated here —
+ * `javascript:` and `data:` payloads must never survive a round-trip through
+ * export/import.
+ */
+function isSafeUrl(value: unknown): boolean {
+  if (typeof value !== 'string' || !value) return false;
+  try {
+    const protocol = new URL(value).protocol;
+    return protocol === 'https:' || protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
+const URL_CONFIG_KEYS = ['feedUrl', 'url', 'targetUrl', 'iconUrl'] as const;
+
+function sanitizeWidget(raw: any): DashboardWidget | null {
+  if (!raw || typeof raw !== 'object') return null;
+  if (typeof raw.id !== 'string' || typeof raw.type !== 'string') return null;
+  if (!raw.layout || typeof raw.layout !== 'object') return null;
+
+  const config: Record<string, any> = { ...(raw.config || {}) };
+
+  for (const key of URL_CONFIG_KEYS) {
+    if (config[key] !== undefined && !isSafeUrl(config[key])) {
+      delete config[key];
+    }
+  }
+
+  // Shortcut and app-drawer entries are nested one level deeper.
+  if (Array.isArray(config.items)) {
+    config.items = config.items.filter(
+      (item: any) => !item || typeof item.url !== 'string' || isSafeUrl(item.url)
+    );
+  }
+
+  return {
+    ...raw,
+    title: typeof raw.title === 'string' ? raw.title : 'Widget',
+    config,
+  } as DashboardWidget;
+}
+
 export const STORAGE_KEYS = {
   WIDGETS: 'dashboard_widgets',
   LAYOUTS: 'dashboard_layouts',
@@ -172,7 +229,7 @@ export const storageService = {
     const appearance = await this.getAppearance();
 
     return {
-      version: '1.0.0',
+      version: currentVersion(),
       exportedAt: new Date().toISOString(),
       widgets,
       layouts,
@@ -188,7 +245,15 @@ export const storageService = {
         throw new Error('Invalid widget format in imported data');
       }
 
-      await this.saveWidgets(data.widgets);
+      const widgets = data.widgets
+        .map(sanitizeWidget)
+        .filter((w): w is DashboardWidget => w !== null);
+
+      if (widgets.length === 0) {
+        throw new Error('Imported file contained no usable widgets');
+      }
+
+      await this.saveWidgets(widgets);
       if (data.layouts) await this.saveLayouts(data.layouts);
       if (data.wallpaper) await this.saveWallpaper(data.wallpaper);
       if (data.appearance) await this.saveAppearance(data.appearance);

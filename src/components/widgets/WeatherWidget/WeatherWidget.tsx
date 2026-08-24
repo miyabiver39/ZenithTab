@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Cloud, CloudRain, CloudSun, Sun, Snowflake, Wind, Droplets, MapPin, RefreshCw } from 'lucide-react';
 import { WeatherWidgetConfig } from '../../../types/widget';
 import { useWeather } from '../../../hooks/useWeather';
-import { weatherService } from '../../../services/weatherService';
+import { weatherService, GeolocationFailure } from '../../../services/weatherService';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 
@@ -17,9 +17,11 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
   const { updateWidgetConfig } = useDashboardStore();
   const { t } = useTranslation();
   const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const handleDetectLocation = async () => {
     setIsLocating(true);
+    setLocationError(null);
     try {
       const location = await weatherService.detectUserLocation();
       if (widgetId) {
@@ -31,7 +33,8 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
       }
       refresh();
     } catch (err) {
-      console.warn('Geolocation detection failed:', err);
+      const reason = err instanceof GeolocationFailure ? err.reason : 'unavailable';
+      setLocationError(reason === 'denied' ? t.widgets.weather.locationDenied : t.widgets.weather.locationFailed);
     } finally {
       setIsLocating(false);
     }
@@ -104,6 +107,9 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
                 <span className="truncate max-w-[120px]">{isLocating ? t.widgets.weather.detecting : (weather?.city || city)}</span>
               </button>
             </div>
+            {locationError && (
+              <div className="text-[10px] text-amber-300/90 mt-0.5 max-w-[160px] leading-tight">{locationError}</div>
+            )}
           </div>
         </div>
 

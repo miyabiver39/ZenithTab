@@ -1,13 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "ZenithTab",
-  "version": "1.2.1",
-  "description": "Customizable and elegant new tab dashboard with widgets, bookmarks, RSS feeds, and dynamic wallpapers.",
+  "name": "__MSG_extName__",
+  "version": "1.2.2",
+  "default_locale": "en",
+  "description": "__MSG_extDescription__",
   "permissions": [
     "storage",
     "bookmarks",
     "alarms",
-    "favicon"
+    "favicon",
+    "geolocation"
   ],
   "host_permissions": [
     "https://api.open-meteo.com/*",
@@ -15,6 +17,9 @@
     "https://nominatim.openstreetmap.org/*",
     "https://news.google.com/*",
     "https://images.unsplash.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*"
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"
