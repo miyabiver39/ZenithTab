@@ -1,7 +1,7 @@
 {
   "name": "zenith-tab",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "description": "High-Performance, Infinitely Customizable New Tab Dashboard with Widgets, Bookmarks, RSS and Dynamic Wallpapers.",
   "scripts": {
@@ -11,6 +11,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit",
+    "package": "node scripts/package.js",
     "version:bump": "node scripts/bump-version.js"
   },
   "dependencies": {

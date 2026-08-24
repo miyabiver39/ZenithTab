@@ -31,3 +31,4 @@ playwright/.cache/
 
 # Archives
 *.zip
+release/
