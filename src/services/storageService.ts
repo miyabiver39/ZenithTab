@@ -90,27 +90,15 @@ export const DEFAULT_APPEARANCE: AppearanceSettings = {
 
 export const DEFAULT_NOTES_CONTENT = `# 🌌 Welcome to ZenithTab!
 
-> **"The secret of getting ahead is getting started."**
-> — *Mark Twain*
+> *"The secret of getting ahead is getting started."*
 
----
+- [x] Install ZenithTab 🎉
+- [ ] Rotate wallpaper \`(top right 🔄)\`
+- [ ] Hit \`/\` to search anything 🔍
+- [ ] Open App Drawer \`(🪟 icon)\`
+- [ ] Start a 25m Focus session ⏱️
 
-### 🚀 クイックスタート
-- [x] ZenithTab をインストールする 🎉
-- [ ] お気に入りの壁紙に変えてみる 🖼️ *(右上の 🔄 アイコン)*
-- [ ] 好きなウィジェットを追加・配置する 🧩 *(右上の「レイアウト編集」)*
-- [ ] アプリドロワーでよく使うサイトを登録する 🪟
-- [ ] ポモドーロタイマーで25分集中してみる ⏱️
-
----
-
-### 💡 便利なショートカット & 小ワザ
-- **\`/\` キー**: どこからでも一瞬で検索バーにフォーカス！
-- **アプリドロワー**: ヘッダー・ドックの 🪟 アイコンから全画面ランチャー起動
-- **現在地の天気**: 天気ウィジェットの 📍 ピンアイコンで現在地の天気を自動取得
-
----
-*このノートは自由に編集・削除できます。日々のメモやアイデア帳としてご活用ください！*`;
+*Feel free to edit or clear this note anytime!*`;
 
 export const DEFAULT_WIDGETS: DashboardWidget[] = [
   {
