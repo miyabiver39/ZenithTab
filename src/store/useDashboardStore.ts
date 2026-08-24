@@ -8,6 +8,7 @@ import {
   DEFAULT_LAYOUTS,
   DEFAULT_WALLPAPER,
   DEFAULT_APPEARANCE,
+  DEFAULT_NOTES_CONTENT,
 } from '../services/storageService';
 import { wallpaperService } from '../services/wallpaperService';
 
@@ -127,7 +128,7 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
     allowScroll: true,
   },
   notes: {
-    content: '### Quick Note\n- Type anything here\n- Auto-saved instantly',
+    content: DEFAULT_NOTES_CONTENT,
     fontSize: 'base',
     fontFamily: 'sans',
   },
