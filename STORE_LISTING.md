@@ -19,41 +19,50 @@ Chrome Web Store デベロッパーダッシュボードの各入力欄に設定
 ### 🇯🇵 日本語版（Japanese）
 
 ```text
-ZenithTab は、新しいタブを美しく洗練された生産性ダッシュボードへと進化させる Chrome 拡張機能です。
+🌌 ZenithTab (ゼニスタブ) - あなたのブラウザ体験を頂点へ。
 
-お好みのウィジェットを自由自在にグリッド配置し、あなただけの理想的な作業空間を構築できます。すりガラス調（Glassmorphism）のモダンなデザインと、軽快なパフォーマンスを両立しています。
+ZenithTab は、洗練されたグラスモフィズム（すりガラス）デザインと圧倒的な自由度を誇る、Google Chrome 向けカスタム「新しいタブ」ダッシュボードです。
 
-✨ 主な機能
+ブラウザを開くたびに、美しいダイナミック壁紙とあなた専用に最適化された生産性ウィジェットが瞬時に迎えてくれます。
 
-🧩 自由なグリッドレイアウト
-・ドラッグ＆ドロップで直感的にウィジェットの移動・リサイズが可能
-・ワークスペースに合わせた柔軟なレイアウトの保存
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✨ 主な機能・特徴
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🔖 ブックマーク＆フォルダエクスプローラー
-・ブラウザのブックマークを階層構造のまま美しく表示
-・フォルダの展開・折りたたみ、クイック検索に対応
+🧩 【自由自在なフリーグリッド配置】
+・直感的なドラッグ＆ドロップとリサイズで、お好みの位置にウィジェットを自由にレイアウト。
+・画面サイズに合わせたマルチブレークポイント対応。
 
-📰 RSS・ニュースフィード
-・お気に入りの RSS / Atom フィードを登録して最新記事を一覧表示
-・定期的なバックグラウンド自動更新に対応
+🗂️ 【クイック・アプリドロワー & ショートカット】
+・よく使うWebサイトやWebアプリをワンクリックで起動。
+・リアルタイム検索フィルターとカテゴリ分類（AI・開発・メディア・生産性など）で素早くアクセス。
 
-🖼️ ダイナミック壁紙＆カスタマイズ
-・高画質な美しい壁紙の自動切り替え
-・すりガラスのぼかし具合や透明度、ライト/ダークテーマの調整
+🔍 【統合マルチ検索バー (Quick Search)】
+・主要なWeb検索エンジン、コードリポジトリ、動画検索、AIツールをワンクリックで瞬時に切り替え。
+・キーボードの「 / 」キーを押すだけで即座に検索窓にフォーカス。
 
-🔍 マルチ検索バー
-・複数の検索エンジンやツールをワンクリックで切り替えて素早く検索
+🔖 【Chrome ブックマーク・フォルダブラウザ】
+・Chromeのブックマークと完全連動。フォルダの階層展開、パンくずナビ、リアルタイム検索、ファビコン自動取得。
 
-⏰ 時計＆ライブ天気
-・デジタル / アナログ時計の表示
-・現在地やお好みの都市のリアルタイム天気・気温表示
+📰 【RSS ＆ ニュースフィード】
+・お好みのRSS/Atomフィードや、キーワード検索による最新トピックをリアルタイム購読。
+・定期バックグラウンド同期により、タブを開いた瞬間に最新ニュースを表示。
 
-📝 クイックメモ
-・作業中のアイデアやタスクをサッと書き留められるローカルメモ機能
+🌤️ 【地区連動・リアルタイム天気予報】
+・ワンクリックで現在地を自動検出し、市区町村単位の気温・風速・湿度・3日間週間予報を表示。
 
-⚡ ローカルファースト＆プライバシー配慮
-・設定やデータはすべてブラウザ内に安全に保存され、外部トラッカーや広告は一切含まれません。
-・設定のエクスポート / インポートにも対応
+⏱️ 【ポモドーロ集中タイマー & ToDoリスト】
+・25分集中／休憩のサイクル管理と、チェックボックス付きToDoリストで毎日のタスクをスムーズに消化。
+
+🖼️ 【ダイナミック壁紙 & グラスモフィズム】
+・厳選された高解像度フォトギャラリー（宇宙・自然・ミニマル・サイバーパンク等）、美しいグラデーション、独自画像のアップロードに対応。
+・すりガラスのぼかし強度、明るさ、暗色オーバーレイを自由に調整可能。
+
+🌍 【完全多言語対応 (i18n)】
+・日本語、英語、中国語、スペイン語、フランス語、ドイツ語、韓国語に対応。
+
+⚡ 【ローカルファースト & プライバシー保護】
+・すべてのデータや設定はブラウザ内（chrome.storage.local）に安全に保存されます。外部サーバーへの個人情報送信や広告トラッカーは一切ありません。
 ```
 
 ---
@@ -61,48 +70,55 @@ ZenithTab は、新しいタブを美しく洗練された生産性ダッシュ�
 ### 🇺🇸 英語版（English）
 
 ```text
-Transform your New Tab page into a stunning, highly productive, and fully customizable dashboard with ZenithTab.
+🌌 ZenithTab - Elevate your browser experience to the pinnacle.
 
-Organize your daily workflow with flexible widgets, sleek glassmorphism aesthetics, and ultra-fast performance.
+ZenithTab is a modern, deeply customizable New Tab productivity dashboard built with a refined glassmorphism aesthetic and lightning-fast performance.
 
+Every time you open a new tab, enjoy rotating dynamic wallpapers and instant access to your personalized workflow widgets.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✨ Key Features
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🧩 Freeform Grid Layout
-• Drag, drop, and resize widgets freely on a responsive grid system.
-• Customize your dashboard layout to match your workflow.
+🧩 【Freeform Grid Drag & Drop】
+• Intuitively place, drag, and resize widgets anywhere on a flexible grid.
+• Responsive layout support tailored to any screen size.
 
-🔖 Bookmark & Folder Explorer
-• Browse and search your browser bookmarks with a clean, hierarchical folder view.
-• Instant favicon loading and smooth folder navigation.
+🗂️ 【Quick App Drawer & Shortcuts】
+• Launch your essential websites and web apps with a single click.
+• Real-time search filter and smart categories (AI, Development, Media, Productivity).
 
-📰 RSS & News Feeds
-• Add your favorite RSS / Atom feeds to stay updated with the latest articles.
-• Automatic background feed updates with local caching.
+🔍 【Unified Multi-Search Bar】
+• Seamlessly switch between web search, code repositories, video searches, and AI tools in one click.
+• Press the "/" shortcut key anytime to instantly focus the search input.
 
-🖼️ Dynamic Wallpapers & Theme Customization
-• Rotating curated backdrop wallpapers or custom image links.
-• Fine-tune glassmorphism blur, card opacity, and dark/light themes.
+🔖 【Bookmark & Folder Explorer】
+• Fully integrated with native Chrome bookmarks. Explore hierarchical folders, breadcrumb navigation, instant search, and automatic favicon fetching.
 
-🔍 Multi-Engine Search Bar
-• Switch effortlessly between different search engines and productivity tools with a single click.
+📰 【RSS & News Feeds】
+• Subscribe to your favorite RSS/Atom feeds and keyword topic feeds.
+• Background sync ensures fresh articles the instant you open a tab.
 
-⏰ Clock & Live Weather
-• Digital and analog clock styles with date and time formats.
-• Real-time local weather forecasts and temperature indicators.
+🌤️ 【Live Weather Forecast】
+• Automatic location detection with real-time temperature, wind speed, humidity, and 3-day weather forecast.
 
-📝 Quick Notes Scratchpad
-• Jot down thoughts, todo lists, and quick reminders that persist automatically.
+⏱️ 【Pomodoro Focus Timer & ToDo List】
+• 25-minute focus/break cycle management paired with an interactive checklist.
 
-⚡ Local-First & Privacy Focused
-• All data and configurations are stored securely inside your browser. No external tracking or ads.
-• Seamless JSON backup, export, and import support.
+🖼️ 【Dynamic Wallpapers & Glassmorphism】
+• Curated high-resolution photography collections (Cosmos, Nature, Minimal, Cyberpunk), gradients, or custom image uploads.
+• Fine-tune backdrop blur intensity, card opacity, and dark/light themes.
+
+🌍 【Full Multi-Language Support】
+• Available in Japanese, English, Chinese, Spanish, French, German, and Korean.
+
+⚡ 【Local-First & Privacy Focused】
+• All configurations and data are stored safely on your device (chrome.storage.local). Zero external tracking, zero ads.
 ```
 
 ---
 
 ## 3. 権限の正当化理由（Permission Justifications）
-
-Chrome Web Store の「プライバシー」タブで各権限の理由入力を求められた場合は、以下を貼り付けてください。
 
 ### `bookmarks`
 - **Justification**: ZenithTab includes an interactive Bookmark Explorer widget that allows users to view, search, and navigate their existing browser bookmarks directly from the new tab dashboard.
