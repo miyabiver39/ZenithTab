@@ -7,10 +7,9 @@ const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 const version = pkg.version;
 
 const distDir = path.resolve('dist');
-if (!fs.existsSync(distDir) || !fs.existsSync(path.join(distDir, 'manifest.json'))) {
-  console.log('dist directory not found or incomplete. Building project first...');
-  execSync('npm run build', { stdio: 'inherit' });
-}
+// Always build first to guarantee fresh production assets
+console.log('Building project...');
+execSync('npm run build', { stdio: 'inherit' });
 
 const releaseDir = path.resolve('release');
 if (!fs.existsSync(releaseDir)) {
@@ -28,7 +27,11 @@ if (fs.existsSync(rootZipFilePath)) fs.unlinkSync(rootZipFilePath);
 console.log(`Packaging ZenithTab v${version}...`);
 
 try {
-  execSync(`cd dist && zip -r "${zipFilePath}" ./*`, { stdio: 'inherit' });
+  if (process.platform === 'win32') {
+    execSync(`powershell -Command "Compress-Archive -Path dist/* -DestinationPath '${zipFilePath}' -Force"`, { stdio: 'inherit' });
+  } else {
+    execSync(`cd dist && zip -r "${zipFilePath}" ./*`, { stdio: 'inherit' });
+  }
   // Also copy to root for convenience
   fs.copyFileSync(zipFilePath, rootZipFilePath);
 
