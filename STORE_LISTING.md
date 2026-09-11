@@ -83,7 +83,7 @@ ZenithTab は、新しいタブを「自分専用の作業台」に変えるダ�
 画面下部（または上部）に常時表示される最小限のショートカットバーです。表示するリンクは自由に追加・削除・並べ替えでき、アイコンは用意されたセットまたは絵文字から選べます。
 
 ■ 統合検索バー
-主要なWeb検索、コードリポジトリ検索、動画検索、AIチャットの入力先をワンクリックで切り替えられます。検索先は自分で追加することもでき、名前・検索用URL・アイコンを指定するだけで一覧に加わります。キーボードの「/」キーを押すと、どこにいても検索欄にカーソルが移動します。
+主要なWeb検索、コードリポジトリ検索、動画検索、AIチャットの入力先をワンクリックで切り替えられます。検索先は自分で追加することもでき、名前・検索用URL・アイコンを指定するだけで一覧に加わります。標準搭載の検索先も含め、使わないものは一覧から取り除いたり、いつでも呼び戻したりできます。キーボードの「/」キーを押すと、どこにいても検索欄にカーソルが移動します。
 
 ■ キーボードショートカット
 好きなリンクにキーの組み合わせを割り当てておけば、キーボードだけで瞬時に開けます。
@@ -141,7 +141,7 @@ Pin the sites you use most as tiles and open them in one click. The app drawer f
 A minimal shortcut bar that stays visible at the bottom (or top) of the screen. Add, remove, and reorder its links freely, and pick an icon from a curated set or type your own emoji.
 
 ■ Unified search bar
-Switch in one click between general web search, code repository search, video search, and an AI chat prompt. Add your own search destinations too — a name, a search URL, and an icon is all it takes. Press "/" anywhere on the page to jump straight into the search field.
+Switch in one click between general web search, code repository search, video search, and an AI chat prompt. Add your own search destinations too — a name, a search URL, and an icon is all it takes. Remove any engine you don't use, built-in or custom, and bring it back anytime. Press "/" anywhere on the page to jump straight into the search field.
 
 ■ Keyboard shortcuts
 Bind any link to a key combo and open it instantly without touching the mouse.
@@ -209,7 +209,7 @@ Una barra de accesos mínima que permanece visible en la parte inferior (o super
 
 ■ Barra de búsqueda unificada
 
-Cambia con un clic entre búsqueda web general, búsqueda en repositorios de código, búsqueda de vídeos y una consulta de chat con IA. También puedes añadir tus propios motores de búsqueda: solo hace falta un nombre, una URL de búsqueda y un icono. Pulsa «/» en cualquier momento para saltar directamente al campo de búsqueda.
+Cambia con un clic entre búsqueda web general, búsqueda en repositorios de código, búsqueda de vídeos y una consulta de chat con IA. También puedes añadir tus propios motores de búsqueda: solo hace falta un nombre, una URL de búsqueda y un icono. Quita cualquier motor que no uses, sea predeterminado o propio, y recupéralo cuando quieras. Pulsa «/» en cualquier momento para saltar directamente al campo de búsqueda.
 
 
 ■ Atajos de teclado
@@ -298,7 +298,7 @@ Eine minimalistische Verknüpfungsleiste, die dauerhaft am unteren (oder oberen)
 
 ■ Vereinheitlichte Suchleiste
 
-Wechsle mit einem Klick zwischen allgemeiner Websuche, Suche in Code-Repositorys, Videosuche und einer KI-Chat-Eingabe. Du kannst auch eigene Suchziele hinzufügen – ein Name, eine Such-URL und ein Symbol genügen. Drück „/“ an beliebiger Stelle, um direkt ins Suchfeld zu springen.
+Wechsle mit einem Klick zwischen allgemeiner Websuche, Suche in Code-Repositorys, Videosuche und einer KI-Chat-Eingabe. Du kannst auch eigene Suchziele hinzufügen – ein Name, eine Such-URL und ein Symbol genügen. Entferne jede Suchmaschine, die du nicht brauchst, ob voreingestellt oder eigene, und hol sie jederzeit zurück. Drück „/“ an beliebiger Stelle, um direkt ins Suchfeld zu springen.
 
 
 ■ Tastenkombinationen
@@ -387,7 +387,7 @@ Une barre de raccourcis minimale qui reste visible en bas (ou en haut) de l'écr
 
 ■ Barre de recherche unifiée
 
-Basculez d'un clic entre recherche web générale, recherche dans les dépôts de code, recherche vidéo et invite de chat IA. Vous pouvez aussi ajouter vos propres moteurs de recherche : un nom, une URL de recherche et une icône suffisent. Appuyez sur « / » n'importe où pour placer directement le curseur dans le champ de recherche.
+Basculez d'un clic entre recherche web générale, recherche dans les dépôts de code, recherche vidéo et invite de chat IA. Vous pouvez aussi ajouter vos propres moteurs de recherche : un nom, une URL de recherche et une icône suffisent. Retirez tout moteur que vous n'utilisez pas, qu'il soit prédéfini ou personnalisé, et récupérez-le à tout moment. Appuyez sur « / » n'importe où pour placer directement le curseur dans le champ de recherche.
 
 
 ■ Raccourcis clavier
@@ -476,7 +476,7 @@ ZenithTab은 새 탭 페이지를 직접 꾸미는 작업 공간으로 바꿔줍
 
 ■ 통합 검색창
 
-일반 웹 검색, 코드 저장소 검색, 동영상 검색, AI 채팅 입력창을 한 번의 클릭으로 전환합니다. 이름·검색 URL·아이콘만 지정하면 원하는 검색 엔진을 직접 추가할 수도 있습니다. 페이지 어디서든 「/」 키를 누르면 곧바로 검색창으로 커서가 이동합니다.
+일반 웹 검색, 코드 저장소 검색, 동영상 검색, AI 채팅 입력창을 한 번의 클릭으로 전환합니다. 이름·검색 URL·아이콘만 지정하면 원하는 검색 엔진을 직접 추가할 수도 있습니다. 기본 제공이든 직접 추가한 것이든 사용하지 않는 검색 엔진은 목록에서 제거하고 언제든 다시 불러올 수 있습니다. 페이지 어디서든 「/」 키를 누르면 곧바로 검색창으로 커서가 이동합니다.
 
 
 ■ 키보드 단축키
@@ -565,7 +565,7 @@ ZenithTab 把新标签页变成一块由你自己布置的工作台。
 
 ■ 聚合搜索栏
 
-一次点击即可在通用网页搜索、代码仓库搜索、视频搜索和 AI 对话输入之间切换。你也可以添加自己的搜索引擎，只需提供名称、搜索 URL 和图标即可。在页面任意位置按下「/」键，光标会立刻跳到搜索框。
+一次点击即可在通用网页搜索、代码仓库搜索、视频搜索和 AI 对话输入之间切换。你也可以添加自己的搜索引擎，只需提供名称、搜索 URL 和图标即可。无论是内置还是自行添加的搜索引擎，只要用不到都可以从列表中移除，也可以随时恢复。在页面任意位置按下「/」键，光标会立刻跳到搜索框。
 
 
 ■ 键盘快捷键
