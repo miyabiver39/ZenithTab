@@ -221,6 +221,7 @@ export const ja = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: '検索エンジンを管理...',
+      popularEngines: 'よく使われるエンジンを追加:',
       customEngines: 'カスタム検索エンジン',
       customEngineName: '名前',
       customEngineHint: '{query} を検索キーワードのプレースホルダーとして使用します。例: https://example.com/search?q={query}',

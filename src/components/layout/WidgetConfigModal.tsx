@@ -9,6 +9,7 @@ import { weatherService, GeolocationFailure } from '../../services/weatherServic
 import { requestHostPermission } from '../../utils/permissions';
 import { useTranslation } from '../../i18n/i18n';
 import { CustomSearchEngine } from '../../types/widget';
+import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../utils/searchEnginePresets';
 
 export const WidgetConfigModal: React.FC = () => {
   const {
@@ -78,23 +79,37 @@ export const WidgetConfigModal: React.FC = () => {
     updateWidgetConfig(editingWidgetId, config, title);
   };
 
-  const handleAddCustomEngine = () => {
-    const name = newEngineName.trim();
-    const urlTemplate = newEngineUrl.trim();
+  const addCustomEngine = (name: string, urlTemplate: string, icon?: string) => {
     if (!name || !urlTemplate.includes('{query}')) return;
-
     const newEngine: CustomSearchEngine = {
       id: `custom-${Date.now()}`,
       name,
       urlTemplate,
-      icon: newEngineIcon.trim() || undefined,
+      icon: icon || undefined,
     };
     const customEngines: CustomSearchEngine[] = [...(config.customEngines || []), newEngine];
     setConfig({ ...config, customEngines });
+  };
 
+  const handleAddCustomEngine = () => {
+    addCustomEngine(newEngineName.trim(), newEngineUrl.trim(), newEngineIcon.trim());
     setNewEngineName('');
     setNewEngineUrl('');
     setNewEngineIcon('');
+  };
+
+  // Most people paste a real search-results URL copied from their address
+  // bar rather than hand-authoring a {query} template — auto-detect that on
+  // blur and rewrite the field so the Add button lights up on its own,
+  // instead of silently staying disabled with no explanation.
+  const handleEngineUrlBlur = () => {
+    const guess = guessSearchUrlTemplate(newEngineUrl);
+    if (guess) setNewEngineUrl(guess);
+  };
+
+  const handleAddPresetEngine = (presetId: string) => {
+    const preset = SEARCH_ENGINE_PRESETS.find((p) => p.id === presetId);
+    if (preset) addCustomEngine(preset.name, preset.urlTemplate, preset.icon);
   };
 
   const handleRemoveCustomEngine = (id: string) => {
@@ -197,6 +212,31 @@ export const WidgetConfigModal: React.FC = () => {
                 </div>
               )}
 
+              {(() => {
+                const addedTemplates = new Set(customEngines.map((e) => e.urlTemplate));
+                const availablePresets = SEARCH_ENGINE_PRESETS.filter((p) => !addedTemplates.has(p.urlTemplate));
+                if (availablePresets.length === 0) return null;
+                return (
+                  <div>
+                    <p className="text-[11px] text-slate-400 mb-1.5">{t.widgets.search.popularEngines}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {availablePresets.map((preset) => (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => handleAddPresetEngine(preset.id)}
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-slate-800 hover:border-white/20 transition-colors"
+                        >
+                          <span className="text-sm leading-none">{preset.icon}</span>
+                          <span>{preset.name}</span>
+                          <Plus size={11} className="text-slate-500" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_56px] gap-2">
                 <Input
                   value={newEngineName}
@@ -206,6 +246,7 @@ export const WidgetConfigModal: React.FC = () => {
                 <Input
                   value={newEngineUrl}
                   onChange={(e) => setNewEngineUrl(e.target.value)}
+                  onBlur={handleEngineUrlBlur}
                   placeholder="https://example.com/search?q={query}"
                 />
                 <Input

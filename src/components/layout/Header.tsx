@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutGrid, Plus, RefreshCw, Settings, Check } from 'lucide-react';
+import { LayoutGrid, Plus, RefreshCw, Settings, Check, Layers } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { Button } from '../common/Button';
 import { useTranslation } from '../../i18n/i18n';
@@ -11,6 +11,8 @@ export const Header: React.FC = () => {
     openSettingsModal,
     rotateWallpaper,
     toggleAppDrawer,
+    pages,
+    addPage,
   } = useDashboardStore();
 
   const { t } = useTranslation();
@@ -74,6 +76,20 @@ export const Header: React.FC = () => {
         >
           <RefreshCw size={15} />
         </button>
+
+        {/* While there's only one page, the dedicated page-tab strip stays
+            hidden to save a full row of vertical space — this compact
+            button is the only "add a page" entry point until a second one
+            exists, at which point the strip itself takes over. */}
+        {pages.length === 1 && (
+          <button
+            onClick={() => addPage()}
+            className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95"
+            title={t.pages.add}
+          >
+            <Layers size={15} />
+          </button>
+        )}
 
         {isEditMode ? (
           <>

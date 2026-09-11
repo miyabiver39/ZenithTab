@@ -23,6 +23,12 @@ export const PageSwitcher: React.FC = () => {
     setRenamingId(null);
   };
 
+  // Most installs only ever have one page. Don't spend a permanent row of
+  // vertical space on a tab strip nobody is using yet — Header renders a
+  // compact "add page" button instead while there's just the one. Once a
+  // second page exists, this strip earns its keep.
+  if (pages.length <= 1) return null;
+
   return (
     <div
       title={pages.length > 1 ? t.pages.shortcutHint : undefined}

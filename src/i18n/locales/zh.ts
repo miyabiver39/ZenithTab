@@ -223,6 +223,7 @@ export const zh: typeof en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: '管理搜索引擎...',
+      popularEngines: '添加常用引擎：',
       customEngines: '自定义搜索引擎',
       customEngineName: '名称',
       customEngineHint: '使用 {query} 作为搜索关键词的占位符,例如 https://example.com/search?q={query}',

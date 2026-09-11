@@ -221,6 +221,7 @@ export const en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: 'Manage search engines...',
+      popularEngines: 'Add a popular engine:',
       customEngines: 'Custom Search Engines',
       customEngineName: 'Name',
       customEngineHint: 'Use {query} as a placeholder for the search text, e.g. https://example.com/search?q={query}',

@@ -223,6 +223,7 @@ export const ko: typeof en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: '검색 엔진 관리...',
+      popularEngines: '인기 검색 엔진 추가:',
       customEngines: '커스텀 검색 엔진',
       customEngineName: '이름',
       customEngineHint: '검색어 자리표시자로 {query}를 사용하세요. 예: https://example.com/search?q={query}',

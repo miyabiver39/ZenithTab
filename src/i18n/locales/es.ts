@@ -223,6 +223,7 @@ export const es: typeof en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: 'Gestionar motores de búsqueda...',
+      popularEngines: 'Añadir un motor popular:',
       customEngines: 'Motores de búsqueda personalizados',
       customEngineName: 'Nombre',
       customEngineHint: 'Usa {query} como marcador para el texto de búsqueda, p. ej. https://example.com/search?q={query}',
