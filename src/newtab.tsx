@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { useDashboardStore } from './store/useDashboardStore';
 import { WallpaperBackground } from './components/layout/WallpaperBackground';
 import { Header } from './components/layout/Header';
+import { PageSwitcher } from './components/layout/PageSwitcher';
 import { Dock } from './components/layout/Dock';
 import { GridContainer } from './components/layout/GridContainer';
 import { SettingsPanel } from './components/layout/SettingsPanel';
@@ -36,6 +37,7 @@ export const App: React.FC = () => {
     <div className={`min-h-screen flex flex-col relative ${appearance.theme === 'light' ? 'theme-light' : 'dark'}`}>
       <WallpaperBackground />
       <Header />
+      <PageSwitcher />
       <main className="flex-1 flex flex-col">
         <GridContainer />
       </main>

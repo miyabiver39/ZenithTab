@@ -1,4 +1,4 @@
-import { DashboardWidget, ResponsiveLayouts } from '../types/widget';
+import { DashboardWidget, ResponsiveLayouts, DashboardPageMeta, DashboardPageData } from '../types/widget';
 import {
   WallpaperSettings,
   AppearanceSettings,
@@ -101,9 +101,15 @@ export const STORAGE_KEYS = {
   NOTES: 'quick_notes',
   DOCK_ITEMS: 'dashboard_dock_items',
   KEYBOARD_SHORTCUTS: 'dashboard_keyboard_shortcuts',
+  PAGES: 'dashboard_pages',
+  ACTIVE_PAGE_ID: 'dashboard_active_page_id',
+  PAGE_DATA: 'dashboard_page_data',
 } as const;
 
 export const DEFAULT_KEYBOARD_SHORTCUTS: KeyboardShortcutBinding[] = [];
+
+export const DEFAULT_PAGE_ID = 'page-1';
+export const DEFAULT_PAGES: DashboardPageMeta[] = [{ id: DEFAULT_PAGE_ID, name: 'Page 1' }];
 
 export const DEFAULT_DOCK_ITEMS: DockItem[] = [
   { id: 'dock-google', label: 'Google', url: 'https://google.com', icon: 'globe', openInNewTab: true },
@@ -333,43 +339,126 @@ export const storageService = {
     await storageSet(STORAGE_KEYS.KEYBOARD_SHORTCUTS, items);
   },
 
-  async exportDashboardData(): Promise<DashboardExportData> {
+  /**
+   * Loads (pages, activePageId, pageData). On an install that predates
+   * multi-page support, `dashboard_pages`/`dashboard_page_data` won't
+   * exist yet — in that case the legacy single `dashboard_widgets` /
+   * `dashboard_layouts` keys are migrated in-place into a single "Page 1"
+   * so existing users keep exactly what they had.
+   */
+  async getPagesState(): Promise<{
+    pages: DashboardPageMeta[];
+    activePageId: string;
+    pageData: Record<string, DashboardPageData>;
+  }> {
+    const pages = await storageGet<DashboardPageMeta[]>(STORAGE_KEYS.PAGES, undefined);
+    const pageData = await storageGet<Record<string, DashboardPageData>>(STORAGE_KEYS.PAGE_DATA, undefined);
+
+    if (pages && pages.length > 0 && pageData && Object.keys(pageData).length > 0) {
+      const storedActiveId = await storageGet<string>(STORAGE_KEYS.ACTIVE_PAGE_ID, undefined);
+      const activePageId = storedActiveId && pages.some((p) => p.id === storedActiveId)
+        ? storedActiveId
+        : pages[0].id;
+      return { pages, activePageId, pageData };
+    }
+
     const widgets = await this.getWidgets();
     const layouts = await this.getLayouts();
+    return {
+      pages: DEFAULT_PAGES,
+      activePageId: DEFAULT_PAGE_ID,
+      pageData: { [DEFAULT_PAGE_ID]: { widgets, layouts } },
+    };
+  },
+
+  async savePages(pages: DashboardPageMeta[]): Promise<void> {
+    await storageSet(STORAGE_KEYS.PAGES, pages);
+  },
+
+  async saveActivePageId(id: string): Promise<void> {
+    await storageSet(STORAGE_KEYS.ACTIVE_PAGE_ID, id);
+  },
+
+  async savePageData(pageData: Record<string, DashboardPageData>): Promise<void> {
+    await storageSet(STORAGE_KEYS.PAGE_DATA, pageData);
+  },
+
+  async exportDashboardData(): Promise<DashboardExportData> {
+    const { pages, activePageId, pageData } = await this.getPagesState();
     const wallpaper = await this.getWallpaper();
     const appearance = await this.getAppearance();
     const dockItems = await this.getDockItems();
     const keyboardShortcuts = await this.getKeyboardShortcuts();
+    const activePage = pageData[activePageId] || { widgets: [], layouts: DEFAULT_LAYOUTS };
 
     return {
       version: currentVersion(),
       exportedAt: new Date().toISOString(),
-      widgets,
-      layouts,
+      widgets: activePage.widgets,
+      layouts: activePage.layouts,
       wallpaper,
       appearance,
       dockItems,
       keyboardShortcuts,
+      pages,
+      pageData,
+      activePageId,
     };
   },
 
   async importDashboardData(jsonData: string): Promise<boolean> {
     try {
       const data: DashboardExportData = JSON.parse(jsonData);
-      if (!data.widgets || !Array.isArray(data.widgets)) {
-        throw new Error('Invalid widget format in imported data');
+
+      if (Array.isArray(data.pages) && data.pageData && typeof data.pageData === 'object') {
+        // Multi-page (1.3+) export shape.
+        const sanitizedPageData: Record<string, DashboardPageData> = {};
+        for (const page of data.pages) {
+          const raw = data.pageData[page.id];
+          if (!raw || !Array.isArray(raw.widgets)) continue;
+          const pageWidgets = raw.widgets
+            .map(sanitizeWidget)
+            .filter((w): w is DashboardWidget => w !== null);
+          sanitizedPageData[page.id] = { widgets: pageWidgets, layouts: raw.layouts || DEFAULT_LAYOUTS };
+        }
+
+        const validPages = data.pages.filter((p) => sanitizedPageData[p.id]);
+        if (validPages.length === 0) {
+          throw new Error('Imported file contained no usable pages');
+        }
+
+        const activePageId =
+          data.activePageId && sanitizedPageData[data.activePageId] ? data.activePageId : validPages[0].id;
+
+        await this.savePages(validPages);
+        await this.savePageData(sanitizedPageData);
+        await this.saveActivePageId(activePageId);
+        // Mirror the legacy single-page keys onto the active page so
+        // anything still reading them directly isn't left with stale data.
+        await this.saveWidgets(sanitizedPageData[activePageId].widgets);
+        await this.saveLayouts(sanitizedPageData[activePageId].layouts);
+      } else {
+        // Legacy (pre-1.3) single-page export shape.
+        if (!data.widgets || !Array.isArray(data.widgets)) {
+          throw new Error('Invalid widget format in imported data');
+        }
+
+        const widgets = data.widgets
+          .map(sanitizeWidget)
+          .filter((w): w is DashboardWidget => w !== null);
+
+        if (widgets.length === 0) {
+          throw new Error('Imported file contained no usable widgets');
+        }
+
+        const layouts = data.layouts || DEFAULT_LAYOUTS;
+        await this.saveWidgets(widgets);
+        await this.saveLayouts(layouts);
+        await this.savePages(DEFAULT_PAGES);
+        await this.savePageData({ [DEFAULT_PAGE_ID]: { widgets, layouts } });
+        await this.saveActivePageId(DEFAULT_PAGE_ID);
       }
 
-      const widgets = data.widgets
-        .map(sanitizeWidget)
-        .filter((w): w is DashboardWidget => w !== null);
-
-      if (widgets.length === 0) {
-        throw new Error('Imported file contained no usable widgets');
-      }
-
-      await this.saveWidgets(widgets);
-      if (data.layouts) await this.saveLayouts(data.layouts);
       if (data.wallpaper) await this.saveWallpaper(data.wallpaper);
       if (data.appearance) await this.saveAppearance(data.appearance);
       if (Array.isArray(data.dockItems)) {
@@ -401,5 +490,8 @@ export const storageService = {
     await this.saveAppearance(DEFAULT_APPEARANCE);
     await this.saveDockItems(DEFAULT_DOCK_ITEMS);
     await this.saveKeyboardShortcuts(DEFAULT_KEYBOARD_SHORTCUTS);
+    await this.savePages(DEFAULT_PAGES);
+    await this.savePageData({ [DEFAULT_PAGE_ID]: { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS } });
+    await this.saveActivePageId(DEFAULT_PAGE_ID);
   },
 };

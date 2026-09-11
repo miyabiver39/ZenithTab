@@ -187,6 +187,10 @@ export const ja = {
     searchPlaceholder: 'アプリやツールをすばやく検索...',
     addCustomApp: '新しいアプリを追加',
   },
+  pages: {
+    add: 'ページを追加',
+    remove: 'ページを削除',
+  },
   settings: {
     modalTitle: 'ZenithTab 設定',
     tabs: {

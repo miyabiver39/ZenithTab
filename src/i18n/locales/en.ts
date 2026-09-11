@@ -187,6 +187,10 @@ export const en = {
     searchPlaceholder: 'Search apps & tools...',
     addCustomApp: 'Add Custom App',
   },
+  pages: {
+    add: 'Add page',
+    remove: 'Remove page',
+  },
   settings: {
     modalTitle: 'ZenithTab Settings',
     tabs: {

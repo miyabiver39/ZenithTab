@@ -188,6 +188,10 @@ export const zh: typeof en = {
     searchPlaceholder: '快速搜索应用与工具...',
     addCustomApp: '添加自定义应用',
   },
+  pages: {
+    add: '添加页面',
+    remove: '删除页面',
+  },
   settings: {
     modalTitle: 'ZenithTab 设置',
     tabs: {

@@ -188,6 +188,10 @@ export const fr: typeof en = {
     searchPlaceholder: 'Rechercher des applications et outils...',
     addCustomApp: 'Ajouter une application personnalisée',
   },
+  pages: {
+    add: 'Ajouter une page',
+    remove: 'Supprimer la page',
+  },
   settings: {
     modalTitle: 'Paramètres ZenithTab',
     tabs: {

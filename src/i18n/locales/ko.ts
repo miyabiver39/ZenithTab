@@ -188,6 +188,10 @@ export const ko: typeof en = {
     searchPlaceholder: '앱 및 도구 빠른 검색...',
     addCustomApp: '커스텀 앱 추가',
   },
+  pages: {
+    add: '페이지 추가',
+    remove: '페이지 삭제',
+  },
   settings: {
     modalTitle: 'ZenithTab 설정',
     tabs: {

@@ -162,3 +162,13 @@ export interface ResponsiveLayouts {
   xs: Layout[];
   [key: string]: Layout[];
 }
+
+export interface DashboardPageMeta {
+  id: string;
+  name: string;
+}
+
+export interface DashboardPageData {
+  widgets: DashboardWidget[];
+  layouts: ResponsiveLayouts;
+}

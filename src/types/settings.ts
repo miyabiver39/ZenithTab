@@ -45,10 +45,14 @@ export interface KeyboardShortcutBinding {
 export interface DashboardExportData {
   version: string;
   exportedAt: string;
+  /** The active page's widgets/layouts — kept for backward compatibility with pre-1.3 exports. */
   widgets: any[];
   layouts: any;
   wallpaper: WallpaperSettings;
   appearance: AppearanceSettings;
   dockItems?: DockItem[];
   keyboardShortcuts?: KeyboardShortcutBinding[];
+  pages?: { id: string; name: string }[];
+  pageData?: Record<string, { widgets: any[]; layouts: any }>;
+  activePageId?: string;
 }
