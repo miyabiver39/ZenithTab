@@ -10,6 +10,7 @@ import { SettingsPanel } from './components/layout/SettingsPanel';
 import { AddWidgetModal } from './components/layout/AddWidgetModal';
 import { WidgetConfigModal } from './components/layout/WidgetConfigModal';
 import { AppDrawerModal } from './components/layout/AppDrawerModal';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
 import './index.css';
 
@@ -56,7 +57,9 @@ const rootElement = document.getElementById('zenith-root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <App />
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </React.StrictMode>
   );
 }

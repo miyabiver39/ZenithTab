@@ -62,6 +62,15 @@
   will-change: transform;
 }
 
+/* Applied for one paint right after a breakpoint change (window resize
+   crossing lg/md/sm/etc). Without this, every widget on the page animates
+   to its new spot independently and can visibly overlap mid-transition —
+   snapping straight there instead avoids that. */
+.no-breakpoint-transition.react-grid-layout,
+.no-breakpoint-transition .react-grid-item {
+  transition: none !important;
+}
+
 /* React Grid Layout resize handles (Only visible during Layout Edit Mode) */
 .react-grid-item > .react-resizable-handle {
   display: none !important;

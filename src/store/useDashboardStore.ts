@@ -18,6 +18,29 @@ import { wallpaperService } from '../services/wallpaperService';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
+/**
+ * chrome.storage.local calls are expected to settle quickly, but a hung
+ * call here would leave `isInitialized` false forever — the new-tab page
+ * stuck on its loading screen with no way out short of reinstalling the
+ * extension. Race the real load against a timeout so the dashboard always
+ * reaches a usable state, worst case falling back to in-memory defaults.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(fallback), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(fallback);
+      }
+    );
+  });
+}
+
 interface DashboardState {
   isInitialized: boolean;
   isEditMode: boolean;
@@ -202,22 +225,36 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
       set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
 
     initialize: async () => {
+      const fallbackPagesState = {
+        pages: DEFAULT_PAGES,
+        activePageId: DEFAULT_PAGE_ID,
+        pageData: { [DEFAULT_PAGE_ID]: { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS } },
+      };
+
       try {
         const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
           await Promise.all([
-            storageService.getPagesState(),
-            storageService.getWallpaper(),
-            storageService.getAppearance(),
-            storageService.getDockItems(),
-            storageService.getKeyboardShortcuts(),
+            withTimeout(storageService.getPagesState(), 5000, fallbackPagesState),
+            withTimeout(storageService.getWallpaper(), 5000, DEFAULT_WALLPAPER),
+            withTimeout(storageService.getAppearance(), 5000, DEFAULT_APPEARANCE),
+            withTimeout(storageService.getDockItems(), 5000, DEFAULT_DOCK_ITEMS),
+            withTimeout(storageService.getKeyboardShortcuts(), 5000, DEFAULT_KEYBOARD_SHORTCUTS),
           ]);
 
-        const active = pageData[activePageId] || { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS };
+        // Guard against corrupted persisted data (e.g. an activePageId that
+        // no longer has a matching pageData entry) rather than propagating
+        // an `undefined` active page into the rest of the app.
+        const safePages = Array.isArray(pages) && pages.length > 0 ? pages : DEFAULT_PAGES;
+        const safeActivePageId = safePages.some((p) => p.id === activePageId) ? activePageId : safePages[0].id;
+        const active =
+          pageData && pageData[safeActivePageId]
+            ? pageData[safeActivePageId]
+            : { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS };
 
         set({
-          pages,
-          activePageId,
-          pageData,
+          pages: safePages,
+          activePageId: safeActivePageId,
+          pageData: pageData || fallbackPagesState.pageData,
           widgets: active.widgets,
           layouts: active.layouts,
           wallpaper,
@@ -228,7 +265,12 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
         });
       } catch (err) {
         console.error('Failed initializing dashboard store:', err);
-        set({ isInitialized: true });
+        set({
+          ...fallbackPagesState,
+          widgets: DEFAULT_WIDGETS,
+          layouts: DEFAULT_LAYOUTS,
+          isInitialized: true,
+        });
       }
     },
 
@@ -323,7 +365,19 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   updateLayouts: (_currentLayout, allLayouts) => {
-    const { widgets } = get();
+    const { widgets, layouts } = get();
+
+    // An empty page has nothing to sync — react-grid-layout still fires
+    // onLayoutChange for a 0-item grid, and persisting+re-rendering on every
+    // one of those firings risks feeding a render loop for no benefit.
+    if (widgets.length === 0) return;
+
+    // Skip the write (and the state update it would trigger) when nothing
+    // actually changed — react-grid-layout can re-report an equivalent
+    // layout after unrelated re-renders, and persisting a no-op change on
+    // every firing is exactly the kind of self-feeding loop that can hang
+    // the tab.
+    if (JSON.stringify(allLayouts) === JSON.stringify(layouts)) return;
 
     // Sync layout coordinates back to widget layout reference
     const updatedWidgets = widgets.map((w) => {
