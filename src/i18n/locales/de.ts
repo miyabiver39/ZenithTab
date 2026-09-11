@@ -125,6 +125,10 @@ export const de: typeof en = {
       github: 'GitHub',
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
+      customEngines: 'Benutzerdefinierte Suchmaschinen',
+      customEngineName: 'Name',
+      customEngineHint: 'Verwende {query} als Platzhalter für den Suchtext, z. B. https://example.com/search?q={query}',
+      customEngineAdd: 'Suchmaschine hinzufügen',
     },
     pomodoro: {
       title: 'Fokus-Timer',

@@ -124,6 +124,10 @@ export const en = {
       github: 'GitHub',
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
+      customEngines: 'Custom Search Engines',
+      customEngineName: 'Name',
+      customEngineHint: 'Use {query} as a placeholder for the search text, e.g. https://example.com/search?q={query}',
+      customEngineAdd: 'Add Engine',
     },
     pomodoro: {
       title: 'Focus Timer',

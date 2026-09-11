@@ -124,6 +124,10 @@ export const ja = {
       github: 'GitHub',
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
+      customEngines: 'カスタム検索エンジン',
+      customEngineName: '名前',
+      customEngineHint: '{query} を検索キーワードのプレースホルダーとして使用します。例: https://example.com/search?q={query}',
+      customEngineAdd: 'エンジンを追加',
     },
     pomodoro: {
       title: '集中タイマー',

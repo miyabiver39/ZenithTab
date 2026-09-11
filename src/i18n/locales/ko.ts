@@ -125,6 +125,10 @@ export const ko: typeof en = {
       github: 'GitHub',
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
+      customEngines: '커스텀 검색 엔진',
+      customEngineName: '이름',
+      customEngineHint: '검색어 자리표시자로 {query}를 사용하세요. 예: https://example.com/search?q={query}',
+      customEngineAdd: '엔진 추가',
     },
     pomodoro: {
       title: '포모도로 타이머',

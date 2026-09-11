@@ -52,6 +52,21 @@ function sanitizeWidget(raw: any): DashboardWidget | null {
     );
   }
 
+  // Custom search engines: the URL is a template (contains a literal
+  // "{query}" placeholder), so validate it with that placeholder swapped
+  // for a harmless value rather than as a URL directly.
+  if (Array.isArray(config.customEngines)) {
+    config.customEngines = config.customEngines.filter(
+      (engine: any) =>
+        engine &&
+        typeof engine.id === 'string' &&
+        typeof engine.name === 'string' &&
+        typeof engine.urlTemplate === 'string' &&
+        engine.urlTemplate.includes('{query}') &&
+        isSafeUrl(engine.urlTemplate.replace('{query}', 'q'))
+    );
+  }
+
   return {
     ...raw,
     title: typeof raw.title === 'string' ? raw.title : 'Widget',

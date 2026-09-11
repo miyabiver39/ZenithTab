@@ -125,6 +125,10 @@ export const zh: typeof en = {
       github: 'GitHub',
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
+      customEngines: '自定义搜索引擎',
+      customEngineName: '名称',
+      customEngineHint: '使用 {query} 作为搜索关键词的占位符,例如 https://example.com/search?q={query}',
+      customEngineAdd: '添加引擎',
     },
     pomodoro: {
       title: '番茄时钟',

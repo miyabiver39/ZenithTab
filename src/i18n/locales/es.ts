@@ -125,6 +125,10 @@ export const es: typeof en = {
       github: 'GitHub',
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
+      customEngines: 'Motores de búsqueda personalizados',
+      customEngineName: 'Nombre',
+      customEngineHint: 'Usa {query} como marcador para el texto de búsqueda, p. ej. https://example.com/search?q={query}',
+      customEngineAdd: 'Añadir motor',
     },
     pomodoro: {
       title: 'Temporizador',

@@ -67,10 +67,21 @@ export interface QuickNotesWidgetConfig extends BaseWidgetConfig {
 
 export type SearchEngine = 'google' | 'bing' | 'duckduckgo' | 'github' | 'youtube' | 'chatgpt';
 
+export interface CustomSearchEngine {
+  id: string;
+  name: string;
+  /** Must contain a `{query}` placeholder, e.g. "https://example.com/search?q={query}". */
+  urlTemplate: string;
+  /** Optional emoji/short string shown instead of the generic search icon. */
+  icon?: string;
+}
+
 export interface SearchWidgetConfig extends BaseWidgetConfig {
-  defaultEngine: SearchEngine;
+  /** A built-in SearchEngine key, or a CustomSearchEngine id from customEngines. */
+  defaultEngine: string;
   showEngineSelector: boolean;
   openInNewTab: boolean;
+  customEngines?: CustomSearchEngine[];
 }
 
 export interface PomodoroWidgetConfig extends BaseWidgetConfig {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Plus, Trash2 } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
@@ -8,6 +8,7 @@ import { rssService } from '../../services/rssService';
 import { weatherService, GeolocationFailure } from '../../services/weatherService';
 import { requestHostPermission } from '../../utils/permissions';
 import { useTranslation } from '../../i18n/i18n';
+import { CustomSearchEngine } from '../../types/widget';
 
 export const WidgetConfigModal: React.FC = () => {
   const {
@@ -26,6 +27,9 @@ export const WidgetConfigModal: React.FC = () => {
   const [config, setConfig] = useState<Record<string, any>>({});
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [newEngineName, setNewEngineName] = useState('');
+  const [newEngineUrl, setNewEngineUrl] = useState('');
+  const [newEngineIcon, setNewEngineIcon] = useState('');
 
   useEffect(() => {
     if (targetWidget) {
@@ -74,6 +78,34 @@ export const WidgetConfigModal: React.FC = () => {
     updateWidgetConfig(editingWidgetId, config, title);
   };
 
+  const handleAddCustomEngine = () => {
+    const name = newEngineName.trim();
+    const urlTemplate = newEngineUrl.trim();
+    if (!name || !urlTemplate.includes('{query}')) return;
+
+    const newEngine: CustomSearchEngine = {
+      id: `custom-${Date.now()}`,
+      name,
+      urlTemplate,
+      icon: newEngineIcon.trim() || undefined,
+    };
+    const customEngines: CustomSearchEngine[] = [...(config.customEngines || []), newEngine];
+    setConfig({ ...config, customEngines });
+
+    setNewEngineName('');
+    setNewEngineUrl('');
+    setNewEngineIcon('');
+  };
+
+  const handleRemoveCustomEngine = (id: string) => {
+    const customEngines = (config.customEngines || []).filter((e: CustomSearchEngine) => e.id !== id);
+    const updated: Record<string, any> = { ...config, customEngines };
+    if (config.defaultEngine === id) {
+      updated.defaultEngine = 'google';
+    }
+    setConfig(updated);
+  };
+
   const renderConfigFields = () => {
     switch (targetWidget.type) {
       case 'shortcuts':
@@ -99,24 +131,30 @@ export const WidgetConfigModal: React.FC = () => {
           </div>
         );
 
-      case 'search':
+      case 'search': {
+        const customEngines: CustomSearchEngine[] = config.customEngines || [];
+        const allEngineOptions = [
+          ...['google', 'duckduckgo', 'bing', 'github', 'youtube', 'chatgpt'].map((id) => ({ id, label: id })),
+          ...customEngines.map((e) => ({ id: e.id, label: e.name })),
+        ];
+
         return (
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1.5">Default Search Engine</label>
               <div className="grid grid-cols-3 gap-2">
-                {['google', 'duckduckgo', 'bing', 'github', 'youtube', 'chatgpt'].map((eng) => (
+                {allEngineOptions.map((eng) => (
                   <button
-                    key={eng}
+                    key={eng.id}
                     type="button"
-                    onClick={() => setConfig({ ...config, defaultEngine: eng })}
-                    className={`py-2 px-3 rounded-lg text-xs font-medium border capitalize transition-all ${
-                      config.defaultEngine === eng
+                    onClick={() => setConfig({ ...config, defaultEngine: eng.id })}
+                    className={`py-2 px-3 rounded-lg text-xs font-medium border capitalize truncate transition-all ${
+                      config.defaultEngine === eng.id
                         ? 'bg-sky-500/20 border-sky-400 text-sky-200 shadow'
                         : 'bg-slate-800/50 border-white/10 text-slate-300 hover:bg-slate-800'
                     }`}
                   >
-                    {eng}
+                    {eng.label}
                   </button>
                 ))}
               </div>
@@ -131,8 +169,68 @@ export const WidgetConfigModal: React.FC = () => {
                 className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"
               />
             </div>
+
+            <div className="pt-3 border-t border-white/10 space-y-3">
+              <label className="block text-xs font-medium text-slate-300">{t.widgets.search.customEngines}</label>
+
+              {customEngines.length > 0 && (
+                <div className="space-y-1.5">
+                  {customEngines.map((e) => (
+                    <div
+                      key={e.id}
+                      className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/50 border border-white/10"
+                    >
+                      <span className="text-sm leading-none w-4 text-center">{e.icon || '🔍'}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-semibold text-white truncate">{e.name}</div>
+                        <div className="text-[10px] text-slate-500 truncate">{e.urlTemplate}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCustomEngine(e.id)}
+                        className="p-1.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_56px] gap-2">
+                <Input
+                  value={newEngineName}
+                  onChange={(e) => setNewEngineName(e.target.value)}
+                  placeholder={t.widgets.search.customEngineName}
+                />
+                <Input
+                  value={newEngineUrl}
+                  onChange={(e) => setNewEngineUrl(e.target.value)}
+                  placeholder="https://example.com/search?q={query}"
+                />
+                <Input
+                  value={newEngineIcon}
+                  onChange={(e) => setNewEngineIcon(e.target.value)}
+                  placeholder="🔍"
+                  maxLength={4}
+                />
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.search.customEngineHint}</p>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handleAddCustomEngine}
+                disabled={!newEngineName.trim() || !newEngineUrl.includes('{query}')}
+                className="gap-1.5"
+              >
+                <Plus size={14} />
+                <span>{t.widgets.search.customEngineAdd}</span>
+              </Button>
+            </div>
           </div>
         );
+      }
 
       case 'clock':
         return (
