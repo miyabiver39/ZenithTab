@@ -25,6 +25,22 @@ export const es: typeof en = {
     afternoon: 'Buenas tardes',
     evening: 'Buenas noches',
     night: 'Buenas noches',
+    splashes: [
+      'Es peligroso ir solo. ¡Toma esta pestaña!',
+      'Funciona con cafeína y esperanza.',
+      'Considera cerrar alguna de tus 47 pestañas.',
+      'Ctrl+Z siempre estará ahí para ti.',
+      '99 pequeños bugs en el código, 99 pequeños bugs...',
+      'Bip bop. ¿Sigues siendo humano?',
+      'Hidrátate, por favor.',
+      'Hoy te ves genial.',
+      'Este mensaje no tiene ningún propósito. Disfrútalo igual.',
+      'Dicen que el botón de reinicio nunca se ha pulsado dos veces seguidas.',
+      'Cargando motivación... espera un momento.',
+      'Con 100% más brillo hoy.',
+      'Tus plantas te reclaman agua.',
+      'Logro desbloqueado: abriste una nueva pestaña.',
+    ],
   },
   widgets: {
     clock: {

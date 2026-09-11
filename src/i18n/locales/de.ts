@@ -25,6 +25,22 @@ export const de: typeof en = {
     afternoon: 'Guten Tag',
     evening: 'Guten Abend',
     night: 'Gute Nacht',
+    splashes: [
+      'Allein unterwegs ist gefährlich. Nimm diesen Tab!',
+      'Betrieben mit Koffein und Hoffnung.',
+      'Wie wäre es, ein paar deiner 47 Tabs zu schließen?',
+      'Strg+Z ist immer für dich da.',
+      '99 kleine Bugs im Code, 99 kleine Bugs...',
+      'Piep piep. Immer noch ein Mensch?',
+      'Denk ans Trinken.',
+      'Du siehst heute gut aus.',
+      'Diese Nachricht hat keinen Zweck. Genieß sie trotzdem.',
+      'Der Legende nach wurde der Reset-Knopf noch nie zweimal hintereinander gedrückt.',
+      'Motivation wird geladen... bitte warten.',
+      'Heute mit 100% mehr Glanz.',
+      'Deine Pflanzen warten auf Wasser.',
+      'Erfolg freigeschaltet: Neuen Tab geöffnet.',
+    ],
   },
   widgets: {
     clock: {

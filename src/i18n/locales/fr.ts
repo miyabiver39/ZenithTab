@@ -25,6 +25,22 @@ export const fr: typeof en = {
     afternoon: 'Bon après-midi',
     evening: 'Bonsoir',
     night: 'Bonne nuit',
+    splashes: [
+      "C'est dangereux d'y aller seul. Prends cet onglet !",
+      "Alimenté à la caféine et à l'espoir.",
+      "Et si vous fermiez quelques-uns de vos 47 onglets ?",
+      'Ctrl+Z sera toujours là pour vous.',
+      '99 petits bugs dans le code, 99 petits bugs...',
+      'Bip boup. Toujours humain ?',
+      "Pensez à vous hydrater.",
+      "Vous avez l'air en pleine forme aujourd'hui.",
+      "Ce message n'a aucun but. Profitez-en quand même.",
+      "La légende dit que le bouton Réinitialiser n'a jamais été pressé deux fois de suite.",
+      'Chargement de la motivation... veuillez patienter.',
+      "Avec 100% de paillettes en plus aujourd'hui.",
+      'Vos plantes réclament un peu d\'eau.',
+      'Succès débloqué : ouverture d\'un nouvel onglet.',
+    ],
   },
   widgets: {
     clock: {

@@ -23,6 +23,23 @@ export const en = {
     afternoon: 'Good afternoon',
     evening: 'Good evening',
     night: 'Good night',
+    splashes: [
+      "It's dangerous to go alone. Take this tab!",
+      'Powered by caffeine and hope.',
+      'Also try closing some of your 47 tabs.',
+      'Ctrl+Z is always there for you.',
+      "99 little bugs in the code, 99 little bugs...",
+      'Beep boop. Still a human?',
+      'Hydrate or diedrate.',
+      'You look nice today.',
+      'This message has no purpose. Enjoy it anyway.',
+      'Somebody set up us the bomb. (Not really, relax.)',
+      'Legend says the Reset button has never been pressed twice.',
+      "Loading motivation... please wait.",
+      'Now with 100% more sparkle.',
+      'Your plants called. They want water.',
+      'Achievement unlocked: Opened a new tab.',
+    ],
   },
   widgets: {
     clock: {
