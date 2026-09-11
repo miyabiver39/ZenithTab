@@ -1,5 +1,5 @@
 import { DashboardWidget, ResponsiveLayouts } from '../types/widget';
-import { WallpaperSettings, AppearanceSettings, DashboardExportData } from '../types/settings';
+import { WallpaperSettings, AppearanceSettings, DashboardExportData, DockItem } from '../types/settings';
 import { storageGet, storageSet } from '../utils/storage';
 
 /** The running extension version, so exports carry the version that produced them. */
@@ -66,7 +66,17 @@ export const STORAGE_KEYS = {
   APPEARANCE: 'dashboard_appearance',
   RSS_CACHE: 'rss_cache',
   NOTES: 'quick_notes',
+  DOCK_ITEMS: 'dashboard_dock_items',
 } as const;
+
+export const DEFAULT_DOCK_ITEMS: DockItem[] = [
+  { id: 'dock-google', label: 'Google', url: 'https://google.com', icon: 'globe', openInNewTab: true },
+  { id: 'dock-github', label: 'GitHub', url: 'https://github.com', icon: 'code', openInNewTab: true },
+  { id: 'dock-youtube', label: 'YouTube', url: 'https://youtube.com', icon: 'video', openInNewTab: true },
+  { id: 'dock-gmail', label: 'Gmail', url: 'https://mail.google.com', icon: 'mail', openInNewTab: true },
+  { id: 'dock-chatgpt', label: 'ChatGPT', url: 'https://chatgpt.com', icon: 'sparkles', openInNewTab: true },
+  { id: 'dock-devdocs', label: 'Dev Docs', url: 'https://developer.mozilla.org', icon: 'terminal', openInNewTab: true },
+];
 
 export const DEFAULT_WALLPAPER: WallpaperSettings = {
   source: 'unsplash',
@@ -266,11 +276,21 @@ export const storageService = {
     await storageSet(STORAGE_KEYS.APPEARANCE, appearance);
   },
 
+  async getDockItems(): Promise<DockItem[]> {
+    const items = await storageGet<DockItem[]>(STORAGE_KEYS.DOCK_ITEMS, DEFAULT_DOCK_ITEMS);
+    return items || DEFAULT_DOCK_ITEMS;
+  },
+
+  async saveDockItems(items: DockItem[]): Promise<void> {
+    await storageSet(STORAGE_KEYS.DOCK_ITEMS, items);
+  },
+
   async exportDashboardData(): Promise<DashboardExportData> {
     const widgets = await this.getWidgets();
     const layouts = await this.getLayouts();
     const wallpaper = await this.getWallpaper();
     const appearance = await this.getAppearance();
+    const dockItems = await this.getDockItems();
 
     return {
       version: currentVersion(),
@@ -279,6 +299,7 @@ export const storageService = {
       layouts,
       wallpaper,
       appearance,
+      dockItems,
     };
   },
 
@@ -301,6 +322,17 @@ export const storageService = {
       if (data.layouts) await this.saveLayouts(data.layouts);
       if (data.wallpaper) await this.saveWallpaper(data.wallpaper);
       if (data.appearance) await this.saveAppearance(data.appearance);
+      if (Array.isArray(data.dockItems)) {
+        const dockItems = data.dockItems.filter(
+          (item): item is DockItem =>
+            !!item &&
+            typeof item.id === 'string' &&
+            typeof item.label === 'string' &&
+            typeof item.icon === 'string' &&
+            isSafeUrl(item.url)
+        );
+        if (dockItems.length > 0) await this.saveDockItems(dockItems);
+      }
 
       return true;
     } catch (error) {
@@ -314,5 +346,6 @@ export const storageService = {
     await this.saveLayouts(DEFAULT_LAYOUTS);
     await this.saveWallpaper(DEFAULT_WALLPAPER);
     await this.saveAppearance(DEFAULT_APPEARANCE);
+    await this.saveDockItems(DEFAULT_DOCK_ITEMS);
   },
 };

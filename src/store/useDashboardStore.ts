@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Layout } from 'react-grid-layout';
 import { DashboardWidget, ResponsiveLayouts, WidgetType } from '../types/widget';
-import { WallpaperSettings, AppearanceSettings } from '../types/settings';
+import { WallpaperSettings, AppearanceSettings, DockItem } from '../types/settings';
 import {
   storageService,
   DEFAULT_WIDGETS,
@@ -9,6 +9,7 @@ import {
   DEFAULT_WALLPAPER,
   DEFAULT_APPEARANCE,
   DEFAULT_NOTES_CONTENT,
+  DEFAULT_DOCK_ITEMS,
 } from '../services/storageService';
 import { wallpaperService } from '../services/wallpaperService';
 
@@ -23,6 +24,7 @@ interface DashboardState {
   layouts: ResponsiveLayouts;
   wallpaper: WallpaperSettings;
   appearance: AppearanceSettings;
+  dockItems: DockItem[];
 
   // Actions
   initialize: () => Promise<void>;
@@ -39,6 +41,11 @@ interface DashboardState {
   updateWallpaper: (partial: Partial<WallpaperSettings>) => void;
   rotateWallpaper: () => void;
   updateAppearance: (partial: Partial<AppearanceSettings>) => void;
+
+  addDockItem: (item: Omit<DockItem, 'id'>) => void;
+  updateDockItem: (id: string, partial: Partial<Omit<DockItem, 'id'>>) => void;
+  removeDockItem: (id: string) => void;
+  moveDockItem: (id: string, direction: 'up' | 'down') => void;
 
   resetToDefault: () => Promise<void>;
   importConfig: (jsonData: string) => Promise<boolean>;
@@ -145,17 +152,19 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   layouts: DEFAULT_LAYOUTS,
   wallpaper: DEFAULT_WALLPAPER,
   appearance: DEFAULT_APPEARANCE,
+  dockItems: DEFAULT_DOCK_ITEMS,
 
   toggleAppDrawer: (open) =>
     set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
 
   initialize: async () => {
     try {
-      const [widgets, layouts, wallpaper, appearance] = await Promise.all([
+      const [widgets, layouts, wallpaper, appearance, dockItems] = await Promise.all([
         storageService.getWidgets(),
         storageService.getLayouts(),
         storageService.getWallpaper(),
         storageService.getAppearance(),
+        storageService.getDockItems(),
       ]);
 
       set({
@@ -163,6 +172,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         layouts,
         wallpaper,
         appearance,
+        dockItems,
         isInitialized: true,
       });
     } catch (err) {
@@ -244,6 +254,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       md: filterLayout(layouts.md),
       sm: filterLayout(layouts.sm),
       xs: filterLayout(layouts.xs),
+      xxs: filterLayout(layouts.xxs || []),
     };
 
     set({
@@ -326,6 +337,40 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     storageService.saveAppearance(updated);
   },
 
+  addDockItem: (item) => {
+    const { dockItems } = get();
+    const newItem: DockItem = { ...item, id: `dock-${Date.now()}` };
+    const updated = [...dockItems, newItem];
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  updateDockItem: (id, partial) => {
+    const { dockItems } = get();
+    const updated = dockItems.map((item) => (item.id === id ? { ...item, ...partial } : item));
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  removeDockItem: (id) => {
+    const { dockItems } = get();
+    const updated = dockItems.filter((item) => item.id !== id);
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  moveDockItem: (id, direction) => {
+    const { dockItems } = get();
+    const index = dockItems.findIndex((item) => item.id === id);
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (index === -1 || targetIndex < 0 || targetIndex >= dockItems.length) return;
+
+    const updated = [...dockItems];
+    [updated[index], updated[targetIndex]] = [updated[targetIndex], updated[index]];
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
   resetToDefault: async () => {
     await storageService.resetDashboard();
     set({
@@ -333,6 +378,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       layouts: DEFAULT_LAYOUTS,
       wallpaper: DEFAULT_WALLPAPER,
       appearance: DEFAULT_APPEARANCE,
+      dockItems: DEFAULT_DOCK_ITEMS,
       isEditMode: false,
       activeSettingsModal: null,
       editingWidgetId: null,
@@ -342,11 +388,12 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   importConfig: async (jsonData) => {
     const success = await storageService.importDashboardData(jsonData);
     if (success) {
-      const [widgets, layouts, wallpaper, appearance] = await Promise.all([
+      const [widgets, layouts, wallpaper, appearance, dockItems] = await Promise.all([
         storageService.getWidgets(),
         storageService.getLayouts(),
         storageService.getWallpaper(),
         storageService.getAppearance(),
+        storageService.getDockItems(),
       ]);
 
       set({
@@ -354,6 +401,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         layouts,
         wallpaper,
         appearance,
+        dockItems,
         activeSettingsModal: null,
       });
       return true;

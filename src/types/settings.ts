@@ -24,6 +24,15 @@ export interface AppearanceSettings {
   dockPosition: 'bottom' | 'top' | 'hidden';
 }
 
+export interface DockItem {
+  id: string;
+  label: string;
+  url: string;
+  /** A key from the curated DOCK_ICON_LIBRARY, or a free-form emoji/short string. */
+  icon: string;
+  openInNewTab: boolean;
+}
+
 export interface DashboardExportData {
   version: string;
   exportedAt: string;
@@ -31,4 +40,5 @@ export interface DashboardExportData {
   layouts: any;
   wallpaper: WallpaperSettings;
   appearance: AppearanceSettings;
+  dockItems?: DockItem[];
 }
