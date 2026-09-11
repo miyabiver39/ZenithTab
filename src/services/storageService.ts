@@ -201,11 +201,32 @@ export const DEFAULT_WIDGETS: DashboardWidget[] = [
   },
 ];
 
+/**
+ * Packs widgets two-per-row at a fixed width. Unlike clamping only `w`,
+ * this also recomputes `x`/`y` so no item's `x + w` can ever exceed the
+ * breakpoint's column count (that mismatch was causing react-grid-layout
+ * to visibly reflow/overlap widgets at the `md` breakpoint).
+ */
+function packTwoColumnLayout(widgets: DashboardWidget[], itemWidth: number) {
+  let rowY = 0;
+  let rowMaxH = 0;
+  return widgets.map((widget, index) => {
+    const col = index % 2;
+    if (col === 0 && index > 0) {
+      rowY += rowMaxH;
+      rowMaxH = 0;
+    }
+    rowMaxH = Math.max(rowMaxH, widget.layout.h);
+    return { ...widget.layout, x: col * itemWidth, y: rowY, w: itemWidth };
+  });
+}
+
 export const DEFAULT_LAYOUTS: ResponsiveLayouts = {
   lg: DEFAULT_WIDGETS.map((w) => w.layout),
-  md: DEFAULT_WIDGETS.map((w) => ({ ...w.layout, w: Math.min(w.layout.w, 5) })),
+  md: packTwoColumnLayout(DEFAULT_WIDGETS, 5),
   sm: DEFAULT_WIDGETS.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 6 })),
   xs: DEFAULT_WIDGETS.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 4 })),
+  xxs: DEFAULT_WIDGETS.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 2 })),
 };
 
 export const storageService = {
