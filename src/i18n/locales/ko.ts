@@ -114,6 +114,9 @@ export const ko: typeof en = {
       placeholder: '메모, 아이디어, 할 일 입력...',
       fontSize: '글자 크기',
       fontStyle: '글꼴 스타일',
+      pageLabel: '페이지',
+      newPage: '페이지 추가',
+      deletePage: '페이지 닫기',
     },
     search: {
       title: '빠른 검색',

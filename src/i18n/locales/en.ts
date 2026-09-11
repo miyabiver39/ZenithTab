@@ -113,6 +113,9 @@ export const en = {
       placeholder: 'Type quick notes, markdown, tasks...',
       fontSize: 'Font Size',
       fontStyle: 'Font Style',
+      pageLabel: 'Page',
+      newPage: 'Add page',
+      deletePage: 'Close page',
     },
     search: {
       title: 'Quick Search',

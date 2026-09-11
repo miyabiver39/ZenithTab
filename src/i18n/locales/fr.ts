@@ -114,6 +114,9 @@ export const fr: typeof en = {
       placeholder: 'Écrivez des notes rapides, des tâches...',
       fontSize: 'Taille de police',
       fontStyle: 'Style de police',
+      pageLabel: 'Page',
+      newPage: 'Ajouter une page',
+      deletePage: 'Fermer la page',
     },
     search: {
       title: 'Recherche rapide',

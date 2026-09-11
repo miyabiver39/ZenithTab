@@ -114,6 +114,9 @@ export const de: typeof en = {
       placeholder: 'Notizen, Markdown, Aufgaben eintippen...',
       fontSize: 'Schriftgröße',
       fontStyle: 'Schriftstil',
+      pageLabel: 'Seite',
+      newPage: 'Seite hinzufügen',
+      deletePage: 'Seite schließen',
     },
     search: {
       title: 'Schnellsuche',

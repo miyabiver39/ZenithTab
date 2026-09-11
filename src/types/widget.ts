@@ -59,8 +59,17 @@ export interface IframeWidgetConfig extends BaseWidgetConfig {
   customFallbackTitle?: string;
 }
 
-export interface QuickNotesWidgetConfig extends BaseWidgetConfig {
+export interface NotePage {
+  id: string;
+  title: string;
   content: string;
+}
+
+export interface QuickNotesWidgetConfig extends BaseWidgetConfig {
+  /** @deprecated Legacy single-note content, kept only to migrate old configs into `pages`. */
+  content?: string;
+  pages?: NotePage[];
+  activePageId?: string;
   fontSize: 'sm' | 'base' | 'lg';
   fontFamily: 'sans' | 'mono' | 'serif';
 }

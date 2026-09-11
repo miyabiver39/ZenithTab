@@ -113,6 +113,9 @@ export const ja = {
       placeholder: 'メモ、マークダウン、タスクを入力...',
       fontSize: '文字サイズ',
       fontStyle: 'フォントスタイル',
+      pageLabel: 'ページ',
+      newPage: 'ページを追加',
+      deletePage: 'ページを閉じる',
     },
     search: {
       title: 'クイック検索',

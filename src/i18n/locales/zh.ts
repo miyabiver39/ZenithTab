@@ -114,6 +114,9 @@ export const zh: typeof en = {
       placeholder: '记录想法、待办事项或 Markdown...',
       fontSize: '字体大小',
       fontStyle: '字体样式',
+      pageLabel: '页面',
+      newPage: '添加页面',
+      deletePage: '关闭页面',
     },
     search: {
       title: '快捷搜索',
