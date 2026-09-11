@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, Globe, Code2, Video, Sparkles, Compass, ChevronDown } from 'lucide-react';
 import { SearchWidgetConfig, SearchEngine } from '../../../types/widget';
 import { useTranslation } from '../../../i18n/i18n';
@@ -54,9 +55,21 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
   const [selectedEngine, setSelectedEngine] = useState<SearchEngine>(defaultEngine);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+
+  // The dropdown is portaled to <body>, so its position must be tracked
+  // manually — it can no longer rely on CSS `absolute` positioning relative
+  // to the trigger once it escapes the widget's own stacking context.
+  const updateMenuPosition = useCallback(() => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setMenuPosition({ top: rect.bottom + 8, left: rect.left });
+    }
+  }, []);
 
   // Keyboard shortcut '/' to focus search
   useEffect(() => {
@@ -74,10 +87,15 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Close dropdown on outside click
+  // Close dropdown on outside click (the menu itself lives in a portal, so
+  // both the trigger and the portaled menu must be checked)
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        !triggerRef.current?.contains(target) &&
+        !menuRef.current?.contains(target)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -86,6 +104,18 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
     }
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [isDropdownOpen]);
+
+  // Keep the portaled menu aligned with its trigger button
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    updateMenuPosition();
+    window.addEventListener('resize', updateMenuPosition);
+    window.addEventListener('scroll', updateMenuPosition, true);
+    return () => {
+      window.removeEventListener('resize', updateMenuPosition);
+      window.removeEventListener('scroll', updateMenuPosition, true);
+    };
+  }, [isDropdownOpen, updateMenuPosition]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +140,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
         {/* Search Bar Input Container */}
         <div className="relative flex items-center bg-slate-900/60 border border-white/10 hover:border-white/20 focus-within:border-sky-400/50 focus-within:ring-2 focus-within:ring-sky-400/20 rounded-2xl p-1.5 transition-all shadow-lg backdrop-blur-md">
           {/* Current Engine Selector Button / Dropdown Toggle */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative" ref={triggerRef}>
             <button
               type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -124,9 +154,15 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
               <ChevronDown size={12} className="text-slate-400" />
             </button>
 
-            {/* Dropdown Menu */}
-            {isDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-44 bg-slate-900/95 border border-white/15 rounded-2xl shadow-2xl backdrop-blur-2xl py-1.5 z-50 animate-fade-in">
+            {/* Dropdown Menu — portaled to <body> so it can't be clipped by
+                the widget card's overflow-hidden or trapped behind a
+                neighboring grid item's stacking context */}
+            {isDropdownOpen && menuPosition && createPortal(
+              <div
+                ref={menuRef}
+                style={{ position: 'fixed', top: menuPosition.top, left: menuPosition.left }}
+                className="w-44 bg-slate-900/95 border border-white/15 rounded-2xl shadow-2xl backdrop-blur-2xl py-1.5 z-[9999] animate-fade-in"
+              >
                 {(Object.keys(SEARCH_ENGINES) as SearchEngine[]).map((key) => {
                   const eng = SEARCH_ENGINES[key];
                   const Icon = eng.icon;
@@ -151,7 +187,8 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
                     </button>
                   );
                 })}
-              </div>
+              </div>,
+              document.body
             )}
           </div>
 
