@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Image, Palette, Download, Upload, RotateCcw, Languages, Dock as DockIcon, Plus, ArrowUp, ArrowDown, Trash2, Keyboard } from 'lucide-react';
+import { Image, Palette, Download, Upload, RotateCcw, Languages, Dock as DockIcon, Plus, ArrowUp, ArrowDown, Trash2, Keyboard, GripVertical } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import { useDashboardStore } from '../../store/useDashboardStore';
@@ -8,6 +8,7 @@ import { wallpaperService, GRADIENT_PRESETS } from '../../services/wallpaperServ
 import { useTranslation, SupportedLanguage } from '../../i18n/i18n';
 import { DOCK_ICON_LIBRARY, DOCK_ICON_KEYS } from '../../utils/dockIcons';
 import { getComboFromEvent } from '../../utils/keyboardShortcuts';
+import { cn } from '../../utils/cn';
 
 export const SettingsPanel: React.FC = () => {
   const {
@@ -23,6 +24,7 @@ export const SettingsPanel: React.FC = () => {
     addDockItem,
     removeDockItem,
     moveDockItem,
+    reorderDockItem,
     addKeyboardShortcut,
     removeKeyboardShortcut,
     resetToDefault,
@@ -35,6 +37,9 @@ export const SettingsPanel: React.FC = () => {
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const wallpaperUploadRef = useRef<HTMLInputElement>(null);
+
+  const [draggedDockId, setDraggedDockId] = useState<string | null>(null);
+  const [dragOverDockId, setDragOverDockId] = useState<string | null>(null);
 
   const [newDockLabel, setNewDockLabel] = useState('');
   const [newDockUrl, setNewDockUrl] = useState('');
@@ -174,79 +179,36 @@ export const SettingsPanel: React.FC = () => {
 
   return (
     <Modal isOpen={isOpen} onClose={closeSettingsModal} title={t.settings.modalTitle} maxWidth="2xl">
-      {/* Navigation Tabs */}
+      {/* Navigation Tabs — ordered by how often a user typically revisits
+          each one: visual/interactive tabs first, one-time setup (language)
+          near the end, backup/reset last since it's touched least. */}
       <div className="flex items-center gap-1 pb-4 border-b border-white/10 select-none overflow-x-auto custom-scrollbar">
-        <button
-          onClick={() => setActiveTab('wallpaper')}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-            activeTab === 'wallpaper'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Image size={15} />
-          <span>{t.settings.tabs.wallpaper}</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('appearance')}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-            activeTab === 'appearance'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Palette size={15} />
-          <span>{t.settings.tabs.appearance}</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('language')}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-            activeTab === 'language'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Languages size={15} />
-          <span>{t.settings.tabs.language}</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('backup')}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-            activeTab === 'backup'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Download size={15} />
-          <span>{t.settings.tabs.backup}</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('dock')}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-            activeTab === 'dock'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <DockIcon size={15} />
-          <span>{t.settings.tabs.dock}</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('keys')}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
-            activeTab === 'keys'
-              ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Keyboard size={15} />
-          <span>{t.settings.tabs.keyboardShortcuts}</span>
-        </button>
+        {(
+          [
+            { key: 'wallpaper', icon: Image, label: t.settings.tabs.wallpaper },
+            { key: 'appearance', icon: Palette, label: t.settings.tabs.appearance },
+            { key: 'dock', icon: DockIcon, label: t.settings.tabs.dock },
+            { key: 'keys', icon: Keyboard, label: t.settings.tabs.keyboardShortcuts },
+            { key: 'language', icon: Languages, label: t.settings.tabs.language },
+            { key: 'backup', icon: Download, label: t.settings.tabs.backup },
+          ] as const
+        ).map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+                activeTab === tab.key
+                  ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Icon size={15} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab Content */}
@@ -604,8 +566,40 @@ export const SettingsPanel: React.FC = () => {
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-800/40 border border-white/10"
+                    onDragOver={(e) => {
+                      if (!draggedDockId) return;
+                      e.preventDefault();
+                      setDragOverDockId(item.id);
+                    }}
+                    onDragLeave={() => setDragOverDockId((cur) => (cur === item.id ? null : cur))}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (draggedDockId && draggedDockId !== item.id) {
+                        reorderDockItem(draggedDockId, index);
+                      }
+                      setDraggedDockId(null);
+                      setDragOverDockId(null);
+                    }}
+                    className={cn(
+                      'flex items-center gap-2 p-2.5 rounded-xl bg-slate-800/40 border transition-colors',
+                      dragOverDockId === item.id ? 'border-sky-400/60 bg-sky-500/10' : 'border-white/10'
+                    )}
                   >
+                    <span
+                      draggable
+                      onDragStart={(e) => {
+                        setDraggedDockId(item.id);
+                        e.dataTransfer.effectAllowed = 'move';
+                      }}
+                      onDragEnd={() => {
+                        setDraggedDockId(null);
+                        setDragOverDockId(null);
+                      }}
+                      title={t.settings.dock.dragToReorder}
+                      className="cursor-grab active:cursor-grabbing text-slate-500 hover:text-white flex-shrink-0"
+                    >
+                      <GripVertical size={14} />
+                    </span>
                     <div className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 text-slate-300 flex-shrink-0">
                       {Icon ? <Icon size={14} /> : <span className="text-sm leading-none">{item.icon || '🔗'}</span>}
                     </div>

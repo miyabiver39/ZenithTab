@@ -61,6 +61,9 @@ describe('rssParser', () => {
     const items = parseRssXml(mockGoogleNewsXml);
     expect(items).toHaveLength(1);
     expect(items[0].sourceTitle).toBe('TechCrunch');
+    // Google News items carry no per-article image, so the RSS widget falls
+    // back to a favicon of this source URL — the parser must extract it.
+    expect(items[0].sourceUrl).toBe('https://techcrunch.com');
   });
 
   it('空または無効なXML入力時に安全に空配列を返すこと', () => {

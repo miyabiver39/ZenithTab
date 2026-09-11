@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Globe, Code2, Video, Sparkles, Compass, ChevronDown } from 'lucide-react';
+import { Search, Globe, Code2, Video, Sparkles, Compass, ChevronDown, Settings } from 'lucide-react';
 import { SearchWidgetConfig, SearchEngine } from '../../../types/widget';
 import { useTranslation } from '../../../i18n/i18n';
+import { useDashboardStore } from '../../../store/useDashboardStore';
 
 interface SearchWidgetProps {
+  widgetId: string;
   config: SearchWidgetConfig;
 }
 
@@ -59,8 +61,9 @@ const SEARCH_ENGINES: Record<
   },
 };
 
-export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
+export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) => {
   const { defaultEngine = 'google', openInNewTab = true, showEngineSelector = true, customEngines = [] } = config;
+  const openSettingsModal = useDashboardStore((s) => s.openSettingsModal);
 
   // Built-in engines plus any user-defined ones (config.customEngines), merged
   // into one lookup so the rest of the component doesn't need to care which
@@ -236,6 +239,18 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
                     </button>
                   );
                 })}
+                <div className="my-1 border-t border-white/10" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    openSettingsModal('editWidget', widgetId);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-sky-300 hover:text-white hover:bg-white/10 transition-colors text-left"
+                >
+                  <Settings size={14} />
+                  <span className="flex-1">{t.widgets.search.manageEngines}</span>
+                </button>
               </div>,
               document.body
             )}

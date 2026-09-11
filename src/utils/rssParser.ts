@@ -82,8 +82,10 @@ export function parseRssXml(xmlText: string): RssFeedItem[] {
 
         // Source title (Google News format often has "Article Title - Source Name" or <source>)
         let sourceTitle: string | undefined;
+        let sourceUrl: string | undefined;
         if (item.source) {
           sourceTitle = typeof item.source === 'string' ? item.source : item.source['#text'];
+          sourceUrl = typeof item.source === 'object' ? item.source['@_url'] : undefined;
         } else if (title.includes(' - ')) {
           const parts = title.split(' - ');
           sourceTitle = parts[parts.length - 1];
@@ -110,6 +112,7 @@ export function parseRssXml(xmlText: string): RssFeedItem[] {
           contentSnippet,
           imageUrl,
           sourceTitle,
+          sourceUrl,
         });
       }
       return items;

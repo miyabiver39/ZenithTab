@@ -9,6 +9,7 @@ export interface RssFeedItem {
   creator?: string;
   imageUrl?: string;
   sourceTitle?: string;
+  sourceUrl?: string;
 }
 
 export interface RssFeedData {

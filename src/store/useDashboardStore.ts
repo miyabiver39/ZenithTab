@@ -58,6 +58,7 @@ interface DashboardState {
   updateDockItem: (id: string, partial: Partial<Omit<DockItem, 'id'>>) => void;
   removeDockItem: (id: string) => void;
   moveDockItem: (id: string, direction: 'up' | 'down') => void;
+  reorderDockItem: (id: string, toIndex: number) => void;
 
   addKeyboardShortcut: (item: Omit<KeyboardShortcutBinding, 'id'>) => void;
   removeKeyboardShortcut: (id: string) => void;
@@ -394,6 +395,18 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
     const updated = [...dockItems];
     [updated[index], updated[targetIndex]] = [updated[targetIndex], updated[index]];
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  reorderDockItem: (id, toIndex) => {
+    const { dockItems } = get();
+    const fromIndex = dockItems.findIndex((item) => item.id === id);
+    if (fromIndex === -1 || toIndex < 0 || toIndex >= dockItems.length || fromIndex === toIndex) return;
+
+    const updated = [...dockItems];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
     set({ dockItems: updated });
     storageService.saveDockItems(updated);
   },

@@ -6,6 +6,7 @@ import { formatRelativeTime } from '../../../utils/date';
 import { rssService } from '../../../services/rssService';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
+import { getFaviconUrl } from '../../../utils/favicon';
 
 interface RssFeedWidgetProps {
   widgetId: string;
@@ -142,7 +143,16 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
           </div>
         ) : (
           <div className="divide-y divide-white/5 space-y-2">
-            {items.slice(0, maxItems).map((item) => (
+            {items.slice(0, maxItems).map((item) => {
+              // Most feeds (Google News especially) carry no per-article
+              // image at all — fall back to a small favicon of the actual
+              // publisher (item.sourceUrl, when present) rather than
+              // showing nothing. Chrome's own favicon cache only, per
+              // utils/favicon.ts's privacy note.
+              const thumbnailUrl = item.imageUrl || getFaviconUrl(item.sourceUrl || item.link, 48);
+              const isFallbackFavicon = !item.imageUrl && !!thumbnailUrl;
+
+              return (
               <a
                 key={item.id}
                 href={item.link}
@@ -151,11 +161,13 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
                 className="pt-2 block group hover:bg-white/[0.03] p-1.5 rounded-xl transition-all"
               >
                 <div className="flex gap-2.5 items-start">
-                  {showThumbnail && item.imageUrl && (
+                  {showThumbnail && thumbnailUrl && (
                     <img
-                      src={item.imageUrl}
+                      src={thumbnailUrl}
                       alt=""
-                      className="w-14 h-14 object-cover rounded-lg flex-shrink-0 bg-slate-800 border border-white/5 group-hover:scale-105 transition-transform"
+                      className={`rounded-lg flex-shrink-0 bg-slate-800 border border-white/5 group-hover:scale-105 transition-transform ${
+                        isFallbackFavicon ? 'w-6 h-6 object-contain p-1' : 'w-14 h-14 object-cover'
+                      }`}
                       onError={(e) => {
                         (e.target as HTMLElement).style.display = 'none';
                       }}
@@ -186,7 +198,8 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
                   </div>
                 </div>
               </a>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

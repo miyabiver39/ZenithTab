@@ -24,7 +24,10 @@ export const PageSwitcher: React.FC = () => {
   };
 
   return (
-    <div className="w-full px-4 sm:px-6 max-w-[1920px] mx-auto flex items-center gap-1.5 pb-2 overflow-x-auto custom-scrollbar select-none">
+    <div
+      title={pages.length > 1 ? t.pages.shortcutHint : undefined}
+      className="w-full px-4 sm:px-6 max-w-[1920px] mx-auto flex items-center gap-1.5 pb-2 overflow-x-auto custom-scrollbar select-none"
+    >
       {pages.map((page) => (
         <div
           key={page.id}

@@ -35,7 +35,7 @@ export const GridContainer: React.FC = () => {
   const renderWidgetContent = (widget: any) => {
     switch (widget.type) {
       case 'search':
-        return <SearchWidget config={widget.config} />;
+        return <SearchWidget widgetId={widget.id} config={widget.config} />;
       case 'shortcuts':
         return <ShortcutsWidget widgetId={widget.id} config={widget.config} />;
       case 'clock':
