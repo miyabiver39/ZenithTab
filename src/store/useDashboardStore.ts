@@ -63,6 +63,7 @@ const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: num
   todo: { w: 4, h: 3, minW: 3, minH: 2 },
   iframe: { w: 6, h: 4, minW: 3, minH: 3 },
   notes: { w: 4, h: 4, minW: 3, minH: 2 },
+  qrcode: { w: 3, h: 4, minW: 3, minH: 3 },
 };
 
 export const DEFAULT_SHORTCUTS = [
@@ -138,6 +139,10 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
     content: DEFAULT_NOTES_CONTENT,
     fontSize: 'base',
     fontFamily: 'sans',
+  },
+  qrcode: {
+    mode: 'url',
+    value: '',
   },
 };
 

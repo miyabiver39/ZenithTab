@@ -10,7 +10,8 @@ export type WidgetType =
   | 'search'
   | 'pomodoro'
   | 'todo'
-  | 'shortcuts';
+  | 'shortcuts'
+  | 'qrcode';
 
 export interface BaseWidgetConfig {
   title?: string;
@@ -128,6 +129,11 @@ export interface ShortcutsWidgetConfig extends BaseWidgetConfig {
   viewMode: 'grid' | 'compact';
 }
 
+export interface QrCodeWidgetConfig extends BaseWidgetConfig {
+  mode: 'url' | 'phone' | 'text';
+  value: string;
+}
+
 export type WidgetConfig =
   | { type: 'clock'; config: ClockWidgetConfig }
   | { type: 'weather'; config: WeatherWidgetConfig }
@@ -138,7 +144,8 @@ export type WidgetConfig =
   | { type: 'search'; config: SearchWidgetConfig }
   | { type: 'pomodoro'; config: PomodoroWidgetConfig }
   | { type: 'todo'; config: TodoWidgetConfig }
-  | { type: 'shortcuts'; config: ShortcutsWidgetConfig };
+  | { type: 'shortcuts'; config: ShortcutsWidgetConfig }
+  | { type: 'qrcode'; config: QrCodeWidgetConfig };
 
 export interface DashboardWidget {
   id: string;

@@ -10,6 +10,7 @@ import {
   Timer,
   CheckSquare,
   Plus,
+  QrCode,
 } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { useDashboardStore } from '../../store/useDashboardStore';
@@ -98,6 +99,13 @@ export const AddWidgetModal: React.FC = () => {
       description: t.widgets.iframe.desc,
       icon: Globe,
       color: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+    },
+    {
+      type: 'qrcode',
+      title: t.widgets.qrcode.title,
+      description: t.widgets.qrcode.desc,
+      icon: QrCode,
+      color: 'text-fuchsia-400 bg-fuchsia-400/10 border-fuchsia-400/20',
     },
   ];
 

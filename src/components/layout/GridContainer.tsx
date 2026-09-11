@@ -12,6 +12,7 @@ import { SearchWidget } from '../widgets/SearchWidget/SearchWidget';
 import { PomodoroWidget } from '../widgets/PomodoroWidget/PomodoroWidget';
 import { TodoWidget } from '../widgets/TodoWidget/TodoWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget/ShortcutsWidget';
+import { QrCodeWidget } from '../widgets/QrCodeWidget/QrCodeWidget';
 import { cn } from '../../utils/cn';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -53,6 +54,8 @@ export const GridContainer: React.FC = () => {
         return <IframeWidget config={widget.config} />;
       case 'notes':
         return <QuickNotesWidget widgetId={widget.id} config={widget.config} />;
+      case 'qrcode':
+        return <QrCodeWidget widgetId={widget.id} config={widget.config} />;
       default:
         return (
           <div className="flex items-center justify-center h-full text-slate-400 text-xs">
