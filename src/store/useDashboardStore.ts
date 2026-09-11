@@ -221,6 +221,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       md: [...layouts.md, { ...newLayout, w: Math.min(newLayout.w, 5) }],
       sm: [...layouts.sm, { ...newLayout, w: 6 }],
       xs: [...layouts.xs, { ...newLayout, w: 4 }],
+      xxs: [...(layouts.xxs || []), { ...newLayout, w: 2 }],
     };
 
     set({

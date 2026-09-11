@@ -22,6 +22,7 @@ export const GridContainer: React.FC = () => {
     layouts,
     isEditMode,
     updateLayouts,
+    appearance,
   } = useDashboardStore();
 
   const handleLayoutChange = (currentLayout: Layout[], allLayouts: any) => {
@@ -62,7 +63,12 @@ export const GridContainer: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex-1 px-4 sm:px-6 pb-24 max-w-[1920px] mx-auto">
+    <div
+      className={cn(
+        'w-full px-4 sm:px-6 max-w-[1920px] mx-auto',
+        appearance.dockPosition === 'bottom' && 'pb-24'
+      )}
+    >
       <ResponsiveGridLayout
         className={cn('layout', isEditMode && 'is-editing')}
         layouts={layouts}
@@ -77,7 +83,13 @@ export const GridContainer: React.FC = () => {
         containerPadding={[0, 10]}
       >
         {widgets.map((widget) => (
-          <div key={widget.id} data-grid={widget.layout}>
+          // No `data-grid` here on purpose: react-grid-layout treats a
+          // child's `data-grid` as authoritative and lets it override the
+          // per-breakpoint `layouts` prop above, which was collapsing every
+          // breakpoint back down to the `lg` coordinates and breaking the
+          // grid on resize. `layouts` (kept in sync for every breakpoint by
+          // the store) is the single source of truth instead.
+          <div key={widget.id}>
             <WidgetWrapper widget={widget}>
               {renderWidgetContent(widget)}
             </WidgetWrapper>
