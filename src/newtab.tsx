@@ -9,6 +9,7 @@ import { SettingsPanel } from './components/layout/SettingsPanel';
 import { AddWidgetModal } from './components/layout/AddWidgetModal';
 import { WidgetConfigModal } from './components/layout/WidgetConfigModal';
 import { AppDrawerModal } from './components/layout/AppDrawerModal';
+import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
 import './index.css';
 
 export const App: React.FC = () => {
@@ -17,6 +18,8 @@ export const App: React.FC = () => {
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  useGlobalKeyboardShortcuts();
 
   if (!isInitialized) {
     return (

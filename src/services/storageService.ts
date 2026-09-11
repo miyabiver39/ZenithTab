@@ -1,5 +1,11 @@
 import { DashboardWidget, ResponsiveLayouts } from '../types/widget';
-import { WallpaperSettings, AppearanceSettings, DashboardExportData, DockItem } from '../types/settings';
+import {
+  WallpaperSettings,
+  AppearanceSettings,
+  DashboardExportData,
+  DockItem,
+  KeyboardShortcutBinding,
+} from '../types/settings';
 import { storageGet, storageSet } from '../utils/storage';
 
 /** The running extension version, so exports carry the version that produced them. */
@@ -74,6 +80,18 @@ function sanitizeWidget(raw: any): DashboardWidget | null {
   } as DashboardWidget;
 }
 
+function sanitizeKeyboardShortcuts(raw: unknown): KeyboardShortcutBinding[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(
+    (item): item is KeyboardShortcutBinding =>
+      !!item &&
+      typeof item.id === 'string' &&
+      typeof item.combo === 'string' &&
+      typeof item.label === 'string' &&
+      isSafeUrl(item.url)
+  );
+}
+
 export const STORAGE_KEYS = {
   WIDGETS: 'dashboard_widgets',
   LAYOUTS: 'dashboard_layouts',
@@ -82,7 +100,10 @@ export const STORAGE_KEYS = {
   RSS_CACHE: 'rss_cache',
   NOTES: 'quick_notes',
   DOCK_ITEMS: 'dashboard_dock_items',
+  KEYBOARD_SHORTCUTS: 'dashboard_keyboard_shortcuts',
 } as const;
+
+export const DEFAULT_KEYBOARD_SHORTCUTS: KeyboardShortcutBinding[] = [];
 
 export const DEFAULT_DOCK_ITEMS: DockItem[] = [
   { id: 'dock-google', label: 'Google', url: 'https://google.com', icon: 'globe', openInNewTab: true },
@@ -300,12 +321,25 @@ export const storageService = {
     await storageSet(STORAGE_KEYS.DOCK_ITEMS, items);
   },
 
+  async getKeyboardShortcuts(): Promise<KeyboardShortcutBinding[]> {
+    const items = await storageGet<KeyboardShortcutBinding[]>(
+      STORAGE_KEYS.KEYBOARD_SHORTCUTS,
+      DEFAULT_KEYBOARD_SHORTCUTS
+    );
+    return items || DEFAULT_KEYBOARD_SHORTCUTS;
+  },
+
+  async saveKeyboardShortcuts(items: KeyboardShortcutBinding[]): Promise<void> {
+    await storageSet(STORAGE_KEYS.KEYBOARD_SHORTCUTS, items);
+  },
+
   async exportDashboardData(): Promise<DashboardExportData> {
     const widgets = await this.getWidgets();
     const layouts = await this.getLayouts();
     const wallpaper = await this.getWallpaper();
     const appearance = await this.getAppearance();
     const dockItems = await this.getDockItems();
+    const keyboardShortcuts = await this.getKeyboardShortcuts();
 
     return {
       version: currentVersion(),
@@ -315,6 +349,7 @@ export const storageService = {
       wallpaper,
       appearance,
       dockItems,
+      keyboardShortcuts,
     };
   },
 
@@ -348,6 +383,9 @@ export const storageService = {
         );
         if (dockItems.length > 0) await this.saveDockItems(dockItems);
       }
+      if (Array.isArray(data.keyboardShortcuts)) {
+        await this.saveKeyboardShortcuts(sanitizeKeyboardShortcuts(data.keyboardShortcuts));
+      }
 
       return true;
     } catch (error) {
@@ -362,5 +400,6 @@ export const storageService = {
     await this.saveWallpaper(DEFAULT_WALLPAPER);
     await this.saveAppearance(DEFAULT_APPEARANCE);
     await this.saveDockItems(DEFAULT_DOCK_ITEMS);
+    await this.saveKeyboardShortcuts(DEFAULT_KEYBOARD_SHORTCUTS);
   },
 };

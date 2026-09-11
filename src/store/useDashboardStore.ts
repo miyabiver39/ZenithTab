@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Layout } from 'react-grid-layout';
 import { DashboardWidget, ResponsiveLayouts, WidgetType } from '../types/widget';
-import { WallpaperSettings, AppearanceSettings, DockItem } from '../types/settings';
+import { WallpaperSettings, AppearanceSettings, DockItem, KeyboardShortcutBinding } from '../types/settings';
 import {
   storageService,
   DEFAULT_WIDGETS,
@@ -10,6 +10,7 @@ import {
   DEFAULT_APPEARANCE,
   DEFAULT_NOTES_CONTENT,
   DEFAULT_DOCK_ITEMS,
+  DEFAULT_KEYBOARD_SHORTCUTS,
 } from '../services/storageService';
 import { wallpaperService } from '../services/wallpaperService';
 
@@ -25,6 +26,7 @@ interface DashboardState {
   wallpaper: WallpaperSettings;
   appearance: AppearanceSettings;
   dockItems: DockItem[];
+  keyboardShortcuts: KeyboardShortcutBinding[];
 
   // Actions
   initialize: () => Promise<void>;
@@ -46,6 +48,9 @@ interface DashboardState {
   updateDockItem: (id: string, partial: Partial<Omit<DockItem, 'id'>>) => void;
   removeDockItem: (id: string) => void;
   moveDockItem: (id: string, direction: 'up' | 'down') => void;
+
+  addKeyboardShortcut: (item: Omit<KeyboardShortcutBinding, 'id'>) => void;
+  removeKeyboardShortcut: (id: string) => void;
 
   resetToDefault: () => Promise<void>;
   importConfig: (jsonData: string) => Promise<boolean>;
@@ -158,18 +163,20 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   wallpaper: DEFAULT_WALLPAPER,
   appearance: DEFAULT_APPEARANCE,
   dockItems: DEFAULT_DOCK_ITEMS,
+  keyboardShortcuts: DEFAULT_KEYBOARD_SHORTCUTS,
 
   toggleAppDrawer: (open) =>
     set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
 
   initialize: async () => {
     try {
-      const [widgets, layouts, wallpaper, appearance, dockItems] = await Promise.all([
+      const [widgets, layouts, wallpaper, appearance, dockItems, keyboardShortcuts] = await Promise.all([
         storageService.getWidgets(),
         storageService.getLayouts(),
         storageService.getWallpaper(),
         storageService.getAppearance(),
         storageService.getDockItems(),
+        storageService.getKeyboardShortcuts(),
       ]);
 
       set({
@@ -178,6 +185,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         wallpaper,
         appearance,
         dockItems,
+        keyboardShortcuts,
         isInitialized: true,
       });
     } catch (err) {
@@ -376,6 +384,21 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     storageService.saveDockItems(updated);
   },
 
+  addKeyboardShortcut: (item) => {
+    const { keyboardShortcuts } = get();
+    const newItem: KeyboardShortcutBinding = { ...item, id: `kbd-${Date.now()}` };
+    const updated = [...keyboardShortcuts, newItem];
+    set({ keyboardShortcuts: updated });
+    storageService.saveKeyboardShortcuts(updated);
+  },
+
+  removeKeyboardShortcut: (id) => {
+    const { keyboardShortcuts } = get();
+    const updated = keyboardShortcuts.filter((item) => item.id !== id);
+    set({ keyboardShortcuts: updated });
+    storageService.saveKeyboardShortcuts(updated);
+  },
+
   resetToDefault: async () => {
     await storageService.resetDashboard();
     set({
@@ -384,6 +407,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       wallpaper: DEFAULT_WALLPAPER,
       appearance: DEFAULT_APPEARANCE,
       dockItems: DEFAULT_DOCK_ITEMS,
+      keyboardShortcuts: DEFAULT_KEYBOARD_SHORTCUTS,
       isEditMode: false,
       activeSettingsModal: null,
       editingWidgetId: null,
@@ -393,12 +417,13 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   importConfig: async (jsonData) => {
     const success = await storageService.importDashboardData(jsonData);
     if (success) {
-      const [widgets, layouts, wallpaper, appearance, dockItems] = await Promise.all([
+      const [widgets, layouts, wallpaper, appearance, dockItems, keyboardShortcuts] = await Promise.all([
         storageService.getWidgets(),
         storageService.getLayouts(),
         storageService.getWallpaper(),
         storageService.getAppearance(),
         storageService.getDockItems(),
+        storageService.getKeyboardShortcuts(),
       ]);
 
       set({
@@ -407,6 +432,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         wallpaper,
         appearance,
         dockItems,
+        keyboardShortcuts,
         activeSettingsModal: null,
       });
       return true;

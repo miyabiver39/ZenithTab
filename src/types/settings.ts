@@ -33,6 +33,15 @@ export interface DockItem {
   openInNewTab: boolean;
 }
 
+export interface KeyboardShortcutBinding {
+  id: string;
+  /** Normalized combo string, e.g. "Ctrl+Alt+G" — see utils/keyboardShortcuts.ts. */
+  combo: string;
+  label: string;
+  url: string;
+  openInNewTab: boolean;
+}
+
 export interface DashboardExportData {
   version: string;
   exportedAt: string;
@@ -41,4 +50,5 @@ export interface DashboardExportData {
   wallpaper: WallpaperSettings;
   appearance: AppearanceSettings;
   dockItems?: DockItem[];
+  keyboardShortcuts?: KeyboardShortcutBinding[];
 }
