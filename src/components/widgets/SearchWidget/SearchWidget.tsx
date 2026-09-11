@@ -62,15 +62,22 @@ const SEARCH_ENGINES: Record<
 };
 
 export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) => {
-  const { defaultEngine = 'google', openInNewTab = true, showEngineSelector = true, customEngines = [] } = config;
+  const {
+    defaultEngine = 'google',
+    openInNewTab = true,
+    showEngineSelector = true,
+    customEngines = [],
+    hiddenBuiltinEngines = [],
+  } = config;
   const openSettingsModal = useDashboardStore((s) => s.openSettingsModal);
 
-  // Built-in engines plus any user-defined ones (config.customEngines), merged
-  // into one lookup so the rest of the component doesn't need to care which
-  // kind an engine key resolves to.
+  // Built-in engines (minus any the user removed) plus any user-defined ones
+  // (config.customEngines), merged into one lookup so the rest of the
+  // component doesn't need to care which kind an engine key resolves to.
   const engines = useMemo<Record<string, ResolvedEngine>>(() => {
     const merged: Record<string, ResolvedEngine> = {};
     for (const key of Object.keys(SEARCH_ENGINES) as SearchEngine[]) {
+      if (hiddenBuiltinEngines.includes(key)) continue;
       const eng = SEARCH_ENGINES[key];
       merged[key] = { key, name: eng.name, icon: eng.icon, url: eng.url, color: eng.color };
     }
@@ -85,7 +92,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
       };
     }
     return merged;
-  }, [customEngines]);
+  }, [customEngines, hiddenBuiltinEngines]);
   const engineKeys = useMemo(() => Object.keys(engines), [engines]);
 
   const [selectedEngine, setSelectedEngine] = useState<string>(defaultEngine);
@@ -153,19 +160,25 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
     };
   }, [isDropdownOpen, updateMenuPosition]);
 
+  // Google is the natural fallback, but the user can now remove built-in
+  // engines too — fall back to whatever's actually left instead of a
+  // hardcoded key that might itself be hidden.
+  const fallbackEngineKey = engines.google ? 'google' : engineKeys[0];
+
   // If the selected engine (e.g. a custom one) got removed elsewhere, fall
   // back to the configured default rather than pointing at nothing.
   useEffect(() => {
-    if (!engines[selectedEngine]) {
-      setSelectedEngine(engines[defaultEngine] ? defaultEngine : 'google');
+    if (!engines[selectedEngine] && fallbackEngineKey) {
+      setSelectedEngine(engines[defaultEngine] ? defaultEngine : fallbackEngineKey);
     }
-  }, [engines, selectedEngine, defaultEngine]);
+  }, [engines, selectedEngine, defaultEngine, fallbackEngineKey]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
-    const engine = engines[selectedEngine] || engines.google;
+    const engine = engines[selectedEngine] || engines[fallbackEngineKey];
+    if (!engine) return;
     const targetUrl = engine.url(query.trim());
 
     if (openInNewTab) {
@@ -175,7 +188,17 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
     }
   };
 
-  const currentEngineObj = engines[selectedEngine] || engines.google;
+  // engineKeys can only be empty if the user removed every built-in engine
+  // without adding a custom one — the settings UI prevents that, but this
+  // keeps the widget from crashing if it ever happens anyway.
+  const currentEngineObj: ResolvedEngine =
+    engines[selectedEngine] || engines[fallbackEngineKey] || {
+      key: '',
+      name: t.widgets.search.title,
+      icon: Search,
+      url: () => '',
+      color: 'text-slate-400',
+    };
   const CurrentIcon = currentEngineObj.icon;
 
   return (

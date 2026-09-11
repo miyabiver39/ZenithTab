@@ -8,8 +8,18 @@ import { rssService } from '../../services/rssService';
 import { weatherService, GeolocationFailure } from '../../services/weatherService';
 import { requestHostPermission } from '../../utils/permissions';
 import { useTranslation } from '../../i18n/i18n';
-import { CustomSearchEngine } from '../../types/widget';
+import { CustomSearchEngine, SearchEngine } from '../../types/widget';
 import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../utils/searchEnginePresets';
+
+const BUILTIN_ENGINE_LABELS: Record<SearchEngine, string> = {
+  google: 'Google',
+  duckduckgo: 'DuckDuckGo',
+  bing: 'Bing',
+  github: 'GitHub',
+  youtube: 'YouTube',
+  chatgpt: 'ChatGPT',
+};
+const BUILTIN_ENGINE_KEYS = Object.keys(BUILTIN_ENGINE_LABELS) as SearchEngine[];
 
 export const WidgetConfigModal: React.FC = () => {
   const {
@@ -112,13 +122,45 @@ export const WidgetConfigModal: React.FC = () => {
     if (preset) addCustomEngine(preset.name, preset.urlTemplate, preset.icon);
   };
 
+  // The default engine may point at whichever engine just got removed —
+  // fall back to whatever's left instead of a hardcoded key that might
+  // itself have been removed too.
+  const pickFallbackEngine = (
+    visibleBuiltins: SearchEngine[],
+    customEngines: CustomSearchEngine[]
+  ): string | undefined => visibleBuiltins[0] || customEngines[0]?.id;
+
   const handleRemoveCustomEngine = (id: string) => {
     const customEngines = (config.customEngines || []).filter((e: CustomSearchEngine) => e.id !== id);
+    const visibleBuiltins = BUILTIN_ENGINE_KEYS.filter(
+      (k) => !(config.hiddenBuiltinEngines || []).includes(k)
+    );
     const updated: Record<string, any> = { ...config, customEngines };
     if (config.defaultEngine === id) {
-      updated.defaultEngine = 'google';
+      updated.defaultEngine = pickFallbackEngine(visibleBuiltins, customEngines);
     }
     setConfig(updated);
+  };
+
+  const handleRemoveBuiltinEngine = (key: SearchEngine) => {
+    const hiddenBuiltinEngines: SearchEngine[] = [...(config.hiddenBuiltinEngines || []), key];
+    const visibleBuiltins = BUILTIN_ENGINE_KEYS.filter((k) => !hiddenBuiltinEngines.includes(k));
+    const customEngines: CustomSearchEngine[] = config.customEngines || [];
+
+    // Always keep at least one engine total — the widget has nothing to
+    // search with otherwise.
+    if (visibleBuiltins.length === 0 && customEngines.length === 0) return;
+
+    const updated: Record<string, any> = { ...config, hiddenBuiltinEngines };
+    if (config.defaultEngine === key) {
+      updated.defaultEngine = pickFallbackEngine(visibleBuiltins, customEngines);
+    }
+    setConfig(updated);
+  };
+
+  const handleRestoreBuiltinEngine = (key: SearchEngine) => {
+    const hiddenBuiltinEngines = (config.hiddenBuiltinEngines || []).filter((k: SearchEngine) => k !== key);
+    setConfig({ ...config, hiddenBuiltinEngines });
   };
 
   const renderConfigFields = () => {
@@ -148,10 +190,14 @@ export const WidgetConfigModal: React.FC = () => {
 
       case 'search': {
         const customEngines: CustomSearchEngine[] = config.customEngines || [];
+        const hiddenBuiltinEngines: SearchEngine[] = config.hiddenBuiltinEngines || [];
+        const visibleBuiltins = BUILTIN_ENGINE_KEYS.filter((k) => !hiddenBuiltinEngines.includes(k));
+        const totalEngineCount = visibleBuiltins.length + customEngines.length;
         const allEngineOptions = [
-          ...['google', 'duckduckgo', 'bing', 'github', 'youtube', 'chatgpt'].map((id) => ({ id, label: id })),
+          ...visibleBuiltins.map((id) => ({ id, label: BUILTIN_ENGINE_LABELS[id] })),
           ...customEngines.map((e) => ({ id: e.id, label: e.name })),
         ];
+        const urlMissingQuery = newEngineUrl.trim().length > 0 && !newEngineUrl.includes('{query}');
 
         return (
           <div className="space-y-4">
@@ -188,8 +234,33 @@ export const WidgetConfigModal: React.FC = () => {
             <div className="pt-3 border-t border-white/10 space-y-3">
               <label className="block text-xs font-medium text-slate-300">{t.widgets.search.customEngines}</label>
 
-              {customEngines.length > 0 && (
+              {/* Built-ins and custom engines are managed the same way: both
+                  show up in one list, both get a remove button. Built-ins
+                  aren't gone for good — removing one just hides it, with a
+                  one-click "restore" chip below. */}
+              {(visibleBuiltins.length > 0 || customEngines.length > 0) && (
                 <div className="space-y-1.5">
+                  {visibleBuiltins.map((key) => (
+                    <div
+                      key={key}
+                      className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/50 border border-white/10"
+                    >
+                      <span className="text-sm leading-none w-4 text-center">🔎</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-semibold text-white truncate">{BUILTIN_ENGINE_LABELS[key]}</div>
+                        <div className="text-[10px] text-slate-500 truncate">{t.widgets.search.builtinEngine}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveBuiltinEngine(key)}
+                        disabled={totalEngineCount <= 1}
+                        title={totalEngineCount <= 1 ? t.widgets.search.lastEngineHint : undefined}
+                        className="p-1.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  ))}
                   {customEngines.map((e) => (
                     <div
                       key={e.id}
@@ -203,12 +274,33 @@ export const WidgetConfigModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleRemoveCustomEngine(e.id)}
-                        className="p-1.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                        disabled={totalEngineCount <= 1}
+                        title={totalEngineCount <= 1 ? t.widgets.search.lastEngineHint : undefined}
+                        className="p-1.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
                       >
                         <Trash2 size={13} />
                       </button>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {hiddenBuiltinEngines.length > 0 && (
+                <div>
+                  <p className="text-[11px] text-slate-400 mb-1.5">{t.widgets.search.hiddenEngines}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {hiddenBuiltinEngines.map((key) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => handleRestoreBuiltinEngine(key)}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800/50 border border-white/10 text-slate-300 hover:bg-slate-800 hover:border-white/20 transition-colors"
+                      >
+                        <span>{BUILTIN_ENGINE_LABELS[key]}</span>
+                        <Plus size={11} className="text-slate-500" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -257,6 +349,9 @@ export const WidgetConfigModal: React.FC = () => {
                 />
               </div>
               <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.search.customEngineHint}</p>
+              {urlMissingQuery && (
+                <p className="text-[11px] text-amber-400 leading-relaxed">{t.widgets.search.customEngineMissingQuery}</p>
+              )}
               <Button
                 type="button"
                 variant="secondary"

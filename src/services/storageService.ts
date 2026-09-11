@@ -73,6 +73,13 @@ function sanitizeWidget(raw: any): DashboardWidget | null {
     );
   }
 
+  const KNOWN_BUILTIN_ENGINES = ['google', 'bing', 'duckduckgo', 'github', 'youtube', 'chatgpt'];
+  if (Array.isArray(config.hiddenBuiltinEngines)) {
+    config.hiddenBuiltinEngines = config.hiddenBuiltinEngines.filter(
+      (key: unknown) => typeof key === 'string' && KNOWN_BUILTIN_ENGINES.includes(key)
+    );
+  }
+
   return {
     ...raw,
     title: typeof raw.title === 'string' ? raw.title : 'Widget',

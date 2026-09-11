@@ -92,6 +92,8 @@ export interface SearchWidgetConfig extends BaseWidgetConfig {
   showEngineSelector: boolean;
   openInNewTab: boolean;
   customEngines?: CustomSearchEngine[];
+  /** Built-in engines the user removed — managed the same way as custom ones. */
+  hiddenBuiltinEngines?: SearchEngine[];
 }
 
 export interface PomodoroWidgetConfig extends BaseWidgetConfig {
