@@ -24,11 +24,35 @@ export interface AppearanceSettings {
   dockPosition: 'bottom' | 'top' | 'hidden';
 }
 
+export interface DockItem {
+  id: string;
+  label: string;
+  url: string;
+  /** A key from the curated DOCK_ICON_LIBRARY, or a free-form emoji/short string. */
+  icon: string;
+  openInNewTab: boolean;
+}
+
+export interface KeyboardShortcutBinding {
+  id: string;
+  /** Normalized combo string, e.g. "Ctrl+Alt+G" — see utils/keyboardShortcuts.ts. */
+  combo: string;
+  label: string;
+  url: string;
+  openInNewTab: boolean;
+}
+
 export interface DashboardExportData {
   version: string;
   exportedAt: string;
+  /** The active page's widgets/layouts — kept for backward compatibility with pre-1.3 exports. */
   widgets: any[];
   layouts: any;
   wallpaper: WallpaperSettings;
   appearance: AppearanceSettings;
+  dockItems?: DockItem[];
+  keyboardShortcuts?: KeyboardShortcutBinding[];
+  pages?: { id: string; name: string }[];
+  pageData?: Record<string, { widgets: any[]; layouts: any }>;
+  activePageId?: string;
 }

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Layout } from 'react-grid-layout';
-import { DashboardWidget, ResponsiveLayouts, WidgetType } from '../types/widget';
-import { WallpaperSettings, AppearanceSettings } from '../types/settings';
+import { DashboardWidget, ResponsiveLayouts, WidgetType, DashboardPageMeta, DashboardPageData } from '../types/widget';
+import { WallpaperSettings, AppearanceSettings, DockItem, KeyboardShortcutBinding } from '../types/settings';
 import {
   storageService,
   DEFAULT_WIDGETS,
@@ -9,8 +9,14 @@ import {
   DEFAULT_WALLPAPER,
   DEFAULT_APPEARANCE,
   DEFAULT_NOTES_CONTENT,
+  DEFAULT_DOCK_ITEMS,
+  DEFAULT_KEYBOARD_SHORTCUTS,
+  DEFAULT_PAGES,
+  DEFAULT_PAGE_ID,
 } from '../services/storageService';
 import { wallpaperService } from '../services/wallpaperService';
+
+const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
 interface DashboardState {
   isInitialized: boolean;
@@ -23,6 +29,14 @@ interface DashboardState {
   layouts: ResponsiveLayouts;
   wallpaper: WallpaperSettings;
   appearance: AppearanceSettings;
+  dockItems: DockItem[];
+  keyboardShortcuts: KeyboardShortcutBinding[];
+
+  // Multi-page dashboard: `widgets`/`layouts` above always mirror the
+  // active page; `pageData` holds every page's own widgets/layouts.
+  pages: DashboardPageMeta[];
+  activePageId: string;
+  pageData: Record<string, DashboardPageData>;
 
   // Actions
   initialize: () => Promise<void>;
@@ -40,6 +54,19 @@ interface DashboardState {
   rotateWallpaper: () => void;
   updateAppearance: (partial: Partial<AppearanceSettings>) => void;
 
+  addDockItem: (item: Omit<DockItem, 'id'>) => void;
+  updateDockItem: (id: string, partial: Partial<Omit<DockItem, 'id'>>) => void;
+  removeDockItem: (id: string) => void;
+  moveDockItem: (id: string, direction: 'up' | 'down') => void;
+
+  addKeyboardShortcut: (item: Omit<KeyboardShortcutBinding, 'id'>) => void;
+  removeKeyboardShortcut: (id: string) => void;
+
+  switchPage: (id: string) => void;
+  addPage: (name?: string) => void;
+  removePage: (id: string) => void;
+  renamePage: (id: string, name: string) => void;
+
   resetToDefault: () => Promise<void>;
   importConfig: (jsonData: string) => Promise<boolean>;
   exportConfig: () => Promise<string>;
@@ -56,6 +83,7 @@ const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: num
   todo: { w: 4, h: 3, minW: 3, minH: 2 },
   iframe: { w: 6, h: 4, minW: 3, minH: 3 },
   notes: { w: 4, h: 4, minW: 3, minH: 2 },
+  qrcode: { w: 3, h: 4, minW: 3, minH: 3 },
 };
 
 export const DEFAULT_SHORTCUTS = [
@@ -132,44 +160,76 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
     fontSize: 'base',
     fontFamily: 'sans',
   },
+  qrcode: {
+    mode: 'url',
+    value: '',
+  },
 };
 
-export const useDashboardStore = create<DashboardState>((set, get) => ({
-  isInitialized: false,
-  isEditMode: false,
-  isAppDrawerOpen: false,
-  activeSettingsModal: null,
-  editingWidgetId: null,
+export const useDashboardStore = create<DashboardState>((set, get) => {
+  // Shared by every widget/layout mutator: keeps `widgets`/`layouts` (the
+  // active page's mirror) and `pageData[activePageId]` in sync, and
+  // persists both.
+  const persistPageState = (widgets: DashboardWidget[], layouts: ResponsiveLayouts) => {
+    const { pageData, activePageId } = get();
+    const updatedPageData = { ...pageData, [activePageId]: { widgets, layouts } };
+    set({ widgets, layouts, pageData: updatedPageData });
+    storageService.saveWidgets(widgets);
+    storageService.saveLayouts(layouts);
+    storageService.savePageData(updatedPageData);
+  };
 
-  widgets: DEFAULT_WIDGETS,
-  layouts: DEFAULT_LAYOUTS,
-  wallpaper: DEFAULT_WALLPAPER,
-  appearance: DEFAULT_APPEARANCE,
+  return {
+    isInitialized: false,
+    isEditMode: false,
+    isAppDrawerOpen: false,
+    activeSettingsModal: null,
+    editingWidgetId: null,
 
-  toggleAppDrawer: (open) =>
-    set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
+    widgets: DEFAULT_WIDGETS,
+    layouts: DEFAULT_LAYOUTS,
+    wallpaper: DEFAULT_WALLPAPER,
+    appearance: DEFAULT_APPEARANCE,
+    dockItems: DEFAULT_DOCK_ITEMS,
+    keyboardShortcuts: DEFAULT_KEYBOARD_SHORTCUTS,
 
-  initialize: async () => {
-    try {
-      const [widgets, layouts, wallpaper, appearance] = await Promise.all([
-        storageService.getWidgets(),
-        storageService.getLayouts(),
-        storageService.getWallpaper(),
-        storageService.getAppearance(),
-      ]);
+    pages: DEFAULT_PAGES,
+    activePageId: DEFAULT_PAGE_ID,
+    pageData: {},
 
-      set({
-        widgets,
-        layouts,
-        wallpaper,
-        appearance,
-        isInitialized: true,
-      });
-    } catch (err) {
-      console.error('Failed initializing dashboard store:', err);
-      set({ isInitialized: true });
-    }
-  },
+    toggleAppDrawer: (open) =>
+      set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
+
+    initialize: async () => {
+      try {
+        const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
+          await Promise.all([
+            storageService.getPagesState(),
+            storageService.getWallpaper(),
+            storageService.getAppearance(),
+            storageService.getDockItems(),
+            storageService.getKeyboardShortcuts(),
+          ]);
+
+        const active = pageData[activePageId] || { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS };
+
+        set({
+          pages,
+          activePageId,
+          pageData,
+          widgets: active.widgets,
+          layouts: active.layouts,
+          wallpaper,
+          appearance,
+          dockItems,
+          keyboardShortcuts,
+          isInitialized: true,
+        });
+      } catch (err) {
+        console.error('Failed initializing dashboard store:', err);
+        set({ isInitialized: true });
+      }
+    },
 
   setEditMode: (isEditMode) => set({ isEditMode }),
 
@@ -224,14 +284,8 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       xxs: [...(layouts.xxs || []), { ...newLayout, w: 2 }],
     };
 
-    set({
-      widgets: updatedWidgets,
-      layouts: updatedLayouts,
-      activeSettingsModal: null,
-    });
-
-    storageService.saveWidgets(updatedWidgets);
-    storageService.saveLayouts(updatedLayouts);
+    persistPageState(updatedWidgets, updatedLayouts);
+    set({ activeSettingsModal: null });
   },
 
   removeWidget: (id) => {
@@ -244,19 +298,14 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       md: filterLayout(layouts.md),
       sm: filterLayout(layouts.sm),
       xs: filterLayout(layouts.xs),
+      xxs: filterLayout(layouts.xxs || []),
     };
 
-    set({
-      widgets: updatedWidgets,
-      layouts: updatedLayouts,
-    });
-
-    storageService.saveWidgets(updatedWidgets);
-    storageService.saveLayouts(updatedLayouts);
+    persistPageState(updatedWidgets, updatedLayouts);
   },
 
   updateWidgetConfig: (id, config, title) => {
-    const { widgets } = get();
+    const { widgets, layouts } = get();
     const updatedWidgets = widgets.map((w) => {
       if (w.id === id) {
         return {
@@ -268,13 +317,8 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       return w;
     });
 
-    set({
-      widgets: updatedWidgets,
-      activeSettingsModal: null,
-      editingWidgetId: null,
-    });
-
-    storageService.saveWidgets(updatedWidgets);
+    persistPageState(updatedWidgets, layouts);
+    set({ activeSettingsModal: null, editingWidgetId: null });
   },
 
   updateLayouts: (_currentLayout, allLayouts) => {
@@ -289,13 +333,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       };
     });
 
-    set({
-      widgets: updatedWidgets,
-      layouts: allLayouts,
-    });
-
-    storageService.saveWidgets(updatedWidgets);
-    storageService.saveLayouts(allLayouts);
+    persistPageState(updatedWidgets, allLayouts);
   },
 
   updateWallpaper: (partial) => {
@@ -326,13 +364,159 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     storageService.saveAppearance(updated);
   },
 
+  addDockItem: (item) => {
+    const { dockItems } = get();
+    const newItem: DockItem = { ...item, id: `dock-${Date.now()}` };
+    const updated = [...dockItems, newItem];
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  updateDockItem: (id, partial) => {
+    const { dockItems } = get();
+    const updated = dockItems.map((item) => (item.id === id ? { ...item, ...partial } : item));
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  removeDockItem: (id) => {
+    const { dockItems } = get();
+    const updated = dockItems.filter((item) => item.id !== id);
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  moveDockItem: (id, direction) => {
+    const { dockItems } = get();
+    const index = dockItems.findIndex((item) => item.id === id);
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (index === -1 || targetIndex < 0 || targetIndex >= dockItems.length) return;
+
+    const updated = [...dockItems];
+    [updated[index], updated[targetIndex]] = [updated[targetIndex], updated[index]];
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  },
+
+  addKeyboardShortcut: (item) => {
+    const { keyboardShortcuts } = get();
+    const newItem: KeyboardShortcutBinding = { ...item, id: `kbd-${Date.now()}` };
+    const updated = [...keyboardShortcuts, newItem];
+    set({ keyboardShortcuts: updated });
+    storageService.saveKeyboardShortcuts(updated);
+  },
+
+  removeKeyboardShortcut: (id) => {
+    const { keyboardShortcuts } = get();
+    const updated = keyboardShortcuts.filter((item) => item.id !== id);
+    set({ keyboardShortcuts: updated });
+    storageService.saveKeyboardShortcuts(updated);
+  },
+
+  switchPage: (id) => {
+    const { pages, pageData, activePageId, widgets, layouts } = get();
+    if (id === activePageId || !pages.some((p) => p.id === id)) return;
+
+    // Snapshot the outgoing page's live state before switching away.
+    const updatedPageData = { ...pageData, [activePageId]: { widgets, layouts } };
+    const nextPage = updatedPageData[id] || { widgets: [], layouts: EMPTY_LAYOUTS };
+
+    set({
+      pageData: updatedPageData,
+      activePageId: id,
+      widgets: nextPage.widgets,
+      layouts: nextPage.layouts,
+      isEditMode: false,
+    });
+
+    storageService.savePageData(updatedPageData);
+    storageService.saveActivePageId(id);
+    storageService.saveWidgets(nextPage.widgets);
+    storageService.saveLayouts(nextPage.layouts);
+  },
+
+  addPage: (name) => {
+    const { pages, pageData, activePageId, widgets, layouts } = get();
+    const newId = `page-${Date.now()}`;
+    const newPageMeta: DashboardPageMeta = { id: newId, name: name?.trim() || `Page ${pages.length + 1}` };
+    const newPages = [...pages, newPageMeta];
+    const updatedPageData = {
+      ...pageData,
+      [activePageId]: { widgets, layouts },
+      [newId]: { widgets: [], layouts: EMPTY_LAYOUTS },
+    };
+
+    set({
+      pages: newPages,
+      pageData: updatedPageData,
+      activePageId: newId,
+      widgets: [],
+      layouts: EMPTY_LAYOUTS,
+      // A brand-new page starts empty — drop straight into edit mode so
+      // "Add Widget" is immediately visible instead of a bare blank page.
+      isEditMode: true,
+    });
+
+    storageService.savePages(newPages);
+    storageService.savePageData(updatedPageData);
+    storageService.saveActivePageId(newId);
+    storageService.saveWidgets([]);
+    storageService.saveLayouts(EMPTY_LAYOUTS);
+  },
+
+  removePage: (id) => {
+    const { pages, pageData, activePageId, widgets, layouts } = get();
+    if (pages.length <= 1) return; // always keep at least one page
+
+    const newPages = pages.filter((p) => p.id !== id);
+    const updatedPageData = { ...pageData };
+    delete updatedPageData[id];
+
+    const switchingAway = activePageId === id;
+    const newActiveId = switchingAway ? newPages[0].id : activePageId;
+    const nextPage = switchingAway
+      ? updatedPageData[newActiveId] || { widgets: [], layouts: EMPTY_LAYOUTS }
+      : { widgets, layouts };
+
+    set({
+      pages: newPages,
+      pageData: updatedPageData,
+      activePageId: newActiveId,
+      widgets: nextPage.widgets,
+      layouts: nextPage.layouts,
+      isEditMode: switchingAway ? false : get().isEditMode,
+    });
+
+    storageService.savePages(newPages);
+    storageService.savePageData(updatedPageData);
+    if (switchingAway) {
+      storageService.saveActivePageId(newActiveId);
+      storageService.saveWidgets(nextPage.widgets);
+      storageService.saveLayouts(nextPage.layouts);
+    }
+  },
+
+  renamePage: (id, name) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const { pages } = get();
+    const newPages = pages.map((p) => (p.id === id ? { ...p, name: trimmed } : p));
+    set({ pages: newPages });
+    storageService.savePages(newPages);
+  },
+
   resetToDefault: async () => {
     await storageService.resetDashboard();
     set({
+      pages: DEFAULT_PAGES,
+      activePageId: DEFAULT_PAGE_ID,
+      pageData: { [DEFAULT_PAGE_ID]: { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS } },
       widgets: DEFAULT_WIDGETS,
       layouts: DEFAULT_LAYOUTS,
       wallpaper: DEFAULT_WALLPAPER,
       appearance: DEFAULT_APPEARANCE,
+      dockItems: DEFAULT_DOCK_ITEMS,
+      keyboardShortcuts: DEFAULT_KEYBOARD_SHORTCUTS,
       isEditMode: false,
       activeSettingsModal: null,
       editingWidgetId: null,
@@ -342,18 +526,27 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   importConfig: async (jsonData) => {
     const success = await storageService.importDashboardData(jsonData);
     if (success) {
-      const [widgets, layouts, wallpaper, appearance] = await Promise.all([
-        storageService.getWidgets(),
-        storageService.getLayouts(),
-        storageService.getWallpaper(),
-        storageService.getAppearance(),
-      ]);
+      const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
+        await Promise.all([
+          storageService.getPagesState(),
+          storageService.getWallpaper(),
+          storageService.getAppearance(),
+          storageService.getDockItems(),
+          storageService.getKeyboardShortcuts(),
+        ]);
+
+      const active = pageData[activePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
 
       set({
-        widgets,
-        layouts,
+        pages,
+        activePageId,
+        pageData,
+        widgets: active.widgets,
+        layouts: active.layouts,
         wallpaper,
         appearance,
+        dockItems,
+        keyboardShortcuts,
         activeSettingsModal: null,
       });
       return true;
@@ -365,4 +558,5 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     const exportData = await storageService.exportDashboardData();
     return JSON.stringify(exportData, null, 2);
   },
-}));
+};
+});

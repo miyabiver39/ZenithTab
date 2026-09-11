@@ -10,7 +10,8 @@ export type WidgetType =
   | 'search'
   | 'pomodoro'
   | 'todo'
-  | 'shortcuts';
+  | 'shortcuts'
+  | 'qrcode';
 
 export interface BaseWidgetConfig {
   title?: string;
@@ -59,18 +60,38 @@ export interface IframeWidgetConfig extends BaseWidgetConfig {
   customFallbackTitle?: string;
 }
 
-export interface QuickNotesWidgetConfig extends BaseWidgetConfig {
+export interface NotePage {
+  id: string;
+  title: string;
   content: string;
+}
+
+export interface QuickNotesWidgetConfig extends BaseWidgetConfig {
+  /** @deprecated Legacy single-note content, kept only to migrate old configs into `pages`. */
+  content?: string;
+  pages?: NotePage[];
+  activePageId?: string;
   fontSize: 'sm' | 'base' | 'lg';
   fontFamily: 'sans' | 'mono' | 'serif';
 }
 
 export type SearchEngine = 'google' | 'bing' | 'duckduckgo' | 'github' | 'youtube' | 'chatgpt';
 
+export interface CustomSearchEngine {
+  id: string;
+  name: string;
+  /** Must contain a `{query}` placeholder, e.g. "https://example.com/search?q={query}". */
+  urlTemplate: string;
+  /** Optional emoji/short string shown instead of the generic search icon. */
+  icon?: string;
+}
+
 export interface SearchWidgetConfig extends BaseWidgetConfig {
-  defaultEngine: SearchEngine;
+  /** A built-in SearchEngine key, or a CustomSearchEngine id from customEngines. */
+  defaultEngine: string;
   showEngineSelector: boolean;
   openInNewTab: boolean;
+  customEngines?: CustomSearchEngine[];
 }
 
 export interface PomodoroWidgetConfig extends BaseWidgetConfig {
@@ -108,6 +129,11 @@ export interface ShortcutsWidgetConfig extends BaseWidgetConfig {
   viewMode: 'grid' | 'compact';
 }
 
+export interface QrCodeWidgetConfig extends BaseWidgetConfig {
+  mode: 'url' | 'phone' | 'text';
+  value: string;
+}
+
 export type WidgetConfig =
   | { type: 'clock'; config: ClockWidgetConfig }
   | { type: 'weather'; config: WeatherWidgetConfig }
@@ -118,7 +144,8 @@ export type WidgetConfig =
   | { type: 'search'; config: SearchWidgetConfig }
   | { type: 'pomodoro'; config: PomodoroWidgetConfig }
   | { type: 'todo'; config: TodoWidgetConfig }
-  | { type: 'shortcuts'; config: ShortcutsWidgetConfig };
+  | { type: 'shortcuts'; config: ShortcutsWidgetConfig }
+  | { type: 'qrcode'; config: QrCodeWidgetConfig };
 
 export interface DashboardWidget {
   id: string;
@@ -134,4 +161,14 @@ export interface ResponsiveLayouts {
   sm: Layout[];
   xs: Layout[];
   [key: string]: Layout[];
+}
+
+export interface DashboardPageMeta {
+  id: string;
+  name: string;
+}
+
+export interface DashboardPageData {
+  widgets: DashboardWidget[];
+  layouts: ResponsiveLayouts;
 }

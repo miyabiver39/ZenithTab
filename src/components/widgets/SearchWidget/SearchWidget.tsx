@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, Globe, Code2, Video, Sparkles, Compass, ChevronDown } from 'lucide-react';
 import { SearchWidgetConfig, SearchEngine } from '../../../types/widget';
@@ -6,6 +6,15 @@ import { useTranslation } from '../../../i18n/i18n';
 
 interface SearchWidgetProps {
   config: SearchWidgetConfig;
+}
+
+interface ResolvedEngine {
+  key: string;
+  name: string;
+  icon: React.ElementType | null;
+  emoji?: string;
+  url: (q: string) => string;
+  color: string;
 }
 
 const SEARCH_ENGINES: Record<
@@ -51,8 +60,32 @@ const SEARCH_ENGINES: Record<
 };
 
 export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
-  const { defaultEngine = 'google', openInNewTab = true, showEngineSelector = true } = config;
-  const [selectedEngine, setSelectedEngine] = useState<SearchEngine>(defaultEngine);
+  const { defaultEngine = 'google', openInNewTab = true, showEngineSelector = true, customEngines = [] } = config;
+
+  // Built-in engines plus any user-defined ones (config.customEngines), merged
+  // into one lookup so the rest of the component doesn't need to care which
+  // kind an engine key resolves to.
+  const engines = useMemo<Record<string, ResolvedEngine>>(() => {
+    const merged: Record<string, ResolvedEngine> = {};
+    for (const key of Object.keys(SEARCH_ENGINES) as SearchEngine[]) {
+      const eng = SEARCH_ENGINES[key];
+      merged[key] = { key, name: eng.name, icon: eng.icon, url: eng.url, color: eng.color };
+    }
+    for (const custom of customEngines) {
+      merged[custom.id] = {
+        key: custom.id,
+        name: custom.name,
+        icon: custom.icon ? null : Search,
+        emoji: custom.icon,
+        url: (q) => custom.urlTemplate.replace('{query}', encodeURIComponent(q)),
+        color: 'text-slate-300',
+      };
+    }
+    return merged;
+  }, [customEngines]);
+  const engineKeys = useMemo(() => Object.keys(engines), [engines]);
+
+  const [selectedEngine, setSelectedEngine] = useState<string>(defaultEngine);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
@@ -117,11 +150,19 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
     };
   }, [isDropdownOpen, updateMenuPosition]);
 
+  // If the selected engine (e.g. a custom one) got removed elsewhere, fall
+  // back to the configured default rather than pointing at nothing.
+  useEffect(() => {
+    if (!engines[selectedEngine]) {
+      setSelectedEngine(engines[defaultEngine] ? defaultEngine : 'google');
+    }
+  }, [engines, selectedEngine, defaultEngine]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
-    const engine = SEARCH_ENGINES[selectedEngine] || SEARCH_ENGINES.google;
+    const engine = engines[selectedEngine] || engines.google;
     const targetUrl = engine.url(query.trim());
 
     if (openInNewTab) {
@@ -131,7 +172,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
     }
   };
 
-  const currentEngineObj = SEARCH_ENGINES[selectedEngine] || SEARCH_ENGINES.google;
+  const currentEngineObj = engines[selectedEngine] || engines.google;
   const CurrentIcon = currentEngineObj.icon;
 
   return (
@@ -147,7 +188,11 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white transition-all mr-2 flex-shrink-0 active:scale-95"
               title="Switch Search Engine"
             >
-              <CurrentIcon size={15} className={currentEngineObj.color} />
+              {CurrentIcon ? (
+                <CurrentIcon size={15} className={currentEngineObj.color} />
+              ) : (
+                <span className="text-sm leading-none">{currentEngineObj.emoji}</span>
+              )}
               <span className="text-xs font-semibold tracking-wide hidden sm:inline">
                 {currentEngineObj.name}
               </span>
@@ -163,8 +208,8 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
                 style={{ position: 'fixed', top: menuPosition.top, left: menuPosition.left }}
                 className="w-44 bg-slate-900/95 border border-white/15 rounded-2xl shadow-2xl backdrop-blur-2xl py-1.5 z-[9999] animate-fade-in"
               >
-                {(Object.keys(SEARCH_ENGINES) as SearchEngine[]).map((key) => {
-                  const eng = SEARCH_ENGINES[key];
+                {engineKeys.map((key) => {
+                  const eng = engines[key];
                   const Icon = eng.icon;
                   const isSelected = selectedEngine === key;
                   return (
@@ -182,7 +227,11 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
                           : 'text-slate-300 hover:text-white hover:bg-white/10'
                       }`}
                     >
-                      <Icon size={14} className={eng.color} />
+                      {Icon ? (
+                        <Icon size={14} className={eng.color} />
+                      ) : (
+                        <span className="text-xs leading-none w-3.5 text-center">{eng.emoji}</span>
+                      )}
                       <span className="flex-1">{eng.name}</span>
                     </button>
                   );
@@ -213,8 +262,8 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
         {/* Optional Pill Switchers (only rendered when showEngineSelector is true) */}
         {showEngineSelector && (
           <div className="hidden lg:flex items-center gap-1.5 mt-2 overflow-x-auto py-0.5 custom-scrollbar">
-            {(Object.keys(SEARCH_ENGINES) as SearchEngine[]).map((key) => {
-              const eng = SEARCH_ENGINES[key];
+            {engineKeys.map((key) => {
+              const eng = engines[key];
               const Icon = eng.icon;
               const isSelected = selectedEngine === key;
               return (
@@ -228,7 +277,11 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ config }) => {
                       : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
                   }`}
                 >
-                  <Icon size={11} className={eng.color} />
+                  {Icon ? (
+                    <Icon size={11} className={eng.color} />
+                  ) : (
+                    <span className="text-[10px] leading-none">{eng.emoji}</span>
+                  )}
                   <span>{eng.name}</span>
                 </button>
               );

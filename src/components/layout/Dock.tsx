@@ -1,22 +1,16 @@
 import React from 'react';
-import { Globe, Code2, Video, Sparkles, Terminal, Mail, Plus, LayoutGrid } from 'lucide-react';
+import { Settings2 } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDashboardStore';
+import { useTranslation } from '../../i18n/i18n';
+import { DOCK_ICON_LIBRARY } from '../../utils/dockIcons';
 
 export const Dock: React.FC = () => {
-  const { appearance, openSettingsModal, toggleAppDrawer } = useDashboardStore();
+  const { appearance, dockItems, openSettingsModal } = useDashboardStore();
+  const { t } = useTranslation();
 
   if (appearance.dockPosition === 'hidden') {
     return null;
   }
-
-  const defaultDockItems = [
-    { label: 'Google', icon: Globe, url: 'https://google.com' },
-    { label: 'GitHub', icon: Code2, url: 'https://github.com' },
-    { label: 'YouTube', icon: Video, url: 'https://youtube.com' },
-    { label: 'Gmail', icon: Mail, url: 'https://mail.google.com' },
-    { label: 'ChatGPT', icon: Sparkles, url: 'https://chatgpt.com' },
-    { label: 'Dev Docs', icon: Terminal, url: 'https://developer.mozilla.org' },
-  ];
 
   return (
     <div
@@ -25,18 +19,22 @@ export const Dock: React.FC = () => {
       } left-1/2 -translate-x-1/2 z-30 transition-all select-none`}
     >
       <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/40 border border-white/10 shadow-2xl backdrop-blur-2xl">
-        {defaultDockItems.map((item, index) => {
-          const Icon = item.icon;
+        {dockItems.map((item) => {
+          const Icon = DOCK_ICON_LIBRARY[item.icon];
           return (
             <a
-              key={index}
+              key={item.id}
               href={item.url}
-              target="_blank"
+              target={item.openInNewTab ? '_blank' : undefined}
               rel="noopener noreferrer"
               className="p-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-95 group relative flex items-center justify-center"
               title={item.label}
             >
-              <Icon size={18} />
+              {Icon ? (
+                <Icon size={18} />
+              ) : (
+                <span className="text-base leading-none">{item.icon || '🔗'}</span>
+              )}
               <span className="absolute -top-8 px-2 py-0.5 rounded-md bg-slate-900/90 text-[10px] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow border border-white/10 whitespace-nowrap">
                 {item.label}
               </span>
@@ -44,28 +42,13 @@ export const Dock: React.FC = () => {
           );
         })}
 
-        <div className="w-[1px] h-5 bg-white/10 mx-1" />
-
         <button
-          onClick={() => toggleAppDrawer(true)}
-          className="p-2.5 rounded-xl text-sky-400 hover:text-sky-300 hover:bg-sky-500/10 transition-all hover:scale-110 active:scale-95 group relative flex items-center justify-center"
-          title="App Drawer"
+          type="button"
+          onClick={() => openSettingsModal('settings', 'dock')}
+          className="p-2.5 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+          title={t.settings.tabs.dock}
         >
-          <LayoutGrid size={18} />
-          <span className="absolute -top-8 px-2 py-0.5 rounded-md bg-slate-900/90 text-[10px] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow border border-white/10 whitespace-nowrap">
-            App Drawer
-          </span>
-        </button>
-
-        <button
-          onClick={() => openSettingsModal('addWidget')}
-          className="p-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-95 group relative flex items-center justify-center"
-          title="Add Widget"
-        >
-          <Plus size={18} />
-          <span className="absolute -top-8 px-2 py-0.5 rounded-md bg-slate-900/90 text-[10px] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow border border-white/10 whitespace-nowrap">
-            Add Widget
-          </span>
+          <Settings2 size={16} />
         </button>
       </div>
     </div>

@@ -18,15 +18,22 @@ export const Header: React.FC = () => {
 
   useEffect(() => {
     const hour = new Date().getHours();
+    let timeGreeting: string;
     if (hour >= 5 && hour < 12) {
-      setGreeting(t.greeting.morning);
+      timeGreeting = t.greeting.morning;
     } else if (hour >= 12 && hour < 18) {
-      setGreeting(t.greeting.afternoon);
+      timeGreeting = t.greeting.afternoon;
     } else if (hour >= 18 && hour < 22) {
-      setGreeting(t.greeting.evening);
+      timeGreeting = t.greeting.evening;
     } else {
-      setGreeting(t.greeting.night);
+      timeGreeting = t.greeting.night;
     }
+
+    // Mostly show a normal time-based greeting, but every so often surprise
+    // with a splash-text-style quip (Minecraft/Discord loading-screen style).
+    const splashes = t.greeting.splashes;
+    const showSplash = splashes.length > 0 && Math.random() < 0.35;
+    setGreeting(showSplash ? splashes[Math.floor(Math.random() * splashes.length)] : timeGreeting);
   }, [t]);
 
   return (
