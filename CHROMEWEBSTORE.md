@@ -1,0 +1,105 @@
+# Chrome Web Store Listing — ZenithTab
+
+> Last Updated: 2026-09-16
+
+## Store Listing
+
+**Extension Name** [REQUIRED]
+ZenithTab - New Tab Dashboard
+
+**Short Description** [REQUIRED]
+A customizable new tab dashboard with drag-and-drop widgets, bookmarks, RSS feeds, weather and dynamic wallpapers.
+
+**Detailed Description** [REQUIRED]
+ZenithTab transforms your new tab into a personal, highly organized productivity dashboard.
+
+Arrange widgets freely with drag-and-drop, pick dynamic wallpapers, and launch your daily workflows instantly. All settings are stored completely inside your local browser profile—no external account, tracking, or cloud sync required.
+
+Key Features:
+- Flexible Grid Layout: Drag, drop, and resize widgets with responsive breakpoints across laptops and external monitors.
+- Multi-Page Workspaces: Organize widgets across distinct named pages for work, personal, and research workflows.
+- Unified Search Bar: Quick-toggle between web search, repository search, video search, and AI assistant targets.
+- Bookmarks Explorer: Browse and search Chrome bookmarks with breadcrumb navigation and zero URL leakage.
+- RSS & News Feeds: Follow news topics and custom RSS/Atom feeds with automatic background cache refresh.
+- Live Weather: Real-time temperature, condition forecasts, and 3-day projections with on-demand location detection.
+- App Drawer & Quick Dock: Launch registered web apps categorized by tags, or use persistent top/bottom dock shortcuts.
+- Focus & Utilities: Built-in Pomodoro timer, to-do checklist, quick scratchpad, and calculator.
+- Privacy-First: Zero telemetry, zero analytics, zero ad network requests.
+
+How to Use:
+1. Open a new tab to see your default dashboard.
+2. Click "Add Widget" to choose and place widgets on your grid.
+3. Drag widgets to reposition, or drag corners to resize.
+4. Access settings to customize themes, wallpapers, or create new workspace pages.
+
+Privacy & Permissions:
+ZenithTab operates locally on your machine. Data stays strictly inside chrome.storage.local, and network requests are only made when you explicitly configure features (e.g. weather forecasts or RSS feeds).
+
+Support & Feedback:
+https://github.com/miyabiver39/ZenithTab/issues
+
+**Category** [REQUIRED]
+Productivity
+
+**Single Purpose** [REQUIRED]
+Provides a customizable, privacy-first productivity dashboard with widgets, bookmarks, and feeds on every new tab.
+
+**Primary Language** [REQUIRED]
+English
+
+---
+
+## Graphics & Assets
+
+| Asset | Dimensions | Status | Filename |
+|-------|-----------|--------|----------|
+| Store Icon [REQUIRED] | 128×128 PNG | ✅ Ready | store-assets/shop_icon_128x128.png |
+| Screenshot 1 [REQUIRED] | 1280×800 PNG | ✅ Ready | store-assets/screenshot_1_1280x800.png |
+| Screenshot 2 [RECOMMENDED] | 1280×800 PNG | ✅ Ready | store-assets/screenshot_2_1280x800.png |
+| Screenshot 3 [RECOMMENDED] | 1280×800 PNG | ✅ Ready | store-assets/screenshot_3_1280x800.png |
+| Screenshot 4 | 1280×800 PNG | ✅ Ready | store-assets/screenshot_4_1280x800.png |
+| Screenshot 5 | 1280×800 PNG | ✅ Ready | store-assets/screenshot_5_1280x800.png |
+| Small Promo Tile [RECOMMENDED] | 440×280 PNG | ✅ Ready | store-assets/promo_tile_small_440x280.png |
+| Marquee Promo Tile | 1400×560 PNG | ✅ Ready | store-assets/marquee_promo_tile_1400x560.png |
+
+---
+
+## Permissions Justification
+
+| Permission | Type | Justification |
+|------------|------|---------------|
+| storage | permissions | Saves user layout preferences, widget placements, custom search engines, notes, and theme options locally in chrome.storage.local. |
+| ookmarks | permissions | Reads the user's Chrome bookmark folders to display and search bookmarks inside the Bookmarks widget without uploading URLs anywhere. |
+| larms | permissions | Schedules background refresh cycles via chrome.alarms in the service worker for weather forecast and RSS feed updates. |
+| avicon | permissions | Fetches site favicons for bookmark entries and launcher shortcuts using the browser's built-in favicon utility. |
+| geolocation | permissions | Determines user coordinates only when the user clicks "Detect current location" in the Weather widget to configure local weather forecasts. |
+| https://api.open-meteo.com/* | host_permissions | Fetches weather forecasts and current meteorological conditions for the user's chosen location without requiring API keys. |
+| https://geocoding-api.open-meteo.com/* | host_permissions | Converts city names entered by the user into geographic coordinates for weather forecasting. |
+| https://nominatim.openstreetmap.org/* | host_permissions | Converts detected GPS coordinates into human-readable place names when the user clicks "Detect current location". |
+| https://news.google.com/* | host_permissions | Fetches Google News RSS feeds for configured topics to display headlines in the RSS/News widget. |
+| https://images.unsplash.com/* | host_permissions | Loads curated high-resolution wallpaper images when Unsplash wallpaper mode is selected by the user. |
+| https://*/* | optional_host_permissions | Prompts for runtime user approval to fetch external custom RSS/Atom feeds added manually by the user. |
+
+---
+
+## Privacy & Data Use
+
+### Data Collection
+- **Personal Information**: None collected or transmitted.
+- **Health / Financial / Authentication / Contacts**: None collected.
+- **Web History**: Not collected.
+- **User Content**: Notes, to-dos, and shortcuts remain exclusively in local browser storage.
+
+### Data Security & Privacy Policy
+- **Privacy Policy URL**: https://github.com/miyabiver39/ZenithTab/blob/main/PRIVACY.md
+- **Single Purpose Policy**: Verified compliant.
+- **Limited Use Policy**: ZenithTab does not sell user data, use data for credit/lending, or transmit data to external AI servers.
+
+---
+
+## Version History
+
+| Version | Date | Changes Summary |
+|---------|------|-----------------|
+| 1.3.2 | 2026-09-04 | Unified built-in and custom search engine management; stability improvements for storage reads. |
+| 1.3.1 | 2026-09-03 | Search engine auto-detection, presets, and reduced memory footprint during workspace page switching. |
