@@ -57,8 +57,32 @@ describe('RssFeedWidget', () => {
 
     const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-rss-1')!;
     expect(w.config.searchQuery).toBe('space');
+    expect(w.config.googleNewsMode).toBe('search');
     expect(w.config.feedUrl).toContain('q=space');
     expect(w.title).toBe('space News');
+  });
+
+  it('トピックモードではトピック名をヘッダーに出し、セクションURLを読むこと', async () => {
+    const fetchSpy = vi.spyOn(rssService, 'fetchFeed').mockResolvedValue(FEED);
+    render(
+      <RssFeedWidget widgetId="widget-rss-1" config={{ ...base, isGoogleNews: true, googleNewsMode: 'topic', googleNewsTopic: 'SCIENCE' }} />
+    );
+    await waitFor(() => screen.getByText('First story'));
+    expect(fetchSpy).toHaveBeenCalledWith('https://news.google.com/rss/headlines/section/topic/SCIENCE?hl=en-US&gl=US&ceid=US:en', false);
+    expect(screen.getByText('Google News: Science')).toBeInTheDocument();
+  });
+
+  it('インライン検索に「headlines」と入れると主要ヘッドラインに戻ること', async () => {
+    vi.spyOn(rssService, 'fetchFeed').mockResolvedValue(FEED);
+    render(<RssFeedWidget widgetId="widget-rss-1" config={{ ...base, isGoogleNews: true, googleNewsMode: 'search', searchQuery: 'tech' }} />);
+    await waitFor(() => screen.getByText('First story'));
+    fireEvent.click(screen.getByTitle('Search Google News'));
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'headlines' } });
+    fireEvent.submit(input.closest('form')!);
+    const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-rss-1')!;
+    expect(w.config.googleNewsMode).toBe('headlines');
+    expect(w.config.searchQuery).toBe('');
   });
 
   it('キーワードを空で保存するとトップニュースに戻ること', async () => {
@@ -74,6 +98,7 @@ describe('RssFeedWidget', () => {
 
     const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-rss-1')!;
     expect(w.config.searchQuery).toBe('');
+    expect(w.config.googleNewsMode).toBe('headlines');
     expect(w.config.feedUrl).toBe('https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en');
     expect(w.title).toBe('News');
   });

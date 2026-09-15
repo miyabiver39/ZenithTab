@@ -17,6 +17,8 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
   const {
     feedUrl,
     isGoogleNews = false,
+    googleNewsMode,
+    googleNewsTopic,
     searchQuery = '',
     maxItems = 8,
     refreshIntervalMinutes = 30,
@@ -32,12 +34,16 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
 
   // Google News URLs are derived from the current UI language rather than
   // the stored `feedUrl`, so switching languages moves the feed with it.
-  // An empty keyword means the edition's front page (top stories).
-  const effectiveFeedUrl = isGoogleNews
-    ? searchQuery
-      ? rssService.buildGoogleNewsRssUrl(searchQuery, activeLanguageCode)
-      : rssService.buildGoogleNewsTopStoriesUrl(activeLanguageCode)
-    : feedUrl;
+  const newsConfig = { googleNewsMode, googleNewsTopic, searchQuery };
+  const newsMode = rssService.resolveGoogleNewsMode(newsConfig);
+  const effectiveFeedUrl = isGoogleNews ? rssService.buildGoogleNewsUrlForConfig(newsConfig, activeLanguageCode) : feedUrl;
+
+  const newsLabel =
+    newsMode === 'topic' && googleNewsTopic
+      ? t.widgets.rss.topics[googleNewsTopic]
+      : newsMode === 'search'
+        ? `"${searchQuery.trim()}"`
+        : t.widgets.rss.modeHeadlines;
 
   const { items, isLoading, error, needsPermission, grantAccess, refresh } = useRssFeed(
     effectiveFeedUrl,
@@ -48,17 +54,18 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
     e.preventDefault();
     const query = searchInput.trim();
 
-    // Clearing the keyword falls back to top stories instead of an error.
+    // Typing a keyword switches to search; clearing it (or typing
+    // "headlines") goes back to the front page instead of erroring.
+    const nextMode = rssService.resolveGoogleNewsMode({ searchQuery: query });
+    const next = { googleNewsMode: nextMode, googleNewsTopic, searchQuery: nextMode === 'search' ? query : '' };
     updateWidgetConfig(
       widgetId,
       {
-        feedUrl: query
-          ? rssService.buildGoogleNewsRssUrl(query, activeLanguageCode)
-          : rssService.buildGoogleNewsTopStoriesUrl(activeLanguageCode),
+        ...next,
+        feedUrl: rssService.buildGoogleNewsUrlForConfig(next, activeLanguageCode),
         isGoogleNews: true,
-        searchQuery: query,
       },
-      query ? `${query} News` : t.defaults.newsTitle
+      nextMode === 'search' ? `${query} News` : t.defaults.newsTitle
     );
     setIsSearching(false);
   };
@@ -73,7 +80,7 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t.widgets.rss.topStoriesHint}
+              placeholder={t.widgets.rss.searchHint}
               autoFocus
               className="flex-1 px-2.5 py-1 bg-slate-800/40 border border-white/10 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
             />
@@ -96,11 +103,7 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
             <div className="flex items-center gap-1.5 overflow-hidden">
               <Newspaper size={14} className="text-sky-400 flex-shrink-0" />
               <span className="text-[11px] text-slate-400 truncate">
-                {isGoogleNews
-                  ? searchQuery
-                    ? `Google News: "${searchQuery}"`
-                    : `Google News: ${t.widgets.rss.topStories}`
-                  : t.widgets.rss.liveFeed}
+                {isGoogleNews ? `Google News: ${newsLabel}` : t.widgets.rss.liveFeed}
               </span>
             </div>
             <div className="flex items-center gap-1">

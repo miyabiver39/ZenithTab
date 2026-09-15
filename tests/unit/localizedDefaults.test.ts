@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rssService } from '../../src/services/rssService';
+import { rssService, isHeadlineKeyword } from '../../src/services/rssService';
 import { createDefaultWidgets, createDefaultLayouts } from '../../src/services/storageService';
 import { getPageDisplayName } from '../../src/utils/pageName';
 import { LOCALES } from '../../src/i18n/resolve';
@@ -16,6 +16,33 @@ describe('Google News URLs', () => {
     expect(rssService.buildGoogleNewsRssUrl('野球', 'ja')).toBe(
       'https://news.google.com/rss/search?q=%E9%87%8E%E7%90%83&hl=ja&gl=JP&ceid=JP:ja'
     );
+  });
+
+  it('空文字や「ヘッドライン」系キーワードは検索せず主要ヘッドラインURLになること', () => {
+    const top = 'https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja';
+    for (const q of ['', '   ', 'ヘッドライン', '主要ニュース', 'トップニュース', 'headlines', 'Top Stories']) {
+      expect(isHeadlineKeyword(q)).toBe(true);
+      expect(rssService.buildGoogleNewsRssUrl(q, 'ja')).toBe(top);
+    }
+    expect(isHeadlineKeyword('headline news today')).toBe(false);
+  });
+
+  it('トピックモードはセクションURLを生成し、未指定トピックはヘッドラインに落ちること', () => {
+    expect(rssService.buildGoogleNewsTopicUrl('TECHNOLOGY', 'de')).toBe(
+      'https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=de&gl=DE&ceid=DE:de'
+    );
+    expect(rssService.buildGoogleNewsRssUrl('ignored', 'en', 'topic', 'SPORTS')).toContain('/topic/SPORTS?');
+    expect(rssService.resolveGoogleNewsMode({ googleNewsMode: 'topic' })).toBe('headlines');
+  });
+
+  it('resolveGoogleNewsMode がモード未設定の旧設定をキーワードから判定すること', () => {
+    expect(rssService.resolveGoogleNewsMode({})).toBe('headlines');
+    expect(rssService.resolveGoogleNewsMode({ searchQuery: 'technology' })).toBe('search');
+    expect(rssService.resolveGoogleNewsMode({ searchQuery: 'ヘッドライン' })).toBe('headlines');
+    expect(rssService.resolveGoogleNewsMode({ googleNewsMode: 'headlines', searchQuery: 'kept' })).toBe('headlines');
+    expect(rssService.resolveGoogleNewsMode({ googleNewsMode: 'topic', googleNewsTopic: 'HEALTH' })).toBe('topic');
+    expect(rssService.buildGoogleNewsUrlForConfig({ googleNewsMode: 'topic', googleNewsTopic: 'HEALTH' }, 'ko')).toContain('/topic/HEALTH?hl=ko');
+    expect(rssService.buildGoogleNewsUrlForConfig({ searchQuery: 'ai' }, 'en')).toContain('/rss/search?q=ai&');
   });
 });
 

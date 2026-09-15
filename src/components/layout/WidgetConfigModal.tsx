@@ -4,12 +4,12 @@ import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 import { useDashboardStore } from '../../store/useDashboardStore';
-import { rssService } from '../../services/rssService';
+import { rssService, GOOGLE_NEWS_TOPICS } from '../../services/rssService';
 import { weatherService, GeolocationFailure } from '../../services/weatherService';
 import { requestHostPermission } from '../../utils/permissions';
 import { normalizeHttpUrl } from '../../utils/url';
 import { useTranslation } from '../../i18n/i18n';
-import { CustomSearchEngine, SearchEngine } from '../../types/widget';
+import { CustomSearchEngine, SearchEngine, GoogleNewsMode, GoogleNewsTopic } from '../../types/widget';
 import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../utils/searchEnginePresets';
 
 const BUILTIN_ENGINE_LABELS: Record<SearchEngine, string> = {
@@ -77,11 +77,9 @@ export const WidgetConfigModal: React.FC = () => {
 
     // Custom formatting for Google News
     if (targetWidget.type === 'rss' && config.isGoogleNews) {
-      const query = (config.searchQuery || '').trim();
-      config.searchQuery = query;
-      config.feedUrl = query
-        ? rssService.buildGoogleNewsRssUrl(query, activeLanguageCode)
-        : rssService.buildGoogleNewsTopStoriesUrl(activeLanguageCode);
+      config.searchQuery = (config.searchQuery || '').trim();
+      config.googleNewsMode = rssService.resolveGoogleNewsMode(config);
+      config.feedUrl = rssService.buildGoogleNewsUrlForConfig(config, activeLanguageCode);
     }
 
     // Hand-typed embed URLs: assume https:// when the scheme is missing and
@@ -590,7 +588,11 @@ export const WidgetConfigModal: React.FC = () => {
           </div>
         );
 
-      case 'rss':
+      case 'rss': {
+        // What the user picked in this dialog, before the save-time
+        // normalisation (an empty keyword only becomes 'headlines' on save,
+        // so choosing 'Keyword search' doesn't snap straight back).
+        const uiNewsMode: GoogleNewsMode = config.googleNewsMode || rssService.resolveGoogleNewsMode(config);
         return (
           <div className="space-y-4">
             <div className="flex items-center justify-between py-1">
@@ -607,14 +609,69 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             {config.isGoogleNews ? (
-              <div className="space-y-1.5">
-                <Input
-                  label={t.widgets.rss.searchPlaceholder}
-                  value={config.searchQuery || ''}
-                  onChange={(e) => setConfig({ ...config, searchQuery: e.target.value })}
-                  placeholder="e.g. artificial intelligence, technology, web dev"
-                />
-                <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.rss.topStoriesHint}</p>
+              <div className="space-y-3">
+                {/* Three ways to use Google News: the front page (needs no
+                    input at all), a topic section, or a free keyword. */}
+                <div>
+                  <label className="block text-xs font-medium text-slate-300 mb-1.5">{t.widgets.rss.mode}</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(
+                      [
+                        { key: 'headlines', label: t.widgets.rss.modeHeadlines },
+                        { key: 'topic', label: t.widgets.rss.modeTopic },
+                        { key: 'search', label: t.widgets.rss.modeSearch },
+                      ] as { key: GoogleNewsMode; label: string }[]
+                    ).map((m) => (
+                      <button
+                        key={m.key}
+                        type="button"
+                        onClick={() =>
+                          setConfig({
+                            ...config,
+                            googleNewsMode: m.key,
+                            googleNewsTopic: m.key === 'topic' ? config.googleNewsTopic || 'TECHNOLOGY' : config.googleNewsTopic,
+                          })
+                        }
+                        className={`py-2 px-2 rounded-lg text-xs font-medium border truncate transition-all ${
+                          uiNewsMode === m.key
+                            ? 'bg-sky-500/20 border-sky-400 text-sky-200 shadow'
+                            : 'bg-slate-800/50 border-white/10 text-slate-300 hover:bg-slate-800'
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {uiNewsMode === 'topic' && (
+                  <div>
+                    <label className="block text-xs font-medium text-slate-300 mb-1.5">{t.widgets.rss.topicLabel}</label>
+                    <select
+                      value={config.googleNewsTopic || 'TECHNOLOGY'}
+                      onChange={(e) => setConfig({ ...config, googleNewsTopic: e.target.value as GoogleNewsTopic })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-800/50 border border-white/10 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-400/50"
+                    >
+                      {GOOGLE_NEWS_TOPICS.map((topic) => (
+                        <option key={topic} value={topic} className="bg-slate-900">
+                          {t.widgets.rss.topics[topic]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {uiNewsMode === 'search' && (
+                  <div className="space-y-1.5">
+                    <Input
+                      label={t.widgets.rss.searchPlaceholder}
+                      value={config.searchQuery || ''}
+                      onChange={(e) => setConfig({ ...config, searchQuery: e.target.value })}
+                      placeholder="e.g. artificial intelligence, technology, web dev"
+                    />
+                    <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.rss.searchHint}</p>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-1.5">
@@ -658,6 +715,7 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
           </div>
         );
+      }
 
       case 'iframe':
         return (

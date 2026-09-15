@@ -137,12 +137,37 @@ describe('WidgetConfigModal', () => {
     expect(widget('widget-search-1').config.customEngines).toHaveLength(0);
   });
 
-  it('RSS: Google News の検索キーワードとカスタムフィードURLを保存し権限を要求すること', () => {
+  it('RSS: ヘッドライン / トピック / 検索の各モードを保存できること', () => {
     openFor('widget-rss-1');
+    expect(screen.queryByPlaceholderText(/artificial intelligence/)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('By topic'));
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'SPORTS' } });
+    save();
+    expect(widget('widget-rss-1').config).toMatchObject({ googleNewsMode: 'topic', googleNewsTopic: 'SPORTS' });
+    expect(widget('widget-rss-1').config.feedUrl).toContain('/topic/SPORTS?');
+
+    openFor('widget-rss-1');
+    fireEvent.click(screen.getByText('Keyword search'));
     fireEvent.change(screen.getByPlaceholderText(/artificial intelligence/), { target: { value: ' space ' } });
     save();
-    expect(widget('widget-rss-1').config.searchQuery).toBe('space');
+    expect(widget('widget-rss-1').config).toMatchObject({ googleNewsMode: 'search', searchQuery: 'space' });
     expect(widget('widget-rss-1').config.feedUrl).toContain('q=space');
+
+    openFor('widget-rss-1');
+    fireEvent.click(screen.getByText('Keyword search'));
+    fireEvent.change(screen.getByPlaceholderText(/artificial intelligence/), { target: { value: 'headlines' } });
+    save();
+    expect(widget('widget-rss-1').config.googleNewsMode).toBe('headlines');
+    expect(widget('widget-rss-1').config.feedUrl).toBe('https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en');
+
+    openFor('widget-rss-1');
+    fireEvent.click(screen.getByText('Top stories'));
+    save();
+    expect(widget('widget-rss-1').config.googleNewsMode).toBe('headlines');
+  });
+
+  it('RSS: カスタムフィードURLを保存し権限を要求すること', () => {
 
     const { container } = openFor('widget-rss-1');
     const googleToggle = container.querySelectorAll('input[type="checkbox"]')[0];

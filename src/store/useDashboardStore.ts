@@ -168,6 +168,7 @@ const DEFAULT_CONFIGS_BY_TYPE = (t: Translation, lang: string): Record<WidgetTyp
   rss: {
     feedUrl: rssService.buildGoogleNewsTopStoriesUrl(lang),
     isGoogleNews: true,
+    googleNewsMode: 'headlines',
     searchQuery: '',
     maxItems: 8,
     refreshIntervalMinutes: 30,

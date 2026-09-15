@@ -42,9 +42,29 @@ export interface BookmarkWidgetConfig extends BaseWidgetConfig {
   columns: number;
 }
 
+/** Google News "section" feeds (https://news.google.com/rss/headlines/section/topic/<TOPIC>). */
+export type GoogleNewsTopic =
+  | 'WORLD'
+  | 'NATION'
+  | 'BUSINESS'
+  | 'TECHNOLOGY'
+  | 'ENTERTAINMENT'
+  | 'SPORTS'
+  | 'SCIENCE'
+  | 'HEALTH';
+
+export type GoogleNewsMode = 'headlines' | 'topic' | 'search';
+
 export interface RssFeedWidgetConfig extends BaseWidgetConfig {
   feedUrl: string;
   isGoogleNews?: boolean;
+  /**
+   * Which Google News feed to show. Older configs have no mode: they are
+   * treated as 'search' when a searchQuery is present, 'headlines'
+   * otherwise (see rssService.resolveGoogleNewsMode).
+   */
+  googleNewsMode?: GoogleNewsMode;
+  googleNewsTopic?: GoogleNewsTopic;
   searchQuery?: string;
   maxItems: number;
   refreshIntervalMinutes: number;

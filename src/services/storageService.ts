@@ -267,6 +267,7 @@ export function createDefaultWidgets(t: Translation, lang = 'en'): DashboardWidg
         // keyword feed — no interest profile needed, and not dev-flavoured.
         feedUrl: rssService.buildGoogleNewsTopStoriesUrl(lang),
         isGoogleNews: true,
+        googleNewsMode: 'headlines',
         searchQuery: '',
         maxItems: 8,
         refreshIntervalMinutes: 30,

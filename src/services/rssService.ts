@@ -1,4 +1,5 @@
 import { RssFeedData } from '../types/rss';
+import { GoogleNewsMode, GoogleNewsTopic } from '../types/widget';
 import { parseRssXml } from '../utils/rssParser';
 import { storageGet, storageSet } from '../utils/storage';
 import { hasHostPermission } from '../utils/permissions';
@@ -38,6 +39,29 @@ const GOOGLE_NEWS_EDITIONS: Record<string, { hl: string; gl: string; ceid: strin
   ko: { hl: 'ko', gl: 'KR', ceid: 'KR:ko' },
 };
 
+export const GOOGLE_NEWS_TOPICS: GoogleNewsTopic[] = [
+  'WORLD',
+  'NATION',
+  'BUSINESS',
+  'TECHNOLOGY',
+  'ENTERTAINMENT',
+  'SPORTS',
+  'SCIENCE',
+  'HEALTH',
+];
+
+/**
+ * Words people type into the search box when they really mean "just show
+ * me the front page". Treated as headlines rather than searched literally
+ * — searching for the word "ヘッドライン" returned articles *about*
+ * headlines, which was the original bug report.
+ */
+const HEADLINE_KEYWORDS = /^(headlines?|top stories|top news|ヘッドライン|トップニュース|主要ニュース|头条|头条新闻|titulares|à la une|schlagzeilen|주요 뉴스|헤드라인)$/i;
+
+export function isHeadlineKeyword(query: string): boolean {
+  return query.trim() === '' || HEADLINE_KEYWORDS.test(query.trim());
+}
+
 export const rssService = {
   /**
    * Google News edition parameters for a dashboard language code. Every
@@ -49,7 +73,32 @@ export const rssService = {
     return `hl=${edition.hl}&gl=${edition.gl}&ceid=${edition.ceid}`;
   },
 
-  buildGoogleNewsRssUrl(query: string, lang = 'en'): string {
+  /**
+   * Works out which feed a widget config asks for. Explicit modes win;
+   * configs from before modes existed fall back on their keyword. A
+   * keyword that just says "headlines" (in any supported language) is the
+   * front page, not a literal search.
+   */
+  resolveGoogleNewsMode(config: { googleNewsMode?: GoogleNewsMode; googleNewsTopic?: GoogleNewsTopic; searchQuery?: string }): GoogleNewsMode {
+    const query = (config.searchQuery || '').trim();
+    if (config.googleNewsMode === 'topic') return config.googleNewsTopic ? 'topic' : 'headlines';
+    if (config.googleNewsMode === 'headlines') return 'headlines';
+    return isHeadlineKeyword(query) ? 'headlines' : 'search';
+  },
+
+  /**
+   * One entry point for every Google News feed. A plain keyword searches;
+   * an empty or "headlines"-like keyword returns the front page; a topic
+   * (when `mode` is 'topic') returns that section.
+   */
+  buildGoogleNewsRssUrl(
+    query: string,
+    lang = 'en',
+    mode: GoogleNewsMode = 'search',
+    topic?: GoogleNewsTopic
+  ): string {
+    if (mode === 'topic' && topic) return this.buildGoogleNewsTopicUrl(topic, lang);
+    if (mode === 'headlines' || isHeadlineKeyword(query)) return this.buildGoogleNewsTopStoriesUrl(lang);
     const encoded = encodeURIComponent(query.trim());
     return `https://news.google.com/rss/search?q=${encoded}&${this.googleNewsEdition(lang)}`;
   },
@@ -57,6 +106,20 @@ export const rssService = {
   /** The edition's front page ("top stories") — no keyword needed. */
   buildGoogleNewsTopStoriesUrl(lang = 'en'): string {
     return `https://news.google.com/rss?${this.googleNewsEdition(lang)}`;
+  },
+
+  /** A topic section (Technology, Business, …) of the edition. */
+  buildGoogleNewsTopicUrl(topic: GoogleNewsTopic, lang = 'en'): string {
+    return `https://news.google.com/rss/headlines/section/topic/${topic}?${this.googleNewsEdition(lang)}`;
+  },
+
+  /** Resolves a widget config straight to the feed URL it should load. */
+  buildGoogleNewsUrlForConfig(
+    config: { googleNewsMode?: GoogleNewsMode; googleNewsTopic?: GoogleNewsTopic; searchQuery?: string },
+    lang = 'en'
+  ): string {
+    const mode = this.resolveGoogleNewsMode(config);
+    return this.buildGoogleNewsRssUrl(config.searchQuery || '', lang, mode, config.googleNewsTopic);
   },
 
   async fetchFeed(url: string, bypassCache = false): Promise<RssFeedData> {
