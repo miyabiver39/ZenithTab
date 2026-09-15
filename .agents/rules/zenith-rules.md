@@ -28,3 +28,7 @@ trigger: always_on
    - Strict TypeScript checking: `npm run typecheck`.
    - Unit & component tests: `npm run test:run`.
    - Production bundle validation: `npm run build`.
+
+6. **Store Presence & Guidance**:
+   - Follow `chrome-extensions` and `modern-web-guidance` skills for modern web standards and Chrome Extensions API patterns.
+   - Maintain `CHROMEWEBSTORE.md` whenever adding permissions, features, or preparing releases.
