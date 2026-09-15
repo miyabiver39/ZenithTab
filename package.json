@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit",
     "verify": "node scripts/verify-build.js",
     "package": "node scripts/package.js",
+    "sbom": "node scripts/generate-sbom.js",
     "version:bump": "node scripts/bump-version.js"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.28",
+    "@cyclonedx/cyclonedx-npm": "^6.0.1",
     "@playwright/test": "^1.50.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",

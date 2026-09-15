@@ -40,6 +40,10 @@ try {
   console.log(`  Entries: ${entries.length}`);
   console.log(`  Size:    ${sizeKB} KB`);
   console.log('========================================\n');
+
+  // Automatically generate SBOM alongside the release zip
+  execSync('node scripts/generate-sbom.js', { stdio: 'inherit' });
+
   console.log('Next steps:');
   console.log('  - Local test: chrome://extensions -> Developer mode -> "Load unpacked" -> select dist/');
   console.log(`  - Store upload: upload release/${zipFileName} in the Chrome Web Store Developer Dashboard`);
