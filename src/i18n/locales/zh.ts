@@ -200,6 +200,7 @@ export const zh: typeof en = {
       desc: '在仪表盘中嵌入常用网页、工具与文档。',
       targetUrl: '目标网页链接',
       allowScroll: '允许框架内滚动',
+      invalidUrl: '未设置有效的网址。请打开小部件设置并输入 http(s) URL。',
       restrictedDesc: '该网站通过安全策略 (CSP / X-Frame-Options) 限制了嵌入。',
       openNewTab: '在新标签页打开',
       loadingPreview: '正在加载预览...',

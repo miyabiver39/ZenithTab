@@ -200,6 +200,7 @@ export const es: typeof en = {
       desc: 'Incrusta herramientas web, paneles o documentos.',
       targetUrl: 'URL del sitio web',
       allowScroll: 'Permitir desplazamiento en el marco',
+      invalidUrl: 'No hay una dirección web válida. Abre los ajustes del widget e introduce una URL http(s).',
       restrictedDesc: 'Este sitio web restringe la incrustación mediante políticas CSP o X-Frame-Options.',
       openNewTab: 'Abrir en nueva pestaña',
       loadingPreview: 'Cargando vista previa...',

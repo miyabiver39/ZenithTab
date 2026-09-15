@@ -198,6 +198,7 @@ export const en = {
       desc: 'Embed external tools, dashboards, documentation, or websites.',
       targetUrl: 'Target Website URL',
       allowScroll: 'Allow Scroll inside Frame',
+      invalidUrl: 'No valid web address is set. Open the widget settings and enter an http(s) URL.',
       restrictedDesc: 'This website restricts embedding inside frames via security policies (CSP / X-Frame-Options).',
       openNewTab: 'Open in New Tab',
       loadingPreview: 'Loading preview...',

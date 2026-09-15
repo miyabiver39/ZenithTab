@@ -198,6 +198,7 @@ export const ja = {
       desc: 'お気に入りのWebツール、ドキュメント、ダッシュボードをiframe表示。',
       targetUrl: '埋め込み先URL',
       allowScroll: 'フレーム内のスクロールを許可',
+      invalidUrl: '有効なWebアドレスが設定されていません。ウィジェット設定で http(s) のURLを入力してください。',
       restrictedDesc: 'このWebサイトはセキュリティポリシー (CSP / X-Frame-Options) により埋め込みが制限されています。',
       openNewTab: '新しいタブで開く',
       loadingPreview: 'プレビューを読み込み中...',

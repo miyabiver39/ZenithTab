@@ -19,6 +19,10 @@ export default defineConfig({
         'src/**/*.d.ts',
         'src/types/**',
         'src/newtab.tsx', // entry point
+        // Locale files are pure data and would inflate the number; the
+        // background worker only runs inside Chrome.
+        'src/i18n/locales/**',
+        'src/background/**',
       ],
     },
   },

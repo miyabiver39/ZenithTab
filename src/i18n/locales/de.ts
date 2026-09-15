@@ -200,6 +200,7 @@ export const de: typeof en = {
       desc: 'Bette Webtools, Dashboards oder Dokumentationen direkt ein.',
       targetUrl: 'Ziel-Website-URL',
       allowScroll: 'Scrollen im Frame erlauben',
+      invalidUrl: 'Keine gültige Webadresse gesetzt. Öffne die Widget-Einstellungen und gib eine http(s)-URL ein.',
       restrictedDesc: 'Diese Website blockiert die Einbettung über CSP / X-Frame-Options.',
       openNewTab: 'In neuem Tab öffnen',
       loadingPreview: 'Vorschau wird geladen...',

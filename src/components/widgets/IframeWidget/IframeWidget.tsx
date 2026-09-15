@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ExternalLink, Globe } from 'lucide-react';
 import { IframeWidgetConfig } from '../../../types/widget';
 import { getFaviconUrl } from '../../../utils/favicon';
+import { isSafeHttpUrl, hostnameOf } from '../../../utils/url';
 import { useTranslation } from '../../../i18n/i18n';
 
 interface IframeWidgetProps {
@@ -14,12 +15,17 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
 
-  const hostname = url ? new URL(url).hostname : '';
-  const faviconUrl = getFaviconUrl(url);
+  // Anything that isn't a parseable http(s) URL is refused outright: a
+  // `javascript:` value must never become an iframe src, and a malformed
+  // one used to throw from `new URL()` mid-render and take the whole
+  // dashboard down to the error boundary.
+  const isValidUrl = isSafeHttpUrl(url);
+  const hostname = isValidUrl ? hostnameOf(url) : '';
+  const faviconUrl = isValidUrl ? getFaviconUrl(url) : '';
 
   return (
     <div className="w-full h-full flex flex-col relative rounded-lg overflow-hidden bg-slate-950/40">
-      {hasError ? (
+      {hasError || !isValidUrl ? (
         /* Fallback Card for CSP / X-Frame-Options blocked origins */
         <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center select-none bg-slate-900/60">
           <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center mb-3">
@@ -31,28 +37,30 @@ export const IframeWidget: React.FC<IframeWidgetProps> = ({ config }) => {
           </div>
           <h3 className="text-sm font-semibold text-white mb-1">{title || hostname}</h3>
           <p className="text-xs text-slate-400 max-w-xs mb-4">
-            {t.widgets.iframe.restrictedDesc}
+            {isValidUrl ? t.widgets.iframe.restrictedDesc : t.widgets.iframe.invalidUrl}
           </p>
-          <div className="flex items-center gap-2">
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-medium transition-colors shadow-lg shadow-sky-500/25"
-            >
-              <span>{t.widgets.iframe.openNewTab}</span>
-              <ExternalLink size={13} />
-            </a>
-            <button
-              onClick={() => {
-                setHasError(false);
-                setIsLoading(true);
-              }}
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-medium transition-colors"
-            >
-              {t.common.retry}
-            </button>
-          </div>
+          {isValidUrl && (
+            <div className="flex items-center gap-2">
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-medium transition-colors shadow-lg shadow-sky-500/25"
+              >
+                <span>{t.widgets.iframe.openNewTab}</span>
+                <ExternalLink size={13} />
+              </a>
+              <button
+                onClick={() => {
+                  setHasError(false);
+                  setIsLoading(true);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-medium transition-colors"
+              >
+                {t.common.retry}
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <>

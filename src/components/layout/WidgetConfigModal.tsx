@@ -7,6 +7,7 @@ import { useDashboardStore } from '../../store/useDashboardStore';
 import { rssService } from '../../services/rssService';
 import { weatherService, GeolocationFailure } from '../../services/weatherService';
 import { requestHostPermission } from '../../utils/permissions';
+import { normalizeHttpUrl } from '../../utils/url';
 import { useTranslation } from '../../i18n/i18n';
 import { CustomSearchEngine, SearchEngine } from '../../types/widget';
 import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../utils/searchEnginePresets';
@@ -81,6 +82,13 @@ export const WidgetConfigModal: React.FC = () => {
       config.feedUrl = query
         ? rssService.buildGoogleNewsRssUrl(query, activeLanguageCode)
         : rssService.buildGoogleNewsTopStoriesUrl(activeLanguageCode);
+    }
+
+    // Hand-typed embed URLs: assume https:// when the scheme is missing and
+    // drop anything that still isn't http(s) rather than letting it reach
+    // an <iframe src>.
+    if (targetWidget.type === 'iframe' && typeof config.url === 'string') {
+      config.url = normalizeHttpUrl(config.url) || '';
     }
 
     // A custom feed lives outside our granted hosts. Ask for its origin right

@@ -1,9 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { storageService } from '../../src/services/storageService';
 
 describe('storageService', () => {
   beforeEach(async () => {
     await storageService.resetDashboard();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('初期ウィジェットを取得できること', async () => {
@@ -41,6 +45,9 @@ describe('storageService', () => {
   });
 
   it('無効なJSONをインポートした場合にfalseを返すこと', async () => {
+    // The rejection is logged on purpose in production; keep the test
+    // output clean.
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     const result = await storageService.importDashboardData('{ "invalid": true }');
     expect(result).toBe(false);
   });
@@ -85,6 +92,7 @@ describe('storageService', () => {
   });
 
   it('ウィジェットを1件も含まないインポートを拒否すること', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     const result = await storageService.importDashboardData('{ "widgets": [] }');
     expect(result).toBe(false);
   });

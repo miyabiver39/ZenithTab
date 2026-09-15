@@ -200,6 +200,7 @@ export const ko: typeof en = {
       desc: '자주 사용하는 웹 도구, 대시보드, 문서를 직접 임베드.',
       targetUrl: '대상 웹사이트 URL',
       allowScroll: '프레임 내 스크롤 허용',
+      invalidUrl: '유효한 웹 주소가 설정되지 않았습니다. 위젯 설정에서 http(s) URL을 입력하세요.',
       restrictedDesc: '해당 사이트는 보안 정책(CSP / X-Frame-Options)에 의해 임베드가 제한되어 있습니다.',
       openNewTab: '새 탭에서 열기',
       loadingPreview: '미리보기 불러오는 중...',

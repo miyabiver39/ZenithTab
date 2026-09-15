@@ -59,6 +59,7 @@ describe('weatherService', () => {
   });
 
   it('取得に失敗しキャッシュも無い場合はダミー値を返さず例外を投げること', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     mockFetchOnce(null, false);
 
     await expect(

@@ -632,7 +632,10 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   syncFromStorage: async () => {
     const current = get();
-    const defaults = localizedDefaults(current.appearance.language);
+    // On a fresh install nothing has been written yet; fall back to what
+    // this tab already shows rather than regenerating defaults (whose
+    // timestamps would differ and force a pointless re-render).
+    const defaults = { widgets: current.widgets, layouts: current.layouts };
     const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
       await Promise.all([
         storageService.getPagesState(defaults),

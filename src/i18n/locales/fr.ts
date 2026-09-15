@@ -200,6 +200,7 @@ export const fr: typeof en = {
       desc: 'Intégrez vos outils et dashboards préférés dans un cadre.',
       targetUrl: 'URL du site web',
       allowScroll: 'Autoriser le défilement dans le cadre',
+      invalidUrl: 'Aucune adresse web valide n\'est définie. Ouvrez les réglages du widget et saisissez une URL http(s).',
       restrictedDesc: 'Ce site restreint son intégration via des politiques CSP / X-Frame-Options.',
       openNewTab: 'Ouvrir dans un nouvel onglet',
       loadingPreview: 'Chargement de l’aperçu...',
