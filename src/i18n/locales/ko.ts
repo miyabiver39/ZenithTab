@@ -189,6 +189,8 @@ export const ko: typeof en = {
       failed: '피드 불러오기 실패',
       empty: '기사가 없습니다',
       liveFeed: '실시간 피드',
+      topStories: '주요 뉴스',
+      topStoriesHint: '비워 두면 지역의 주요 뉴스를 표시합니다',
       permissionNeeded: '이 피드를 읽으려면 권한이 필요합니다.',
       grantAccess: '이 피드 허용',
       permissionHint: '저장하면 Chrome이 이 피드 사이트의 접근 권한을 확인합니다. ZenithTab은 직접 추가한 피드에만 접근합니다.',
@@ -292,6 +294,14 @@ export const ko: typeof en = {
     add: '페이지 추가',
     remove: '페이지 삭제',
     shortcutHint: '팁: Ctrl+Alt+←/→ 로 페이지를 전환할 수 있어요',
+    defaultName: '페이지 {n}',
+    addEmpty: '빈 페이지 추가',
+    addEmptySub: '처음부터 구성하기',
+    duplicateCurrent: '이 페이지 복제',
+    duplicateCurrentSub: '현재 페이지의 모든 위젯을 복사',
+    emptyTitle: '이 페이지는 비어 있어요',
+    emptyDesc: '아무것도 삭제되지 않았어요. 다른 페이지는 위 탭에 그대로 있습니다. 여기에 위젯을 추가하거나 돌아갈 수 있어요.',
+    backTo: '{name}(으)로 돌아가기',
   },
   settings: {
     modalTitle: 'ZenithTab 설정',
@@ -363,5 +373,23 @@ export const ko: typeof en = {
     architecture: '현대 건축',
     abstract: '3D 추상화',
     cyberpunk: '사이버펑크 & 네온',
+  },
+  // First-run content baked into the default widgets (localized once at
+  // install time, so a later language switch doesn't clobber user edits).
+  defaults: {
+    newsTitle: '뉴스',
+    todoExplore: 'ZenithTab 설정 둘러보기',
+    todoCustomize: '위젯과 배경화면 꾸미기',
+    notes: `# 🌌 ZenithTab에 오신 것을 환영합니다!
+
+> *"시작이 반이다."*
+
+- [x] ZenithTab 설치 🎉
+- [ ] 배경화면 바꾸기 \`(오른쪽 위 🔄)\`
+- [ ] \`/\` 키로 검색하기 🔍
+- [ ] 앱 서랍 열기 \`(🪟 아이콘)\`
+- [ ] 25분 집중 세션 시작 ⏱️
+
+*이 메모는 언제든 수정하거나 지워도 괜찮아요!*`,
   },
 };

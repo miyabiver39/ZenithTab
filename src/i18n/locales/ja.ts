@@ -187,6 +187,8 @@ export const ja = {
       failed: 'フィードの取得に失敗しました',
       empty: '記事がありません',
       liveFeed: '最新フィード',
+      topStories: 'トップニュース',
+      topStoriesHint: '空欄にすると地域のトップニュースを表示します',
       permissionNeeded: 'このフィードを読み込むには許可が必要です。',
       grantAccess: 'このフィードを許可',
       permissionHint: '保存時に、このフィードのサイトへのアクセス許可をChromeが確認します。ZenithTabはあなたが追加したフィード以外にはアクセスしません。',
@@ -290,6 +292,14 @@ export const ja = {
     add: 'ページを追加',
     remove: 'ページを削除',
     shortcutHint: 'ヒント: Ctrl+Alt+←/→ でページを切り替えられます',
+    defaultName: 'ページ {n}',
+    addEmpty: '空のページを追加',
+    addEmptySub: 'ゼロから組み立てる',
+    duplicateCurrent: 'このページを複製',
+    duplicateCurrentSub: '今のページのウィジェットをすべてコピー',
+    emptyTitle: 'このページは空です',
+    emptyDesc: '何も消えていません。元のウィジェットは上のタブの別ページにあります。ここにウィジェットを追加するか、戻れます。',
+    backTo: '{name} に戻る',
   },
   settings: {
     modalTitle: 'ZenithTab 設定',
@@ -361,5 +371,23 @@ export const ja = {
     architecture: '現代建築',
     abstract: 'アブストラクト3D',
     cyberpunk: 'サイバーパンク・ネオン',
+  },
+  // First-run content baked into the default widgets (localized once at
+  // install time, so a later language switch doesn't clobber user edits).
+  defaults: {
+    newsTitle: 'ニュース',
+    todoExplore: 'ZenithTab の設定を見てみる',
+    todoCustomize: 'ウィジェットと壁紙をカスタマイズする',
+    notes: `# 🌌 ZenithTab へようこそ！
+
+> *「千里の道も一歩から」*
+
+- [x] ZenithTab をインストール 🎉
+- [ ] 壁紙を切り替える \`(右上の 🔄)\`
+- [ ] \`/\` キーで検索バーにフォーカス 🔍
+- [ ] アプリドロワーを開く \`(🪟 アイコン)\`
+- [ ] 25分の集中セッションを始める ⏱️
+
+*このメモは自由に書き換えたり消したりしてOKです！*`,
   },
 };

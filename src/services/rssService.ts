@@ -28,13 +28,35 @@ function fetchWithTimeout(input: string, init: RequestInit = {}, timeoutMs = REQ
   return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(timer));
 }
 
+const GOOGLE_NEWS_EDITIONS: Record<string, { hl: string; gl: string; ceid: string }> = {
+  en: { hl: 'en-US', gl: 'US', ceid: 'US:en' },
+  ja: { hl: 'ja', gl: 'JP', ceid: 'JP:ja' },
+  'zh-CN': { hl: 'zh-CN', gl: 'CN', ceid: 'CN:zh-Hans' },
+  es: { hl: 'es', gl: 'ES', ceid: 'ES:es' },
+  fr: { hl: 'fr', gl: 'FR', ceid: 'FR:fr' },
+  de: { hl: 'de', gl: 'DE', ceid: 'DE:de' },
+  ko: { hl: 'ko', gl: 'KR', ceid: 'KR:ko' },
+};
+
 export const rssService = {
-  buildGoogleNewsRssUrl(query: string, lang = 'en', country = 'US'): string {
+  /**
+   * Google News edition parameters for a dashboard language code. Every
+   * supported UI language maps to the matching regional edition so both the
+   * headlines and the keyword search come back in that language.
+   */
+  googleNewsEdition(lang = 'en'): string {
+    const edition = GOOGLE_NEWS_EDITIONS[lang] || GOOGLE_NEWS_EDITIONS.en;
+    return `hl=${edition.hl}&gl=${edition.gl}&ceid=${edition.ceid}`;
+  },
+
+  buildGoogleNewsRssUrl(query: string, lang = 'en'): string {
     const encoded = encodeURIComponent(query.trim());
-    if (lang === 'ja' || country === 'JP') {
-      return `https://news.google.com/rss/search?q=${encoded}&hl=ja&gl=JP&ceid=JP:ja`;
-    }
-    return `https://news.google.com/rss/search?q=${encoded}&hl=${lang}-${country}&gl=${country}&ceid=${country}:${lang}`;
+    return `https://news.google.com/rss/search?q=${encoded}&${this.googleNewsEdition(lang)}`;
+  },
+
+  /** The edition's front page ("top stories") — no keyword needed. */
+  buildGoogleNewsTopStoriesUrl(lang = 'en'): string {
+    return `https://news.google.com/rss?${this.googleNewsEdition(lang)}`;
   },
 
   async fetchFeed(url: string, bypassCache = false): Promise<RssFeedData> {

@@ -13,6 +13,7 @@ import { PomodoroWidget } from '../widgets/PomodoroWidget/PomodoroWidget';
 import { TodoWidget } from '../widgets/TodoWidget/TodoWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget/ShortcutsWidget';
 import { QrCodeWidget } from '../widgets/QrCodeWidget/QrCodeWidget';
+import { EmptyPage } from './EmptyPage';
 import { cn } from '../../utils/cn';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -87,6 +88,7 @@ export const GridContainer: React.FC = () => {
         appearance.dockPosition === 'bottom' && 'pb-24'
       )}
     >
+      {widgets.length === 0 && <EmptyPage />}
       <ResponsiveGridLayout
         className={cn('layout', isEditMode && 'is-editing', suppressTransition && 'no-breakpoint-transition')}
         layouts={layouts}

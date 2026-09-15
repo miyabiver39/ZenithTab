@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, Globe, X, ExternalLink } from 'lucide-react';
-import { useDashboardStore } from '../../store/useDashboardStore';
+import { useDashboardStore, DEFAULT_SHORTCUTS } from '../../store/useDashboardStore';
 import { getFaviconUrl } from '../../utils/favicon';
 import { useTranslation } from '../../i18n/i18n';
 import { ShortcutItem } from '../../types/widget';
@@ -23,17 +23,7 @@ export const AppDrawerModal: React.FC = () => {
 
   // Find shortcuts widget config or fallback to default
   const shortcutsWidget = widgets.find((w) => w.type === 'shortcuts');
-  const items: ShortcutItem[] = shortcutsWidget?.config?.items || [
-    { id: 'app-chatgpt', title: 'ChatGPT', url: 'https://chatgpt.com', category: 'AI & Tools' },
-    { id: 'app-github', title: 'GitHub', url: 'https://github.com', category: 'Development' },
-    { id: 'app-youtube', title: 'YouTube', url: 'https://youtube.com', category: 'Media' },
-    { id: 'app-gmail', title: 'Gmail', url: 'https://mail.google.com', category: 'Productivity' },
-    { id: 'app-notion', title: 'Notion', url: 'https://notion.so', category: 'Productivity' },
-    { id: 'app-twitter', title: 'X (Twitter)', url: 'https://x.com', category: 'Social' },
-    { id: 'app-figma', title: 'Figma', url: 'https://figma.com', category: 'Design' },
-    { id: 'app-spotify', title: 'Spotify', url: 'https://open.spotify.com', category: 'Media' },
-    { id: 'app-reddit', title: 'Reddit', url: 'https://reddit.com', category: 'Social' },
-  ];
+  const items: ShortcutItem[] = shortcutsWidget?.config?.items || DEFAULT_SHORTCUTS;
 
   const categories = ['all', ...Array.from(new Set(items.map((it) => it.category).filter(Boolean))) as string[]];
 

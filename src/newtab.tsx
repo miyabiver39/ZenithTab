@@ -12,6 +12,7 @@ import { WidgetConfigModal } from './components/layout/WidgetConfigModal';
 import { AppDrawerModal } from './components/layout/AppDrawerModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
+import { useStorageSync } from './hooks/useStorageSync';
 import './index.css';
 
 export const App: React.FC = () => {
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
   }, [initialize]);
 
   useGlobalKeyboardShortcuts();
+  useStorageSync();
 
   if (!isInitialized) {
     return (
