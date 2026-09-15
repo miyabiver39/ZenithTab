@@ -53,7 +53,8 @@ describe('WidgetWrapper', () => {
         <span>bar</span>
       </WidgetWrapper>
     );
-    expect(screen.queryByText('Search')).not.toBeInTheDocument();
+    // The legacy stock title 'Search' resolves to the current catalogue name.
+    expect(screen.queryByText('Quick Search')).not.toBeInTheDocument();
 
     act(() => useDashboardStore.getState().setEditMode(true));
     rerender(
@@ -61,6 +62,6 @@ describe('WidgetWrapper', () => {
         <span>bar</span>
       </WidgetWrapper>
     );
-    expect(screen.getByText('Search')).toBeInTheDocument();
+    expect(screen.getByText('Quick Search')).toBeInTheDocument();
   });
 });

@@ -2,6 +2,8 @@ import React from 'react';
 import { GripHorizontal, Settings, Trash2 } from 'lucide-react';
 import { DashboardWidget } from '../../types/widget';
 import { useDashboardStore } from '../../store/useDashboardStore';
+import { useTranslation } from '../../i18n/i18n';
+import { getLocalizedWidgetTitle } from '../../utils/widgetTitle';
 import { GlassCard } from '../common/GlassCard';
 import { cn } from '../../utils/cn';
 
@@ -12,7 +14,10 @@ interface WidgetWrapperProps {
 
 export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }) => {
   const { isEditMode, removeWidget, openSettingsModal } = useDashboardStore();
+  const { t } = useTranslation();
   const isSearch = widget.type === 'search';
+  // Stock titles follow the language setting; user-typed ones are kept.
+  const title = getLocalizedWidgetTitle(widget, t);
 
   return (
     <GlassCard
@@ -32,7 +37,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }
               </div>
             )}
             <h3 className="text-xs font-semibold text-slate-200 truncate tracking-wide">
-              {widget.title}
+              {title}
             </h3>
           </div>
 

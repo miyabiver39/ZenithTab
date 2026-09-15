@@ -8,6 +8,7 @@ import { rssService, GOOGLE_NEWS_TOPICS } from '../../services/rssService';
 import { weatherService, GeolocationFailure } from '../../services/weatherService';
 import { requestHostPermission } from '../../utils/permissions';
 import { normalizeHttpUrl } from '../../utils/url';
+import { getLocalizedWidgetTitle } from '../../utils/widgetTitle';
 import { useTranslation } from '../../i18n/i18n';
 import { CustomSearchEngine, SearchEngine, GoogleNewsMode, GoogleNewsTopic } from '../../types/widget';
 import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../utils/searchEnginePresets';
@@ -45,7 +46,9 @@ export const WidgetConfigModal: React.FC = () => {
 
   useEffect(() => {
     if (targetWidget) {
-      setTitle(targetWidget.title);
+      // Show (and, if left untouched, re-save) the stock title in the
+      // current language so the field never looks stale after a language switch.
+      setTitle(getLocalizedWidgetTitle(targetWidget, t));
       setConfig({ ...targetWidget.config });
     }
   }, [targetWidget]);
@@ -789,7 +792,7 @@ export const WidgetConfigModal: React.FC = () => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeSettingsModal} title={`Configure ${targetWidget.title}`} maxWidth="md">
+    <Modal isOpen={isOpen} onClose={closeSettingsModal} title={`Configure ${getLocalizedWidgetTitle(targetWidget, t)}`} maxWidth="md">
       <form onSubmit={handleSave} className="space-y-5">
         <Input
           label="Widget Title"

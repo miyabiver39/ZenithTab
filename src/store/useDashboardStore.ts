@@ -18,6 +18,7 @@ import {
 import { wallpaperService } from '../services/wallpaperService';
 import { rssService } from '../services/rssService';
 import { getTranslation, resolveLanguageCode, Translation } from '../i18n/resolve';
+import { getDefaultWidgetTitle } from '../utils/widgetTitle';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -350,7 +351,9 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     const defaultConfig = DEFAULT_CONFIGS_BY_TYPE(getTranslation(languageSetting), resolveLanguageCode(languageSetting))[type];
     const config = { ...defaultConfig, ...initialConfig };
 
-    const title = customTitle || (type.charAt(0).toUpperCase() + type.slice(1));
+    // Stock titles are recognised by WidgetWrapper and re-localized on
+    // language change, so it's fine to persist the current language's one.
+    const title = customTitle || getDefaultWidgetTitle(type, getTranslation(languageSetting));
 
     // Find next available spot at top or bottom
     const newLayout: Layout = {

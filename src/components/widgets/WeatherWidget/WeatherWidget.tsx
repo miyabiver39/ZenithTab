@@ -5,6 +5,8 @@ import { useWeather } from '../../../hooks/useWeather';
 import { weatherService, GeolocationFailure } from '../../../services/weatherService';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
+import { getIntlLocale } from '../../../utils/date';
+import { getWeatherConditionLabel } from '../../../utils/weatherCondition';
 
 interface WeatherWidgetProps {
   widgetId?: string;
@@ -15,7 +17,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
   const { city = 'Tokyo', latitude = 35.6762, longitude = 139.6503, unit = 'celsius', showForecast = true } = config;
   const { weather, isLoading, error, refresh } = useWeather(latitude, longitude, city);
   const { updateWidgetConfig } = useDashboardStore();
-  const { t } = useTranslation();
+  const { t, activeLanguageCode } = useTranslation();
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
 
@@ -117,7 +119,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
         {current && (
           <div className="text-right text-[11px] text-slate-300 space-y-0.5">
             <div className="flex items-center justify-end gap-1.5 font-medium text-slate-200">
-              <span>{current.condition}</span>
+              <span>{getWeatherConditionLabel(current.weatherCode, t, current.condition)}</span>
               <button
                 onClick={refresh}
                 className="text-slate-400 hover:text-white p-0.5 rounded transition-colors"
@@ -146,7 +148,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
           {weather.forecast.slice(1, 4).map((f, idx) => (
             <div key={idx} className="flex flex-col items-center bg-white/[0.03] p-1 rounded-lg">
               <span className="text-[10px] text-slate-400">
-                {new Date(f.date).toLocaleDateString(undefined, { weekday: 'short' })}
+                {new Date(f.date).toLocaleDateString(getIntlLocale(activeLanguageCode), { weekday: 'short' })}
               </span>
               <div className="my-0.5">{getWeatherIcon(f.weatherCode, true, 16)}</div>
               <span className="text-xs font-semibold text-slate-200">
