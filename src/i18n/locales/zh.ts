@@ -189,6 +189,8 @@ export const zh: typeof en = {
       failed: '获取失败',
       empty: '暂无文章',
       liveFeed: '最新资讯',
+      topStories: '头条新闻',
+      topStoriesHint: '留空则显示所在地区的头条新闻',
       permissionNeeded: '读取该订阅源需要你的授权。',
       grantAccess: '允许该订阅源',
       permissionHint: '保存时 Chrome 会询问该订阅源站点的访问权限。ZenithTab 只会请求你自己添加的订阅源。',
@@ -292,6 +294,14 @@ export const zh: typeof en = {
     add: '添加页面',
     remove: '删除页面',
     shortcutHint: '提示：Ctrl+Alt+←/→ 可切换页面',
+    defaultName: '页面 {n}',
+    addEmpty: '新建空白页面',
+    addEmptySub: '从零开始搭建',
+    duplicateCurrent: '复制当前页面',
+    duplicateCurrentSub: '复制当前页面上的所有小部件',
+    emptyTitle: '此页面为空',
+    emptyDesc: '没有任何内容被删除——其他页面仍在上方的标签中。在这里添加小部件，或返回。',
+    backTo: '返回 {name}',
   },
   settings: {
     modalTitle: 'ZenithTab 设置',
@@ -363,5 +373,23 @@ export const zh: typeof en = {
     architecture: '现代建筑',
     abstract: '3D 抽象',
     cyberpunk: '赛博朋克',
+  },
+  // First-run content baked into the default widgets (localized once at
+  // install time, so a later language switch doesn't clobber user edits).
+  defaults: {
+    newsTitle: '新闻',
+    todoExplore: '浏览 ZenithTab 设置',
+    todoCustomize: '自定义小部件与壁纸',
+    notes: `# 🌌 欢迎使用 ZenithTab！
+
+> *「千里之行，始于足下。」*
+
+- [x] 安装 ZenithTab 🎉
+- [ ] 切换壁纸 \`(右上角 🔄)\`
+- [ ] 按 \`/\` 键聚焦搜索 🔍
+- [ ] 打开应用抽屉 \`(🪟 图标)\`
+- [ ] 开始一次 25 分钟专注 ⏱️
+
+*随时可以编辑或清空这条笔记！*`,
   },
 };

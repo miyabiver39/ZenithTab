@@ -189,6 +189,8 @@ export const es: typeof en = {
       failed: 'Error al cargar el feed',
       empty: 'No hay artículos',
       liveFeed: 'Feed en vivo',
+      topStories: 'Titulares',
+      topStoriesHint: 'Déjalo vacío para ver los titulares de tu región',
       permissionNeeded: 'ZenithTab necesita tu permiso para leer este feed.',
       grantAccess: 'Permitir este feed',
       permissionHint: 'Al guardar, Chrome pedirá permiso para el sitio de este feed. ZenithTab solo solicita los feeds que tú añades.',
@@ -292,6 +294,14 @@ export const es: typeof en = {
     add: 'Añadir página',
     remove: 'Eliminar página',
     shortcutHint: 'Consejo: Ctrl+Alt+←/→ cambia de página',
+    defaultName: 'Página {n}',
+    addEmpty: 'Nueva página vacía',
+    addEmptySub: 'Empezar desde cero',
+    duplicateCurrent: 'Duplicar esta página',
+    duplicateCurrentSub: 'Copiar todos los widgets de la página actual',
+    emptyTitle: 'Esta página está vacía',
+    emptyDesc: 'No se ha borrado nada: tus otras páginas siguen en las pestañas de arriba. Añade widgets aquí o vuelve atrás.',
+    backTo: 'Volver a {name}',
   },
   settings: {
     modalTitle: 'Ajustes de ZenithTab',
@@ -363,5 +373,23 @@ export const es: typeof en = {
     architecture: 'Arquitectura',
     abstract: 'Abstracto 3D',
     cyberpunk: 'Ciberpunk',
+  },
+  // First-run content baked into the default widgets (localized once at
+  // install time, so a later language switch doesn't clobber user edits).
+  defaults: {
+    newsTitle: 'Noticias',
+    todoExplore: 'Explorar los ajustes de ZenithTab',
+    todoCustomize: 'Personalizar widgets y fondos',
+    notes: `# 🌌 ¡Bienvenido a ZenithTab!
+
+> *"El secreto para avanzar es empezar."*
+
+- [x] Instalar ZenithTab 🎉
+- [ ] Cambiar el fondo \`(arriba a la derecha 🔄)\`
+- [ ] Pulsa \`/\` para buscar 🔍
+- [ ] Abrir el cajón de apps \`(icono 🪟)\`
+- [ ] Iniciar una sesión de 25 min ⏱️
+
+*¡Edita o borra esta nota cuando quieras!*`,
   },
 };

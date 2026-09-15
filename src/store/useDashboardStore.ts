@@ -4,17 +4,20 @@ import { DashboardWidget, ResponsiveLayouts, WidgetType, DashboardPageMeta, Dash
 import { WallpaperSettings, AppearanceSettings, DockItem, KeyboardShortcutBinding } from '../types/settings';
 import {
   storageService,
+  createDefaultWidgets,
+  createDefaultLayouts,
   DEFAULT_WIDGETS,
   DEFAULT_LAYOUTS,
   DEFAULT_WALLPAPER,
   DEFAULT_APPEARANCE,
-  DEFAULT_NOTES_CONTENT,
   DEFAULT_DOCK_ITEMS,
   DEFAULT_KEYBOARD_SHORTCUTS,
   DEFAULT_PAGES,
   DEFAULT_PAGE_ID,
 } from '../services/storageService';
 import { wallpaperService } from '../services/wallpaperService';
+import { rssService } from '../services/rssService';
+import { getTranslation, resolveLanguageCode, Translation } from '../i18n/resolve';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -87,9 +90,15 @@ interface DashboardState {
   removeKeyboardShortcut: (id: string) => void;
 
   switchPage: (id: string) => void;
-  addPage: (name?: string) => void;
+  addPage: (options?: { name?: string; duplicateCurrent?: boolean }) => void;
   removePage: (id: string) => void;
   renamePage: (id: string, name: string) => void;
+
+  /**
+   * Re-reads everything from storage and applies whatever differs. Used to
+   * pick up writes made by another new-tab instance (see useStorageSync).
+   */
+  syncFromStorage: () => Promise<void>;
 
   resetToDefault: () => Promise<void>;
   importConfig: (jsonData: string) => Promise<boolean>;
@@ -110,19 +119,23 @@ const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: num
   qrcode: { w: 3, h: 4, minW: 3, minH: 3 },
 };
 
+// General-audience picks (no GitHub / Figma / Notion): the typical new-tab
+// user is not a developer, and every entry is editable anyway.
 export const DEFAULT_SHORTCUTS = [
   { id: 'app-chatgpt', title: 'ChatGPT', url: 'https://chatgpt.com', category: 'AI & Tools' },
-  { id: 'app-github', title: 'GitHub', url: 'https://github.com', category: 'Development' },
   { id: 'app-youtube', title: 'YouTube', url: 'https://youtube.com', category: 'Media' },
   { id: 'app-gmail', title: 'Gmail', url: 'https://mail.google.com', category: 'Productivity' },
-  { id: 'app-notion', title: 'Notion', url: 'https://notion.so', category: 'Productivity' },
+  { id: 'app-maps', title: 'Google Maps', url: 'https://maps.google.com', category: 'Productivity' },
   { id: 'app-twitter', title: 'X (Twitter)', url: 'https://x.com', category: 'Social' },
-  { id: 'app-figma', title: 'Figma', url: 'https://figma.com', category: 'Design' },
+  { id: 'app-instagram', title: 'Instagram', url: 'https://instagram.com', category: 'Social' },
   { id: 'app-spotify', title: 'Spotify', url: 'https://open.spotify.com', category: 'Media' },
-  { id: 'app-reddit', title: 'Reddit', url: 'https://reddit.com', category: 'Social' },
+  { id: 'app-netflix', title: 'Netflix', url: 'https://netflix.com', category: 'Media' },
+  { id: 'app-wikipedia', title: 'Wikipedia', url: 'https://www.wikipedia.org', category: 'Reference' },
 ];
 
-const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
+// Built per call because the notes / todo / news defaults carry
+// user-visible text in the dashboard's current language.
+const DEFAULT_CONFIGS_BY_TYPE = (t: Translation, lang: string): Record<WidgetType, Record<string, any>> => ({
   search: {
     defaultEngine: 'google',
     showEngineSelector: true,
@@ -153,9 +166,9 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
     columns: 4,
   },
   rss: {
-    feedUrl: 'https://news.google.com/rss/search?q=technology&hl=en-US&gl=US&ceid=US:en',
+    feedUrl: rssService.buildGoogleNewsTopStoriesUrl(lang),
     isGoogleNews: true,
-    searchQuery: 'technology',
+    searchQuery: '',
     maxItems: 8,
     refreshIntervalMinutes: 30,
     showThumbnail: true,
@@ -170,8 +183,8 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
   },
   todo: {
     items: [
-      { id: '1', text: 'Explore ZenithTab settings', completed: false, createdAt: Date.now() },
-      { id: '2', text: 'Customize widgets & wallpapers', completed: true, createdAt: Date.now() - 1000 },
+      { id: '1', text: t.defaults.todoExplore, completed: false, createdAt: Date.now() },
+      { id: '2', text: t.defaults.todoCustomize, completed: true, createdAt: Date.now() - 1000 },
     ],
   },
   iframe: {
@@ -180,7 +193,7 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
     allowScroll: true,
   },
   notes: {
-    content: DEFAULT_NOTES_CONTENT,
+    content: t.defaults.notes,
     fontSize: 'base',
     fontFamily: 'sans',
   },
@@ -188,7 +201,40 @@ const DEFAULT_CONFIGS_BY_TYPE: Record<WidgetType, Record<string, any>> = {
     mode: 'url',
     value: '',
   },
-};
+});
+
+/** Widgets/layouts for a fresh page-1 in the given language setting. */
+function localizedDefaults(languageSetting: AppearanceSettings['language']) {
+  const lang = resolveLanguageCode(languageSetting);
+  const widgets = createDefaultWidgets(getTranslation(languageSetting), lang);
+  return { widgets, layouts: createDefaultLayouts(widgets) };
+}
+
+/**
+ * Gives every widget on a page a fresh id (in both the widget list and each
+ * breakpoint's layout) so a duplicated page never shares ids with its source.
+ */
+function cloneWidgetsWithNewIds(widgets: DashboardWidget[], layouts: ResponsiveLayouts): DashboardPageData {
+  const stamp = Date.now();
+  const idMap = new Map<string, string>();
+  widgets.forEach((w, index) => idMap.set(w.id, `widget-${w.type}-${stamp}-${index}`));
+  const remap = (layout: Layout): Layout => ({ ...layout, i: idMap.get(layout.i) || layout.i });
+
+  const clonedWidgets: DashboardWidget[] = widgets.map((w) => ({
+    ...w,
+    id: idMap.get(w.id) || w.id,
+    config: JSON.parse(JSON.stringify(w.config)),
+    layout: remap(w.layout),
+  }));
+  const clonedLayouts: ResponsiveLayouts = {
+    lg: (layouts.lg || []).map(remap),
+    md: (layouts.md || []).map(remap),
+    sm: (layouts.sm || []).map(remap),
+    xs: (layouts.xs || []).map(remap),
+    xxs: (layouts.xxs || []).map(remap),
+  };
+  return { widgets: clonedWidgets, layouts: clonedLayouts };
+}
 
 export const useDashboardStore = create<DashboardState>((set, get) => {
   // Shared by every widget/layout mutator: keeps `widgets`/`layouts` (the
@@ -232,11 +278,16 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
       };
 
       try {
-        const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
+        // Appearance first: on a fresh install the default page is built
+        // in the browser's language, so the welcome note, sample todos and
+        // news feed read naturally instead of defaulting to English.
+        const appearance = await withTimeout(storageService.getAppearance(), 5000, DEFAULT_APPEARANCE);
+        const defaults = localizedDefaults(appearance.language);
+
+        const [{ pages, activePageId, pageData }, wallpaper, dockItems, keyboardShortcuts] =
           await Promise.all([
-            withTimeout(storageService.getPagesState(), 5000, fallbackPagesState),
+            withTimeout(storageService.getPagesState(defaults), 5000, fallbackPagesState),
             withTimeout(storageService.getWallpaper(), 5000, DEFAULT_WALLPAPER),
-            withTimeout(storageService.getAppearance(), 5000, DEFAULT_APPEARANCE),
             withTimeout(storageService.getDockItems(), 5000, DEFAULT_DOCK_ITEMS),
             withTimeout(storageService.getKeyboardShortcuts(), 5000, DEFAULT_KEYBOARD_SHORTCUTS),
           ]);
@@ -249,7 +300,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
         const active =
           pageData && pageData[safeActivePageId]
             ? pageData[safeActivePageId]
-            : { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS };
+            : defaults;
 
         set({
           pages: safePages,
@@ -291,10 +342,11 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   addWidget: (type, customTitle, initialConfig) => {
-    const { widgets, layouts } = get();
+    const { widgets, layouts, appearance } = get();
     const id = `widget-${type}-${Date.now()}`;
     const size = DEFAULT_WIDGET_SIZES[type];
-    const defaultConfig = DEFAULT_CONFIGS_BY_TYPE[type];
+    const languageSetting = appearance.language || 'auto';
+    const defaultConfig = DEFAULT_CONFIGS_BY_TYPE(getTranslation(languageSetting), resolveLanguageCode(languageSetting))[type];
     const config = { ...defaultConfig, ...initialConfig };
 
     const title = customTitle || (type.charAt(0).toUpperCase() + type.slice(1));
@@ -502,33 +554,39 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     storageService.saveLayouts(nextPage.layouts);
   },
 
-  addPage: (name) => {
+  addPage: (options) => {
     const { pages, pageData, activePageId, widgets, layouts } = get();
     const newId = `page-${Date.now()}`;
-    const newPageMeta: DashboardPageMeta = { id: newId, name: name?.trim() || `Page ${pages.length + 1}` };
+    // Empty name = "unnamed", rendered as the localized "Page N".
+    const newPageMeta: DashboardPageMeta = { id: newId, name: options?.name?.trim() || '' };
     const newPages = [...pages, newPageMeta];
+
+    const newPage: DashboardPageData = options?.duplicateCurrent
+      ? cloneWidgetsWithNewIds(widgets, layouts)
+      : { widgets: [], layouts: EMPTY_LAYOUTS };
+
     const updatedPageData = {
       ...pageData,
       [activePageId]: { widgets, layouts },
-      [newId]: { widgets: [], layouts: EMPTY_LAYOUTS },
+      [newId]: newPage,
     };
 
     set({
       pages: newPages,
       pageData: updatedPageData,
       activePageId: newId,
-      widgets: [],
-      layouts: EMPTY_LAYOUTS,
-      // A brand-new page starts empty — drop straight into edit mode so
-      // "Add Widget" is immediately visible instead of a bare blank page.
-      isEditMode: true,
+      widgets: newPage.widgets,
+      layouts: newPage.layouts,
+      // A brand-new empty page drops straight into edit mode so "Add
+      // Widget" is immediately visible; a duplicate is ready to use as-is.
+      isEditMode: newPage.widgets.length === 0,
     });
 
     storageService.savePages(newPages);
     storageService.savePageData(updatedPageData);
     storageService.saveActivePageId(newId);
-    storageService.saveWidgets([]);
-    storageService.saveLayouts(EMPTY_LAYOUTS);
+    storageService.saveWidgets(newPage.widgets);
+    storageService.saveLayouts(newPage.layouts);
   },
 
   removePage: (id) => {
@@ -564,22 +622,61 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   renamePage: (id, name) => {
+    // Clearing the name hands the page back to its localized "Page N".
     const trimmed = name.trim();
-    if (!trimmed) return;
     const { pages } = get();
     const newPages = pages.map((p) => (p.id === id ? { ...p, name: trimmed } : p));
     set({ pages: newPages });
     storageService.savePages(newPages);
   },
 
+  syncFromStorage: async () => {
+    const current = get();
+    const defaults = localizedDefaults(current.appearance.language);
+    const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
+      await Promise.all([
+        storageService.getPagesState(defaults),
+        storageService.getWallpaper(),
+        storageService.getAppearance(),
+        storageService.getDockItems(),
+        storageService.getKeyboardShortcuts(),
+      ]);
+
+    const safeActivePageId = pages.some((p) => p.id === activePageId) ? activePageId : pages[0].id;
+    const active = pageData[safeActivePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
+
+    const next = {
+      pages,
+      activePageId: safeActivePageId,
+      pageData,
+      widgets: active.widgets,
+      layouts: active.layouts,
+      wallpaper,
+      appearance,
+      dockItems,
+      keyboardShortcuts,
+    };
+
+    // Only touch the slices that actually changed so an unchanged grid
+    // doesn't re-render (and re-animate) for nothing.
+    const changed: Partial<DashboardState> = {};
+    for (const key of Object.keys(next) as (keyof typeof next)[]) {
+      if (JSON.stringify(get()[key]) !== JSON.stringify(next[key])) {
+        (changed as any)[key] = next[key];
+      }
+    }
+    if (Object.keys(changed).length > 0) set(changed);
+  },
+
   resetToDefault: async () => {
-    await storageService.resetDashboard();
+    const { widgets: defaultWidgets, layouts: defaultLayouts } = localizedDefaults(get().appearance.language);
+    await storageService.resetDashboard({ widgets: defaultWidgets, layouts: defaultLayouts });
     set({
       pages: DEFAULT_PAGES,
       activePageId: DEFAULT_PAGE_ID,
-      pageData: { [DEFAULT_PAGE_ID]: { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS } },
-      widgets: DEFAULT_WIDGETS,
-      layouts: DEFAULT_LAYOUTS,
+      pageData: { [DEFAULT_PAGE_ID]: { widgets: defaultWidgets, layouts: defaultLayouts } },
+      widgets: defaultWidgets,
+      layouts: defaultLayouts,
       wallpaper: DEFAULT_WALLPAPER,
       appearance: DEFAULT_APPEARANCE,
       dockItems: DEFAULT_DOCK_ITEMS,

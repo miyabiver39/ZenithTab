@@ -7,6 +7,9 @@ import {
   KeyboardShortcutBinding,
 } from '../types/settings';
 import { storageGet, storageSet } from '../utils/storage';
+import { rssService } from './rssService';
+import { en } from '../i18n/locales/en';
+import type { Translation } from '../i18n/resolve';
 
 /** The running extension version, so exports carry the version that produced them. */
 function currentVersion(): string {
@@ -116,15 +119,26 @@ export const STORAGE_KEYS = {
 export const DEFAULT_KEYBOARD_SHORTCUTS: KeyboardShortcutBinding[] = [];
 
 export const DEFAULT_PAGE_ID = 'page-1';
-export const DEFAULT_PAGES: DashboardPageMeta[] = [{ id: DEFAULT_PAGE_ID, name: 'Page 1' }];
+// An empty name means "unnamed": the UI renders it as the localized
+// "Page N" for its position, so it follows the language setting and
+// renumbers itself when pages are removed. Only user-typed names persist.
+export const DEFAULT_PAGES: DashboardPageMeta[] = [{ id: DEFAULT_PAGE_ID, name: '' }];
 
+/** Localized defaults handed in by the store for first launch / reset. */
+export interface DashboardDefaults {
+  widgets: DashboardWidget[];
+  layouts: ResponsiveLayouts;
+}
+
+// General-audience picks — the previous GitHub / Dev Docs set assumed a
+// developer at the keyboard, which most new-tab users are not.
 export const DEFAULT_DOCK_ITEMS: DockItem[] = [
   { id: 'dock-google', label: 'Google', url: 'https://google.com', icon: 'globe', openInNewTab: true },
-  { id: 'dock-github', label: 'GitHub', url: 'https://github.com', icon: 'code', openInNewTab: true },
   { id: 'dock-youtube', label: 'YouTube', url: 'https://youtube.com', icon: 'video', openInNewTab: true },
   { id: 'dock-gmail', label: 'Gmail', url: 'https://mail.google.com', icon: 'mail', openInNewTab: true },
   { id: 'dock-chatgpt', label: 'ChatGPT', url: 'https://chatgpt.com', icon: 'sparkles', openInNewTab: true },
-  { id: 'dock-devdocs', label: 'Dev Docs', url: 'https://developer.mozilla.org', icon: 'terminal', openInNewTab: true },
+  { id: 'dock-maps', label: 'Google Maps', url: 'https://maps.google.com', icon: 'map', openInNewTab: true },
+  { id: 'dock-wikipedia', label: 'Wikipedia', url: 'https://www.wikipedia.org', icon: 'book', openInNewTab: true },
 ];
 
 export const DEFAULT_WALLPAPER: WallpaperSettings = {
@@ -147,119 +161,6 @@ export const DEFAULT_APPEARANCE: AppearanceSettings = {
   dockPosition: 'bottom',
 };
 
-export const DEFAULT_NOTES_CONTENT = `# 🌌 Welcome to ZenithTab!
-
-> *"The secret of getting ahead is getting started."*
-
-- [x] Install ZenithTab 🎉
-- [ ] Rotate wallpaper \`(top right 🔄)\`
-- [ ] Hit \`/\` to search anything 🔍
-- [ ] Open App Drawer \`(🪟 icon)\`
-- [ ] Start a 25m Focus session ⏱️
-
-*Feel free to edit or clear this note anytime!*`;
-
-export const DEFAULT_WIDGETS: DashboardWidget[] = [
-  {
-    id: 'widget-search-1',
-    type: 'search',
-    title: 'Search',
-    config: {
-      defaultEngine: 'google',
-      showEngineSelector: true,
-      openInNewTab: true,
-    },
-    layout: { i: 'widget-search-1', x: 2, y: 0, w: 8, h: 1, minW: 4, minH: 1 },
-  },
-  {
-    id: 'widget-clock-1',
-    type: 'clock',
-    title: 'Clock',
-    config: {
-      style: 'digital',
-      showSeconds: true,
-      showDate: true,
-      is24Hour: true,
-    },
-    layout: { i: 'widget-clock-1', x: 0, y: 1, w: 4, h: 2, minW: 2, minH: 2 },
-  },
-  {
-    id: 'widget-weather-1',
-    type: 'weather',
-    title: 'Weather',
-    config: {
-      city: 'Tokyo',
-      latitude: 35.6762,
-      longitude: 139.6503,
-      unit: 'celsius',
-      showForecast: true,
-    },
-    layout: { i: 'widget-weather-1', x: 4, y: 1, w: 4, h: 2, minW: 3, minH: 2 },
-  },
-  {
-    id: 'widget-pomodoro-1',
-    type: 'pomodoro',
-    title: 'Focus Timer',
-    config: {
-      focusDurationMinutes: 25,
-      shortBreakDurationMinutes: 5,
-      longBreakDurationMinutes: 15,
-      autoStartBreaks: false,
-    },
-    layout: { i: 'widget-pomodoro-1', x: 8, y: 1, w: 4, h: 2, minW: 3, minH: 2 },
-  },
-  {
-    id: 'widget-bookmarks-1',
-    type: 'bookmarks',
-    title: 'Bookmarks',
-    config: {
-      viewMode: 'grid',
-      showFavicons: true,
-      columns: 4,
-    },
-    layout: { i: 'widget-bookmarks-1', x: 0, y: 3, w: 4, h: 4, minW: 3, minH: 3 },
-  },
-  {
-    id: 'widget-rss-1',
-    type: 'rss',
-    title: 'Tech News',
-    config: {
-      feedUrl: 'https://news.google.com/rss/search?q=technology&hl=en-US&gl=US&ceid=US:en',
-      isGoogleNews: true,
-      searchQuery: 'technology',
-      maxItems: 8,
-      refreshIntervalMinutes: 30,
-      showThumbnail: true,
-      showDate: true,
-      showDescription: true,
-    },
-    layout: { i: 'widget-rss-1', x: 4, y: 3, w: 4, h: 4, minW: 3, minH: 3 },
-  },
-  {
-    id: 'widget-todo-1',
-    type: 'todo',
-    title: 'Todo List',
-    config: {
-      items: [
-        { id: '1', text: 'Explore ZenithTab settings', completed: false, createdAt: Date.now() },
-        { id: '2', text: 'Customize widgets & wallpapers', completed: true, createdAt: Date.now() - 1000 },
-      ],
-    },
-    layout: { i: 'widget-todo-1', x: 8, y: 3, w: 4, h: 4, minW: 3, minH: 2 },
-  },
-  {
-    id: 'widget-notes-1',
-    type: 'notes',
-    title: 'Quick Notes',
-    config: {
-      content: DEFAULT_NOTES_CONTENT,
-      fontSize: 'base',
-      fontFamily: 'sans',
-    },
-    layout: { i: 'widget-notes-1', x: 0, y: 7, w: 4, h: 4, minW: 3, minH: 2 },
-  },
-];
-
 /**
  * Packs widgets two-per-row at a fixed width. Unlike clamping only `w`,
  * this also recomputes `x`/`y` so no item's `x + w` can ever exceed the
@@ -280,27 +181,146 @@ function packTwoColumnLayout(widgets: DashboardWidget[], itemWidth: number) {
   });
 }
 
-export const DEFAULT_LAYOUTS: ResponsiveLayouts = {
-  lg: DEFAULT_WIDGETS.map((w) => w.layout),
-  md: packTwoColumnLayout(DEFAULT_WIDGETS, 5),
-  sm: DEFAULT_WIDGETS.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 6 })),
-  xs: DEFAULT_WIDGETS.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 4 })),
-  xxs: DEFAULT_WIDGETS.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 2 })),
-};
+export function createDefaultLayouts(widgets: DashboardWidget[]): ResponsiveLayouts {
+  return {
+    lg: widgets.map((w) => w.layout),
+    md: packTwoColumnLayout(widgets, 5),
+    sm: widgets.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 6 })),
+    xs: widgets.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 4 })),
+    xxs: widgets.map((w, index) => ({ ...w.layout, x: 0, y: index * 2, w: 2 })),
+  };
+}
+
+/**
+ * The out-of-the-box dashboard, with every user-visible string (widget
+ * titles, the welcome note, sample todos) taken from `t`. This runs once at
+ * first launch in the browser's language; the result is then persisted like
+ * any user-authored content, so a later language switch leaves it alone.
+ */
+export function createDefaultWidgets(t: Translation, lang = 'en'): DashboardWidget[] {
+  return [
+    {
+      id: 'widget-search-1',
+      type: 'search',
+      title: t.widgets.search.title,
+      config: {
+        defaultEngine: 'google',
+        showEngineSelector: true,
+        openInNewTab: true,
+      },
+      layout: { i: 'widget-search-1', x: 2, y: 0, w: 8, h: 1, minW: 4, minH: 1 },
+    },
+    {
+      id: 'widget-clock-1',
+      type: 'clock',
+      title: t.widgets.clock.title,
+      config: {
+        style: 'digital',
+        showSeconds: true,
+        showDate: true,
+        is24Hour: true,
+      },
+      layout: { i: 'widget-clock-1', x: 0, y: 1, w: 4, h: 2, minW: 2, minH: 2 },
+    },
+    {
+      id: 'widget-weather-1',
+      type: 'weather',
+      title: t.widgets.weather.title,
+      config: {
+        city: 'Tokyo',
+        latitude: 35.6762,
+        longitude: 139.6503,
+        unit: 'celsius',
+        showForecast: true,
+      },
+      layout: { i: 'widget-weather-1', x: 4, y: 1, w: 4, h: 2, minW: 3, minH: 2 },
+    },
+    {
+      id: 'widget-pomodoro-1',
+      type: 'pomodoro',
+      title: t.widgets.pomodoro.title,
+      config: {
+        focusDurationMinutes: 25,
+        shortBreakDurationMinutes: 5,
+        longBreakDurationMinutes: 15,
+        autoStartBreaks: false,
+      },
+      layout: { i: 'widget-pomodoro-1', x: 8, y: 1, w: 4, h: 2, minW: 3, minH: 2 },
+    },
+    {
+      id: 'widget-bookmarks-1',
+      type: 'bookmarks',
+      title: t.widgets.bookmarks.title,
+      config: {
+        viewMode: 'grid',
+        showFavicons: true,
+        columns: 4,
+      },
+      layout: { i: 'widget-bookmarks-1', x: 0, y: 3, w: 4, h: 4, minW: 3, minH: 3 },
+    },
+    {
+      id: 'widget-rss-1',
+      type: 'rss',
+      title: t.defaults.newsTitle,
+      config: {
+        // Top stories for the user's region rather than a "technology"
+        // keyword feed — no interest profile needed, and not dev-flavoured.
+        feedUrl: rssService.buildGoogleNewsTopStoriesUrl(lang),
+        isGoogleNews: true,
+        searchQuery: '',
+        maxItems: 8,
+        refreshIntervalMinutes: 30,
+        showThumbnail: true,
+        showDate: true,
+        showDescription: true,
+      },
+      layout: { i: 'widget-rss-1', x: 4, y: 3, w: 4, h: 4, minW: 3, minH: 3 },
+    },
+    {
+      id: 'widget-todo-1',
+      type: 'todo',
+      title: t.widgets.todo.title,
+      config: {
+        items: [
+          { id: '1', text: t.defaults.todoExplore, completed: false, createdAt: Date.now() },
+          { id: '2', text: t.defaults.todoCustomize, completed: true, createdAt: Date.now() - 1000 },
+        ],
+      },
+      layout: { i: 'widget-todo-1', x: 8, y: 3, w: 4, h: 4, minW: 3, minH: 2 },
+    },
+    {
+      id: 'widget-notes-1',
+      type: 'notes',
+      title: t.widgets.notes.title,
+      config: {
+        content: t.defaults.notes,
+        fontSize: 'base',
+        fontFamily: 'sans',
+      },
+      layout: { i: 'widget-notes-1', x: 0, y: 7, w: 4, h: 4, minW: 3, minH: 2 },
+    },
+  ];
+}
+
+// English fallbacks for code paths that have no language to hand
+// (corrupted-storage recovery, unit tests). First launch and "reset to
+// default" go through createDefaultWidgets() with the real language.
+export const DEFAULT_WIDGETS: DashboardWidget[] = createDefaultWidgets(en);
+export const DEFAULT_LAYOUTS: ResponsiveLayouts = createDefaultLayouts(DEFAULT_WIDGETS);
 
 export const storageService = {
-  async getWidgets(): Promise<DashboardWidget[]> {
-    const widgets = await storageGet<DashboardWidget[]>(STORAGE_KEYS.WIDGETS, DEFAULT_WIDGETS);
-    return widgets || DEFAULT_WIDGETS;
+  async getWidgets(fallback: DashboardWidget[] = DEFAULT_WIDGETS): Promise<DashboardWidget[]> {
+    const widgets = await storageGet<DashboardWidget[]>(STORAGE_KEYS.WIDGETS, fallback);
+    return widgets || fallback;
   },
 
   async saveWidgets(widgets: DashboardWidget[]): Promise<void> {
     await storageSet(STORAGE_KEYS.WIDGETS, widgets);
   },
 
-  async getLayouts(): Promise<ResponsiveLayouts> {
-    const layouts = await storageGet<ResponsiveLayouts>(STORAGE_KEYS.LAYOUTS, DEFAULT_LAYOUTS);
-    return layouts || DEFAULT_LAYOUTS;
+  async getLayouts(fallback: ResponsiveLayouts = DEFAULT_LAYOUTS): Promise<ResponsiveLayouts> {
+    const layouts = await storageGet<ResponsiveLayouts>(STORAGE_KEYS.LAYOUTS, fallback);
+    return layouts || fallback;
   },
 
   async saveLayouts(layouts: ResponsiveLayouts): Promise<void> {
@@ -351,9 +371,11 @@ export const storageService = {
    * multi-page support, `dashboard_pages`/`dashboard_page_data` won't
    * exist yet — in that case the legacy single `dashboard_widgets` /
    * `dashboard_layouts` keys are migrated in-place into a single "Page 1"
-   * so existing users keep exactly what they had.
+   * so existing users keep exactly what they had. On a genuinely fresh
+   * install neither key exists and `defaults` (localized by the caller)
+   * becomes the first page.
    */
-  async getPagesState(): Promise<{
+  async getPagesState(defaults?: DashboardDefaults): Promise<{
     pages: DashboardPageMeta[];
     activePageId: string;
     pageData: Record<string, DashboardPageData>;
@@ -369,8 +391,8 @@ export const storageService = {
       return { pages, activePageId, pageData };
     }
 
-    const widgets = await this.getWidgets();
-    const layouts = await this.getLayouts();
+    const widgets = await this.getWidgets(defaults?.widgets);
+    const layouts = await this.getLayouts(defaults?.layouts);
     return {
       pages: DEFAULT_PAGES,
       activePageId: DEFAULT_PAGE_ID,
@@ -490,15 +512,15 @@ export const storageService = {
     }
   },
 
-  async resetDashboard(): Promise<void> {
-    await this.saveWidgets(DEFAULT_WIDGETS);
-    await this.saveLayouts(DEFAULT_LAYOUTS);
+  async resetDashboard(defaults: DashboardDefaults = { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS }): Promise<void> {
+    await this.saveWidgets(defaults.widgets);
+    await this.saveLayouts(defaults.layouts);
     await this.saveWallpaper(DEFAULT_WALLPAPER);
     await this.saveAppearance(DEFAULT_APPEARANCE);
     await this.saveDockItems(DEFAULT_DOCK_ITEMS);
     await this.saveKeyboardShortcuts(DEFAULT_KEYBOARD_SHORTCUTS);
     await this.savePages(DEFAULT_PAGES);
-    await this.savePageData({ [DEFAULT_PAGE_ID]: { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS } });
+    await this.savePageData({ [DEFAULT_PAGE_ID]: { widgets: defaults.widgets, layouts: defaults.layouts } });
     await this.saveActivePageId(DEFAULT_PAGE_ID);
   },
 };

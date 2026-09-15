@@ -75,8 +75,12 @@ export const WidgetConfigModal: React.FC = () => {
     if (!editingWidgetId) return;
 
     // Custom formatting for Google News
-    if (targetWidget.type === 'rss' && config.isGoogleNews && config.searchQuery) {
-      config.feedUrl = rssService.buildGoogleNewsRssUrl(config.searchQuery, activeLanguageCode, activeLanguageCode === 'ja' ? 'JP' : 'US');
+    if (targetWidget.type === 'rss' && config.isGoogleNews) {
+      const query = (config.searchQuery || '').trim();
+      config.searchQuery = query;
+      config.feedUrl = query
+        ? rssService.buildGoogleNewsRssUrl(query, activeLanguageCode)
+        : rssService.buildGoogleNewsTopStoriesUrl(activeLanguageCode);
     }
 
     // A custom feed lives outside our granted hosts. Ask for its origin right
@@ -595,12 +599,15 @@ export const WidgetConfigModal: React.FC = () => {
             </div>
 
             {config.isGoogleNews ? (
-              <Input
-                label={t.widgets.rss.searchPlaceholder}
-                value={config.searchQuery || ''}
-                onChange={(e) => setConfig({ ...config, searchQuery: e.target.value })}
-                placeholder="e.g. artificial intelligence, technology, web dev"
-              />
+              <div className="space-y-1.5">
+                <Input
+                  label={t.widgets.rss.searchPlaceholder}
+                  value={config.searchQuery || ''}
+                  onChange={(e) => setConfig({ ...config, searchQuery: e.target.value })}
+                  placeholder="e.g. artificial intelligence, technology, web dev"
+                />
+                <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.rss.topStoriesHint}</p>
+              </div>
             ) : (
               <div className="space-y-1.5">
                 <Input

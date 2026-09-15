@@ -189,6 +189,8 @@ export const fr: typeof en = {
       failed: 'Échec du chargement du flux',
       empty: 'Aucun article trouvé',
       liveFeed: 'Flux en direct',
+      topStories: 'À la une',
+      topStoriesHint: 'Laissez vide pour afficher les titres de votre région',
       permissionNeeded: 'ZenithTab a besoin de votre autorisation pour lire ce flux.',
       grantAccess: 'Autoriser ce flux',
       permissionHint: 'À l’enregistrement, Chrome demandera l’autorisation pour le site de ce flux. ZenithTab ne demande que les flux que vous ajoutez.',
@@ -292,6 +294,14 @@ export const fr: typeof en = {
     add: 'Ajouter une page',
     remove: 'Supprimer la page',
     shortcutHint: 'Astuce : Ctrl+Alt+←/→ change de page',
+    defaultName: 'Page {n}',
+    addEmpty: 'Nouvelle page vide',
+    addEmptySub: 'Partir de zéro',
+    duplicateCurrent: 'Dupliquer cette page',
+    duplicateCurrentSub: 'Copier tous les widgets de la page actuelle',
+    emptyTitle: 'Cette page est vide',
+    emptyDesc: 'Rien n\'a été supprimé : vos autres pages sont toujours dans les onglets ci-dessus. Ajoutez des widgets ici, ou revenez en arrière.',
+    backTo: 'Revenir à {name}',
   },
   settings: {
     modalTitle: 'Paramètres ZenithTab',
@@ -363,5 +373,23 @@ export const fr: typeof en = {
     architecture: 'Architecture',
     abstract: 'Abstrait 3D',
     cyberpunk: 'Cyberpunk',
+  },
+  // First-run content baked into the default widgets (localized once at
+  // install time, so a later language switch doesn't clobber user edits).
+  defaults: {
+    newsTitle: 'Actualités',
+    todoExplore: 'Explorer les réglages de ZenithTab',
+    todoCustomize: 'Personnaliser les widgets et fonds d\'écran',
+    notes: `# 🌌 Bienvenue sur ZenithTab !
+
+> *« Le secret pour avancer, c'est de commencer. »*
+
+- [x] Installer ZenithTab 🎉
+- [ ] Changer le fond d'écran \`(en haut à droite 🔄)\`
+- [ ] Appuyez sur \`/\` pour rechercher 🔍
+- [ ] Ouvrir le tiroir d'applications \`(icône 🪟)\`
+- [ ] Lancer une session de 25 min ⏱️
+
+*Modifiez ou effacez cette note quand vous voulez !*`,
   },
 };

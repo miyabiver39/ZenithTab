@@ -189,6 +189,8 @@ export const de: typeof en = {
       failed: 'Fehler beim Laden des Feeds',
       empty: 'Keine Artikel vorhanden',
       liveFeed: 'Live-Feed',
+      topStories: 'Schlagzeilen',
+      topStoriesHint: 'Leer lassen, um die Schlagzeilen deiner Region zu sehen',
       permissionNeeded: 'ZenithTab benötigt deine Erlaubnis, diesen Feed zu lesen.',
       grantAccess: 'Diesen Feed erlauben',
       permissionHint: 'Beim Speichern fragt Chrome nach der Berechtigung für die Website dieses Feeds. ZenithTab fragt nur nach Feeds, die du selbst hinzufügst.',
@@ -292,6 +294,14 @@ export const de: typeof en = {
     add: 'Seite hinzufügen',
     remove: 'Seite entfernen',
     shortcutHint: 'Tipp: Strg+Alt+←/→ wechselt die Seite',
+    defaultName: 'Seite {n}',
+    addEmpty: 'Neue leere Seite',
+    addEmptySub: 'Von vorn beginnen',
+    duplicateCurrent: 'Diese Seite duplizieren',
+    duplicateCurrentSub: 'Alle Widgets der aktuellen Seite kopieren',
+    emptyTitle: 'Diese Seite ist leer',
+    emptyDesc: 'Es wurde nichts gelöscht – deine anderen Seiten sind weiterhin in den Tabs oben. Füge hier Widgets hinzu oder geh zurück.',
+    backTo: 'Zurück zu {name}',
   },
   settings: {
     modalTitle: 'ZenithTab Einstellungen',
@@ -363,5 +373,23 @@ export const de: typeof en = {
     architecture: 'Architektur',
     abstract: 'Abstrakte 3D-Kunst',
     cyberpunk: 'Cyberpunk & Neon',
+  },
+  // First-run content baked into the default widgets (localized once at
+  // install time, so a later language switch doesn't clobber user edits).
+  defaults: {
+    newsTitle: 'Nachrichten',
+    todoExplore: 'ZenithTab-Einstellungen erkunden',
+    todoCustomize: 'Widgets & Hintergründe anpassen',
+    notes: `# 🌌 Willkommen bei ZenithTab!
+
+> *„Das Geheimnis des Vorankommens ist das Anfangen.“*
+
+- [x] ZenithTab installieren 🎉
+- [ ] Hintergrund wechseln \`(oben rechts 🔄)\`
+- [ ] \`/\` drücken, um zu suchen 🔍
+- [ ] App-Schublade öffnen \`(🪟-Symbol)\`
+- [ ] 25-Minuten-Fokus starten ⏱️
+
+*Diese Notiz kannst du jederzeit ändern oder löschen!*`,
   },
 };

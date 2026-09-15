@@ -187,6 +187,8 @@ export const en = {
       failed: 'Failed to load feed',
       empty: 'No articles found',
       liveFeed: 'Live Feed',
+      topStories: 'Top stories',
+      topStoriesHint: 'Leave empty to show top stories for your region',
       permissionNeeded: 'ZenithTab needs your permission to read this feed.',
       grantAccess: 'Allow this feed',
       permissionHint: 'When you save, Chrome will ask permission for this feed’s site. ZenithTab only ever requests the feeds you add yourself.',
@@ -290,6 +292,14 @@ export const en = {
     add: 'Add page',
     remove: 'Remove page',
     shortcutHint: 'Tip: Ctrl+Alt+←/→ switches pages',
+    defaultName: 'Page {n}',
+    addEmpty: 'New empty page',
+    addEmptySub: 'Start from scratch',
+    duplicateCurrent: 'Duplicate this page',
+    duplicateCurrentSub: 'Copy every widget on the current page',
+    emptyTitle: 'This page is empty',
+    emptyDesc: 'Nothing was deleted — your other pages are still in the tabs above. Add widgets here, or go back.',
+    backTo: 'Back to {name}',
   },
   settings: {
     modalTitle: 'ZenithTab Settings',
@@ -361,5 +371,23 @@ export const en = {
     architecture: 'Architecture',
     abstract: 'Abstract 3D',
     cyberpunk: 'Cyberpunk & Neon',
+  },
+  // First-run content baked into the default widgets (localized once at
+  // install time, so a later language switch doesn't clobber user edits).
+  defaults: {
+    newsTitle: 'News',
+    todoExplore: 'Explore ZenithTab settings',
+    todoCustomize: 'Customize widgets & wallpapers',
+    notes: `# 🌌 Welcome to ZenithTab!
+
+> *"The secret of getting ahead is getting started."*
+
+- [x] Install ZenithTab 🎉
+- [ ] Rotate wallpaper \`(top right 🔄)\`
+- [ ] Hit \`/\` to search anything 🔍
+- [ ] Open App Drawer \`(🪟 icon)\`
+- [ ] Start a 25m Focus session ⏱️
+
+*Feel free to edit or clear this note anytime!*`,
   },
 };
