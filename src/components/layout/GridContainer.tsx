@@ -6,6 +6,7 @@ import { getWidgetDefinition } from '../widgets/registry';
 import { EmptyPage } from './EmptyPage';
 import { DashboardWidget } from '../../types/widget';
 import { cn } from '../../utils/cn';
+import { useLayoutUndo } from '../../hooks/useLayoutUndo';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -23,6 +24,10 @@ export const GridContainer: React.FC = () => {
       updateLayouts(currentLayout, allLayouts);
     }
   };
+
+  // One undo entry per drag/resize gesture (see the hook for why not per
+  // onLayoutChange).
+  const layoutUndo = useLayoutUndo();
 
   // Every widget normally animates to its new position over 200ms (nice for
   // a manual drag/resize) — but a window resize can flip the breakpoint and
@@ -72,6 +77,10 @@ export const GridContainer: React.FC = () => {
         draggableHandle=".grid-drag-handle"
         onLayoutChange={handleLayoutChange}
         onBreakpointChange={handleBreakpointChange}
+        onDragStart={layoutUndo.onDragStart}
+        onDragStop={layoutUndo.onDragStop}
+        onResizeStart={layoutUndo.onResizeStart}
+        onResizeStop={layoutUndo.onResizeStop}
         margin={[16, 16]}
         containerPadding={[0, 10]}
       >

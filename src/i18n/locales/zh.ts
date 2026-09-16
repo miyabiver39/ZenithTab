@@ -363,6 +363,21 @@ export const zh: typeof en = {
     emptyDesc: '没有任何内容被删除——其他页面仍在上方的标签中。在这里添加小部件，或返回。',
     backTo: '返回 {name}',
   },
+  undo: {
+    undoBtn: '撤销',
+    undone: '已恢复',
+    removedWidget: '已删除小组件“{name}”',
+    removedPage: '已删除页面“{name}”',
+    removedDockItem: '已从 Dock 中移除“{name}”',
+    removedShortcut: '已删除键盘快捷键“{name}”',
+    reorderedDock: '已重新排列 Dock',
+    movedWidget: '已移动小组件',
+    resizedWidget: '已调整小组件大小',
+    removedTask: '已删除任务',
+    clearedCompleted: '已清除已完成的任务',
+    removedSite: '已删除快捷方式“{name}”',
+    closedNotePage: '已关闭笔记页“{name}”',
+  },
   settings: {
     modalTitle: 'ZenithTab 设置',
     tabs: {

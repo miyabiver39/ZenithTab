@@ -363,6 +363,21 @@ export const es: typeof en = {
     emptyDesc: 'No se ha borrado nada: tus otras páginas siguen en las pestañas de arriba. Añade widgets aquí o vuelve atrás.',
     backTo: 'Volver a {name}',
   },
+  undo: {
+    undoBtn: 'Deshacer',
+    undone: 'Restaurado',
+    removedWidget: 'Widget "{name}" eliminado',
+    removedPage: 'Página "{name}" eliminada',
+    removedDockItem: '"{name}" eliminado del dock',
+    removedShortcut: 'Atajo de teclado "{name}" eliminado',
+    reorderedDock: 'Dock reordenado',
+    movedWidget: 'Widget movido',
+    resizedWidget: 'Tamaño del widget cambiado',
+    removedTask: 'Tarea eliminada',
+    clearedCompleted: 'Tareas completadas eliminadas',
+    removedSite: 'Acceso directo "{name}" eliminado',
+    closedNotePage: 'Página de notas "{name}" cerrada',
+  },
   settings: {
     modalTitle: 'Ajustes de ZenithTab',
     tabs: {

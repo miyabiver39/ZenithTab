@@ -24,6 +24,9 @@ import { getRegionalDockItems, getRegionalShortcuts } from '../config/defaults/r
 import { WIDGET_DEFINITIONS } from '../components/widgets/widgetDefinitions';
 import { uniqueId } from '../utils/id';
 import { calculateBottomY, sanitizeResponsiveLayouts } from '../utils/layout';
+import { useUndoStore } from './useUndoStore';
+import { getLocalizedWidgetTitle } from '../utils/widgetTitle';
+import { getPageDisplayName } from '../utils/pageName';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -80,6 +83,12 @@ interface DashboardState {
   addWidget: (type: WidgetType, customTitle?: string, initialConfig?: Record<string, any>) => void;
   removeWidget: (id: string) => void;
   updateWidgetConfig: (id: string, config: Record<string, any>, title?: string) => void;
+  /**
+   * Like updateWidgetConfig, but the previous values of the patched keys
+   * are captured so the change can be undone (toast / Ctrl+Z). For
+   * in-widget deletions — a task, a note page, a shortcut tile.
+   */
+  updateWidgetConfigUndoable: (id: string, config: Record<string, any>, label: string) => void;
   updateLayouts: (currentLayout: Layout[], allLayouts: ResponsiveLayouts) => void;
 
   updateWallpaper: (partial: Partial<WallpaperSettings>) => void;
@@ -159,6 +168,161 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     storageService.saveWidgets(widgets);
     storageService.saveLayouts(layouts);
     storageService.savePageData(updatedPageData);
+  };
+
+  // --- Undo support -------------------------------------------------------
+  // Every destructive action below is split into a plain "do" helper and
+  // the public action, which runs the helper and registers how to reverse
+  // it. Undo re-inserts what was removed into the *current* state (never
+  // replaces the whole slice) so it stays safe with other tabs' changes;
+  // redo re-runs the helper.
+  const tr = () => getTranslation(get().appearance.language || 'auto');
+  const pushUndo = (label: string, undo: () => void, redo?: () => void) =>
+    useUndoStore.getState().pushUndo({ label, undo, redo });
+  const fmt = (template: string, name: string) => template.replace('{name}', name);
+
+  type BreakpointKey = keyof ResponsiveLayouts;
+  const BREAKPOINTS: BreakpointKey[] = ['lg', 'md', 'sm', 'xs', 'xxs'];
+
+  interface RemovedWidget {
+    widget: DashboardWidget;
+    index: number;
+    pageId: string;
+    layouts: Partial<Record<BreakpointKey, Layout>>;
+  }
+
+  const removeWidgetInternal = (id: string): RemovedWidget | null => {
+    const { widgets, layouts, activePageId } = get();
+    const index = widgets.findIndex((w) => w.id === id);
+    if (index === -1) return null;
+    const removed: RemovedWidget = { widget: widgets[index], index, pageId: activePageId, layouts: {} };
+    const updatedLayouts = { ...layouts } as ResponsiveLayouts;
+    for (const bp of BREAKPOINTS) {
+      const list = layouts[bp] || [];
+      const match = list.find((l) => l.i === id);
+      if (match) removed.layouts[bp] = match;
+      updatedLayouts[bp] = list.filter((l) => l.i !== id);
+    }
+    persistPageState(widgets.filter((w) => w.id !== id), updatedLayouts);
+    return removed;
+  };
+
+  /**
+   * Puts a removed widget back where it was. If its page is no longer the
+   * active one (or no longer exists) it lands on the current page instead;
+   * an id that already exists again (restored elsewhere) is left alone.
+   */
+  const restoreWidgetInternal = (removed: RemovedWidget) => {
+    const { widgets, layouts, pageData, activePageId } = get();
+    const { widget, index } = removed;
+    if (widgets.some((w) => w.id === widget.id)) return;
+    if (removed.pageId !== activePageId && pageData[removed.pageId]) {
+      const page = pageData[removed.pageId];
+      if (page.widgets.some((w) => w.id === widget.id)) return;
+      const restored = {
+        widgets: insertAt(page.widgets, index, widget),
+        layouts: withLayoutEntries(page.layouts, widget, removed.layouts),
+      };
+      const updatedPageData = { ...pageData, [removed.pageId]: restored };
+      set({ pageData: updatedPageData });
+      storageService.savePageData(updatedPageData);
+      return;
+    }
+    persistPageState(insertAt(widgets, index, widget), withLayoutEntries(layouts, widget, removed.layouts));
+  };
+
+  const insertAt = <T>(list: T[], index: number, item: T): T[] => {
+    const next = [...list];
+    next.splice(Math.min(index, next.length), 0, item);
+    return next;
+  };
+
+  const withLayoutEntries = (
+    layouts: ResponsiveLayouts,
+    widget: DashboardWidget,
+    saved: Partial<Record<BreakpointKey, Layout>>
+  ): ResponsiveLayouts => {
+    const next = { ...layouts } as ResponsiveLayouts;
+    for (const bp of BREAKPOINTS) {
+      const list = (layouts[bp] || []).filter((l) => l.i !== widget.id);
+      next[bp] = [...list, saved[bp] || { ...widget.layout, i: widget.id }];
+    }
+    return next;
+  };
+
+  interface RemovedPage {
+    meta: DashboardPageMeta;
+    index: number;
+    data: DashboardPageData;
+    wasActive: boolean;
+  }
+
+  const removePageInternal = (id: string): RemovedPage | null => {
+    const { pages, pageData, activePageId, widgets, layouts } = get();
+    if (pages.length <= 1) return null; // always keep at least one page
+    const index = pages.findIndex((p) => p.id === id);
+    if (index === -1) return null;
+
+    const switchingAway = activePageId === id;
+    const removed: RemovedPage = {
+      meta: pages[index],
+      index,
+      // The active page's live mirror is the freshest copy of its data.
+      data: switchingAway ? { widgets, layouts } : pageData[id] || { widgets: [], layouts: EMPTY_LAYOUTS },
+      wasActive: switchingAway,
+    };
+
+    const newPages = pages.filter((p) => p.id !== id);
+    const updatedPageData = { ...pageData };
+    delete updatedPageData[id];
+
+    const newActiveId = switchingAway ? newPages[0].id : activePageId;
+    const nextPage = switchingAway
+      ? updatedPageData[newActiveId] || { widgets: [], layouts: EMPTY_LAYOUTS }
+      : { widgets, layouts };
+
+    set({
+      pages: newPages,
+      pageData: updatedPageData,
+      activePageId: newActiveId,
+      widgets: nextPage.widgets,
+      layouts: nextPage.layouts,
+      isEditMode: switchingAway ? false : get().isEditMode,
+    });
+
+    storageService.savePages(newPages);
+    storageService.savePageData(updatedPageData);
+    if (switchingAway) {
+      storageService.saveActivePageId(newActiveId);
+      storageService.saveWidgets(nextPage.widgets);
+      storageService.saveLayouts(nextPage.layouts);
+    }
+    return removed;
+  };
+
+  const restorePageInternal = (removed: RemovedPage) => {
+    const { pages, pageData, activePageId, widgets, layouts } = get();
+    if (pages.some((p) => p.id === removed.meta.id)) return;
+    const newPages = insertAt(pages, removed.index, removed.meta);
+    const updatedPageData = {
+      ...pageData,
+      [activePageId]: { widgets, layouts },
+      [removed.meta.id]: removed.data,
+    };
+    set({ pages: newPages, pageData: updatedPageData });
+    storageService.savePages(newPages);
+    storageService.savePageData(updatedPageData);
+    if (removed.wasActive) get().switchPage(removed.meta.id);
+  };
+
+  const saveDock = (updated: DockItem[]) => {
+    set({ dockItems: updated });
+    storageService.saveDockItems(updated);
+  };
+
+  const saveKeys = (updated: KeyboardShortcutBinding[]) => {
+    set({ keyboardShortcuts: updated });
+    storageService.saveKeyboardShortcuts(updated);
   };
 
   return {
@@ -331,19 +495,13 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   removeWidget: (id) => {
-    const { widgets, layouts } = get();
-    const updatedWidgets = widgets.filter((w) => w.id !== id);
-    const filterLayout = (list: Layout[]) => list.filter((l) => l.i !== id);
-
-    const updatedLayouts: ResponsiveLayouts = {
-      lg: filterLayout(layouts.lg),
-      md: filterLayout(layouts.md),
-      sm: filterLayout(layouts.sm),
-      xs: filterLayout(layouts.xs),
-      xxs: filterLayout(layouts.xxs || []),
-    };
-
-    persistPageState(updatedWidgets, updatedLayouts);
+    const removed = removeWidgetInternal(id);
+    if (!removed) return;
+    pushUndo(
+      fmt(tr().undo.removedWidget, getLocalizedWidgetTitle(removed.widget, tr())),
+      () => restoreWidgetInternal(removed),
+      () => removeWidgetInternal(id)
+    );
   },
 
   updateWidgetConfig: (id, config, title) => {
@@ -361,6 +519,27 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
     persistPageState(updatedWidgets, layouts);
     set({ activeSettingsModal: null, editingWidgetId: null });
+  },
+
+  updateWidgetConfigUndoable: (id, config, label) => {
+    const { widgets, layouts } = get();
+    const target = widgets.find((w) => w.id === id);
+    if (!target) return;
+    const previous: Record<string, any> = {};
+    for (const key of Object.keys(config)) previous[key] = target.config?.[key];
+
+    const apply = (patch: Record<string, any>) => {
+      const current = get();
+      if (!current.widgets.some((w) => w.id === id)) return;
+      const updated = current.widgets.map((w) => (w.id === id ? { ...w, config: { ...w.config, ...patch } } : w));
+      persistPageState(updated, current.layouts);
+    };
+
+    persistPageState(
+      widgets.map((w) => (w.id === id ? { ...w, config: { ...w.config, ...config } } : w)),
+      layouts
+    );
+    pushUndo(label, () => apply(previous), () => apply(config));
   },
 
   updateLayouts: (_currentLayout, allLayouts) => {
@@ -447,9 +626,19 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   removeDockItem: (id) => {
     const { dockItems } = get();
-    const updated = dockItems.filter((item) => item.id !== id);
-    set({ dockItems: updated });
-    storageService.saveDockItems(updated);
+    const index = dockItems.findIndex((item) => item.id === id);
+    if (index === -1) return;
+    const removed = dockItems[index];
+    saveDock(dockItems.filter((item) => item.id !== id));
+    pushUndo(
+      fmt(tr().undo.removedDockItem, removed.label),
+      () => {
+        const current = get().dockItems;
+        if (current.some((item) => item.id === id)) return;
+        saveDock(insertAt(current, index, removed));
+      },
+      () => saveDock(get().dockItems.filter((item) => item.id !== id))
+    );
   },
 
   moveDockItem: (id, direction) => {
@@ -457,11 +646,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     const index = dockItems.findIndex((item) => item.id === id);
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     if (index === -1 || targetIndex < 0 || targetIndex >= dockItems.length) return;
-
-    const updated = [...dockItems];
-    [updated[index], updated[targetIndex]] = [updated[targetIndex], updated[index]];
-    set({ dockItems: updated });
-    storageService.saveDockItems(updated);
+    get().reorderDockItem(id, targetIndex);
   },
 
   reorderDockItem: (id, toIndex) => {
@@ -469,11 +654,16 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     const fromIndex = dockItems.findIndex((item) => item.id === id);
     if (fromIndex === -1 || toIndex < 0 || toIndex >= dockItems.length || fromIndex === toIndex) return;
 
-    const updated = [...dockItems];
-    const [moved] = updated.splice(fromIndex, 1);
-    updated.splice(toIndex, 0, moved);
-    set({ dockItems: updated });
-    storageService.saveDockItems(updated);
+    const move = (from: number, to: number) => {
+      const current = get().dockItems;
+      if (from >= current.length || to >= current.length) return;
+      const updated = [...current];
+      const [moved] = updated.splice(from, 1);
+      updated.splice(to, 0, moved);
+      saveDock(updated);
+    };
+    move(fromIndex, toIndex);
+    pushUndo(tr().undo.reorderedDock, () => move(toIndex, fromIndex), () => move(fromIndex, toIndex));
   },
 
   addKeyboardShortcut: (item) => {
@@ -486,9 +676,19 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   removeKeyboardShortcut: (id) => {
     const { keyboardShortcuts } = get();
-    const updated = keyboardShortcuts.filter((item) => item.id !== id);
-    set({ keyboardShortcuts: updated });
-    storageService.saveKeyboardShortcuts(updated);
+    const index = keyboardShortcuts.findIndex((item) => item.id === id);
+    if (index === -1) return;
+    const removed = keyboardShortcuts[index];
+    saveKeys(keyboardShortcuts.filter((item) => item.id !== id));
+    pushUndo(
+      fmt(tr().undo.removedShortcut, removed.label),
+      () => {
+        const current = get().keyboardShortcuts;
+        if (current.some((item) => item.id === id)) return;
+        saveKeys(insertAt(current, index, removed));
+      },
+      () => saveKeys(get().keyboardShortcuts.filter((item) => item.id !== id))
+    );
   },
 
   switchPage: (id) => {
@@ -549,35 +749,17 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   removePage: (id) => {
-    const { pages, pageData, activePageId, widgets, layouts } = get();
-    if (pages.length <= 1) return; // always keep at least one page
-
-    const newPages = pages.filter((p) => p.id !== id);
-    const updatedPageData = { ...pageData };
-    delete updatedPageData[id];
-
-    const switchingAway = activePageId === id;
-    const newActiveId = switchingAway ? newPages[0].id : activePageId;
-    const nextPage = switchingAway
-      ? updatedPageData[newActiveId] || { widgets: [], layouts: EMPTY_LAYOUTS }
-      : { widgets, layouts };
-
-    set({
-      pages: newPages,
-      pageData: updatedPageData,
-      activePageId: newActiveId,
-      widgets: nextPage.widgets,
-      layouts: nextPage.layouts,
-      isEditMode: switchingAway ? false : get().isEditMode,
-    });
-
-    storageService.savePages(newPages);
-    storageService.savePageData(updatedPageData);
-    if (switchingAway) {
-      storageService.saveActivePageId(newActiveId);
-      storageService.saveWidgets(nextPage.widgets);
-      storageService.saveLayouts(nextPage.layouts);
-    }
+    const { pages } = get();
+    const index = pages.findIndex((p) => p.id === id);
+    if (index === -1) return;
+    const name = getPageDisplayName(pages[index], index, tr());
+    const removed = removePageInternal(id);
+    if (!removed) return;
+    pushUndo(
+      fmt(tr().undo.removedPage, name),
+      () => restorePageInternal(removed),
+      () => removePageInternal(id)
+    );
   },
 
   renamePage: (id, name) => {

@@ -4,6 +4,7 @@ import { setupUser, literal } from '../helpers/user';
 import { ShortcutsWidget } from '../../src/components/widgets/ShortcutsWidget/ShortcutsWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { resetDashboardStore } from '../helpers/store';
+import { useUndoStore } from '../../src/store/useUndoStore';
 import { WidgetHarness } from '../helpers/WidgetHarness';
 
 const WIDGET_ID = 'widget-shortcuts-test';
@@ -98,6 +99,19 @@ describe('ShortcutsWidget', () => {
 
     await user.click(screen.getAllByTitle('Delete')[0]);
     expect(items().some((i: any) => i.id === '1')).toBe(false);
+  });
+
+  it('削除したショートカットを元に戻せること', async () => {
+    const user = setupUser();
+    renderShortcuts();
+    act(() => useDashboardStore.getState().setEditMode(true));
+    const first = items()[0];
+    await user.click(screen.getAllByTitle('Delete')[0]);
+    expect(items().some((i: any) => i.id === first.id)).toBe(false);
+    expect(useUndoStore.getState().toast?.label).toBe(`Removed shortcut "${first.title}"`);
+
+    act(() => void useUndoStore.getState().undo());
+    expect(items()[0]).toEqual(first);
   });
 
   it('設定した列数がグリッドのインラインスタイルに反映されること', async () => {

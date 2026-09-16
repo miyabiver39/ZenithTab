@@ -10,6 +10,7 @@ import { SettingsPanel } from './components/layout/SettingsPanel';
 import { AddWidgetModal } from './components/layout/AddWidgetModal';
 import { WidgetConfigModal } from './components/layout/WidgetConfigModal';
 import { AppDrawerModal } from './components/layout/AppDrawerModal';
+import { UndoToast } from './components/common/UndoToast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
 import { useStorageSync } from './hooks/useStorageSync';
@@ -51,6 +52,7 @@ export const App: React.FC = () => {
       <AddWidgetModal />
       <WidgetConfigModal />
       <AppDrawerModal />
+      <UndoToast />
     </div>
   );
 };

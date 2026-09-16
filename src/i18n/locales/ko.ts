@@ -363,6 +363,21 @@ export const ko: typeof en = {
     emptyDesc: '아무것도 삭제되지 않았어요. 다른 페이지는 위 탭에 그대로 있습니다. 여기에 위젯을 추가하거나 돌아갈 수 있어요.',
     backTo: '{name}(으)로 돌아가기',
   },
+  undo: {
+    undoBtn: '실행 취소',
+    undone: '복원했습니다',
+    removedWidget: '위젯 "{name}"을(를) 삭제했습니다',
+    removedPage: '페이지 "{name}"을(를) 삭제했습니다',
+    removedDockItem: '독에서 "{name}"을(를) 삭제했습니다',
+    removedShortcut: '키보드 단축키 "{name}"을(를) 삭제했습니다',
+    reorderedDock: '독 순서를 변경했습니다',
+    movedWidget: '위젯을 이동했습니다',
+    resizedWidget: '위젯 크기를 변경했습니다',
+    removedTask: '할 일을 삭제했습니다',
+    clearedCompleted: '완료된 할 일을 삭제했습니다',
+    removedSite: '바로가기 "{name}"을(를) 삭제했습니다',
+    closedNotePage: '메모 페이지 "{name}"을(를) 닫았습니다',
+  },
   settings: {
     modalTitle: 'ZenithTab 설정',
     tabs: {

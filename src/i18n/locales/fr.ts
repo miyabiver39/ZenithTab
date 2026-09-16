@@ -363,6 +363,21 @@ export const fr: typeof en = {
     emptyDesc: 'Rien n\'a été supprimé : vos autres pages sont toujours dans les onglets ci-dessus. Ajoutez des widgets ici, ou revenez en arrière.',
     backTo: 'Revenir à {name}',
   },
+  undo: {
+    undoBtn: 'Annuler',
+    undone: 'Restauré',
+    removedWidget: 'Widget « {name} » supprimé',
+    removedPage: 'Page « {name} » supprimée',
+    removedDockItem: '« {name} » retiré du dock',
+    removedShortcut: 'Raccourci clavier « {name} » supprimé',
+    reorderedDock: 'Dock réorganisé',
+    movedWidget: 'Widget déplacé',
+    resizedWidget: 'Widget redimensionné',
+    removedTask: 'Tâche supprimée',
+    clearedCompleted: 'Tâches terminées supprimées',
+    removedSite: 'Raccourci « {name} » supprimé',
+    closedNotePage: 'Page de notes « {name} » fermée',
+  },
   settings: {
     modalTitle: 'Paramètres ZenithTab',
     tabs: {

@@ -4,6 +4,7 @@ import { setupUser, literal } from '../helpers/user';
 import { TodoWidget } from '../../src/components/widgets/TodoWidget/TodoWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { resetDashboardStore } from '../helpers/store';
+import { useUndoStore } from '../../src/store/useUndoStore';
 import { WidgetHarness } from '../helpers/WidgetHarness';
 
 const WIDGET_ID = 'widget-todo-1';
@@ -71,6 +72,21 @@ describe('TodoWidget', () => {
     await user.click(screen.getByRole('button', { name: 'Delete: Explore ZenithTab settings' }));
     expect(items().some((i: any) => i.id === '1')).toBe(false);
     expect(screen.queryByText('Explore ZenithTab settings')).not.toBeInTheDocument();
+  });
+
+  it('削除したタスクと完了済み一括削除を元に戻せること', async () => {
+    const user = setupUser();
+    renderTodo();
+    await user.click(screen.getByRole('button', { name: 'Delete: Explore ZenithTab settings' }));
+    expect(useUndoStore.getState().toast?.label).toBe('Removed a task');
+    useUndoStore.getState().undo();
+    expect(items().some((i: any) => i.id === '1')).toBe(true);
+    expect(await screen.findByText('Explore ZenithTab settings')).toBeInTheDocument();
+
+    await user.click(screen.getByText('Clear completed'));
+    expect(useUndoStore.getState().toast?.label).toBe('Cleared completed tasks');
+    useUndoStore.getState().undo();
+    expect(items().some((i: any) => i.completed)).toBe(true);
   });
 
   it('フィルターで未完了 / 完了済みを絞り込めること', async () => {

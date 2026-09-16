@@ -1,15 +1,20 @@
 import { useEffect } from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
+import { useUndoStore } from '../store/useUndoStore';
 import { getComboFromEvent, isEditableElement } from '../utils/keyboardShortcuts';
 
 const PAGE_NEXT_COMBO = 'Ctrl+Alt+ArrowRight';
 const PAGE_PREV_COMBO = 'Ctrl+Alt+ArrowLeft';
+// Ctrl on Windows/Linux, Cmd on macOS.
+const UNDO_COMBOS = new Set(['Ctrl+Z', 'Meta+Z']);
+const REDO_COMBOS = new Set(['Ctrl+Shift+Z', 'Meta+Shift+Z', 'Ctrl+Y']);
 
 /**
  * Listens for two things anywhere on the dashboard:
  * 1. The built-in page-switch combos (next/previous dashboard page).
  * 2. The user's custom keyboard shortcuts, opening the bound URL on match.
- * Both are ignored while typing into any input/textarea/contentEditable
+ * 3. Undo/redo of the last dashboard action (Ctrl+Z / Ctrl+Shift+Z).
+ * All are ignored while typing into any input/textarea/contentEditable
  * (including the shortcut recorder itself, which handles its own keydown
  * separately).
  */
@@ -25,6 +30,19 @@ export function useGlobalKeyboardShortcuts() {
 
       const combo = getComboFromEvent(e);
       if (!combo) return;
+
+      // Inside a modal the browser's own undo (for its inputs) must win,
+      // and a layout undo behind a dialog would be invisible anyway.
+      if (useDashboardStore.getState().activeSettingsModal === null) {
+        if (UNDO_COMBOS.has(combo)) {
+          if (useUndoStore.getState().undo()) e.preventDefault();
+          return;
+        }
+        if (REDO_COMBOS.has(combo)) {
+          if (useUndoStore.getState().redo()) e.preventDefault();
+          return;
+        }
+      }
 
       if ((combo === PAGE_NEXT_COMBO || combo === PAGE_PREV_COMBO) && pages.length > 1) {
         const currentIndex = pages.findIndex((p) => p.id === activePageId);

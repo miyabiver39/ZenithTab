@@ -5,6 +5,7 @@ import { useStorageSync } from '../../../src/hooks/useStorageSync';
 import { useRssFeed } from '../../../src/hooks/useRssFeed';
 import { useBookmarks } from '../../../src/hooks/useBookmarks';
 import { useDashboardStore } from '../../../src/store/useDashboardStore';
+import { useUndoStore } from '../../../src/store/useUndoStore';
 import { storageService, STORAGE_KEYS, DEFAULT_PAGE_ID } from '../../../src/services/storageService';
 import { rssService } from '../../../src/services/rssService';
 import { bookmarkService } from '../../../src/services/bookmarkService';
@@ -57,6 +58,48 @@ describe('useGlobalKeyboardShortcuts', () => {
     input.focus();
     act(() => keydown({ key: 'g', ctrlKey: true, shiftKey: true }));
     expect(open).not.toHaveBeenCalled();
+    input.remove();
+  });
+
+  it('Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y で undo / redo すること', () => {
+    const undo = vi.fn();
+    const redo = vi.fn();
+    useUndoStore.getState().pushUndo({ label: 'x', undo, redo });
+    renderHook(() => useGlobalKeyboardShortcuts());
+
+    const undoEvent = new KeyboardEvent('keydown', { cancelable: true, key: 'z', ctrlKey: true });
+    act(() => void window.dispatchEvent(undoEvent));
+    expect(undo).toHaveBeenCalledTimes(1);
+    expect(undoEvent.defaultPrevented).toBe(true);
+
+    act(() => keydown({ key: 'Z', ctrlKey: true, shiftKey: true }));
+    expect(redo).toHaveBeenCalledTimes(1);
+    act(() => keydown({ key: 'z', ctrlKey: true }));
+    act(() => keydown({ key: 'y', ctrlKey: true }));
+    expect(redo).toHaveBeenCalledTimes(2);
+
+    // Nothing left to undo: the key falls through untouched.
+    useUndoStore.getState().clear();
+    const idle = new KeyboardEvent('keydown', { cancelable: true, key: 'z', ctrlKey: true });
+    act(() => void window.dispatchEvent(idle));
+    expect(idle.defaultPrevented).toBe(false);
+  });
+
+  it('モーダルが開いている間と入力中は undo しないこと', () => {
+    const undo = vi.fn();
+    useUndoStore.getState().pushUndo({ label: 'x', undo });
+    renderHook(() => useGlobalKeyboardShortcuts());
+
+    state().openSettingsModal('settings');
+    act(() => keydown({ key: 'z', ctrlKey: true }));
+    expect(undo).not.toHaveBeenCalled();
+    state().closeSettingsModal();
+
+    const input = document.createElement('textarea');
+    document.body.appendChild(input);
+    input.focus();
+    act(() => keydown({ key: 'z', ctrlKey: true }));
+    expect(undo).not.toHaveBeenCalled();
     input.remove();
   });
 });

@@ -4,6 +4,7 @@ import { setupUser, literal } from '../helpers/user';
 import { QuickNotesWidget } from '../../src/components/widgets/QuickNotesWidget/QuickNotesWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { resetDashboardStore } from '../helpers/store';
+import { useUndoStore } from '../../src/store/useUndoStore';
 import { WidgetHarness } from '../helpers/WidgetHarness';
 
 const WIDGET_ID = 'widget-notes-1';
@@ -72,6 +73,24 @@ describe('QuickNotesWidget', () => {
     await user.click(screen.getAllByTitle('Close page')[1]);
     expect(config().pages).toHaveLength(1);
     expect(screen.queryByText('Page 2')).not.toBeInTheDocument();
+  });
+
+  it('閉じたページを本文ごと元に戻せること', async () => {
+    const user = setupUser();
+    renderNotes();
+    await user.click(screen.getByTitle('Add page'));
+    await user.type(screen.getByRole('textbox'), 'draft');
+    act(() => vi.advanceTimersByTime(500));
+    const secondId = config().pages[1].id;
+
+    await user.click(screen.getAllByTitle('Close page')[1]);
+    expect(config().pages).toHaveLength(1);
+    expect(useUndoStore.getState().toast?.label).toBe('Closed note page "Page 2"');
+
+    act(() => void useUndoStore.getState().undo());
+    expect(config().pages.map((p: any) => p.id)).toContain(secondId);
+    expect(config().pages[1].content).toBe('draft');
+    expect(config().activePageId).toBe(secondId);
   });
 
   it('ダブルクリックでページ名を変更でき、空なら元の名前を保つこと', async () => {

@@ -361,6 +361,21 @@ export const ja = {
     emptyDesc: '何も消えていません。元のウィジェットは上のタブの別ページにあります。ここにウィジェットを追加するか、戻れます。',
     backTo: '{name} に戻る',
   },
+  undo: {
+    undoBtn: '元に戻す',
+    undone: '元に戻しました',
+    removedWidget: 'ウィジェット「{name}」を削除しました',
+    removedPage: 'ページ「{name}」を削除しました',
+    removedDockItem: 'ドックから「{name}」を削除しました',
+    removedShortcut: 'キーボードショートカット「{name}」を削除しました',
+    reorderedDock: 'ドックを並べ替えました',
+    movedWidget: 'ウィジェットを移動しました',
+    resizedWidget: 'ウィジェットのサイズを変更しました',
+    removedTask: 'タスクを削除しました',
+    clearedCompleted: '完了したタスクを削除しました',
+    removedSite: 'ショートカット「{name}」を削除しました',
+    closedNotePage: 'メモページ「{name}」を閉じました',
+  },
   settings: {
     modalTitle: 'ZenithTab 設定',
     tabs: {

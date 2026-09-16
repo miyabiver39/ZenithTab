@@ -15,7 +15,7 @@ const MAX_PAGES = 8;
 
 export const QuickNotesWidget: React.FC<QuickNotesWidgetProps> = ({ widgetId, config }) => {
   const { content, pages: configPages, activePageId, fontSize = 'base', fontFamily = 'sans' } = config;
-  const { updateWidgetConfig } = useDashboardStore();
+  const { updateWidgetConfig, updateWidgetConfigUndoable } = useDashboardStore();
   const { t } = useTranslation();
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -66,9 +66,16 @@ export const QuickNotesWidget: React.FC<QuickNotesWidgetProps> = ({ widgetId, co
 
   const handleClosePage = (id: string) => {
     if (pages.length <= 1) return;
+    const closing = pages.find((p) => p.id === id);
     const nextPages = pages.filter((p) => p.id !== id);
     const nextActive = id === activeId ? nextPages[0].id : activeId;
-    persistPages(nextPages, nextActive);
+    // Closing a page discards its text, so it goes through the undoable
+    // path (a plain rename/switch doesn't need to).
+    updateWidgetConfigUndoable(
+      widgetId,
+      { pages: nextPages, activePageId: nextActive, content: undefined },
+      t.undo.closedNotePage.replace('{name}', closing?.title || '')
+    );
   };
 
   const commitRename = () => {

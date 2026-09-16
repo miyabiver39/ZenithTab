@@ -20,7 +20,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
   // Applied as an inline style: a computed `grid-cols-${n}` class would be
   // purged by Tailwind at build time and silently do nothing.
   const columns = Math.min(8, Math.max(2, config.columns || 4));
-  const { updateWidgetConfig, isEditMode } = useDashboardStore();
+  const { updateWidgetConfig, updateWidgetConfigUndoable, isEditMode } = useDashboardStore();
   const { t } = useTranslation();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -53,8 +53,13 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    const removed = items.find((it) => it.id === id);
     const updated = items.filter((it) => it.id !== id);
-    updateWidgetConfig(widgetId, { items: updated });
+    updateWidgetConfigUndoable(
+      widgetId,
+      { items: updated },
+      t.undo.removedSite.replace('{name}', removed?.title || '')
+    );
   };
 
   const handleSave = (e: React.FormEvent) => {

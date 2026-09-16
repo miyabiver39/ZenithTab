@@ -12,7 +12,7 @@ interface TodoWidgetProps {
 
 export const TodoWidget: React.FC<TodoWidgetProps> = ({ widgetId, config }) => {
   const { items = [] } = config;
-  const { updateWidgetConfig } = useDashboardStore();
+  const { updateWidgetConfig, updateWidgetConfigUndoable } = useDashboardStore();
   const { t } = useTranslation();
 
   const [inputVal, setInputVal] = useState('');
@@ -44,12 +44,13 @@ export const TodoWidget: React.FC<TodoWidgetProps> = ({ widgetId, config }) => {
 
   const handleDelete = (id: string) => {
     const updated = items.filter((it) => it.id !== id);
-    updateWidgetConfig(widgetId, { items: updated });
+    updateWidgetConfigUndoable(widgetId, { items: updated }, t.undo.removedTask);
   };
 
   const handleClearCompleted = () => {
     const updated = items.filter((it) => !it.completed);
-    updateWidgetConfig(widgetId, { items: updated });
+    if (updated.length === items.length) return;
+    updateWidgetConfigUndoable(widgetId, { items: updated }, t.undo.clearedCompleted);
   };
 
   const filteredItems = items.filter((it) => {

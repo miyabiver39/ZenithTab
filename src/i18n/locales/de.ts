@@ -363,6 +363,21 @@ export const de: typeof en = {
     emptyDesc: 'Es wurde nichts gelöscht – deine anderen Seiten sind weiterhin in den Tabs oben. Füge hier Widgets hinzu oder geh zurück.',
     backTo: 'Zurück zu {name}',
   },
+  undo: {
+    undoBtn: 'Rückgängig',
+    undone: 'Wiederhergestellt',
+    removedWidget: 'Widget „{name}“ entfernt',
+    removedPage: 'Seite „{name}“ entfernt',
+    removedDockItem: '„{name}“ aus dem Dock entfernt',
+    removedShortcut: 'Tastenkürzel „{name}“ entfernt',
+    reorderedDock: 'Dock neu sortiert',
+    movedWidget: 'Widget verschoben',
+    resizedWidget: 'Widget-Größe geändert',
+    removedTask: 'Aufgabe entfernt',
+    clearedCompleted: 'Erledigte Aufgaben entfernt',
+    removedSite: 'Verknüpfung „{name}“ entfernt',
+    closedNotePage: 'Notizseite „{name}“ geschlossen',
+  },
   settings: {
     modalTitle: 'ZenithTab Einstellungen',
     tabs: {

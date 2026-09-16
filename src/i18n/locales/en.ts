@@ -361,6 +361,21 @@ export const en = {
     emptyDesc: 'Nothing was deleted — your other pages are still in the tabs above. Add widgets here, or go back.',
     backTo: 'Back to {name}',
   },
+  undo: {
+    undoBtn: 'Undo',
+    undone: 'Restored',
+    removedWidget: 'Removed widget "{name}"',
+    removedPage: 'Removed page "{name}"',
+    removedDockItem: 'Removed "{name}" from the dock',
+    removedShortcut: 'Removed keyboard shortcut "{name}"',
+    reorderedDock: 'Reordered the dock',
+    movedWidget: 'Moved a widget',
+    resizedWidget: 'Resized a widget',
+    removedTask: 'Removed a task',
+    clearedCompleted: 'Cleared completed tasks',
+    removedSite: 'Removed shortcut "{name}"',
+    closedNotePage: 'Closed note page "{name}"',
+  },
   settings: {
     modalTitle: 'ZenithTab Settings',
     tabs: {

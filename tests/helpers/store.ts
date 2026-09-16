@@ -1,4 +1,5 @@
 import { useDashboardStore } from '../../src/store/useDashboardStore';
+import { useUndoStore } from '../../src/store/useUndoStore';
 import {
   DEFAULT_WIDGETS,
   DEFAULT_LAYOUTS,
@@ -16,6 +17,7 @@ import {
  * test that mutates the store.
  */
 export function resetDashboardStore(overrides: Partial<ReturnType<typeof useDashboardStore.getState>> = {}) {
+  useUndoStore.getState().clear();
   useDashboardStore.setState({
     isInitialized: true,
     isEditMode: false,
