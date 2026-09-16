@@ -84,9 +84,9 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
   const progressPercent = Math.min(100, Math.max(0, ((currentTotal - timeLeft) / currentTotal) * 100));
 
   return (
-    <div className="w-full h-full flex flex-col justify-between items-center text-center select-none py-1">
+    <div className="w-full h-full flex flex-col justify-between items-center text-center select-none">
       {/* Mode Switcher */}
-      <div className="flex items-center gap-1 bg-white/[0.05] p-1 rounded-xl border border-white/5">
+      <div className="flex items-center gap-1 bg-white/[0.05] p-0.5 rounded-xl border border-white/5 flex-shrink-0">
         {[
           { key: 'focus', label: t.widgets.pomodoro.focus },
           { key: 'shortBreak', label: t.widgets.pomodoro.shortBreak },
@@ -95,7 +95,7 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
           <button
             key={item.key}
             onClick={() => handleModeChange(item.key as PomodoroMode)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+            className={`px-2.5 py-0.5 rounded-lg text-xs font-medium transition-all ${
               mode === item.key
                 ? 'bg-sky-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
@@ -107,8 +107,8 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
       </div>
 
       {/* Timer Display with circular bar indicator */}
-      <div className="relative my-2 flex items-center justify-center">
-        <div className="text-4xl font-extrabold font-mono tracking-tight text-white drop-shadow">
+      <div className="relative my-0.5 sm:my-1 flex items-center justify-center flex-shrink-0">
+        <div className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-white drop-shadow leading-none">
           {timeFormatted}
         </div>
       </div>
@@ -119,7 +119,7 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(progressPercent)}
-        className="w-full max-w-[200px] h-1.5 bg-white/10 rounded-full overflow-hidden mb-2"
+        className="w-full max-w-[200px] h-1.5 bg-white/10 rounded-full overflow-hidden mb-1 flex-shrink-0"
       >
         <div
           className="h-full bg-sky-400 rounded-full transition-all duration-300"
@@ -128,10 +128,10 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5 flex-shrink-0">
         <button
           onClick={() => setIsActive(!isActive)}
-          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl font-semibold text-xs transition-all shadow-md active:scale-95 ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-semibold text-xs transition-all shadow-md active:scale-95 ${
             isActive
               ? 'bg-amber-500/80 hover:bg-amber-500 text-white shadow-amber-500/20'
               : 'bg-sky-500 hover:bg-sky-400 text-white shadow-sky-500/20'
@@ -143,14 +143,14 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
 
         <button
           onClick={handleReset}
-          className="p-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition-all active:scale-95"
+          className="p-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition-all active:scale-95"
           title={t.widgets.pomodoro.reset}
         >
           <RotateCcw size={14} />
         </button>
       </div>
 
-      <div className="text-[10px] text-slate-400 mt-1">
+      <div className="text-[11px] text-slate-400 mt-0.5 leading-none flex-shrink-0">
         {t.widgets.pomodoro.sessionsCompleted}: <span className="text-sky-300 font-bold">{sessionsCompleted}</span>
       </div>
     </div>

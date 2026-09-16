@@ -108,4 +108,10 @@ describe('PomodoroWidget', () => {
     tick(30);
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '50');
   });
+
+  it('完了セッション数のラベルと初期カウントが表示されること', () => {
+    render(<PomodoroWidget config={config} />);
+    expect(screen.getByText(/Sessions completed|完了セッション数/i)).toBeInTheDocument();
+    expect(screen.getByText('0')).toBeInTheDocument();
+  });
 });
