@@ -1,4 +1,4 @@
-import { WallpaperCategory } from '../types/settings';
+import { WallpaperCategory, WallpaperSettings, TimeSlot, TimeSlotConfig } from '../types/settings';
 
 /** Widest edge we keep for a user-uploaded wallpaper, in CSS pixels. */
 const MAX_WALLPAPER_WIDTH = 2560;
@@ -46,7 +46,98 @@ export const GRADIENT_PRESETS = [
   'linear-gradient(135deg, #0b0c10 0%, #1f2833 50%, #45a29e 100%)',
 ];
 
+export const TIME_SLOTS: TimeSlot[] = ['morning', 'day', 'sunset', 'night'];
+
+/**
+ * The "make it nice for me" presets: one look per part of the day, tuned
+ * so white glass-UI text stays readable (brighter mornings still carry a
+ * light tint; nights get a heavier overlay to rest the eyes).
+ */
+export const SMART_TIME_SLOTS: Record<TimeSlot, TimeSlotConfig> = {
+  morning: { startHour: 6, source: 'unsplash', category: 'nature', gradientIndex: 1, blur: 3, brightness: 0.95, overlayOpacity: 0.25 },
+  day: { startHour: 11, source: 'unsplash', category: 'architecture', gradientIndex: 2, blur: 3, brightness: 0.9, overlayOpacity: 0.3 },
+  sunset: { startHour: 17, source: 'unsplash', category: 'abstract', gradientIndex: 0, blur: 4, brightness: 0.85, overlayOpacity: 0.35 },
+  night: { startHour: 20, source: 'unsplash', category: 'space', gradientIndex: 3, blur: 5, brightness: 0.7, overlayOpacity: 0.5 },
+};
+
+export interface ResolvedWallpaper {
+  slot: TimeSlot;
+  source: 'unsplash' | 'gradient';
+  url: string;
+  blur: number;
+  brightness: number;
+  overlayOpacity: number;
+}
+
+/** Day-of-year, so the picked image is stable for a day but rotates over time. */
+function dayOfYear(date: Date): number {
+  const start = Date.UTC(date.getFullYear(), 0, 0);
+  return Math.floor((Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - start) / 86400000);
+}
+
 export const wallpaperService = {
+  /**
+   * Which slot a given hour falls into. Slots are ordered by startHour and
+   * the last one wraps past midnight, so with the defaults 03:00 is
+   * "night" (started at 20:00 the previous evening).
+   */
+  getCurrentTimeSlot(hour: number, slots: Record<TimeSlot, TimeSlotConfig> = SMART_TIME_SLOTS): TimeSlot {
+    const ordered = TIME_SLOTS.map((slot) => ({ slot, start: slots[slot]?.startHour ?? SMART_TIME_SLOTS[slot].startHour }))
+      .sort((a, b) => a.start - b.start);
+    const h = ((Math.floor(hour) % 24) + 24) % 24;
+    let current = ordered[ordered.length - 1].slot;
+    for (const entry of ordered) {
+      if (entry.start <= h) current = entry.slot;
+    }
+    return current;
+  },
+
+  /** The slot table a settings object is actually using (smart vs custom). */
+  getActiveSlots(wallpaper: WallpaperSettings): Record<TimeSlot, TimeSlotConfig> {
+    const dynamic = wallpaper.dynamic;
+    if (dynamic?.mode === 'custom' && dynamic.slots) {
+      // Fill any slot a partial custom config leaves out from the presets.
+      return TIME_SLOTS.reduce(
+        (acc, slot) => ({ ...acc, [slot]: { ...SMART_TIME_SLOTS[slot], ...dynamic.slots?.[slot] } }),
+        {} as Record<TimeSlot, TimeSlotConfig>
+      );
+    }
+    return SMART_TIME_SLOTS;
+  },
+
+  /**
+   * Turns the dynamic settings into the concrete look for `now`. Only
+   * Unsplash (already an allowed host) or local CSS gradients are ever
+   * used; when the browser reports itself offline the gradient is used so
+   * the page never sits on a blank background.
+   */
+  resolveDynamicWallpaper(wallpaper: WallpaperSettings, now: Date = new Date()): ResolvedWallpaper {
+    const slots = this.getActiveSlots(wallpaper);
+    const slot = this.getCurrentTimeSlot(now.getHours(), slots);
+    const config = slots[slot];
+    const seed = wallpaper.dynamic?.seed ?? 0;
+    const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+
+    const gradient = GRADIENT_PRESETS[(config.gradientIndex ?? TIME_SLOTS.indexOf(slot)) % GRADIENT_PRESETS.length];
+    let source: 'unsplash' | 'gradient' = config.source;
+    let url = gradient;
+    if (source === 'unsplash' && !offline) {
+      const list = WALLPAPER_COLLECTIONS[config.category] || WALLPAPER_COLLECTIONS.space;
+      url = list[(dayOfYear(now) + TIME_SLOTS.indexOf(slot) + seed) % list.length];
+    } else {
+      source = 'gradient';
+    }
+
+    return {
+      slot,
+      source,
+      url,
+      blur: config.blur ?? wallpaper.blur,
+      brightness: config.brightness ?? wallpaper.brightness,
+      overlayOpacity: config.overlayOpacity ?? wallpaper.overlayOpacity,
+    };
+  },
+
   getRandomWallpaper(category: WallpaperCategory = 'space'): string {
     const list = WALLPAPER_COLLECTIONS[category] || WALLPAPER_COLLECTIONS.space;
     const index = Math.floor(Math.random() * list.length);

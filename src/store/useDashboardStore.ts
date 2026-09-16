@@ -446,6 +446,18 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   rotateWallpaper: () => {
     const { wallpaper } = get();
+    // In time-aware mode the image is chosen per slot; "change wallpaper"
+    // just moves to the next picture within the current slot.
+    if (wallpaper.dynamic?.enabled) {
+      const updated = {
+        ...wallpaper,
+        dynamic: { ...wallpaper.dynamic, seed: (wallpaper.dynamic.seed ?? 0) + 1 },
+        lastRefreshed: Date.now(),
+      };
+      set({ wallpaper: updated });
+      storageService.saveWallpaper(updated);
+      return;
+    }
     if (wallpaper.source === 'unsplash' || wallpaper.source === 'collection') {
       const newUrl = wallpaperService.getRandomWallpaper(wallpaper.category);
       const updated = {

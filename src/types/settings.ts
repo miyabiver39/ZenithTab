@@ -2,6 +2,32 @@ export type WallpaperSource = 'unsplash' | 'gradient' | 'custom' | 'collection';
 
 export type WallpaperCategory = 'nature' | 'minimal' | 'architecture' | 'space' | 'abstract' | 'cyberpunk';
 
+/** Time-aware wallpaper: 'smart' uses curated presets, 'custom' the user's own slots. */
+export type DynamicWallpaperMode = 'smart' | 'custom';
+
+export type TimeSlot = 'morning' | 'day' | 'sunset' | 'night';
+
+export interface TimeSlotConfig {
+  /** Hour (0–23) at which this slot begins; slots wrap around midnight. */
+  startHour: number;
+  source: 'unsplash' | 'gradient';
+  category: WallpaperCategory;
+  /** Index into GRADIENT_PRESETS when source is 'gradient'. */
+  gradientIndex?: number;
+  blur?: number; // 0 to 20
+  brightness?: number; // 0.2 to 1.2
+  overlayOpacity?: number; // 0 to 0.8
+}
+
+export interface DynamicWallpaperSettings {
+  enabled: boolean;
+  mode: DynamicWallpaperMode;
+  /** Only read in 'custom' mode; 'smart' always uses the built-in slots. */
+  slots?: Record<TimeSlot, TimeSlotConfig>;
+  /** Bumped by "change wallpaper" to cycle to another image within the slot. */
+  seed?: number;
+}
+
 export interface WallpaperSettings {
   source: WallpaperSource;
   customUrl?: string;
@@ -12,6 +38,8 @@ export interface WallpaperSettings {
   refreshInterval: 'never' | 'hourly' | 'daily' | 'newtab';
   lastRefreshed?: number;
   currentWallpaperUrl: string;
+  /** When enabled, overrides source/category/blur/brightness/overlay by time of day. */
+  dynamic?: DynamicWallpaperSettings;
 }
 
 export interface AppearanceSettings {
