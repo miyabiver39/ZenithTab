@@ -32,8 +32,7 @@ if (fs.existsSync(lockPath)) {
   const lock = JSON.parse(fs.readFileSync(lockPath, 'utf-8'));
   lock.version = cleanVersion;
   if (lock.packages && lock.packages['']) lock.packages[''].version = cleanVersion;
-  fs.writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '
-');
+  fs.writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n');
   console.log(`Updated package-lock.json version to ${cleanVersion}`);
 }
 
