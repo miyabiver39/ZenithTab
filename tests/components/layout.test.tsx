@@ -164,6 +164,31 @@ describe('PageSwitcher', () => {
     await user.click(removeButtons[2]);
     expect(state().pages).toHaveLength(2);
   });
+
+  it('ウィジェットのあるページの削除は確認してから行い、キャンセルできること', async () => {
+    const user = setupUser();
+    act(() => {
+      state().addPage({ name: 'Work' });
+      state().addWidget('clock', 'A');
+      state().addWidget('clock', 'B');
+    });
+    render(<PageSwitcher />);
+
+    await user.click(screen.getAllByTitle('Remove page')[1]);
+    const dialog = screen.getByRole('alertdialog');
+    expect(dialog).toHaveTextContent('Remove page "Work"?');
+    expect(dialog).toHaveTextContent('2 widgets');
+    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toHaveFocus();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+    expect(state().pages).toHaveLength(2);
+
+    await user.click(screen.getAllByTitle('Remove page')[1]);
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Remove page' }));
+    expect(state().pages).toHaveLength(1);
+    expect(state().trash[0]).toMatchObject({ kind: 'page', pageMeta: { name: 'Work' } });
+  });
 });
 
 describe('EmptyPage', () => {

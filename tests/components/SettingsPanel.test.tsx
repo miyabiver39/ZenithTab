@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor, within } from '@testing-library/react';
 import { setupUser, literal } from '../helpers/user';
 import { SettingsPanel } from '../../src/components/layout/SettingsPanel';
 import { AppDrawerModal } from '../../src/components/layout/AppDrawerModal';
@@ -21,6 +21,47 @@ function openSettings(tab?: 'dock') {
 
 describe('SettingsPanel', () => {
   beforeEach(() => resetDashboardStore());
+
+  it('ごみ箱タブ: 件数バッジ・復元・完全削除・空にするが動くこと', async () => {
+    const user = setupUser();
+    const removed = state().widgets[1];
+    act(() => {
+      state().removeWidget(removed.id);
+      state().addPage({ name: 'Old' });
+      state().addWidget('clock', 'x');
+    });
+    act(() => state().removePage(state().activePageId));
+    expect(state().trash).toHaveLength(2);
+    openSettings();
+
+    await user.click(screen.getByRole('button', { name: /^Trash/ }));
+    const list = screen.getByRole('list', { name: 'Trash' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(2);
+    expect(list).toHaveTextContent('Old');
+    expect(list).toHaveTextContent('1 widgets');
+    expect(list).toHaveTextContent(removed.title);
+    expect(list).toHaveTextContent('from Page 1');
+
+    // Restore closes the panel so the user sees the widget come back.
+    await user.click(screen.getByRole('button', { name: `Restore: ${removed.title}` }));
+    expect(state().widgets.some((w) => w.id === removed.id)).toBe(true);
+    expect(state().trash).toHaveLength(1);
+    expect(state().activeSettingsModal).toBeNull();
+
+    openSettings();
+    await user.click(screen.getByRole('button', { name: /^Trash/ }));
+    await user.click(screen.getByRole('button', { name: 'Delete forever: Old' }));
+    expect(screen.getByRole('alertdialog')).toHaveTextContent('Delete forever?');
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Delete forever' }));
+    expect(state().trash).toHaveLength(0);
+    expect(screen.getByText('The trash is empty.')).toBeInTheDocument();
+    expect(screen.queryByText('Empty trash')).not.toBeInTheDocument();
+
+    act(() => state().removeWidget(state().widgets[0].id));
+    await user.click(screen.getByText('Empty trash'));
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Empty trash' }));
+    expect(state().trash).toHaveLength(0);
+  });
   afterEach(() => {
     mounted = null;
     vi.restoreAllMocks();
@@ -179,24 +220,43 @@ describe('SettingsPanel', () => {
     });
     const fileInput = screen.getByLabelText('Import JSON File');
 
+    // Import and reset replace the whole dashboard, so since #21 both go
+    // through the in-app ConfirmDialog (Cancel is focused, Enter is safe)
+    // instead of window.confirm.
+    const confirmDialog = () => screen.getByRole('alertdialog');
+    const confirmWith = (name: string) => user.click(within(confirmDialog()).getByRole('button', { name }));
+
     // A bad file keeps the modal open and reports the failure inline.
     vi.spyOn(console, 'error').mockImplementation(() => {});
     await user.upload(fileInput, new File(['{bad'], 'bad.json', { type: 'application/json' }));
+    await waitFor(() => expect(confirmDialog()).toHaveTextContent('Import this file?'));
+    await confirmWith('Import JSON File');
     await waitFor(() => expect(screen.getByText(/Failed to import/)).toBeInTheDocument());
 
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
     await user.click(screen.getByText('Reset All to Defaults'));
+    expect(confirmDialog()).toHaveTextContent('Reset everything?');
+    expect(within(confirmDialog()).getByRole('button', { name: 'Cancel' })).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
     expect(state().widgets[0].title).toBe('Quick Search');
 
     // A good file applies the config; the store closes the modal on success.
     await user.upload(fileInput, new File([json], 'config.json', { type: 'application/json' }));
+    await waitFor(() => expect(confirmDialog()).toBeInTheDocument());
+    // Cancelling leaves everything as is and lets the same file be re-picked.
+    await user.keyboard('{Escape}');
+    expect(state().widgets[0].title).toBe('Quick Search');
+    expect(state().activeSettingsModal).toBe('settings');
+    await user.upload(fileInput, new File([json], 'config.json', { type: 'application/json' }));
+    await waitFor(() => expect(confirmDialog()).toBeInTheDocument());
+    await confirmWith('Import JSON File');
     await waitFor(() => expect(state().widgets[0].title).toBe('Imported Clock'));
     expect(state().activeSettingsModal).toBeNull();
 
     openSettings();
     await user.click(screen.getByText('Backup & Sync'));
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     await user.click(screen.getByText('Reset All to Defaults'));
+    await confirmWith('Reset All to Defaults');
     await waitFor(() => expect(state().widgets[0].title).toBe('Quick Search'));
   });
 });

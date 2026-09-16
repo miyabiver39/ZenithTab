@@ -205,3 +205,34 @@ export interface DashboardPageData {
   widgets: DashboardWidget[];
   layouts: ResponsiveLayouts;
 }
+
+/** Grid breakpoint names, as used by react-grid-layout and ResponsiveLayouts. */
+export type GridBreakpoint = 'lg' | 'md' | 'sm' | 'xs' | 'xxs';
+
+interface TrashEntryBase {
+  id: string;
+  deletedAt: number;
+}
+
+/** A widget removed from a page, with its slot on every breakpoint. */
+export interface TrashedWidget extends TrashEntryBase {
+  kind: 'widget';
+  widget: DashboardWidget;
+  layouts: Partial<Record<GridBreakpoint, Layout>>;
+  sourcePageId: string;
+  /** Display name at deletion time, so the row still reads well if the page is gone. */
+  sourcePageName: string;
+}
+
+/** A whole page removed from the dashboard. */
+export interface TrashedPage extends TrashEntryBase {
+  kind: 'page';
+  pageMeta: DashboardPageMeta;
+  pageData: DashboardPageData;
+}
+
+/**
+ * Deleted widgets/pages, kept for a while so an accidental delete can be
+ * undone long after the undo toast is gone (see services/trashService.ts).
+ */
+export type TrashEntry = TrashedWidget | TrashedPage;

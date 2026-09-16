@@ -1,6 +1,14 @@
 import { create } from 'zustand';
 import { Layout } from 'react-grid-layout';
-import { DashboardWidget, ResponsiveLayouts, WidgetType, DashboardPageMeta, DashboardPageData } from '../types/widget';
+import {
+  DashboardWidget,
+  ResponsiveLayouts,
+  WidgetType,
+  DashboardPageMeta,
+  DashboardPageData,
+  TrashEntry,
+  GridBreakpoint,
+} from '../types/widget';
 import { WallpaperSettings, AppearanceSettings, DockItem, KeyboardShortcutBinding } from '../types/settings';
 import {
   storageService,
@@ -27,6 +35,14 @@ import { calculateBottomY, sanitizeResponsiveLayouts } from '../utils/layout';
 import { useUndoStore } from './useUndoStore';
 import { getLocalizedWidgetTitle } from '../utils/widgetTitle';
 import { getPageDisplayName } from '../utils/pageName';
+import {
+  createTrashedWidget,
+  createTrashedPage,
+  pruneTrash,
+  layoutsWithRestoredWidget,
+  withFreshWidgetId,
+} from '../services/trashService';
+import { GRID_BREAKPOINT_KEYS } from '../config/grid';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -73,6 +89,9 @@ interface DashboardState {
   activePageId: string;
   pageData: Record<string, DashboardPageData>;
 
+  // Deleted widgets/pages, restorable from Settings > Trash for 30 days.
+  trash: TrashEntry[];
+
   // Actions
   initialize: () => Promise<void>;
   setEditMode: (isEditMode: boolean) => void;
@@ -108,6 +127,11 @@ interface DashboardState {
   addPage: (options?: { name?: string; duplicateCurrent?: boolean }) => void;
   removePage: (id: string) => void;
   renamePage: (id: string, name: string) => void;
+
+  /** Puts a trashed widget back on its page (or the current one) / re-adds a trashed page. */
+  restoreFromTrash: (entryId: string) => void;
+  deleteFromTrash: (entryId: string) => void;
+  emptyTrash: () => void;
 
   /**
    * Re-reads everything from storage and applies whatever differs. Used to
@@ -181,8 +205,25 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     useUndoStore.getState().pushUndo({ label, undo, redo });
   const fmt = (template: string, name: string) => template.replace('{name}', name);
 
-  type BreakpointKey = keyof ResponsiveLayouts;
-  const BREAKPOINTS: BreakpointKey[] = ['lg', 'md', 'sm', 'xs', 'xxs'];
+  type BreakpointKey = GridBreakpoint;
+  const BREAKPOINTS = GRID_BREAKPOINT_KEYS;
+
+  /** The live copy of a page: the active page's mirror, or its pageData entry. */
+  const readPage = (pageId: string): DashboardPageData | null => {
+    const { activePageId, widgets, layouts, pageData } = get();
+    if (pageId === activePageId) return { widgets, layouts };
+    return pageData[pageId] || null;
+  };
+
+  const writePage = (pageId: string, page: DashboardPageData) => {
+    if (pageId === get().activePageId) {
+      persistPageState(page.widgets, page.layouts);
+      return;
+    }
+    const updatedPageData = { ...get().pageData, [pageId]: page };
+    set({ pageData: updatedPageData });
+    storageService.savePageData(updatedPageData);
+  };
 
   interface RemovedWidget {
     widget: DashboardWidget;
@@ -191,44 +232,53 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     layouts: Partial<Record<BreakpointKey, Layout>>;
   }
 
-  const removeWidgetInternal = (id: string): RemovedWidget | null => {
-    const { widgets, layouts, activePageId } = get();
-    const index = widgets.findIndex((w) => w.id === id);
+  const removeWidgetFromPage = (pageId: string, id: string): RemovedWidget | null => {
+    const page = readPage(pageId);
+    if (!page) return null;
+    const index = page.widgets.findIndex((w) => w.id === id);
     if (index === -1) return null;
-    const removed: RemovedWidget = { widget: widgets[index], index, pageId: activePageId, layouts: {} };
-    const updatedLayouts = { ...layouts } as ResponsiveLayouts;
+    const removed: RemovedWidget = { widget: page.widgets[index], index, pageId, layouts: {} };
+    const updatedLayouts = { ...page.layouts } as ResponsiveLayouts;
     for (const bp of BREAKPOINTS) {
-      const list = layouts[bp] || [];
+      const list = page.layouts[bp] || [];
       const match = list.find((l) => l.i === id);
       if (match) removed.layouts[bp] = match;
       updatedLayouts[bp] = list.filter((l) => l.i !== id);
     }
-    persistPageState(widgets.filter((w) => w.id !== id), updatedLayouts);
+    writePage(pageId, { widgets: page.widgets.filter((w) => w.id !== id), layouts: updatedLayouts });
     return removed;
   };
 
+  const removeWidgetInternal = (id: string) => removeWidgetFromPage(get().activePageId, id);
+
   /**
-   * Puts a removed widget back where it was. If its page is no longer the
-   * active one (or no longer exists) it lands on the current page instead;
-   * an id that already exists again (restored elsewhere) is left alone.
+   * Puts a removed widget back where it was. If its page no longer exists
+   * it lands on the current page instead; an id that already exists again
+   * (restored elsewhere) is left alone.
    */
   const restoreWidgetInternal = (removed: RemovedWidget) => {
-    const { widgets, layouts, pageData, activePageId } = get();
+    const { pageData, activePageId } = get();
     const { widget, index } = removed;
-    if (widgets.some((w) => w.id === widget.id)) return;
-    if (removed.pageId !== activePageId && pageData[removed.pageId]) {
-      const page = pageData[removed.pageId];
-      if (page.widgets.some((w) => w.id === widget.id)) return;
-      const restored = {
-        widgets: insertAt(page.widgets, index, widget),
-        layouts: withLayoutEntries(page.layouts, widget, removed.layouts),
-      };
-      const updatedPageData = { ...pageData, [removed.pageId]: restored };
-      set({ pageData: updatedPageData });
-      storageService.savePageData(updatedPageData);
-      return;
-    }
-    persistPageState(insertAt(widgets, index, widget), withLayoutEntries(layouts, widget, removed.layouts));
+    const pageId = removed.pageId === activePageId || pageData[removed.pageId] ? removed.pageId : activePageId;
+    const page = readPage(pageId);
+    if (!page || page.widgets.some((w) => w.id === widget.id)) return;
+    writePage(pageId, {
+      widgets: insertAt(page.widgets, index, widget),
+      layouts: withLayoutEntries(page.layouts, widget, removed.layouts),
+    });
+  };
+
+  const saveTrash = (trash: TrashEntry[]) => {
+    set({ trash });
+    storageService.saveTrash(trash);
+  };
+  const addTrash = (entry: TrashEntry) => {
+    if (get().trash.some((e) => e.id === entry.id)) return;
+    saveTrash(pruneTrash([...get().trash, entry]));
+  };
+  const removeTrashEntry = (entryId: string) => {
+    if (!get().trash.some((e) => e.id === entryId)) return;
+    saveTrash(get().trash.filter((e) => e.id !== entryId));
   };
 
   const insertAt = <T>(list: T[], index: number, item: T): T[] => {
@@ -342,6 +392,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     pages: DEFAULT_PAGES,
     activePageId: DEFAULT_PAGE_ID,
     pageData: {},
+    trash: [],
 
     toggleAppDrawer: (open) =>
       set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
@@ -370,13 +421,19 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
         const appearance = await withTimeout(storageService.getAppearance(), 5000, DEFAULT_APPEARANCE);
         const defaults = localizedDefaults(appearance.language);
 
-        const [{ pages, activePageId, pageData }, wallpaper, dockItems, keyboardShortcuts] =
+        const [{ pages, activePageId, pageData }, wallpaper, dockItems, keyboardShortcuts, storedTrash] =
           await Promise.all([
             withTimeout(storageService.getPagesState(defaults), 5000, fallbackPagesState),
             withTimeout(storageService.getWallpaper(), 5000, DEFAULT_WALLPAPER),
             withTimeout(storageService.getDockItems(defaults.dockItems), 5000, defaults.dockItems),
             withTimeout(storageService.getKeyboardShortcuts(), 5000, DEFAULT_KEYBOARD_SHORTCUTS),
+            withTimeout(storageService.getTrash(), 5000, []),
           ]);
+
+        // Expired trash is dropped here (new-tab page only, never the
+        // service worker) and written back only when something changed.
+        const trash = pruneTrash(storedTrash);
+        if (trash !== storedTrash) storageService.saveTrash(trash);
 
         // Guard against corrupted persisted data (e.g. an activePageId that
         // no longer has a matching pageData entry) rather than propagating
@@ -407,6 +464,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
           appearance,
           dockItems,
           keyboardShortcuts,
+          trash,
           isInitialized: true,
         });
       } catch (err) {
@@ -495,12 +553,23 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   removeWidget: (id) => {
+    const { pages, activePageId } = get();
+    const pageIndex = pages.findIndex((p) => p.id === activePageId);
+    const pageName = pageIndex === -1 ? '' : getPageDisplayName(pages[pageIndex], pageIndex, tr());
     const removed = removeWidgetInternal(id);
     if (!removed) return;
+    const entry = createTrashedWidget(removed.widget, removed.layouts, removed.pageId, pageName);
+    addTrash(entry);
     pushUndo(
       fmt(tr().undo.removedWidget, getLocalizedWidgetTitle(removed.widget, tr())),
-      () => restoreWidgetInternal(removed),
-      () => removeWidgetInternal(id)
+      () => {
+        restoreWidgetInternal(removed);
+        removeTrashEntry(entry.id);
+      },
+      () => {
+        removeWidgetInternal(id);
+        addTrash(entry);
+      }
     );
   },
 
@@ -755,11 +824,70 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     const name = getPageDisplayName(pages[index], index, tr());
     const removed = removePageInternal(id);
     if (!removed) return;
+    const entry = createTrashedPage(removed.meta, removed.data);
+    addTrash(entry);
     pushUndo(
       fmt(tr().undo.removedPage, name),
-      () => restorePageInternal(removed),
-      () => removePageInternal(id)
+      () => {
+        restorePageInternal(removed);
+        removeTrashEntry(entry.id);
+      },
+      () => {
+        removePageInternal(id);
+        addTrash(entry);
+      }
     );
+  },
+
+  restoreFromTrash: (entryId) => {
+    const entry = get().trash.find((e) => e.id === entryId);
+    if (!entry) return;
+
+    if (entry.kind === 'widget') {
+      const { pageData, activePageId } = get();
+      const pageId = entry.sourcePageId === activePageId || pageData[entry.sourcePageId] ? entry.sourcePageId : activePageId;
+      // The id may be live again (the delete was undone, or the widget
+      // restored from another tab); give the copy a fresh one then.
+      const idTaken =
+        Object.values(pageData).some((p) => p.widgets.some((w) => w.id === entry.widget.id)) ||
+        get().widgets.some((w) => w.id === entry.widget.id);
+      const restored = idTaken ? withFreshWidgetId(entry, uniqueId('widget-' + entry.widget.type)) : entry;
+      const page = readPage(pageId);
+      if (!page) return;
+      writePage(pageId, {
+        widgets: [...page.widgets, restored.widget],
+        layouts: layoutsWithRestoredWidget(page.layouts, restored.widget, restored.layouts),
+      });
+      removeTrashEntry(entry.id);
+      if (pageId !== get().activePageId) get().switchPage(pageId);
+      pushUndo(fmt(tr().undo.restoredFromTrash, getLocalizedWidgetTitle(restored.widget, tr())), () => {
+        removeWidgetFromPage(pageId, restored.widget.id);
+        addTrash(entry);
+      });
+      return;
+    }
+
+    const { pages, activePageId, widgets, layouts, pageData } = get();
+    const pageId = pages.some((p) => p.id === entry.pageMeta.id) ? uniqueId('page') : entry.pageMeta.id;
+    const meta = { ...entry.pageMeta, id: pageId };
+    const newPages = [...pages, meta];
+    const updatedPageData = { ...pageData, [activePageId]: { widgets, layouts }, [pageId]: entry.pageData };
+    set({ pages: newPages, pageData: updatedPageData });
+    storageService.savePages(newPages);
+    storageService.savePageData(updatedPageData);
+    removeTrashEntry(entry.id);
+    get().switchPage(pageId);
+    pushUndo(fmt(tr().undo.restoredFromTrash, getPageDisplayName(meta, newPages.length - 1, tr())), () => {
+      removePageInternal(pageId);
+      addTrash(entry);
+    });
+  },
+
+  deleteFromTrash: (entryId) => removeTrashEntry(entryId),
+
+  emptyTrash: () => {
+    if (get().trash.length === 0) return;
+    saveTrash([]);
   },
 
   renamePage: (id, name) => {
@@ -777,13 +905,14 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     // this tab already shows rather than regenerating defaults (whose
     // timestamps would differ and force a pointless re-render).
     const defaults = { widgets: current.widgets, layouts: current.layouts };
-    const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
+    const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts, trash] =
       await Promise.all([
         storageService.getPagesState(defaults),
         storageService.getWallpaper(),
         storageService.getAppearance(),
         storageService.getDockItems(current.dockItems),
         storageService.getKeyboardShortcuts(),
+        storageService.getTrash(),
       ]);
 
     const safeActivePageId = pages.some((p) => p.id === activePageId) ? activePageId : pages[0].id;
@@ -800,6 +929,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
       appearance,
       dockItems,
       keyboardShortcuts,
+      trash,
     };
 
     // Only touch the slices that actually changed so an unchanged grid
@@ -826,22 +956,25 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
       appearance: DEFAULT_APPEARANCE,
       dockItems: defaultDock,
       keyboardShortcuts: DEFAULT_KEYBOARD_SHORTCUTS,
+      // The trash deliberately survives a reset: it is the last resort.
       isEditMode: false,
       activeSettingsModal: null,
       editingWidgetId: null,
     });
+    useUndoStore.getState().clear();
   },
 
   importConfig: async (jsonData) => {
     const success = await storageService.importDashboardData(jsonData);
     if (success) {
-      const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts] =
+      const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts, trash] =
         await Promise.all([
           storageService.getPagesState(),
           storageService.getWallpaper(),
           storageService.getAppearance(),
           storageService.getDockItems(),
           storageService.getKeyboardShortcuts(),
+          storageService.getTrash(),
         ]);
 
       const hydrated = hydratePageData(pageData, getTranslation(appearance.language), resolveLanguageCode(appearance.language));
@@ -857,8 +990,11 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
         appearance,
         dockItems,
         keyboardShortcuts,
+        trash,
         activeSettingsModal: null,
       });
+      // Nothing on the old stack refers to what is on screen any more.
+      useUndoStore.getState().clear();
       return true;
     }
     return false;

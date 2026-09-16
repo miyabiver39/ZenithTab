@@ -84,6 +84,7 @@ const EXPORT_FIELD_BY_KEY: Record<string, string> = {
   [STORAGE_KEYS.PAGES]: 'pages',
   [STORAGE_KEYS.ACTIVE_PAGE_ID]: 'activePageId',
   [STORAGE_KEYS.PAGE_DATA]: 'pageData',
+  [STORAGE_KEYS.TRASH]: 'trash',
   [STORAGE_KEYS.SCHEMA_VERSION]: 'schemaVersion',
 };
 

@@ -4,6 +4,7 @@ import { useDashboardStore } from '../../store/useDashboardStore';
 import { useTranslation } from '../../i18n/i18n';
 import { getPageDisplayName } from '../../utils/pageName';
 import { AddPageMenu } from './AddPageMenu';
+import { ConfirmDialog } from '../common/ConfirmDialog';
 import { cn } from '../../utils/cn';
 
 /**
@@ -12,10 +13,22 @@ import { cn } from '../../utils/cn';
  * the QuickNotes tab-strip UX: click to switch, double-click to rename.
  */
 export const PageSwitcher: React.FC = () => {
-  const { pages, activePageId, switchPage, removePage, renamePage } = useDashboardStore();
+  const { pages, activePageId, switchPage, removePage, renamePage, pageData, widgets } = useDashboardStore();
   const { t } = useTranslation();
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
+  const [confirmRemove, setConfirmRemove] = useState<{ id: string; name: string; count: number } | null>(null);
+
+  // An empty page is gone with one click (the undo toast covers a slip);
+  // one with widgets on it asks first, since it takes everything with it.
+  const requestRemove = (id: string, name: string) => {
+    const count = (id === activePageId ? widgets : pageData[id]?.widgets || []).length;
+    if (count === 0) {
+      removePage(id);
+      return;
+    }
+    setConfirmRemove({ id, name, count });
+  };
 
   const commitRename = () => {
     if (renamingId) renamePage(renamingId, renameValue);
@@ -74,7 +87,7 @@ export const PageSwitcher: React.FC = () => {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                removePage(page.id);
+                requestRemove(page.id, getPageDisplayName(page, index, t));
               }}
               title={t.pages.remove}
               className="opacity-0 group-hover:opacity-100 hover:text-rose-400 transition-opacity"
@@ -93,6 +106,18 @@ export const PageSwitcher: React.FC = () => {
           <Plus size={13} />
         </button>
       </AddPageMenu>
+      <ConfirmDialog
+        isOpen={confirmRemove !== null}
+        title={t.confirm.removePageTitle.replace('{name}', confirmRemove?.name || '')}
+        body={t.confirm.removePageBody.replace('{n}', String(confirmRemove?.count ?? 0))}
+        confirmLabel={t.pages.remove}
+        danger
+        onConfirm={() => {
+          if (confirmRemove) removePage(confirmRemove.id);
+          setConfirmRemove(null);
+        }}
+        onCancel={() => setConfirmRemove(null)}
+      />
     </div>
   );
 };

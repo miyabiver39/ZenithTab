@@ -15,6 +15,8 @@ export const STORAGE_KEYS = {
   PAGES: 'dashboard_pages',
   ACTIVE_PAGE_ID: 'dashboard_active_page_id',
   PAGE_DATA: 'dashboard_page_data',
+  /** Deleted widgets/pages awaiting restore or expiry (services/trashService.ts). */
+  TRASH: 'dashboard_trash',
   /** Schema generation of everything above; see services/migrations.ts. */
   SCHEMA_VERSION: 'schema_version',
 } as const;
@@ -34,4 +36,5 @@ export const USER_DATA_KEYS: string[] = [
   STORAGE_KEYS.PAGES,
   STORAGE_KEYS.ACTIVE_PAGE_ID,
   STORAGE_KEYS.PAGE_DATA,
+  STORAGE_KEYS.TRASH,
 ];

@@ -43,6 +43,18 @@ export function formatDate(date: Date, timezone?: string, locale?: string): stri
   return new Intl.DateTimeFormat(intlLocale, options).format(date);
 }
 
+/** Compact date + time for lists (trash rows, backup rows): "Sep 17, 2026, 14:05". */
+export function formatDateTime(date: Date, locale?: string): string {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+  return new Intl.DateTimeFormat(getIntlLocale(locale), options).format(date);
+}
+
 export function formatRelativeTime(dateStringOrTimestamp?: string | number): string {
   if (!dateStringOrTimestamp) return '';
   const date = new Date(dateStringOrTimestamp);

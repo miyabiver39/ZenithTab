@@ -1,4 +1,4 @@
-import { DashboardWidget, ResponsiveLayouts, DashboardPageMeta, DashboardPageData } from '../types/widget';
+import { DashboardWidget, ResponsiveLayouts, DashboardPageMeta, DashboardPageData, TrashEntry } from '../types/widget';
 import {
   WallpaperSettings,
   AppearanceSettings,
@@ -15,6 +15,7 @@ import { en } from '../i18n/locales/en';
 import type { Translation } from '../i18n/resolve';
 import { getRegionalDockItems, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
 import { sanitizeLayout, sanitizeResponsiveLayouts } from '../utils/layout';
+import { sanitizeTrash } from './trashService';
 
 /** The running extension version, so exports carry the version that produced them. */
 function currentVersion(): string {
@@ -450,12 +451,21 @@ export const storageService = {
     await storageSet(STORAGE_KEYS.PAGE_DATA, sanitized);
   },
 
+  async getTrash(): Promise<TrashEntry[]> {
+    return sanitizeTrash(await storageGet<TrashEntry[]>(STORAGE_KEYS.TRASH, []));
+  },
+
+  async saveTrash(entries: TrashEntry[]): Promise<void> {
+    await storageSet(STORAGE_KEYS.TRASH, entries);
+  },
+
   async exportDashboardData(): Promise<DashboardExportData> {
     const { pages, activePageId, pageData } = await this.getPagesState();
     const wallpaper = await this.getWallpaper();
     const appearance = await this.getAppearance();
     const dockItems = await this.getDockItems();
     const keyboardShortcuts = await this.getKeyboardShortcuts();
+    const trash = await this.getTrash();
     const activePage = pageData[activePageId] || { widgets: [], layouts: DEFAULT_LAYOUTS };
 
     return {
@@ -471,6 +481,7 @@ export const storageService = {
       pages,
       pageData,
       activePageId,
+      trash,
     };
   },
 
@@ -552,6 +563,19 @@ export const storageService = {
       }
       if (Array.isArray(data.keyboardShortcuts)) {
         await this.saveKeyboardShortcuts(sanitizeKeyboardShortcuts(data.keyboardShortcuts));
+      }
+      // Trashed widgets carry user URLs like any other widget; scrub them
+      // the same way before they can be restored.
+      if (Array.isArray(data.trash)) {
+        const trash = sanitizeTrash(data.trash).map((entry) => {
+          if (entry.kind === 'widget') {
+            const widget = sanitizeWidget(entry.widget);
+            return widget ? { ...entry, widget } : null;
+          }
+          const widgets = entry.pageData.widgets.map(sanitizeWidget).filter((w): w is DashboardWidget => w !== null);
+          return { ...entry, pageData: { ...entry.pageData, widgets } };
+        });
+        await this.saveTrash(trash.filter((e): e is TrashEntry => e !== null));
       }
 
       return true;

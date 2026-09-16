@@ -33,6 +33,7 @@ export function resetDashboardStore(overrides: Partial<ReturnType<typeof useDash
     pages: DEFAULT_PAGES,
     activePageId: DEFAULT_PAGE_ID,
     pageData: { [DEFAULT_PAGE_ID]: { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS } },
+    trash: [],
     ...overrides,
   });
 }

@@ -85,4 +85,6 @@ export interface DashboardExportData {
   pages?: { id: string; name: string }[];
   pageData?: Record<string, { widgets: any[]; layouts: any }>;
   activePageId?: string;
+  /** Deleted-but-restorable items; absent in exports from before 1.8.0. */
+  trash?: any[];
 }
