@@ -35,6 +35,13 @@ export interface WidgetDefinitionMeta {
   /** Extra import-time cleanup for nested structures (item lists, engines…). */
   sanitizeConfig?: (config: Record<string, any>, isSafeUrl: (value: unknown) => boolean) => Record<string, any>;
   /**
+   * Upgrade rule for configs written by older versions, run before missing
+   * keys are filled from createDefaultConfig. Return only the keys to set.
+   * Use it when a plain default would change what the user sees — e.g. an
+   * old keyword-search news widget must not be defaulted to "headlines".
+   */
+  migrateConfig?: (config: Record<string, any>) => Record<string, any>;
+  /**
    * Chrome API permissions from manifest `optional_permissions` this widget
    * needs. Requested when the widget is added (a user gesture); the widget
    * itself offers a "grant" button until they are given.
@@ -131,6 +138,13 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
     type: 'rss',
     size: { w: 4, h: 4, minW: 3, minH: 3 },
     urlKeys: ['feedUrl'],
+    // Pre-1.4 configs have no googleNewsMode: derive it from the keyword
+    // they did have, so "technology" keeps searching instead of becoming
+    // the front page once the default mode is filled in.
+    migrateConfig: (config) =>
+      config.isGoogleNews && config.googleNewsMode === undefined
+        ? { googleNewsMode: rssService.resolveGoogleNewsMode(config) }
+        : {},
     createDefaultConfig: (_t, lang) => ({
       feedUrl: rssService.buildGoogleNewsTopStoriesUrl(lang),
       isGoogleNews: true,

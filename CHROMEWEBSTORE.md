@@ -73,6 +73,7 @@ English
 | bookmarks | permissions | Reads the user's Chrome bookmark folders to display and search bookmarks inside the Bookmarks widget without uploading URLs anywhere. |
 | alarms | permissions | Schedules background refresh cycles via chrome.alarms in the service worker for weather forecast and RSS feed updates. |
 | favicon | permissions | Fetches site favicons for bookmark entries and launcher shortcuts using the browser's built-in favicon utility. |
+| unlimitedStorage | permissions | Lifts the 10 MB chrome.storage.local cap so a user-uploaded wallpaper plus cached feeds can never fail to save; no data leaves the device. Shows no install warning. |
 | topSites | optional_permissions | Requested only when the user adds the Quick Access widget: lists the sites Chrome already ranks as most visited so they can be offered as one-click shortcuts; read locally, never uploaded. |
 | sessions | optional_permissions | Requested only when the user adds the Quick Access widget: lists and restores the user's recently closed tabs; data stays in the browser. |
 | geolocation | permissions | Determines user coordinates only when the user clicks "Detect current location" in the Weather widget to configure local weather forecasts. |

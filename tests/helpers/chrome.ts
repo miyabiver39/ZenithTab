@@ -200,6 +200,9 @@ export const chromeMock = {
     // number that changes with every release.
     getManifest: vi.fn(() => ({ version: '9.9.9', name: 'ZenithTab (test)' })),
     lastError: undefined as { message: string } | undefined,
+    // Service-worker entry points; tests grab the registered listeners.
+    onInstalled: { addListener: vi.fn() },
+    onMessage: { addListener: vi.fn() },
   },
 };
 

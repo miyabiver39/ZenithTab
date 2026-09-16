@@ -1,6 +1,6 @@
 import { parseRssXml } from '../utils/rssParser';
 import { STORAGE_KEYS } from '../services/storageService';
-import { DashboardWidget } from '../types/widget';
+import { DashboardWidget, DashboardPageData } from '../types/widget';
 import { RssFeedData } from '../types/rss';
 import { hasHostPermission } from '../utils/permissions';
 
@@ -37,9 +37,16 @@ function fetchWithTimeout(input: string, init: RequestInit = {}, timeoutMs = FET
 
 async function refreshAllConfiguredFeeds() {
   try {
-    const result = await chrome.storage.local.get([STORAGE_KEYS.WIDGETS, STORAGE_KEYS.RSS_CACHE]);
-    const widgets: DashboardWidget[] = result[STORAGE_KEYS.WIDGETS] || [];
+    const result = await chrome.storage.local.get([STORAGE_KEYS.WIDGETS, STORAGE_KEYS.PAGE_DATA, STORAGE_KEYS.RSS_CACHE]);
     const cacheStore: Record<string, RssFeedData> = result[STORAGE_KEYS.RSS_CACHE] || {};
+
+    // Every page's widgets, not just the active page's mirror — otherwise a
+    // feed on a page the user isn't looking at never gets refreshed.
+    // The legacy single-page key is still read for installs that predate
+    // pages (migrated on their next foreground load).
+    const pageData: Record<string, DashboardPageData> = result[STORAGE_KEYS.PAGE_DATA] || {};
+    const pagedWidgets = Object.values(pageData).flatMap((page) => page?.widgets || []);
+    const widgets: DashboardWidget[] = pagedWidgets.length > 0 ? pagedWidgets : result[STORAGE_KEYS.WIDGETS] || [];
 
     const rssWidgets = widgets.filter((w) => w.type === 'rss');
     if (rssWidgets.length === 0) {

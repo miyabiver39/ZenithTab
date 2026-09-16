@@ -6,6 +6,7 @@ import {
   storageService,
   createDefaultWidgets,
   createDefaultLayouts,
+  hydratePageData,
   DEFAULT_WIDGETS,
   DEFAULT_LAYOUTS,
   DEFAULT_WALLPAPER,
@@ -206,15 +207,20 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
         // an `undefined` active page into the rest of the app.
         const safePages = Array.isArray(pages) && pages.length > 0 ? pages : DEFAULT_PAGES;
         const safeActivePageId = safePages.some((p) => p.id === activePageId) ? activePageId : safePages[0].id;
-        const active =
-          pageData && pageData[safeActivePageId]
-            ? pageData[safeActivePageId]
-            : defaults;
+        // Widgets saved by an older version may lack config keys added
+        // since; fill them from today's defaults (in memory only — storage
+        // is rewritten the next time the user changes something).
+        const hydratedPageData = hydratePageData(
+          pageData || fallbackPagesState.pageData,
+          getTranslation(appearance.language),
+          resolveLanguageCode(appearance.language)
+        );
+        const active = hydratedPageData[safeActivePageId] || defaults;
 
         set({
           pages: safePages,
           activePageId: safeActivePageId,
-          pageData: pageData || fallbackPagesState.pageData,
+          pageData: hydratedPageData,
           widgets: active.widgets,
           layouts: active.layouts,
           wallpaper,
@@ -570,12 +576,13 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
       ]);
 
     const safeActivePageId = pages.some((p) => p.id === activePageId) ? activePageId : pages[0].id;
-    const active = pageData[safeActivePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
+    const hydrated = hydratePageData(pageData, getTranslation(appearance.language), resolveLanguageCode(appearance.language));
+    const active = hydrated[safeActivePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
 
     const next = {
       pages,
       activePageId: safeActivePageId,
-      pageData,
+      pageData: hydrated,
       widgets: active.widgets,
       layouts: active.layouts,
       wallpaper,
@@ -626,12 +633,13 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
           storageService.getKeyboardShortcuts(),
         ]);
 
-      const active = pageData[activePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
+      const hydrated = hydratePageData(pageData, getTranslation(appearance.language), resolveLanguageCode(appearance.language));
+      const active = hydrated[activePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
 
       set({
         pages,
         activePageId,
-        pageData,
+        pageData: hydrated,
         widgets: active.widgets,
         layouts: active.layouts,
         wallpaper,

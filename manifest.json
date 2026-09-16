@@ -9,7 +9,8 @@
     "bookmarks",
     "alarms",
     "favicon",
-    "geolocation"
+    "geolocation",
+    "unlimitedStorage"
   ],
   "optional_permissions": [
     "topSites",

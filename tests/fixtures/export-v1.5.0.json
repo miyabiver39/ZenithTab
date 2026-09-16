@@ -1,0 +1,1058 @@
+{
+  "version": "1.5.0",
+  "exportedAt": "2026-09-16T10:00:00.000Z",
+  "widgets": [
+    {
+      "id": "widget-search-1",
+      "type": "search",
+      "title": "Quick Search",
+      "config": {
+        "defaultEngine": "duckduckgo",
+        "showEngineSelector": false,
+        "openInNewTab": true
+      },
+      "layout": {
+        "i": "widget-search-1",
+        "x": 2,
+        "y": 0,
+        "w": 8,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      }
+    },
+    {
+      "id": "widget-clock-1",
+      "type": "clock",
+      "title": "Clock",
+      "config": {
+        "style": "minimal",
+        "showSeconds": false,
+        "showDate": true,
+        "is24Hour": false
+      },
+      "layout": {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-weather-1",
+      "type": "weather",
+      "title": "Weather",
+      "config": {
+        "city": "Berlin",
+        "latitude": 52.52,
+        "longitude": 13.405,
+        "unit": "celsius",
+        "showForecast": false
+      },
+      "layout": {
+        "i": "widget-weather-1",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-rss-1",
+      "type": "rss",
+      "title": "News",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/headlines/section/topic/SCIENCE?hl=de&gl=DE&ceid=DE:de",
+        "isGoogleNews": true,
+        "googleNewsMode": "topic",
+        "googleNewsTopic": "SCIENCE",
+        "searchQuery": "",
+        "maxItems": 8,
+        "refreshIntervalMinutes": 30,
+        "showThumbnail": true,
+        "showDate": true,
+        "showDescription": true
+      },
+      "layout": {
+        "i": "widget-rss-1",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      }
+    },
+    {
+      "id": "widget-shortcuts-mfn2k3a1abcd",
+      "type": "shortcuts",
+      "title": "Shortcuts",
+      "config": {
+        "items": [
+          {
+            "id": "app-google",
+            "title": "Google",
+            "url": "https://google.com",
+            "category": "Alltag"
+          },
+          {
+            "id": "app-spiegel",
+            "title": "DER SPIEGEL",
+            "url": "https://www.spiegel.de",
+            "category": "Nachrichten"
+          }
+        ],
+        "columns": 6,
+        "openInNewTab": true,
+        "viewMode": "grid"
+      },
+      "layout": {
+        "i": "widget-shortcuts-mfn2k3a1abcd",
+        "x": 0,
+        "y": 3,
+        "w": 8,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-qrcode-mfn2k3a2efgh",
+      "type": "qrcode",
+      "title": "QR Code",
+      "config": {
+        "mode": "phone",
+        "value": "+49 30 123456"
+      },
+      "layout": {
+        "i": "widget-qrcode-mfn2k3a2efgh",
+        "x": 8,
+        "y": 5,
+        "w": 3,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      }
+    },
+    {
+      "id": "widget-notes-1",
+      "type": "notes",
+      "title": "Quick Notes",
+      "config": {
+        "pages": [
+          {
+            "id": "page-1",
+            "title": "Page 1",
+            "content": "Notes"
+          }
+        ],
+        "activePageId": "page-1",
+        "fontSize": "base",
+        "fontFamily": "serif"
+      },
+      "layout": {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 6,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    }
+  ],
+  "layouts": {
+    "lg": [
+      {
+        "i": "widget-search-1",
+        "x": 2,
+        "y": 0,
+        "w": 8,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-shortcuts-mfn2k3a1abcd",
+        "x": 0,
+        "y": 3,
+        "w": 8,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-qrcode-mfn2k3a2efgh",
+        "x": 8,
+        "y": 5,
+        "w": 3,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 6,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "md": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 5,
+        "y": 0,
+        "w": 5,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 3,
+        "w": 5,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 5,
+        "y": 3,
+        "w": 5,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-shortcuts-mfn2k3a1abcd",
+        "x": 0,
+        "y": 6,
+        "w": 5,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-qrcode-mfn2k3a2efgh",
+        "x": 5,
+        "y": 6,
+        "w": 5,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 9,
+        "w": 5,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "sm": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 2,
+        "w": 6,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 4,
+        "w": 6,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 0,
+        "y": 6,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-shortcuts-mfn2k3a1abcd",
+        "x": 0,
+        "y": 8,
+        "w": 6,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-qrcode-mfn2k3a2efgh",
+        "x": 0,
+        "y": 10,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 12,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "xs": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 2,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 4,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 0,
+        "y": 6,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-shortcuts-mfn2k3a1abcd",
+        "x": 0,
+        "y": 8,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-qrcode-mfn2k3a2efgh",
+        "x": 0,
+        "y": 10,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 12,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "xxs": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 2,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 2,
+        "w": 2,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 4,
+        "w": 2,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 0,
+        "y": 6,
+        "w": 2,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-shortcuts-mfn2k3a1abcd",
+        "x": 0,
+        "y": 8,
+        "w": 2,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-qrcode-mfn2k3a2efgh",
+        "x": 0,
+        "y": 10,
+        "w": 2,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 12,
+        "w": 2,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ]
+  },
+  "wallpaper": {
+    "source": "unsplash",
+    "category": "space",
+    "blur": 4,
+    "brightness": 0.85,
+    "overlayOpacity": 0.35,
+    "refreshInterval": "hourly",
+    "currentWallpaperUrl": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=2560&q=80",
+    "dynamic": {
+      "enabled": true,
+      "mode": "custom",
+      "seed": 2,
+      "slots": {
+        "morning": {
+          "startHour": 5,
+          "source": "gradient",
+          "category": "nature",
+          "gradientIndex": 1,
+          "blur": 0,
+          "brightness": 1,
+          "overlayOpacity": 0.2
+        },
+        "night": {
+          "startHour": 21,
+          "source": "unsplash",
+          "category": "cyberpunk",
+          "blur": 6,
+          "brightness": 0.6,
+          "overlayOpacity": 0.55
+        }
+      }
+    }
+  },
+  "appearance": {
+    "language": "de",
+    "theme": "dark",
+    "glassBlur": 16,
+    "glassOpacity": 0.45,
+    "borderRadius": "2xl",
+    "compactMode": false,
+    "dockPosition": "bottom"
+  },
+  "dockItems": [
+    {
+      "id": "dock-google",
+      "label": "Google",
+      "url": "https://google.com",
+      "icon": "globe",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-amazon-de",
+      "label": "Amazon",
+      "url": "https://www.amazon.de",
+      "icon": "cart",
+      "openInNewTab": true
+    }
+  ],
+  "keyboardShortcuts": [],
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Home"
+    }
+  ],
+  "pageData": {
+    "page-1": {
+      "widgets": [
+        {
+          "id": "widget-search-1",
+          "type": "search",
+          "title": "Quick Search",
+          "config": {
+            "defaultEngine": "duckduckgo",
+            "showEngineSelector": false,
+            "openInNewTab": true
+          },
+          "layout": {
+            "i": "widget-search-1",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          }
+        },
+        {
+          "id": "widget-clock-1",
+          "type": "clock",
+          "title": "Clock",
+          "config": {
+            "style": "minimal",
+            "showSeconds": false,
+            "showDate": true,
+            "is24Hour": false
+          },
+          "layout": {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-weather-1",
+          "type": "weather",
+          "title": "Weather",
+          "config": {
+            "city": "Berlin",
+            "latitude": 52.52,
+            "longitude": 13.405,
+            "unit": "celsius",
+            "showForecast": false
+          },
+          "layout": {
+            "i": "widget-weather-1",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-rss-1",
+          "type": "rss",
+          "title": "News",
+          "config": {
+            "feedUrl": "https://news.google.com/rss/headlines/section/topic/SCIENCE?hl=de&gl=DE&ceid=DE:de",
+            "isGoogleNews": true,
+            "googleNewsMode": "topic",
+            "googleNewsTopic": "SCIENCE",
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true
+          },
+          "layout": {
+            "i": "widget-rss-1",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "widget-shortcuts-mfn2k3a1abcd",
+          "type": "shortcuts",
+          "title": "Shortcuts",
+          "config": {
+            "items": [
+              {
+                "id": "app-google",
+                "title": "Google",
+                "url": "https://google.com",
+                "category": "Alltag"
+              },
+              {
+                "id": "app-spiegel",
+                "title": "DER SPIEGEL",
+                "url": "https://www.spiegel.de",
+                "category": "Nachrichten"
+              }
+            ],
+            "columns": 6,
+            "openInNewTab": true,
+            "viewMode": "grid"
+          },
+          "layout": {
+            "i": "widget-shortcuts-mfn2k3a1abcd",
+            "x": 0,
+            "y": 3,
+            "w": 8,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-qrcode-mfn2k3a2efgh",
+          "type": "qrcode",
+          "title": "QR Code",
+          "config": {
+            "mode": "phone",
+            "value": "+49 30 123456"
+          },
+          "layout": {
+            "i": "widget-qrcode-mfn2k3a2efgh",
+            "x": 8,
+            "y": 5,
+            "w": 3,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "widget-notes-1",
+          "type": "notes",
+          "title": "Quick Notes",
+          "config": {
+            "pages": [
+              {
+                "id": "page-1",
+                "title": "Page 1",
+                "content": "Notes"
+              }
+            ],
+            "activePageId": "page-1",
+            "fontSize": "base",
+            "fontFamily": "serif"
+          },
+          "layout": {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "widget-search-1",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-shortcuts-mfn2k3a1abcd",
+            "x": 0,
+            "y": 3,
+            "w": 8,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-qrcode-mfn2k3a2efgh",
+            "x": 8,
+            "y": 5,
+            "w": 3,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "md": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 5,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 5,
+            "y": 0,
+            "w": 5,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 3,
+            "w": 5,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 5,
+            "y": 3,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-shortcuts-mfn2k3a1abcd",
+            "x": 0,
+            "y": 6,
+            "w": 5,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-qrcode-mfn2k3a2efgh",
+            "x": 5,
+            "y": 6,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 9,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "sm": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 2,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 0,
+            "y": 6,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-shortcuts-mfn2k3a1abcd",
+            "x": 0,
+            "y": 8,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-qrcode-mfn2k3a2efgh",
+            "x": 0,
+            "y": 10,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 12,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "xs": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 2,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-shortcuts-mfn2k3a1abcd",
+            "x": 0,
+            "y": 8,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-qrcode-mfn2k3a2efgh",
+            "x": 0,
+            "y": 10,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 12,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "xxs": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 2,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 4,
+            "w": 2,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 0,
+            "y": 6,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-shortcuts-mfn2k3a1abcd",
+            "x": 0,
+            "y": 8,
+            "w": 2,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-qrcode-mfn2k3a2efgh",
+            "x": 0,
+            "y": 10,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 12,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ]
+      }
+    }
+  },
+  "activePageId": "page-1"
+}

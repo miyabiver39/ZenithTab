@@ -282,6 +282,44 @@ export function createDefaultWidgets(t: Translation, lang = 'en'): DashboardWidg
 // (corrupted-storage recovery, unit tests). First launch and "reset to
 // default" go through createDefaultWidgets() with the real language.
 export const DEFAULT_WIDGETS: DashboardWidget[] = createDefaultWidgets(en);
+
+/**
+ * Fills in config keys a stored widget predates. Shallow on purpose: a
+ * missing key gets today's default, an existing key (including arrays the
+ * user emptied deliberately) is left exactly as saved. Unknown widget
+ * types pass through untouched.
+ */
+export function hydrateWidget(widget: DashboardWidget, t: Translation, lang: string): DashboardWidget {
+  const meta = getWidgetMeta(widget.type);
+  if (!meta) return widget;
+  const defaults = meta.createDefaultConfig(t, lang);
+  const stored = widget.config || {};
+  const migrated = meta.migrateConfig ? meta.migrateConfig(stored) : {};
+  const config = { ...stored, ...migrated };
+  const missing = Object.keys(defaults).filter((key) => config[key] === undefined);
+  if (missing.length === 0 && Object.keys(migrated).length === 0) return widget;
+  const filled: Record<string, any> = { ...config };
+  for (const key of missing) filled[key] = defaults[key];
+  return { ...widget, config: filled };
+}
+
+export function hydratePageData(
+  pageData: Record<string, DashboardPageData>,
+  t: Translation,
+  lang: string
+): Record<string, DashboardPageData> {
+  let changed = false;
+  const next: Record<string, DashboardPageData> = {};
+  for (const [id, page] of Object.entries(pageData)) {
+    const widgets = (page.widgets || []).map((w) => {
+      const hydrated = hydrateWidget(w, t, lang);
+      if (hydrated !== w) changed = true;
+      return hydrated;
+    });
+    next[id] = changed ? { ...page, widgets } : page;
+  }
+  return changed ? next : pageData;
+}
 export const DEFAULT_LAYOUTS: ResponsiveLayouts = createDefaultLayouts(DEFAULT_WIDGETS);
 
 export const storageService = {
@@ -303,9 +341,14 @@ export const storageService = {
     await storageSet(STORAGE_KEYS.LAYOUTS, layouts);
   },
 
+  // Settings objects are stored whole, so a user who installed before a
+  // field existed simply doesn't have it. Layer the stored object over
+  // today's defaults (one level deep — nested structures such as
+  // wallpaper.dynamic.slots already fill their own gaps) so every field
+  // the code expects is present.
   async getWallpaper(): Promise<WallpaperSettings> {
     const wallpaper = await storageGet<WallpaperSettings>(STORAGE_KEYS.WALLPAPER, DEFAULT_WALLPAPER);
-    return wallpaper || DEFAULT_WALLPAPER;
+    return wallpaper ? { ...DEFAULT_WALLPAPER, ...wallpaper } : DEFAULT_WALLPAPER;
   },
 
   async saveWallpaper(wallpaper: WallpaperSettings): Promise<void> {
@@ -314,7 +357,7 @@ export const storageService = {
 
   async getAppearance(): Promise<AppearanceSettings> {
     const appearance = await storageGet<AppearanceSettings>(STORAGE_KEYS.APPEARANCE, DEFAULT_APPEARANCE);
-    return appearance || DEFAULT_APPEARANCE;
+    return appearance ? { ...DEFAULT_APPEARANCE, ...appearance } : DEFAULT_APPEARANCE;
   },
 
   async saveAppearance(appearance: AppearanceSettings): Promise<void> {

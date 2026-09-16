@@ -1,0 +1,1415 @@
+{
+  "version": "1.3.3",
+  "exportedAt": "2026-09-16T00:00:00.000Z",
+  "widgets": [
+    {
+      "id": "widget-search-1",
+      "type": "search",
+      "title": "クイック検索",
+      "config": {
+        "defaultEngine": "google",
+        "showEngineSelector": true,
+        "openInNewTab": true,
+        "customEngines": [
+          {
+            "id": "custom-1757000000000",
+            "name": "Yahoo! JAPAN",
+            "urlTemplate": "https://search.yahoo.co.jp/search?p={query}",
+            "icon": "🟥"
+          }
+        ],
+        "hiddenBuiltinEngines": [
+          "bing"
+        ]
+      },
+      "layout": {
+        "i": "widget-search-1",
+        "x": 2,
+        "y": 0,
+        "w": 8,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      }
+    },
+    {
+      "id": "widget-clock-1",
+      "type": "clock",
+      "title": "時計",
+      "config": {
+        "style": "analog",
+        "showSeconds": true,
+        "showDate": true,
+        "is24Hour": true,
+        "timezone": "Asia/Tokyo"
+      },
+      "layout": {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-weather-1",
+      "type": "weather",
+      "title": "天気情報",
+      "config": {
+        "city": "Osaka",
+        "latitude": 34.6937,
+        "longitude": 135.5023,
+        "unit": "celsius",
+        "showForecast": true
+      },
+      "layout": {
+        "i": "widget-weather-1",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-pomodoro-1",
+      "type": "pomodoro",
+      "title": "集中タイマー",
+      "config": {
+        "focusDurationMinutes": 50,
+        "shortBreakDurationMinutes": 10,
+        "longBreakDurationMinutes": 20,
+        "autoStartBreaks": false
+      },
+      "layout": {
+        "i": "widget-pomodoro-1",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-bookmarks-1",
+      "type": "bookmarks",
+      "title": "ブックマーク",
+      "config": {
+        "viewMode": "list",
+        "showFavicons": true,
+        "columns": 4
+      },
+      "layout": {
+        "i": "widget-bookmarks-1",
+        "x": 0,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      }
+    },
+    {
+      "id": "widget-rss-1",
+      "type": "rss",
+      "title": "ニュース",
+      "config": {
+        "feedUrl": "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja",
+        "isGoogleNews": true,
+        "searchQuery": "",
+        "maxItems": 8,
+        "refreshIntervalMinutes": 30,
+        "showThumbnail": true,
+        "showDate": true,
+        "showDescription": true
+      },
+      "layout": {
+        "i": "widget-rss-1",
+        "x": 4,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      }
+    },
+    {
+      "id": "widget-todo-1",
+      "type": "todo",
+      "title": "タスク管理",
+      "config": {
+        "items": [
+          {
+            "id": "1",
+            "text": "ZenithTab の設定を見てみる",
+            "completed": true,
+            "createdAt": 1757900000000
+          }
+        ]
+      },
+      "layout": {
+        "i": "widget-todo-1",
+        "x": 8,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-notes-1",
+      "type": "notes",
+      "title": "クイックメモ",
+      "config": {
+        "pages": [
+          {
+            "id": "page-1",
+            "title": "ページ 1",
+            "content": "買い物リスト\n- 牛乳"
+          },
+          {
+            "id": "page-1757910000000",
+            "title": "アイデア",
+            "content": ""
+          }
+        ],
+        "activePageId": "page-1",
+        "fontSize": "lg",
+        "fontFamily": "mono"
+      },
+      "layout": {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 7,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    }
+  ],
+  "layouts": {
+    "lg": [
+      {
+        "i": "widget-search-1",
+        "x": 2,
+        "y": 0,
+        "w": 8,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-pomodoro-1",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-bookmarks-1",
+        "x": 0,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 4,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-todo-1",
+        "x": 8,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 7,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "md": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 5,
+        "y": 0,
+        "w": 5,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 3,
+        "w": 5,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-pomodoro-1",
+        "x": 5,
+        "y": 3,
+        "w": 5,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-bookmarks-1",
+        "x": 0,
+        "y": 6,
+        "w": 5,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 5,
+        "y": 6,
+        "w": 5,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-todo-1",
+        "x": 0,
+        "y": 9,
+        "w": 5,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 5,
+        "y": 9,
+        "w": 5,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "sm": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 2,
+        "w": 6,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 4,
+        "w": 6,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-pomodoro-1",
+        "x": 0,
+        "y": 6,
+        "w": 6,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-bookmarks-1",
+        "x": 0,
+        "y": 8,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 0,
+        "y": 10,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-todo-1",
+        "x": 0,
+        "y": 12,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 14,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "xs": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 2,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 4,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-pomodoro-1",
+        "x": 0,
+        "y": 6,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-bookmarks-1",
+        "x": 0,
+        "y": 8,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 0,
+        "y": 10,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-todo-1",
+        "x": 0,
+        "y": 12,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 14,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "xxs": [
+      {
+        "i": "widget-search-1",
+        "x": 0,
+        "y": 0,
+        "w": 2,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-1",
+        "x": 0,
+        "y": 2,
+        "w": 2,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-weather-1",
+        "x": 0,
+        "y": 4,
+        "w": 2,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-pomodoro-1",
+        "x": 0,
+        "y": 6,
+        "w": 2,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-bookmarks-1",
+        "x": 0,
+        "y": 8,
+        "w": 2,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-rss-1",
+        "x": 0,
+        "y": 10,
+        "w": 2,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "widget-todo-1",
+        "x": 0,
+        "y": 12,
+        "w": 2,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "widget-notes-1",
+        "x": 0,
+        "y": 14,
+        "w": 2,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    ]
+  },
+  "wallpaper": {
+    "source": "gradient",
+    "category": "space",
+    "blur": 4,
+    "brightness": 0.85,
+    "overlayOpacity": 0.35,
+    "refreshInterval": "hourly",
+    "currentWallpaperUrl": "linear-gradient(135deg, #09203f 0%, #537895 100%)"
+  },
+  "appearance": {
+    "language": "auto",
+    "theme": "dark",
+    "glassBlur": 20,
+    "glassOpacity": 0.5,
+    "borderRadius": "xl",
+    "compactMode": true,
+    "dockPosition": "top"
+  },
+  "dockItems": [
+    {
+      "id": "dock-google",
+      "label": "Google",
+      "url": "https://google.com",
+      "icon": "globe",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-youtube",
+      "label": "YouTube",
+      "url": "https://youtube.com",
+      "icon": "video",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-1757930000000",
+      "label": "Slack",
+      "url": "https://app.slack.com",
+      "icon": "💬",
+      "openInNewTab": false
+    }
+  ],
+  "keyboardShortcuts": [
+    {
+      "id": "kbd-1757940000000",
+      "combo": "Ctrl+Alt+G",
+      "label": "Gmail",
+      "url": "https://mail.google.com",
+      "openInNewTab": true
+    }
+  ],
+  "pages": [
+    {
+      "id": "page-1",
+      "name": ""
+    },
+    {
+      "id": "page-1757950000000",
+      "name": "仕事"
+    }
+  ],
+  "pageData": {
+    "page-1": {
+      "widgets": [
+        {
+          "id": "widget-search-1",
+          "type": "search",
+          "title": "クイック検索",
+          "config": {
+            "defaultEngine": "google",
+            "showEngineSelector": true,
+            "openInNewTab": true,
+            "customEngines": [
+              {
+                "id": "custom-1757000000000",
+                "name": "Yahoo! JAPAN",
+                "urlTemplate": "https://search.yahoo.co.jp/search?p={query}",
+                "icon": "🟥"
+              }
+            ],
+            "hiddenBuiltinEngines": [
+              "bing"
+            ]
+          },
+          "layout": {
+            "i": "widget-search-1",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          }
+        },
+        {
+          "id": "widget-clock-1",
+          "type": "clock",
+          "title": "時計",
+          "config": {
+            "style": "analog",
+            "showSeconds": true,
+            "showDate": true,
+            "is24Hour": true,
+            "timezone": "Asia/Tokyo"
+          },
+          "layout": {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-weather-1",
+          "type": "weather",
+          "title": "天気情報",
+          "config": {
+            "city": "Osaka",
+            "latitude": 34.6937,
+            "longitude": 135.5023,
+            "unit": "celsius",
+            "showForecast": true
+          },
+          "layout": {
+            "i": "widget-weather-1",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-pomodoro-1",
+          "type": "pomodoro",
+          "title": "集中タイマー",
+          "config": {
+            "focusDurationMinutes": 50,
+            "shortBreakDurationMinutes": 10,
+            "longBreakDurationMinutes": 20,
+            "autoStartBreaks": false
+          },
+          "layout": {
+            "i": "widget-pomodoro-1",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-bookmarks-1",
+          "type": "bookmarks",
+          "title": "ブックマーク",
+          "config": {
+            "viewMode": "list",
+            "showFavicons": true,
+            "columns": 4
+          },
+          "layout": {
+            "i": "widget-bookmarks-1",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "widget-rss-1",
+          "type": "rss",
+          "title": "ニュース",
+          "config": {
+            "feedUrl": "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja",
+            "isGoogleNews": true,
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true
+          },
+          "layout": {
+            "i": "widget-rss-1",
+            "x": 4,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "widget-todo-1",
+          "type": "todo",
+          "title": "タスク管理",
+          "config": {
+            "items": [
+              {
+                "id": "1",
+                "text": "ZenithTab の設定を見てみる",
+                "completed": true,
+                "createdAt": 1757900000000
+              }
+            ]
+          },
+          "layout": {
+            "i": "widget-todo-1",
+            "x": 8,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-notes-1",
+          "type": "notes",
+          "title": "クイックメモ",
+          "config": {
+            "pages": [
+              {
+                "id": "page-1",
+                "title": "ページ 1",
+                "content": "買い物リスト\n- 牛乳"
+              },
+              {
+                "id": "page-1757910000000",
+                "title": "アイデア",
+                "content": ""
+              }
+            ],
+            "activePageId": "page-1",
+            "fontSize": "lg",
+            "fontFamily": "mono"
+          },
+          "layout": {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 7,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "widget-search-1",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-1",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-bookmarks-1",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 4,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-todo-1",
+            "x": 8,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 7,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "md": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 5,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 5,
+            "y": 0,
+            "w": 5,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 3,
+            "w": 5,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-1",
+            "x": 5,
+            "y": 3,
+            "w": 5,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-bookmarks-1",
+            "x": 0,
+            "y": 6,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 5,
+            "y": 6,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-todo-1",
+            "x": 0,
+            "y": 9,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 5,
+            "y": 9,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "sm": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 2,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-1",
+            "x": 0,
+            "y": 6,
+            "w": 6,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-bookmarks-1",
+            "x": 0,
+            "y": 8,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 0,
+            "y": 10,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-todo-1",
+            "x": 0,
+            "y": 12,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 14,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "xs": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 2,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-1",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-bookmarks-1",
+            "x": 0,
+            "y": 8,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 0,
+            "y": 10,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-todo-1",
+            "x": 0,
+            "y": 12,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 14,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "xxs": [
+          {
+            "i": "widget-search-1",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-1",
+            "x": 0,
+            "y": 2,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-weather-1",
+            "x": 0,
+            "y": 4,
+            "w": 2,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-1",
+            "x": 0,
+            "y": 6,
+            "w": 2,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-bookmarks-1",
+            "x": 0,
+            "y": 8,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1",
+            "x": 0,
+            "y": 10,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-todo-1",
+            "x": 0,
+            "y": 12,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-1",
+            "x": 0,
+            "y": 14,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        ]
+      }
+    },
+    "page-1757950000000": {
+      "widgets": [
+        {
+          "id": "widget-rss-1757920000000",
+          "type": "rss",
+          "title": "AI News",
+          "config": {
+            "feedUrl": "https://news.google.com/rss/search?q=AI&hl=ja&gl=JP&ceid=JP:ja",
+            "isGoogleNews": true,
+            "searchQuery": "AI",
+            "maxItems": 12,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": false,
+            "showDate": true,
+            "showDescription": false
+          },
+          "layout": {
+            "i": "widget-rss-1757920000000",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "widget-rss-1757920000001",
+          "type": "rss",
+          "title": "Blog",
+          "config": {
+            "feedUrl": "https://blog.example.com/feed.xml",
+            "isGoogleNews": false,
+            "searchQuery": "",
+            "maxItems": 5,
+            "refreshIntervalMinutes": 60,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true
+          },
+          "layout": {
+            "i": "widget-rss-1757920000001",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "widget-iframe-1757920000002",
+          "type": "iframe",
+          "title": "Web埋め込み",
+          "config": {
+            "url": "https://example.com/dashboard",
+            "title": "Dashboard",
+            "allowScroll": true
+          },
+          "layout": {
+            "i": "widget-iframe-1757920000002",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "widget-rss-1757920000000",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1757920000001",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-iframe-1757920000002",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "md": [
+          {
+            "i": "widget-rss-1757920000000",
+            "x": 0,
+            "y": 0,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1757920000001",
+            "x": 5,
+            "y": 0,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-iframe-1757920000002",
+            "x": 0,
+            "y": 3,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "sm": [
+          {
+            "i": "widget-rss-1757920000000",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1757920000001",
+            "x": 0,
+            "y": 2,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-iframe-1757920000002",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "xs": [
+          {
+            "i": "widget-rss-1757920000000",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1757920000001",
+            "x": 0,
+            "y": 2,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-iframe-1757920000002",
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "xxs": [
+          {
+            "i": "widget-rss-1757920000000",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-rss-1757920000001",
+            "x": 0,
+            "y": 2,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "widget-iframe-1757920000002",
+            "x": 0,
+            "y": 4,
+            "w": 2,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ]
+      }
+    }
+  },
+  "activePageId": "page-1"
+}
