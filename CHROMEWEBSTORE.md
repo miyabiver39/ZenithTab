@@ -25,6 +25,7 @@ Key Features:
 - App Drawer & Quick Dock: Launch registered web apps categorized by tags, or use persistent top/bottom dock shortcuts.
 - Quick Access: Jump back to your most-visited sites or reopen recently closed tabs, straight from the new tab.
 - Focus & Utilities: Built-in Pomodoro timer, to-do checklist, quick scratchpad, and calculator.
+- Safe to Experiment: Undo any delete or move (toast or Ctrl+Z), restore deleted widgets and pages from the trash for 30 days, and roll the whole dashboard back to an automatic backup.
 - Privacy-First: Zero telemetry, zero analytics, zero ad network requests.
 
 How to Use:
@@ -105,6 +106,7 @@ English
 
 | Version | Date | Changes Summary |
 |---------|------|-----------------|
+| 1.8.0 | 2026-09-17 | Undo for every delete and layout change (toast + Ctrl+Z); 30-day trash for widgets and pages; automatic whole-dashboard backups before reset/import/restore and after quiet periods, with a restore UI; in-app confirm dialogs replace window.confirm. |
 | 1.7.1 | 2026-09-16 | Dependency updates (npm audit clean) and accessibility attributes across settings forms and widgets; lint, E2E and user-event test infrastructure. |
 | 1.7.0 | 2026-09-16 | Schema versioning with a forward migration pipeline and pre-migration snapshots; upgrade regression tests against real 1.2/1.3/1.5 data; read-time hydration of settings written by older versions; unlimitedStorage; background feed refresh covers every page. |
 | 1.6.1 | 2026-09-16 | Quick Access permissions (topSites, sessions) moved to optional_permissions and requested when the widget is added, so updates never disable the extension; widget registry refactor (no behaviour change). |

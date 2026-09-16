@@ -155,3 +155,68 @@ test.describe('widgets', () => {
     expect(opened).toEqual(['https://duckduckgo.com/?q=zenith%20tab']);
   });
 });
+
+test.describe('recovery', () => {
+  test('a removed widget comes back from the undo toast', async ({ page }) => {
+    await page.getByTitle('Edit Layout').click();
+    const clockCard = page.locator('.react-grid-item', { has: page.locator('[data-widget-type="clock"]') });
+    await clockCard.getByTitle('Remove Widget').click();
+    await expect(widgetCards(page)).toHaveCount(7);
+
+    const toast = page.getByRole('status');
+    await expect(toast).toContainText('Removed widget "Clock"');
+    await toast.getByRole('button', { name: 'Undo' }).click();
+    await expect(widgetCards(page)).toHaveCount(8);
+    await expect(page.locator('[data-widget-type="clock"]')).toBeVisible();
+  });
+
+  test('a removed page can be restored from the trash', async ({ page }) => {
+    await page.getByRole('banner').getByRole('button', { name: 'Add page' }).click();
+    await page.getByText('Duplicate this page').click();
+    await expect(page.getByText('Page 2')).toBeVisible();
+
+    // Removing a page with widgets on it asks first.
+    const strip = page.getByTitle(/switches pages/);
+    await strip.locator('.group', { hasText: 'Page 2' }).hover();
+    await strip.locator('.group', { hasText: 'Page 2' }).getByTitle('Remove page').click();
+    const dialog = page.getByRole('alertdialog');
+    await expect(dialog).toContainText('Remove page "Page 2"?');
+    await dialog.getByRole('button', { name: 'Remove page' }).click();
+    await expect(strip).toBeHidden();
+
+    await page.getByTitle('Settings').click();
+    await page.getByRole('button', { name: /^Trash/ }).click();
+    const trashList = page.getByRole('list', { name: 'Trash' });
+    await expect(trashList.getByRole('listitem')).toHaveCount(1);
+    await trashList.getByRole('button', { name: /^Restore: / }).click();
+
+    await expect(page.getByRole('heading', { name: 'ZenithTab Settings' })).toBeHidden();
+    await expect(page.getByRole('status')).toContainText('Restored "Page 2" from the trash');
+    await expect(strip.getByText('Page 2', { exact: true })).toBeVisible();
+    await expect(widgetCards(page)).toHaveCount(8);
+  });
+
+  test('a reset can be reverted from the automatic backup', async ({ page }) => {
+    const input = page.getByPlaceholder('Add a new task...');
+    await input.fill('Keep me');
+    await input.press('Enter');
+    await expect(page.getByText('Keep me')).toBeVisible();
+
+    await page.getByTitle('Settings').click();
+    await page.getByRole('button', { name: 'Backup & Sync' }).click();
+    await page.getByRole('button', { name: 'Reset All to Defaults' }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Reset All to Defaults' }).click();
+    await expect(page.getByText('Keep me')).toBeHidden();
+
+    await page.getByTitle('Settings').click();
+    await page.getByRole('button', { name: 'Backup & Sync' }).click();
+    const backups = page.getByRole('list', { name: 'Automatic backups' });
+    const beforeReset = backups.getByRole('listitem').filter({ hasText: 'Before reset' });
+    await expect(beforeReset).toBeVisible();
+    await beforeReset.getByRole('button', { name: /^Restore: / }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Restore' }).click();
+
+    await expect(page.getByText('Keep me')).toBeVisible();
+    await expect(page.getByRole('status')).toContainText('Restored the backup from');
+  });
+});
