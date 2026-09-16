@@ -23,6 +23,7 @@ import { getDefaultWidgetTitle } from '../utils/widgetTitle';
 import { getRegionalDockItems, getRegionalShortcuts } from '../config/defaults/regionalPresets';
 import { WIDGET_DEFINITIONS } from '../components/widgets/widgetDefinitions';
 import { uniqueId } from '../utils/id';
+import { calculateBottomY, sanitizeResponsiveLayouts } from '../utils/layout';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -226,7 +227,11 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
           getTranslation(appearance.language),
           resolveLanguageCode(appearance.language)
         );
-        const active = hydratedPageData[safeActivePageId] || defaults;
+        const activeRaw = hydratedPageData[safeActivePageId] || defaults;
+        const active = {
+          ...activeRaw,
+          layouts: sanitizeResponsiveLayouts(activeRaw.layouts),
+        };
 
         set({
           pages: safePages,
@@ -280,11 +285,12 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     // language change, so it's fine to persist the current language's one.
     const title = customTitle || getDefaultWidgetTitle(type, getTranslation(languageSetting));
 
-    // Find next available spot at top or bottom
+    // Place at the bottom of the current layout per breakpoint (never use Infinity:
+    // in react-grid-layout, Infinity causes an infinite compaction while-loop).
     const newLayout: Layout = {
       i: id,
       x: 0,
-      y: Infinity, // Place at bottom
+      y: calculateBottomY(layouts.lg || []),
       w: size.w,
       h: size.h,
       minW: size.minW,
@@ -301,11 +307,23 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
     const updatedWidgets = [...widgets, newWidget];
     const updatedLayouts: ResponsiveLayouts = {
-      lg: [...layouts.lg, newLayout],
-      md: [...layouts.md, { ...newLayout, w: Math.min(newLayout.w, 5) }],
-      sm: [...layouts.sm, { ...newLayout, w: 6 }],
-      xs: [...layouts.xs, { ...newLayout, w: 4 }],
-      xxs: [...(layouts.xxs || []), { ...newLayout, w: 2 }],
+      lg: [...(layouts.lg || []), newLayout],
+      md: [
+        ...(layouts.md || []),
+        { ...newLayout, y: calculateBottomY(layouts.md || []), w: Math.min(newLayout.w, 5) },
+      ],
+      sm: [
+        ...(layouts.sm || []),
+        { ...newLayout, y: calculateBottomY(layouts.sm || []), w: 6 },
+      ],
+      xs: [
+        ...(layouts.xs || []),
+        { ...newLayout, y: calculateBottomY(layouts.xs || []), w: 4 },
+      ],
+      xxs: [
+        ...(layouts.xxs || []),
+        { ...newLayout, y: calculateBottomY(layouts.xxs || []), w: 2 },
+      ],
     };
 
     persistPageState(updatedWidgets, updatedLayouts);

@@ -98,10 +98,68 @@ describe('useDashboardStore', () => {
       expect(added.type).toBe('todo');
       expect(added.title).toBe('My Tasks');
       for (const bp of ['lg', 'md', 'sm', 'xs', 'xxs'] as const) {
-        expect(state().layouts[bp].some((l) => l.i === added.id)).toBe(true);
+        const item = state().layouts[bp].find((l) => l.i === added.id);
+        expect(item).toBeDefined();
+        expect(Number.isFinite(item?.y)).toBe(true);
+        expect(item?.y).toBeGreaterThanOrEqual(0);
+        expect(item?.y).not.toBe(Infinity);
       }
       expect(state().pageData[DEFAULT_PAGE_ID].widgets).toHaveLength(before + 1);
       expect(chromeStorageData[STORAGE_KEYS.WIDGETS]).toHaveLength(before + 1);
+    });
+
+    it('addWidget を連続で追加しても y 座標が有限な数値として正しく累積されること', () => {
+      state().addWidget('clock');
+      state().addWidget('weather');
+      state().addWidget('todo');
+
+      for (const widget of state().widgets) {
+        for (const bp of ['lg', 'md', 'sm', 'xs', 'xxs'] as const) {
+          const item = state().layouts[bp].find((l) => l.i === widget.id);
+          expect(item).toBeDefined();
+          expect(Number.isFinite(item?.y)).toBe(true);
+          expect(item?.y).not.toBe(Infinity);
+        }
+      }
+    });
+
+    it('ストレージに破損したレイアウト (y: null/Infinity) があっても initialize で自己修復されること', async () => {
+      await storageService.savePages([{ id: 'p1', name: '' }]);
+      await storageService.savePageData({
+        p1: {
+          widgets: [
+            {
+              id: 'w-corrupt',
+              type: 'clock',
+              title: 'Clock',
+              config: {},
+              layout: { i: 'w-corrupt', x: 0, y: null as any, w: 4, h: 2 },
+            },
+          ],
+          layouts: {
+            lg: [{ i: 'w-corrupt', x: 0, y: null as any, w: 4, h: 2 }],
+            md: [{ i: 'w-corrupt', x: 0, y: Infinity as any, w: 4, h: 2 }],
+            sm: [{ i: 'w-corrupt', x: 0, y: NaN as any, w: 4, h: 2 }],
+            xs: [],
+            xxs: [],
+          },
+        },
+      });
+      await storageService.saveActivePageId('p1');
+
+      await state().initialize();
+
+      expect(state().isInitialized).toBe(true);
+      const lgItem = state().layouts.lg.find((l) => l.i === 'w-corrupt');
+      const mdItem = state().layouts.md.find((l) => l.i === 'w-corrupt');
+      const smItem = state().layouts.sm.find((l) => l.i === 'w-corrupt');
+
+      expect(lgItem?.y).toBe(0);
+      expect(mdItem?.y).toBe(0);
+      expect(smItem?.y).toBe(0);
+      expect(Number.isFinite(lgItem?.y)).toBe(true);
+      expect(Number.isFinite(mdItem?.y)).toBe(true);
+      expect(Number.isFinite(smItem?.y)).toBe(true);
     });
 
     it('addWidget はタイトル省略時に型名をタイトルにし、初期設定をマージすること', () => {
@@ -220,8 +278,24 @@ describe('useDashboardStore', () => {
       state().removePage(newId);
 
       expect(state().pages.map((p) => p.id)).toEqual([DEFAULT_PAGE_ID]);
+      expect(state().widgets.length).toBeGreaterThan(0);
+    });
+
+    it('編集モード中にアクティブページを削除しても同期不整合やフリーズが発生しないこと', async () => {
+      state().addPage();
+      const pageId = state().activePageId;
+      state().setEditMode(true);
+      expect(state().isEditMode).toBe(true);
+
+      state().removePage(pageId);
+
       expect(state().activePageId).toBe(DEFAULT_PAGE_ID);
-      expect(state().pageData[newId]).toBeUndefined();
+      expect(state().isEditMode).toBe(false);
+      expect(state().pageData[pageId]).toBeUndefined();
+
+      // Ensure syncFromStorage doesn't revive the deleted page or wipe out the active page
+      await state().syncFromStorage();
+      expect(state().activePageId).toBe(DEFAULT_PAGE_ID);
       expect(state().widgets.length).toBeGreaterThan(0);
     });
 
