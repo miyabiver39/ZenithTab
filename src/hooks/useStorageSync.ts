@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
-import { STORAGE_KEYS } from '../services/storageService';
+import { STORAGE_KEYS } from '../services/storageKeys';
 import { isChromeExtension } from '../utils/storage';
 
 const WATCHED_KEYS = new Set<string>([

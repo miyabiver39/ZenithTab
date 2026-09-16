@@ -72,6 +72,8 @@ export interface KeyboardShortcutBinding {
 
 export interface DashboardExportData {
   version: string;
+  /** Shape generation of the file; absent in exports from before 1.7.0 (= 1). */
+  schemaVersion?: number;
   exportedAt: string;
   /** The active page's widgets/layouts — kept for backward compatibility with pre-1.3 exports. */
   widgets: any[];

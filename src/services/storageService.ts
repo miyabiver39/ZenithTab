@@ -7,6 +7,8 @@ import {
   KeyboardShortcutBinding,
 } from '../types/settings';
 import { storageGet, storageSet } from '../utils/storage';
+import { STORAGE_KEYS } from './storageKeys';
+import { CURRENT_SCHEMA_VERSION, runMigrations, exportDataSource } from './migrations';
 import { rssService } from './rssService';
 import { getWidgetMeta, GENERIC_URL_KEYS } from '../components/widgets/widgetDefinitions';
 import { en } from '../i18n/locales/en';
@@ -82,19 +84,7 @@ function sanitizeKeyboardShortcuts(raw: unknown): KeyboardShortcutBinding[] {
   );
 }
 
-export const STORAGE_KEYS = {
-  WIDGETS: 'dashboard_widgets',
-  LAYOUTS: 'dashboard_layouts',
-  WALLPAPER: 'dashboard_wallpaper',
-  APPEARANCE: 'dashboard_appearance',
-  RSS_CACHE: 'rss_cache',
-  NOTES: 'quick_notes',
-  DOCK_ITEMS: 'dashboard_dock_items',
-  KEYBOARD_SHORTCUTS: 'dashboard_keyboard_shortcuts',
-  PAGES: 'dashboard_pages',
-  ACTIVE_PAGE_ID: 'dashboard_active_page_id',
-  PAGE_DATA: 'dashboard_page_data',
-} as const;
+export { STORAGE_KEYS } from './storageKeys';
 
 export const DEFAULT_KEYBOARD_SHORTCUTS: KeyboardShortcutBinding[] = [];
 
@@ -441,6 +431,7 @@ export const storageService = {
 
     return {
       version: currentVersion(),
+      schemaVersion: CURRENT_SCHEMA_VERSION,
       exportedAt: new Date().toISOString(),
       widgets: activePage.widgets,
       layouts: activePage.layouts,
@@ -457,6 +448,12 @@ export const storageService = {
   async importDashboardData(jsonData: string): Promise<boolean> {
     try {
       const data: DashboardExportData = JSON.parse(jsonData);
+      if (!data || typeof data !== 'object') throw new Error('Imported file is not an object');
+
+      // Bring an older export up to today's shape with the same pipeline
+      // that upgrades stored data; a file without schemaVersion is treated
+      // as version 1 like any pre-versioning install.
+      await runMigrations(exportDataSource(data as unknown as Record<string, any>), { snapshot: false });
 
       if (Array.isArray(data.pages) && data.pageData && typeof data.pageData === 'object') {
         // Multi-page (1.3+) export shape.
@@ -507,6 +504,7 @@ export const storageService = {
         await this.saveActivePageId(DEFAULT_PAGE_ID);
       }
 
+      await storageSet(STORAGE_KEYS.SCHEMA_VERSION, CURRENT_SCHEMA_VERSION);
       if (data.wallpaper) await this.saveWallpaper(data.wallpaper);
       if (data.appearance) await this.saveAppearance(data.appearance);
       if (Array.isArray(data.dockItems)) {

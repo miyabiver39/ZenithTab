@@ -17,6 +17,7 @@ import {
   DEFAULT_PAGE_ID,
 } from '../services/storageService';
 import { wallpaperService } from '../services/wallpaperService';
+import { runMigrations } from '../services/migrations';
 import { getTranslation, resolveLanguageCode } from '../i18n/resolve';
 import { getDefaultWidgetTitle } from '../utils/widgetTitle';
 import { getRegionalDockItems, getRegionalShortcuts } from '../config/defaults/regionalPresets';
@@ -188,6 +189,16 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
       };
 
       try {
+        // Schema migrations first, before anything reads the data. A
+        // failure here must not keep the dashboard from starting: the
+        // reads below cope with older shapes via hydration, and the next
+        // launch retries from the last completed step.
+        try {
+          await withTimeout(runMigrations(), 5000, null);
+        } catch (err) {
+          console.error('Schema migration failed; continuing with current data:', err);
+        }
+
         // Appearance first: on a fresh install the default page is built
         // in the browser's language, so the welcome note, sample todos and
         // news feed read naturally instead of defaulting to English.

@@ -1,5 +1,5 @@
 import { parseRssXml } from '../utils/rssParser';
-import { STORAGE_KEYS } from '../services/storageService';
+import { STORAGE_KEYS } from '../services/storageKeys';
 import { DashboardWidget, DashboardPageData } from '../types/widget';
 import { RssFeedData } from '../types/rss';
 import { hasHostPermission } from '../utils/permissions';
