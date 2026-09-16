@@ -14,6 +14,7 @@ import { getWidgetMeta, GENERIC_URL_KEYS } from '../components/widgets/widgetDef
 import { en } from '../i18n/locales/en';
 import type { Translation } from '../i18n/resolve';
 import { getRegionalDockItems, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
+import { sanitizeLayout, sanitizeResponsiveLayouts } from '../utils/layout';
 
 /** The running extension version, so exports carry the version that produced them. */
 function currentVersion(): string {
@@ -68,6 +69,7 @@ function sanitizeWidget(raw: any): DashboardWidget | null {
   return {
     ...raw,
     title: typeof raw.title === 'string' ? raw.title : 'Widget',
+    layout: sanitizeLayout(raw.layout),
     config,
   } as DashboardWidget;
 }
@@ -303,10 +305,16 @@ export function hydratePageData(
   for (const [id, page] of Object.entries(pageData)) {
     const widgets = (page.widgets || []).map((w) => {
       const hydrated = hydrateWidget(w, t, lang);
-      if (hydrated !== w) changed = true;
+      const sanitizedLayout = sanitizeLayout(hydrated.layout);
+      if (hydrated !== w || sanitizedLayout !== hydrated.layout) {
+        changed = true;
+        return { ...hydrated, layout: sanitizedLayout };
+      }
       return hydrated;
     });
-    next[id] = changed ? { ...page, widgets } : page;
+    const sanitizedLayouts = sanitizeResponsiveLayouts(page.layouts || DEFAULT_LAYOUTS);
+    if (sanitizedLayouts !== page.layouts) changed = true;
+    next[id] = changed ? { ...page, widgets, layouts: sanitizedLayouts } : page;
   }
   return changed ? next : pageData;
 }
@@ -324,11 +332,11 @@ export const storageService = {
 
   async getLayouts(fallback: ResponsiveLayouts = DEFAULT_LAYOUTS): Promise<ResponsiveLayouts> {
     const layouts = await storageGet<ResponsiveLayouts>(STORAGE_KEYS.LAYOUTS, fallback);
-    return layouts || fallback;
+    return sanitizeResponsiveLayouts(layouts || fallback);
   },
 
   async saveLayouts(layouts: ResponsiveLayouts): Promise<void> {
-    await storageSet(STORAGE_KEYS.LAYOUTS, layouts);
+    await storageSet(STORAGE_KEYS.LAYOUTS, sanitizeResponsiveLayouts(layouts));
   },
 
   // Settings objects are stored whole, so a user who installed before a
@@ -397,7 +405,18 @@ export const storageService = {
       const activePageId = storedActiveId && pages.some((p) => p.id === storedActiveId)
         ? storedActiveId
         : pages[0].id;
-      return { pages, activePageId, pageData };
+
+      const sanitizedPageData: Record<string, DashboardPageData> = {};
+      for (const [id, data] of Object.entries(pageData)) {
+        sanitizedPageData[id] = {
+          widgets: (data.widgets || []).map((w) => ({
+            ...w,
+            layout: sanitizeLayout(w.layout),
+          })),
+          layouts: sanitizeResponsiveLayouts(data.layouts || DEFAULT_LAYOUTS),
+        };
+      }
+      return { pages, activePageId, pageData: sanitizedPageData };
     }
 
     const widgets = await this.getWidgets(defaults?.widgets);
@@ -418,7 +437,17 @@ export const storageService = {
   },
 
   async savePageData(pageData: Record<string, DashboardPageData>): Promise<void> {
-    await storageSet(STORAGE_KEYS.PAGE_DATA, pageData);
+    const sanitized: Record<string, DashboardPageData> = {};
+    for (const [id, data] of Object.entries(pageData)) {
+      sanitized[id] = {
+        widgets: (data.widgets || []).map((w) => ({
+          ...w,
+          layout: sanitizeLayout(w.layout),
+        })),
+        layouts: sanitizeResponsiveLayouts(data.layouts || DEFAULT_LAYOUTS),
+      };
+    }
+    await storageSet(STORAGE_KEYS.PAGE_DATA, sanitized);
   },
 
   async exportDashboardData(): Promise<DashboardExportData> {
@@ -464,7 +493,10 @@ export const storageService = {
           const pageWidgets = raw.widgets
             .map(sanitizeWidget)
             .filter((w): w is DashboardWidget => w !== null);
-          sanitizedPageData[page.id] = { widgets: pageWidgets, layouts: raw.layouts || DEFAULT_LAYOUTS };
+          sanitizedPageData[page.id] = {
+            widgets: pageWidgets,
+            layouts: sanitizeResponsiveLayouts(raw.layouts || DEFAULT_LAYOUTS),
+          };
         }
 
         const validPages = data.pages.filter((p) => sanitizedPageData[p.id]);
