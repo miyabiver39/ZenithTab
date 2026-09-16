@@ -25,9 +25,21 @@ manifest.version = cleanVersion;
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 console.log(`Updated manifest.json version to ${cleanVersion}`);
 
-// 3. Git commit & tag
+// 3. Update package-lock.json's own version fields, otherwise the lockfile
+//    keeps reporting the previous release until the next `npm install`.
+const lockPath = path.resolve('package-lock.json');
+if (fs.existsSync(lockPath)) {
+  const lock = JSON.parse(fs.readFileSync(lockPath, 'utf-8'));
+  lock.version = cleanVersion;
+  if (lock.packages && lock.packages['']) lock.packages[''].version = cleanVersion;
+  fs.writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '
+');
+  console.log(`Updated package-lock.json version to ${cleanVersion}`);
+}
+
+// 4. Git commit & tag
 try {
-  execSync(`git add package.json manifest.json`);
+  execSync(`git add package.json manifest.json package-lock.json`);
   execSync(`git commit -m "chore(release): bump version to v${cleanVersion}"`);
   execSync(`git tag -a v${cleanVersion} -m "Release v${cleanVersion}"`);
   console.log(`\nCreated Git commit and tag: v${cleanVersion}`);
