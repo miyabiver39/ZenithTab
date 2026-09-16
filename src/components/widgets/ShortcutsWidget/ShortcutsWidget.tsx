@@ -16,6 +16,10 @@ interface ShortcutsWidgetProps {
 
 export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, config }) => {
   const { items = [], openInNewTab = true } = config;
+  // The settings modal offers 2–8 columns; clamp anything odd from storage.
+  // Applied as an inline style: a computed `grid-cols-${n}` class would be
+  // purged by Tailwind at build time and silently do nothing.
+  const columns = Math.min(8, Math.max(2, config.columns || 4));
   const { updateWidgetConfig, isEditMode } = useDashboardStore();
   const { t } = useTranslation();
 
@@ -126,7 +130,11 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-2.5">
+          <div
+            className="grid gap-2.5"
+            data-testid="shortcuts-grid"
+            style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+          >
             {filteredItems.map((item) => (
               <ShortcutCard
                 key={item.id}

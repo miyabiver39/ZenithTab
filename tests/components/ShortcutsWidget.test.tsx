@@ -90,6 +90,28 @@ describe('ShortcutsWidget', () => {
     expect(items().some((i: any) => i.id === '1')).toBe(false);
   });
 
+  it('設定した列数がグリッドのインラインスタイルに反映されること', () => {
+    for (const [columns, expected] of [[2, 2], [6, 6], [undefined, 4], [1, 2], [20, 8]] as const) {
+      useDashboardStore.setState((s) => ({
+        widgets: [
+          ...s.widgets.filter((w) => w.id !== WIDGET_ID),
+          {
+            id: WIDGET_ID,
+            type: 'shortcuts',
+            title: 'Shortcuts',
+            config: { items: mockItems, columns, openInNewTab: true, viewMode: 'grid' },
+            layout: { i: WIDGET_ID, x: 0, y: 0, w: 6, h: 3 },
+          },
+        ],
+      }));
+      const { unmount } = render(
+        <WidgetHarness widgetId={WIDGET_ID} render={(w) => <ShortcutsWidget widgetId={w.id} config={w.config as any} />} />
+      );
+      expect(screen.getByTestId('shortcuts-grid').style.gridTemplateColumns).toBe(`repeat(${expected}, minmax(0, 1fr))`);
+      unmount();
+    }
+  });
+
   it('項目が無い場合は空状態と追加導線を出すこと', () => {
     renderShortcuts([]);
     expect(screen.getByText(/No shortcuts found/)).toBeInTheDocument();

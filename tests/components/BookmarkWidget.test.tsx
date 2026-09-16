@@ -60,6 +60,11 @@ describe('BookmarkWidget', () => {
     await waitFor(() => expect(screen.getByText('Bookmarks bar')).toBeInTheDocument());
   });
 
+  it('グリッド表示の列数が設定に従うこと', async () => {
+    await renderLoaded({ columns: 6 });
+    expect(screen.getByTestId('bookmarks-grid').style.gridTemplateColumns).toBe('repeat(6, minmax(0, 1fr))');
+  });
+
   it('リスト表示でも同じ項目を描画すること', async () => {
     await renderLoaded({ viewMode: 'list' });
     fireEvent.click(screen.getByText('Bookmarks bar'));

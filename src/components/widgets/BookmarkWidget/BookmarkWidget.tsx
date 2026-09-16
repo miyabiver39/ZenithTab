@@ -11,6 +11,9 @@ interface BookmarkWidgetProps {
 
 export const BookmarkWidget: React.FC<BookmarkWidgetProps> = ({ config }) => {
   const { viewMode = 'grid', showFavicons = true } = config;
+  // Same inline-style approach as ShortcutsWidget: dynamic Tailwind
+  // classes don't survive the build.
+  const columns = Math.min(8, Math.max(2, config.columns || 4));
   const { bookmarks, searchResults, searchQuery, searchBookmarks, isLoading } = useBookmarks();
   const { t } = useTranslation();
 
@@ -92,7 +95,11 @@ export const BookmarkWidget: React.FC<BookmarkWidgetProps> = ({ config }) => {
             {searchQuery ? t.widgets.bookmarks.notFound : t.widgets.bookmarks.empty}
           </div>
         ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div
+            className="grid gap-2"
+            data-testid="bookmarks-grid"
+            style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+          >
             {displayedItems.map((item) => (
               <BookmarkGridCard
                 key={item.id}
