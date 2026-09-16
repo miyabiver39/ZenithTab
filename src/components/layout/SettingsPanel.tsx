@@ -492,6 +492,7 @@ export const SettingsPanel: React.FC = () => {
                   type="file"
                   ref={wallpaperUploadRef}
                   onChange={handleCustomWallpaperUpload}
+                  aria-label={t.settings.chooseImage}
                   accept="image/*"
                   className="hidden"
                 />
@@ -519,6 +520,7 @@ export const SettingsPanel: React.FC = () => {
                   min="0"
                   max="20"
                   value={wallpaper.blur}
+                  aria-label={t.settings.wallpaperBlur}
                   onChange={(e) => updateWallpaper({ blur: parseInt(e.target.value) || 0 })}
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
                 />
@@ -536,6 +538,7 @@ export const SettingsPanel: React.FC = () => {
                   min="30"
                   max="120"
                   value={Math.round(wallpaper.brightness * 100)}
+                  aria-label={t.settings.wallpaperBrightness}
                   onChange={(e) => updateWallpaper({ brightness: parseInt(e.target.value) / 100 })}
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
                 />
@@ -553,6 +556,7 @@ export const SettingsPanel: React.FC = () => {
                   min="0"
                   max="80"
                   value={Math.round(wallpaper.overlayOpacity * 100)}
+                  aria-label={t.settings.overlayTint}
                   onChange={(e) => updateWallpaper({ overlayOpacity: parseInt(e.target.value) / 100 })}
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
                 />
@@ -692,6 +696,7 @@ export const SettingsPanel: React.FC = () => {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleImportFile}
+                aria-label={t.settings.importBtn}
                 accept=".json"
                 className="hidden"
               />

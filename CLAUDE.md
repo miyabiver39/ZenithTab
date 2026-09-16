@@ -44,6 +44,7 @@ ZenithTab(ゼニスタブ)は Manifest V3 の新しいタブ拡張です。ア�
 
 - 永続化は `storageService` / `utils/storage.ts` 経由(拡張外では `localStorage` にフォールバック)。`chrome.*` API を直接呼ぶ場合は未定義環境での安全なフォールバックを必ず用意する。
 - テストは Vitest + Testing Library。`tests/setup.ts` が `chrome` をモックし(`tests/helpers/chrome.ts`)、各テスト後にストレージとモックをリセットする。新しい Chrome API を使うときは `chromeMock` にも追加する。
+- コンポーネントテストの操作は `tests/helpers/user.ts` の `setupUser()`(user-event)で行い、クエリは `getByRole` / `getByLabelText` / `getByTestId` を優先する(class 名依存の `querySelector` は避ける)。range スライダー・HTML5 DnD・`load`/`error` イベントだけは `fireEvent` を使い、理由をコメントする。フェイクタイマー下でも動く(setup が RTL に vitest のタイマーを橋渡し)。
 - ID 生成は `utils/id.ts` の `uniqueId()` を使う(`Date.now()` 単独は同一ミリ秒で衝突する)。
 - 動的な Tailwind クラス(`grid-cols-${n}` など)はビルド時に消えるので、動的値はインラインスタイルで当てる。
 

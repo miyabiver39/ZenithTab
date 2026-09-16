@@ -114,7 +114,13 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full max-w-[200px] h-1.5 bg-white/10 rounded-full overflow-hidden mb-2">
+      <div
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(progressPercent)}
+        className="w-full max-w-[200px] h-1.5 bg-white/10 rounded-full overflow-hidden mb-2"
+      >
         <div
           className="h-full bg-sky-400 rounded-full transition-all duration-300"
           style={{ width: `${progressPercent}%` }}

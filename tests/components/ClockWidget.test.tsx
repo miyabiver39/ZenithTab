@@ -17,25 +17,25 @@ describe('ClockWidget', () => {
     vi.useRealTimers();
   });
 
-  it('24時間表記で時刻と日付を描画すること', () => {
+  it('24時間表記で時刻と日付を描画すること', async () => {
     render(<ClockWidget config={base} />);
     expect(screen.getByText('15:04:05')).toBeInTheDocument();
     expect(screen.getByText(/Wednesday/)).toBeInTheDocument();
     expect(screen.getByText('UTC')).toBeInTheDocument();
   });
 
-  it('12時間表記に切り替わること', () => {
+  it('12時間表記に切り替わること', async () => {
     render(<ClockWidget config={{ ...base, is24Hour: false }} />);
     expect(screen.getByText(/^3:04:05\sPM$/)).toBeInTheDocument();
   });
 
-  it('秒と日付を非表示にできること', () => {
+  it('秒と日付を非表示にできること', async () => {
     render(<ClockWidget config={{ ...base, showSeconds: false, showDate: false }} />);
     expect(screen.getByText('15:04')).toBeInTheDocument();
     expect(screen.queryByText(/Wednesday/)).not.toBeInTheDocument();
   });
 
-  it('1秒ごとに時刻が進むこと', () => {
+  it('1秒ごとに時刻が進むこと', async () => {
     render(<ClockWidget config={base} />);
     act(() => {
       vi.advanceTimersByTime(2000);
@@ -43,13 +43,13 @@ describe('ClockWidget', () => {
     expect(screen.getByText('15:04:07')).toBeInTheDocument();
   });
 
-  it('言語設定に応じた日付フォーマットになること', () => {
+  it('言語設定に応じた日付フォーマットになること', async () => {
     useDashboardStore.setState({ appearance: { ...useDashboardStore.getState().appearance, language: 'ja' } });
     render(<ClockWidget config={base} />);
     expect(screen.getByText(/水曜日/)).toBeInTheDocument();
   });
 
-  it('アナログ時計では針の角度が現在時刻を反映すること', () => {
+  it('アナログ時計では針の角度が現在時刻を反映すること', async () => {
     const { container } = render(<ClockWidget config={{ ...base, style: 'analog', timezone: undefined }} />);
     const clock = container.querySelector('[data-widget-type="clock"]');
     expect(clock).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe('ClockWidget', () => {
     expect((hands[2] as HTMLElement).style.transform).toBe(`rotate(${secDeg}deg)`);
   });
 
-  it('アナログ時計で秒針を非表示にできること', () => {
+  it('アナログ時計で秒針を非表示にできること', async () => {
     const { container } = render(<ClockWidget config={{ ...base, style: 'analog', showSeconds: false }} />);
     expect(container.querySelectorAll('[style*="rotate"]')).toHaveLength(2);
   });

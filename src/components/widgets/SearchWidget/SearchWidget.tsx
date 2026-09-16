@@ -231,6 +231,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
             {isDropdownOpen && menuPosition && createPortal(
               <div
                 ref={menuRef}
+                role="menu"
                 style={{ position: 'fixed', top: menuPosition.top, left: menuPosition.left }}
                 className="w-44 bg-slate-900/95 border border-white/15 rounded-2xl shadow-2xl backdrop-blur-2xl py-1.5 z-[9999] animate-fade-in"
               >

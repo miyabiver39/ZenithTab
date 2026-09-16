@@ -32,7 +32,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }
         <div className="flex items-center justify-between px-3 py-2 border-b border-white/5 bg-white/[0.02] flex-shrink-0">
           <div className="flex items-center gap-2 overflow-hidden">
             {isEditMode && (
-              <div className="grid-drag-handle cursor-grab active:cursor-grabbing text-slate-400 hover:text-white p-0.5 rounded hover:bg-white/10 transition-colors">
+              <div data-testid="drag-handle" className="grid-drag-handle cursor-grab active:cursor-grabbing text-slate-400 hover:text-white p-0.5 rounded hover:bg-white/10 transition-colors">
                 <GripHorizontal size={16} />
               </div>
             )}

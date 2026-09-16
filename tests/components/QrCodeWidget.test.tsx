@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { render, screen, act, waitFor } from '@testing-library/react';
+import { setupUser, literal } from '../helpers/user';
 import QRCode from 'qrcode';
 import { QrCodeWidget } from '../../src/components/widgets/QrCodeWidget/QrCodeWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
@@ -42,19 +43,21 @@ describe('QrCodeWidget', () => {
     vi.useRealTimers();
   });
 
-  it('入力が無ければ案内文を表示し、QRを描かないこと', () => {
+  it('入力が無ければ案内文を表示し、QRを描かないこと', async () => {
     renderQr();
     expect(screen.getByText('Enter a value above to generate a QR code.')).toBeInTheDocument();
     expect(toCanvas).not.toHaveBeenCalled();
   });
 
   it('URL モードはスキームを補って QR を生成し、デバウンス後に保存すること', async () => {
+    const user = setupUser();
     renderQr();
     const input = screen.getByPlaceholderText('example.com');
-    fireEvent.change(input, { target: { value: 'zenith.example/path' } });
+    await user.clear(input);
+    await user.type(input, literal('zenith.example/path'));
 
-    await waitFor(() => expect(toCanvas).toHaveBeenCalled());
-    expect(toCanvas.mock.calls[0][1]).toBe('https://zenith.example/path');
+    // Typing re-renders the code per keystroke; the last render carries the full value.
+    await waitFor(() => expect(toCanvas.mock.lastCall?.[1]).toBe('https://zenith.example/path'));
     // Not persisted synchronously — the widget debounces the store write.
     expect(config().value).toBe('');
 
@@ -73,32 +76,35 @@ describe('QrCodeWidget', () => {
     await waitFor(() => expect(toCanvas.mock.calls[0]?.[1]).toBe('hello world'));
   });
 
-  it('モード切替が設定に保存されること', () => {
+  it('モード切替が設定に保存されること', async () => {
+    const user = setupUser();
     renderQr();
-    fireEvent.click(screen.getByText('Phone'));
+    await user.click(screen.getByText('Phone'));
     expect(config().mode).toBe('phone');
-    fireEvent.click(screen.getByText('Text'));
+    await user.click(screen.getByText('Text'));
     expect(config().mode).toBe('text');
   });
 
   it('ダウンロードで PNG のリンクをクリックすること', async () => {
+    const user = setupUser();
     renderQr({ value: 'example.com' });
     await waitFor(() => screen.getByText('Download'));
     vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,abc');
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
 
-    fireEvent.click(screen.getByText('Download'));
+    await user.click(screen.getByText('Download'));
 
     expect(click).toHaveBeenCalled();
   });
 
   it('コピーでクリップボードに書き込み、表示が一時的に変わること', async () => {
-    vi.useFakeTimers();
+    const user = setupUser();
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
 
     renderQr({ value: 'example.com' });
-    fireEvent.click(screen.getByText('Copy'));
+    await user.click(screen.getByText('Copy'));
 
     await act(async () => {
       await Promise.resolve();
@@ -113,12 +119,13 @@ describe('QrCodeWidget', () => {
   });
 
   it('クリップボードが拒否しても例外にならないこと', async () => {
+    const user = setupUser();
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText: vi.fn().mockRejectedValue(new Error('denied')) },
     });
     renderQr({ value: 'example.com' });
-    fireEvent.click(screen.getByText('Copy'));
+    await user.click(screen.getByText('Copy'));
     await act(async () => {
       await Promise.resolve();
     });

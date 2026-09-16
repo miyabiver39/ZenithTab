@@ -135,6 +135,7 @@ export const TodoWidget: React.FC<TodoWidgetProps> = ({ widgetId, config }) => {
               </div>
               <button
                 onClick={() => handleDelete(item.id)}
+                aria-label={`${t.common.delete}: ${item.text}`}
                 className="text-slate-500 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Trash2 size={12} />

@@ -31,6 +31,7 @@ export const ClockConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =>
         <span className="text-xs text-slate-300">{t.widgets.clock.is24Hour}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.clock.is24Hour}
           checked={!!config.is24Hour}
           onChange={(e) => setConfig({ ...config, is24Hour: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"
@@ -41,6 +42,7 @@ export const ClockConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =>
         <span className="text-xs text-slate-300">{t.widgets.clock.showSeconds}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.clock.showSeconds}
           checked={!!config.showSeconds}
           onChange={(e) => setConfig({ ...config, showSeconds: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"
@@ -51,6 +53,7 @@ export const ClockConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =>
         <span className="text-xs text-slate-300">{t.widgets.clock.showDate}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.clock.showDate}
           checked={!!config.showDate}
           onChange={(e) => setConfig({ ...config, showDate: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"

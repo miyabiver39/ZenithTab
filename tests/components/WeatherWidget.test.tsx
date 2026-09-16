@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { setupUser } from '../helpers/user';
 import { WeatherWidget } from '../../src/components/widgets/WeatherWidget/WeatherWidget';
 import { weatherService, GeolocationFailure } from '../../src/services/weatherService';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
@@ -65,12 +66,13 @@ describe('WeatherWidget', () => {
   });
 
   it('現在地検出でウィジェット設定が更新され再取得されること', async () => {
+    const user = setupUser();
     const fetchSpy = vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);
     vi.spyOn(weatherService, 'detectUserLocation').mockResolvedValue({ latitude: 34.69, longitude: 135.5, city: 'Osaka' });
 
     render(<WeatherWidget widgetId="widget-weather-1" config={config} />);
     await waitFor(() => screen.getByText('Slight rain'));
-    fireEvent.click(screen.getByTitle('Detect Current Location'));
+    await user.click(screen.getByTitle('Detect Current Location'));
 
     await waitFor(() => {
       const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-weather-1')!;
@@ -81,31 +83,34 @@ describe('WeatherWidget', () => {
   });
 
   it('位置情報が拒否された場合はその旨を表示すること', async () => {
+    const user = setupUser();
     vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);
     vi.spyOn(weatherService, 'detectUserLocation').mockRejectedValue(new GeolocationFailure('denied', 'no'));
 
     render(<WeatherWidget widgetId="widget-weather-1" config={config} />);
     await waitFor(() => screen.getByText('Slight rain'));
-    fireEvent.click(screen.getByTitle('Detect Current Location'));
+    await user.click(screen.getByTitle('Detect Current Location'));
 
     await waitFor(() => expect(screen.getByText(/Location access was denied/)).toBeInTheDocument());
   });
 
   it('その他の位置情報エラーは汎用メッセージになること', async () => {
+    const user = setupUser();
     vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);
     vi.spyOn(weatherService, 'detectUserLocation').mockRejectedValue(new Error('weird'));
 
     render(<WeatherWidget config={config} />);
     await waitFor(() => screen.getByText('Slight rain'));
-    fireEvent.click(screen.getByTitle('Detect Current Location'));
+    await user.click(screen.getByTitle('Detect Current Location'));
     await waitFor(() => expect(screen.getByText(/Could not determine your location/)).toBeInTheDocument());
   });
 
   it('更新ボタンで再取得すること', async () => {
+    const user = setupUser();
     const fetchSpy = vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);
     render(<WeatherWidget config={config} />);
     await waitFor(() => screen.getByText('Slight rain'));
-    fireEvent.click(screen.getByTitle('Refresh'));
+    await user.click(screen.getByTitle('Refresh'));
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
   });
 });

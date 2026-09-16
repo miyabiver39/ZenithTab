@@ -54,6 +54,7 @@ export const GridContainer: React.FC = () => {
 
   return (
     <div
+      data-testid="dashboard-grid"
       className={cn(
         'w-full px-4 sm:px-6 max-w-[1920px] mx-auto',
         appearance.dockPosition === 'bottom' && 'pb-24'

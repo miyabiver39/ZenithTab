@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, within } from '@testing-library/react';
+import { setupUser } from '../helpers/user';
 import {
   wallpaperService,
   SMART_TIME_SLOTS,
@@ -24,7 +25,7 @@ const smart = (extra: Partial<WallpaperSettings> = {}): WallpaperSettings => ({
 describe('wallpaperService time slots', () => {
   afterEach(() => vi.restoreAllMocks());
 
-  it('デフォルトの時間帯区分(朝6/昼11/夕17/夜20、深夜は夜に含まれる)', () => {
+  it('デフォルトの時間帯区分(朝6/昼11/夕17/夜20、深夜は夜に含まれる)', async () => {
     const expectSlot = (hour: number, slot: string) => expect(wallpaperService.getCurrentTimeSlot(hour)).toBe(slot);
     expectSlot(6, 'morning');
     expectSlot(10, 'morning');
@@ -39,7 +40,7 @@ describe('wallpaperService time slots', () => {
     expectSlot(30, 'morning'); // wraps modulo 24
   });
 
-  it('カスタム開始時刻を順序に関係なく解釈すること', () => {
+  it('カスタム開始時刻を順序に関係なく解釈すること', async () => {
     const slots = {
       morning: { ...SMART_TIME_SLOTS.morning, startHour: 5 },
       day: { ...SMART_TIME_SLOTS.day, startHour: 9 },
@@ -51,7 +52,7 @@ describe('wallpaperService time slots', () => {
     expect(wallpaperService.getCurrentTimeSlot(21, slots)).toBe('sunset');
   });
 
-  it('おまかせモードは時間帯ごとの厳選プリセットで解決すること', () => {
+  it('おまかせモードは時間帯ごとの厳選プリセットで解決すること', async () => {
     const night = wallpaperService.resolveDynamicWallpaper(smart(), at('2026-09-16T23:00:00'));
     expect(night.slot).toBe('night');
     expect(night.source).toBe('unsplash');
@@ -65,7 +66,7 @@ describe('wallpaperService time slots', () => {
     expect(morning.overlayOpacity).toBeLessThan(night.overlayOpacity);
   });
 
-  it('同じ日のうちは画像が安定し、seed で次の画像に進むこと', () => {
+  it('同じ日のうちは画像が安定し、seed で次の画像に進むこと', async () => {
     const a = wallpaperService.resolveDynamicWallpaper(smart(), at('2026-09-16T12:00:00'));
     const b = wallpaperService.resolveDynamicWallpaper(smart(), at('2026-09-16T15:30:00'));
     expect(a.url).toBe(b.url);
@@ -74,7 +75,7 @@ describe('wallpaperService time slots', () => {
     expect(WALLPAPER_COLLECTIONS.architecture).toContain(bumped.url);
   });
 
-  it('こだわりモードはスロットごとの設定を使い、欠けた項目はプリセットで補うこと', () => {
+  it('こだわりモードはスロットごとの設定を使い、欠けた項目はプリセットで補うこと', async () => {
     const settings = smart({
       dynamic: {
         enabled: true,
@@ -100,7 +101,7 @@ describe('wallpaperService time slots', () => {
     expect(WALLPAPER_COLLECTIONS.space).toContain(night.url);
   });
 
-  it('オフライン時は写真ではなくグラデーションにフォールバックすること', () => {
+  it('オフライン時は写真ではなくグラデーションにフォールバックすること', async () => {
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
     const resolved = wallpaperService.resolveDynamicWallpaper(smart(), at('2026-09-16T12:00:00'));
     expect(resolved.source).toBe('gradient');
@@ -111,7 +112,7 @@ describe('wallpaperService time slots', () => {
 describe('WallpaperBackground (time-aware)', () => {
   beforeEach(() => {
     resetDashboardStore();
-    vi.useFakeTimers();
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
     vi.setSystemTime(new Date('2026-09-16T23:00:00'));
   });
   afterEach(() => {
@@ -119,17 +120,17 @@ describe('WallpaperBackground (time-aware)', () => {
     vi.restoreAllMocks();
   });
 
-  it('有効時は時間帯で解決した画像とオーバーレイを描画すること', () => {
+  it('有効時は時間帯で解決した画像とオーバーレイを描画すること', async () => {
     act(() => useDashboardStore.getState().updateWallpaper({ dynamic: { enabled: true, mode: 'smart' } }));
     const { container } = render(<WallpaperBackground />);
     const layer = container.querySelector('[data-wallpaper-layer="top"]') as HTMLElement;
     expect(layer.style.backgroundImage).toContain('images.unsplash.com');
     expect(layer.style.filter).toBe('blur(5px) brightness(0.7)');
-    const overlay = container.querySelector('.bg-slate-950.transition-opacity') as HTMLElement;
+    const overlay = screen.getByTestId('wallpaper-overlay');
     expect(overlay.style.opacity).toBe('0.5');
   });
 
-  it('タブ再表示で時間帯をまたいでいればクロスフェードで切り替わること', () => {
+  it('タブ再表示で時間帯をまたいでいればクロスフェードで切り替わること', async () => {
     act(() => useDashboardStore.getState().updateWallpaper({ dynamic: { enabled: true, mode: 'smart' } }));
     const { container } = render(<WallpaperBackground />);
     const before = (container.querySelector('[data-wallpaper-layer="top"]') as HTMLElement).style.backgroundImage;
@@ -150,7 +151,7 @@ describe('WallpaperBackground (time-aware)', () => {
     expect(container.querySelectorAll('[data-wallpaper-layer]')).toHaveLength(1);
   });
 
-  it('無効時は従来どおり手動設定の壁紙を描画すること', () => {
+  it('無効時は従来どおり手動設定の壁紙を描画すること', async () => {
     act(() => useDashboardStore.getState().updateWallpaper({ currentWallpaperUrl: 'https://img.example/manual.jpg', blur: 2, brightness: 1 }));
     const { container } = render(<WallpaperBackground />);
     const layer = container.querySelector('[data-wallpaper-layer="top"]') as HTMLElement;
@@ -158,7 +159,7 @@ describe('WallpaperBackground (time-aware)', () => {
     expect(layer.style.filter).toBe('blur(2px) brightness(1)');
   });
 
-  it('壁紙変更ボタンは時間帯モードでは seed を進めること', () => {
+  it('壁紙変更ボタンは時間帯モードでは seed を進めること', async () => {
     act(() => useDashboardStore.getState().updateWallpaper({ dynamic: { enabled: true, mode: 'smart' } }));
     act(() => useDashboardStore.getState().rotateWallpaper());
     expect(useDashboardStore.getState().wallpaper.dynamic?.seed).toBe(1);
@@ -170,40 +171,43 @@ describe('SettingsPanel: time-aware wallpaper', () => {
   beforeEach(() => resetDashboardStore());
 
   it('トグルで有効化し、モードを切り替え、こだわり設定のスロットを編集できること', async () => {
+    const user = setupUser();
     act(() => useDashboardStore.getState().openSettingsModal('settings'));
     render(<SettingsPanel />);
 
-    fireEvent.click(screen.getByLabelText('Change with the time of day'));
+    await user.click(screen.getByLabelText('Change with the time of day'));
     const wp = () => useDashboardStore.getState().wallpaper;
     expect(wp().dynamic).toMatchObject({ enabled: true, mode: 'smart' });
     // Manual source picker is hidden while the time-aware mode drives things.
     expect(screen.queryByText('Wallpaper Source')).not.toBeInTheDocument();
     expect(screen.getByText(/^Now/)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('Fine-tune it myself'));
+    await user.click(screen.getByText('Fine-tune it myself'));
     expect(wp().dynamic?.mode).toBe('custom');
     expect(wp().dynamic?.slots?.night.category).toBe('space');
 
     const night = screen.getByTestId('slot-night');
-    fireEvent.change(night.querySelector('input[type="number"]')!, { target: { value: '21' } });
+    const startHour = within(night).getByRole('spinbutton');
+    await user.clear(startHour);
+    await user.type(startHour, '21');
     expect(wp().dynamic?.slots?.night.startHour).toBe(21);
 
-    fireEvent.click(night.querySelector('button:nth-of-type(2)')!); // Gradient
+    await user.click(within(night).getByRole('button', { name: 'Gradient' }));
     expect(wp().dynamic?.slots?.night.source).toBe('gradient');
-    fireEvent.click(screen.getAllByLabelText('Gradient 3')[0]);
+    await user.click(screen.getAllByLabelText('Gradient 3')[0]);
     expect(wp().dynamic?.slots?.night.gradientIndex).toBe(2);
 
     const morning = screen.getByTestId('slot-morning');
-    fireEvent.change(morning.querySelector('select')!, { target: { value: 'minimal' } });
+    await user.selectOptions(within(morning).getByRole('combobox'), 'minimal');
     expect(wp().dynamic?.slots?.morning.category).toBe('minimal');
     const sliders = morning.querySelectorAll('input[type="range"]');
-    fireEvent.change(sliders[2], { target: { value: '60' } });
+    fireEvent.change(sliders[2], { target: { value: '60' } }); // range input
     expect(wp().dynamic?.slots?.morning.overlayOpacity).toBe(0.6);
 
     await act(async () => {});
     expect(chromeStorageData[STORAGE_KEYS.WALLPAPER].dynamic.mode).toBe('custom');
 
-    fireEvent.click(screen.getByLabelText('Change with the time of day'));
+    await user.click(screen.getByLabelText('Change with the time of day'));
     expect(wp().dynamic?.enabled).toBe(false);
     expect(screen.getByText('Wallpaper Source')).toBeInTheDocument();
   });

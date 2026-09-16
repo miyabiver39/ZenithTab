@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
+import { setupUser } from '../helpers/user';
 import { WidgetWrapper } from '../../src/components/widgets/WidgetWrapper';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { resetDashboardStore } from '../helpers/store';
@@ -16,7 +17,7 @@ const widget: DashboardWidget = {
 describe('WidgetWrapper', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('通常時はタイトルと子要素のみ描画し、編集コントロールは出さないこと', () => {
+  it('通常時はタイトルと子要素のみ描画し、編集コントロールは出さないこと', async () => {
     render(
       <WidgetWrapper widget={widget}>
         <span>content</span>
@@ -26,27 +27,28 @@ describe('WidgetWrapper', () => {
     expect(screen.getByText('content')).toBeInTheDocument();
     expect(screen.queryByTitle('Widget Settings')).not.toBeInTheDocument();
     expect(screen.queryByTitle('Remove Widget')).not.toBeInTheDocument();
-    expect(document.querySelector('.grid-drag-handle')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('drag-handle')).not.toBeInTheDocument();
   });
 
-  it('編集モードではドラッグハンドル・設定・削除が出て、それぞれ store を呼ぶこと', () => {
+  it('編集モードではドラッグハンドル・設定・削除が出て、それぞれ store を呼ぶこと', async () => {
+    const user = setupUser();
     useDashboardStore.getState().setEditMode(true);
     render(
       <WidgetWrapper widget={widget}>
         <span>content</span>
       </WidgetWrapper>
     );
-    expect(document.querySelector('.grid-drag-handle')).toBeInTheDocument();
+    expect(screen.getByTestId('drag-handle')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTitle('Widget Settings'));
+    await user.click(screen.getByTitle('Widget Settings'));
     expect(useDashboardStore.getState().activeSettingsModal).toBe('editWidget');
     expect(useDashboardStore.getState().editingWidgetId).toBe('widget-clock-1');
 
-    fireEvent.click(screen.getByTitle('Remove Widget'));
+    await user.click(screen.getByTitle('Remove Widget'));
     expect(useDashboardStore.getState().widgets.some((w) => w.id === 'widget-clock-1')).toBe(false);
   });
 
-  it('検索ウィジェットは通常時ヘッダーを隠し、編集モードでは表示すること', () => {
+  it('検索ウィジェットは通常時ヘッダーを隠し、編集モードでは表示すること', async () => {
     const search = { ...widget, id: 'widget-search-1', type: 'search' as const, title: 'Search' };
     const { rerender } = render(
       <WidgetWrapper widget={search}>

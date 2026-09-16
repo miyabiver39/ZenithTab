@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
+import { setupUser, literal } from '../helpers/user';
 import { ShortcutsWidget } from '../../src/components/widgets/ShortcutsWidget/ShortcutsWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { resetDashboardStore } from '../helpers/store';
@@ -35,7 +36,7 @@ function renderShortcuts(initialItems = mockItems) {
 describe('ShortcutsWidget', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('ショートカットをリンクとして描画し、新しいタブで開く設定になっていること', () => {
+  it('ショートカットをリンクとして描画し、新しいタブで開く設定になっていること', async () => {
     renderShortcuts();
     const link = screen.getByText('GitHub').closest('a')!;
     expect(link).toHaveAttribute('href', 'https://github.com');
@@ -43,54 +44,63 @@ describe('ShortcutsWidget', () => {
     expect(screen.getByText('YouTube')).toBeInTheDocument();
   });
 
-  it('カテゴリで絞り込めること', () => {
+  it('カテゴリで絞り込めること', async () => {
+    const user = setupUser();
     renderShortcuts();
-    fireEvent.click(screen.getByText('Media'));
+    await user.click(screen.getByText('Media'));
     expect(screen.queryByText('GitHub')).not.toBeInTheDocument();
     expect(screen.getByText('YouTube')).toBeInTheDocument();
-    fireEvent.click(screen.getByText('All Apps'));
+    await user.click(screen.getByText('All Apps'));
     expect(screen.getByText('GitHub')).toBeInTheDocument();
   });
 
-  it('追加フォームから新しいショートカットを保存し、スキームを補うこと', () => {
+  it('追加フォームから新しいショートカットを保存し、スキームを補うこと', async () => {
+    const user = setupUser();
     renderShortcuts();
-    fireEvent.click(screen.getByTitle('Add Shortcut'));
+    await user.click(screen.getByTitle('Add Shortcut'));
 
-    fireEvent.change(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), { target: { value: ' Wikipedia ' } });
-    fireEvent.change(screen.getByPlaceholderText('https://example.com'), { target: { value: 'wikipedia.org' } });
-    fireEvent.click(screen.getByText('Save'));
+    await user.clear(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'));
+
+    await user.type(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), literal(' Wikipedia '));
+    await user.clear(screen.getByPlaceholderText('https://example.com'));
+    await user.type(screen.getByPlaceholderText('https://example.com'), literal('wikipedia.org'));
+    await user.click(screen.getByText('Save'));
 
     expect(items()).toHaveLength(4);
     expect(items()[3]).toMatchObject({ title: 'Wikipedia', url: 'https://wikipedia.org' });
     expect(screen.getByText('Wikipedia')).toBeInTheDocument();
   });
 
-  it('名前かURLが空なら保存しないこと', () => {
+  it('名前かURLが空なら保存しないこと', async () => {
+    const user = setupUser();
     renderShortcuts();
-    fireEvent.click(screen.getByTitle('Add Shortcut'));
-    fireEvent.change(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), { target: { value: 'NoUrl' } });
-    fireEvent.click(screen.getByText('Save'));
+    await user.click(screen.getByTitle('Add Shortcut'));
+    await user.clear(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'));
+    await user.type(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), literal('NoUrl'));
+    await user.click(screen.getByText('Save'));
     expect(items()).toHaveLength(3);
-    fireEvent.click(screen.getByText('Cancel'));
+    await user.click(screen.getByText('Cancel'));
   });
 
-  it('編集モードで項目を編集・削除できること', () => {
+  it('編集モードで項目を編集・削除できること', async () => {
+    const user = setupUser();
     renderShortcuts();
     act(() => useDashboardStore.getState().setEditMode(true));
 
     const editButtons = screen.getAllByTitle('Edit');
-    fireEvent.click(editButtons[0]);
+    await user.click(editButtons[0]);
     expect(screen.getByText('Edit Shortcut')).toBeInTheDocument();
-    fireEvent.change(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), { target: { value: 'GH' } });
-    fireEvent.change(screen.getByPlaceholderText('e.g. Productivity, Media, Tools'), { target: { value: '' } });
-    fireEvent.click(screen.getByText('Save'));
+    await user.clear(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'));
+    await user.type(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), literal('GH'));
+    await user.clear(screen.getByPlaceholderText('e.g. Productivity, Media, Tools'));
+    await user.click(screen.getByText('Save'));
     expect(items()[0]).toMatchObject({ title: 'GH', category: undefined });
 
-    fireEvent.click(screen.getAllByTitle('Delete')[0]);
+    await user.click(screen.getAllByTitle('Delete')[0]);
     expect(items().some((i: any) => i.id === '1')).toBe(false);
   });
 
-  it('設定した列数がグリッドのインラインスタイルに反映されること', () => {
+  it('設定した列数がグリッドのインラインスタイルに反映されること', async () => {
     for (const [columns, expected] of [[2, 2], [6, 6], [undefined, 4], [1, 2], [20, 8]] as const) {
       useDashboardStore.setState((s) => ({
         widgets: [
@@ -112,10 +122,11 @@ describe('ShortcutsWidget', () => {
     }
   });
 
-  it('項目が無い場合は空状態と追加導線を出すこと', () => {
+  it('項目が無い場合は空状態と追加導線を出すこと', async () => {
+    const user = setupUser();
     renderShortcuts([]);
     expect(screen.getByText(/No shortcuts found/)).toBeInTheDocument();
-    fireEvent.click(screen.getByText('Add Shortcut'));
+    await user.click(screen.getByText('Add Shortcut'));
     expect(screen.getByPlaceholderText('https://example.com')).toBeInTheDocument();
   });
 });

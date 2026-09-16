@@ -105,6 +105,7 @@ export const WeatherConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
         <span className="text-xs text-slate-300">{t.widgets.weather.showForecast}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.weather.showForecast}
           checked={!!config.showForecast}
           onChange={(e) => setConfig({ ...config, showForecast: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"

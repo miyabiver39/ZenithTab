@@ -135,6 +135,7 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
         <span className="text-xs text-slate-300">Open Search Results in New Tab</span>
         <input
           type="checkbox"
+          aria-label="Open Search Results in New Tab"
           checked={config.openInNewTab !== false}
           onChange={(e) => setConfig({ ...config, openInNewTab: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"
@@ -163,6 +164,7 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
                 <button
                   type="button"
                   onClick={() => handleRemoveBuiltinEngine(key)}
+                  aria-label={`${t.common.delete}: ${BUILTIN_ENGINE_LABELS[key]}`}
                   disabled={totalEngineCount <= 1}
                   title={totalEngineCount <= 1 ? t.widgets.search.lastEngineHint : undefined}
                   className="p-1.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
@@ -184,6 +186,7 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
                 <button
                   type="button"
                   onClick={() => handleRemoveCustomEngine(e.id)}
+                  aria-label={`${t.common.delete}: ${e.name}`}
                   disabled={totalEngineCount <= 1}
                   title={totalEngineCount <= 1 ? t.widgets.search.lastEngineHint : undefined}
                   className="p-1.5 rounded-md text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"

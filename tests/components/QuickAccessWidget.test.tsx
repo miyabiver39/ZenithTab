@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, within, fireEvent, waitFor, act } from '@testing-library/react';
+import { setupUser } from '../helpers/user';
 import { QuickAccessWidget } from '../../src/components/widgets/QuickAccessWidget/QuickAccessWidget';
 import { WidgetConfigModal } from '../../src/components/layout/WidgetConfigModal';
 import { AddWidgetModal } from '../../src/components/layout/AddWidgetModal';
@@ -93,12 +94,13 @@ describe('QuickAccessWidget', () => {
   });
 
   it('タブ切替で最近閉じたタブを表示し、クリックでセッションを復元すること', async () => {
+    const user = setupUser();
     render(<QuickAccessWidget widgetId="qa" config={base} />);
     await waitFor(() => screen.getByText('YouTube'));
-    fireEvent.click(screen.getByText('Recently closed'));
+    await user.click(screen.getByText('Recently closed'));
     await waitFor(() => expect(screen.getByText('Closed article')).toBeInTheDocument());
 
-    fireEvent.click(screen.getByText('Closed article'));
+    await user.click(screen.getByText('Closed article'));
     await waitFor(() => expect(chromeMock.sessions.restore).toHaveBeenCalledWith('s-1'));
   });
 
@@ -117,6 +119,7 @@ describe('QuickAccessWidget', () => {
   });
 
   it('権限が未許可なら案内と許可ボタンを出し、許可後にデータを読み込むこと', async () => {
+    const user = setupUser();
     chromeMock.permissions.contains.mockResolvedValue(false);
     render(<QuickAccessWidget widgetId="qa" config={base} />);
     await waitFor(() => expect(screen.getByText('Allow Quick Access')).toBeInTheDocument());
@@ -127,25 +130,27 @@ describe('QuickAccessWidget', () => {
       chromeMock.permissions.contains.mockResolvedValue(true);
       return Promise.resolve(true);
     });
-    fireEvent.click(screen.getByText('Allow Quick Access'));
+    await user.click(screen.getByText('Allow Quick Access'));
     await waitFor(() => expect(screen.getByText('YouTube')).toBeInTheDocument());
     expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
   });
 
   it('許可を拒否されたら案内のままであること', async () => {
+    const user = setupUser();
     chromeMock.permissions.contains.mockResolvedValue(false);
     chromeMock.permissions.request.mockResolvedValue(false);
     render(<QuickAccessWidget widgetId="qa" config={base} />);
     await waitFor(() => screen.getByText('Allow Quick Access'));
-    fireEvent.click(screen.getByText('Allow Quick Access'));
+    await user.click(screen.getByText('Allow Quick Access'));
     await waitFor(() => expect(chromeMock.permissions.request).toHaveBeenCalled());
     expect(screen.getByText('Allow Quick Access')).toBeInTheDocument();
   });
 
   it('更新ボタンで再取得すること', async () => {
+    const user = setupUser();
     render(<QuickAccessWidget widgetId="qa" config={base} />);
     await waitFor(() => screen.getByText('YouTube'));
-    fireEvent.click(screen.getByTitle('Refresh'));
+    await user.click(screen.getByTitle('Refresh'));
     await waitFor(() => expect(chromeMock.topSites.get).toHaveBeenCalledTimes(2));
   });
 
@@ -161,11 +166,11 @@ describe('QuickAccessWidget', () => {
 describe('Quick Access in catalogue and config modal', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('カタログから追加でき、設定モーダルで各項目を保存できること', () => {
+  it('カタログから追加でき、設定モーダルで各項目を保存できること', async () => {
+    const user = setupUser();
     act(() => useDashboardStore.getState().openSettingsModal('addWidget'));
     const { unmount } = render(<AddWidgetModal />);
-    const card = screen.getByText('Quick Access').closest('.group')!;
-    fireEvent.click(card.querySelector('button')!);
+    await user.click(within(screen.getByTestId('widget-card-quickaccess')).getByRole('button', { name: 'Add Widget' }));
     unmount();
 
     const added = useDashboardStore.getState().widgets.at(-1)!;
@@ -175,12 +180,12 @@ describe('Quick Access in catalogue and config modal', () => {
     expect(added.config).toMatchObject({ defaultView: 'topSites', maxItems: 8, viewMode: 'list', openInNewTab: true });
 
     act(() => useDashboardStore.getState().openSettingsModal('editWidget', added.id));
-    const { container } = render(<WidgetConfigModal />);
-    fireEvent.click(screen.getByText('Recently closed'));
-    fireEvent.click(screen.getByText('12'));
-    fireEvent.click(screen.getByText('Grid'));
-    fireEvent.click(container.querySelector('input[type="checkbox"]')!);
-    fireEvent.click(screen.getByText('Save Changes'));
+    render(<WidgetConfigModal />);
+    await user.click(screen.getByText('Recently closed'));
+    await user.click(screen.getByText('12'));
+    await user.click(screen.getByText('Grid'));
+    await user.click(screen.getByRole('checkbox', { name: 'Open in a new tab' }));
+    await user.click(screen.getByText('Save Changes'));
 
     const saved = useDashboardStore.getState().widgets.find((w) => w.id === added.id)!;
     expect(saved.config).toMatchObject({ defaultView: 'recentlyClosed', maxItems: 12, viewMode: 'grid', openInNewTab: false });

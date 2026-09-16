@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { setupUser, literal } from '../helpers/user';
 import { RssFeedWidget } from '../../src/components/widgets/RssFeedWidget/RssFeedWidget';
 import { rssService, FeedPermissionRequired } from '../../src/services/rssService';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
@@ -46,14 +47,16 @@ describe('RssFeedWidget', () => {
   });
 
   it('キーワード検索でウィジェット設定とタイトルが更新されること', async () => {
+    const user = setupUser();
     vi.spyOn(rssService, 'fetchFeed').mockResolvedValue(FEED);
     render(<RssFeedWidget widgetId="widget-rss-1" config={{ ...base, isGoogleNews: true, searchQuery: '' }} />);
     await waitFor(() => screen.getByText('First story'));
 
-    fireEvent.click(screen.getByTitle('Search Google News'));
+    await user.click(screen.getByTitle('Search Google News'));
     const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: '  space  ' } });
-    fireEvent.submit(input.closest('form')!);
+    await user.clear(input);
+    await user.type(input, literal('  space  '));
+    await user.keyboard('{Enter}');
 
     const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-rss-1')!;
     expect(w.config.searchQuery).toBe('space');
@@ -73,28 +76,31 @@ describe('RssFeedWidget', () => {
   });
 
   it('インライン検索に「headlines」と入れると主要ヘッドラインに戻ること', async () => {
+    const user = setupUser();
     vi.spyOn(rssService, 'fetchFeed').mockResolvedValue(FEED);
     render(<RssFeedWidget widgetId="widget-rss-1" config={{ ...base, isGoogleNews: true, googleNewsMode: 'search', searchQuery: 'tech' }} />);
     await waitFor(() => screen.getByText('First story'));
-    fireEvent.click(screen.getByTitle('Search Google News'));
+    await user.click(screen.getByTitle('Search Google News'));
     const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: 'headlines' } });
-    fireEvent.submit(input.closest('form')!);
+    await user.clear(input);
+    await user.type(input, literal('headlines'));
+    await user.keyboard('{Enter}');
     const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-rss-1')!;
     expect(w.config.googleNewsMode).toBe('headlines');
     expect(w.config.searchQuery).toBe('');
   });
 
   it('キーワードを空で保存するとトップニュースに戻ること', async () => {
+    const user = setupUser();
     vi.spyOn(rssService, 'fetchFeed').mockResolvedValue(FEED);
     render(<RssFeedWidget widgetId="widget-rss-1" config={{ ...base, isGoogleNews: true, searchQuery: 'tech' }} />);
     await waitFor(() => screen.getByText('First story'));
     expect(screen.getByText('Google News: "tech"')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTitle('Search Google News'));
+    await user.click(screen.getByTitle('Search Google News'));
     const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: '' } });
-    fireEvent.submit(input.closest('form')!);
+    await user.clear(input);
+    await user.keyboard('{Enter}');
 
     const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-rss-1')!;
     expect(w.config.searchQuery).toBe('');
@@ -104,15 +110,17 @@ describe('RssFeedWidget', () => {
   });
 
   it('検索フォームはキャンセルで閉じること', async () => {
+    const user = setupUser();
     vi.spyOn(rssService, 'fetchFeed').mockResolvedValue(FEED);
     render(<RssFeedWidget widgetId="widget-rss-1" config={base} />);
     await waitFor(() => screen.getByText('First story'));
-    fireEvent.click(screen.getByTitle('Search Google News'));
-    fireEvent.click(screen.getByText('Cancel'));
+    await user.click(screen.getByTitle('Search Google News'));
+    await user.click(screen.getByText('Cancel'));
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
   it('権限が無いフィードでは許可ボタンを出し、許可後に再取得すること', async () => {
+    const user = setupUser();
     const fetchSpy = vi
       .spyOn(rssService, 'fetchFeed')
       .mockRejectedValueOnce(new FeedPermissionRequired(base.feedUrl))
@@ -121,18 +129,19 @@ describe('RssFeedWidget', () => {
     render(<RssFeedWidget widgetId="widget-rss-1" config={base} />);
     await waitFor(() => expect(screen.getByText('Allow this feed')).toBeInTheDocument());
 
-    fireEvent.click(screen.getByText('Allow this feed'));
+    await user.click(screen.getByText('Allow this feed'));
     await waitFor(() => expect(screen.getByText('First story')).toBeInTheDocument());
     expect(chromeMock.permissions.request).toHaveBeenCalledWith({ origins: ['https://example.com/*'] });
     expect(fetchSpy).toHaveBeenLastCalledWith(base.feedUrl, true);
   });
 
   it('権限が拒否されたら許可ボタンのままであること', async () => {
+    const user = setupUser();
     vi.spyOn(rssService, 'fetchFeed').mockRejectedValue(new FeedPermissionRequired(base.feedUrl));
     chromeMock.permissions.request.mockResolvedValue(false);
     render(<RssFeedWidget widgetId="widget-rss-1" config={base} />);
     await waitFor(() => screen.getByText('Allow this feed'));
-    fireEvent.click(screen.getByText('Allow this feed'));
+    await user.click(screen.getByText('Allow this feed'));
     await waitFor(() => expect(chromeMock.permissions.request).toHaveBeenCalled());
     expect(screen.getByText('Allow this feed')).toBeInTheDocument();
   });
@@ -145,10 +154,11 @@ describe('RssFeedWidget', () => {
   });
 
   it('記事が無ければ空メッセージを表示し、更新ボタンで再取得すること', async () => {
+    const user = setupUser();
     const fetchSpy = vi.spyOn(rssService, 'fetchFeed').mockResolvedValue({ ...FEED, items: [] });
     render(<RssFeedWidget widgetId="widget-rss-1" config={base} />);
     await waitFor(() => expect(screen.getByText('No articles found')).toBeInTheDocument());
-    fireEvent.click(screen.getByTitle('Refresh Feed'));
+    await user.click(screen.getByTitle('Refresh Feed'));
     await waitFor(() => expect(fetchSpy).toHaveBeenLastCalledWith(base.feedUrl, true));
   });
 

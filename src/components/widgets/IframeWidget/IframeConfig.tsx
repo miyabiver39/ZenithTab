@@ -29,6 +29,7 @@ export const IframeConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
         <span className="text-xs text-slate-300">{t.widgets.iframe.allowScroll}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.iframe.allowScroll}
           checked={!!config.allowScroll}
           onChange={(e) => setConfig({ ...config, allowScroll: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"

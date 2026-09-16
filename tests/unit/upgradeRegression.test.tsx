@@ -128,8 +128,8 @@ describe('upgrade regression: data written by older versions', () => {
       seedStorageAsVersion(data);
       await useDashboardStore.getState().initialize();
 
-      const { container } = render(<Dashboard />);
-      await waitFor(() => expect(container.querySelector('.react-grid-layout')).toBeInTheDocument());
+      render(<Dashboard />);
+      await waitFor(() => expect(screen.getByTestId('dashboard-grid')).toBeInTheDocument());
       expect(screen.queryByText('Unknown widget')).not.toBeInTheDocument();
       expect(screen.queryByText(/Something went wrong/)).not.toBeInTheDocument();
 
@@ -153,8 +153,8 @@ describe('upgrade regression: data written by older versions', () => {
 
       const state = useDashboardStore.getState();
       expect(state.widgets.map((w) => w.id)).toEqual(data.widgets.map((w) => w.id));
-      const { container } = render(<Dashboard />);
-      await waitFor(() => expect(container.querySelector('.react-grid-layout')).toBeInTheDocument());
+      render(<Dashboard />);
+      await waitFor(() => expect(screen.getByTestId('dashboard-grid')).toBeInTheDocument());
       expect(screen.queryByText('Unknown widget')).not.toBeInTheDocument();
     });
   });

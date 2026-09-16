@@ -70,6 +70,7 @@ export const QuickAccessConfig: React.FC<ConfigFormProps> = ({ config, setConfig
         <span className="text-xs text-slate-300">{t.widgets.quickaccess.openInNewTab}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.quickaccess.openInNewTab}
           checked={config.openInNewTab !== false}
           onChange={(e) => setConfig({ ...config, openInNewTab: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"

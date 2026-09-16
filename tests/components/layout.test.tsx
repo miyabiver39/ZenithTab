@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, act, fireEvent, within } from '@testing-library/react';
+import { setupUser, literal } from '../helpers/user';
 import React from 'react';
 import { Header } from '../../src/components/layout/Header';
 import { PageSwitcher } from '../../src/components/layout/PageSwitcher';
@@ -23,33 +24,34 @@ const state = () => useDashboardStore.getState();
 describe('Header', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('挨拶・アプリドロワー・壁紙・ページ追加・編集・設定の各操作が動くこと', () => {
+  it('挨拶・アプリドロワー・壁紙・ページ追加・編集・設定の各操作が動くこと', async () => {
+    const user = setupUser();
     vi.spyOn(Math, 'random').mockReturnValue(0.9); // never the splash branch
     render(<Header />);
     expect(screen.getByText('ZenithTab')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTitle('App Drawer'));
+    await user.click(screen.getByTitle('App Drawer'));
     expect(state().isAppDrawerOpen).toBe(true);
 
     const before = state().wallpaper.currentWallpaperUrl;
-    fireEvent.click(screen.getByTitle('Change Wallpaper'));
+    await user.click(screen.getByTitle('Change Wallpaper'));
     expect(state().wallpaper.lastRefreshed).toBeTypeOf('number');
     expect(typeof before).toBe('string');
 
-    fireEvent.click(screen.getByTitle('Edit Layout'));
+    await user.click(screen.getByTitle('Edit Layout'));
     expect(state().isEditMode).toBe(true);
     expect(screen.getByText('Add Widget')).toBeInTheDocument();
-    fireEvent.click(screen.getByText('Add Widget'));
+    await user.click(screen.getByText('Add Widget'));
     expect(state().activeSettingsModal).toBe('addWidget');
-    fireEvent.click(screen.getByText('Done Editing'));
+    await user.click(screen.getByText('Done Editing'));
     expect(state().isEditMode).toBe(false);
 
-    fireEvent.click(screen.getByTitle('Settings'));
+    await user.click(screen.getByTitle('Settings'));
     expect(state().activeSettingsModal).toBe('settings');
     vi.restoreAllMocks();
   });
 
-  it('ページが1つの間だけ「ページを追加」ボタンを出すこと', () => {
+  it('ページが1つの間だけ「ページを追加」ボタンを出すこと', async () => {
     const { rerender } = render(<Header />);
     expect(screen.getByTitle('Add page')).toBeInTheDocument();
     act(() => state().addPage());
@@ -57,7 +59,7 @@ describe('Header', () => {
     expect(screen.queryByTitle('Add page')).not.toBeInTheDocument();
   });
 
-  it('スプラッシュ文言が出ることがあること', () => {
+  it('スプラッシュ文言が出ることがあること', async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.1);
     render(<Header />);
     expect(document.querySelector('header')).toBeInTheDocument();
@@ -68,47 +70,49 @@ describe('Header', () => {
 describe('AddPageMenu', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('空のページ / 複製を選べ、外側クリックや Escape で閉じること', () => {
+  it('空のページ / 複製を選べ、外側クリックや Escape で閉じること', async () => {
+    const user = setupUser();
     render(
       <AddPageMenu>
         <button>open</button>
       </AddPageMenu>
     );
-    fireEvent.click(screen.getByText('open'));
+    await user.click(screen.getByText('open'));
     expect(screen.getByRole('menu')).toBeInTheDocument();
 
-    fireEvent.mouseDown(document.body);
+    await user.click(document.body);
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('open'));
-    fireEvent.keyDown(document, { key: 'Escape' });
+    await user.click(screen.getByText('open'));
+    await user.keyboard('{Escape}');
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('open'));
-    fireEvent.click(screen.getByText('open')); // toggle closes
+    await user.click(screen.getByText('open'));
+    await user.click(screen.getByText('open')); // toggle closes
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('open'));
-    fireEvent.click(screen.getByText('Duplicate this page'));
+    await user.click(screen.getByText('open'));
+    await user.click(screen.getByText('Duplicate this page'));
     expect(state().pages).toHaveLength(2);
     expect(state().widgets.length).toBeGreaterThan(0);
 
-    fireEvent.click(screen.getByText('open'));
-    fireEvent.click(screen.getByText('New empty page'));
+    await user.click(screen.getByText('open'));
+    await user.click(screen.getByText('New empty page'));
     expect(state().pages).toHaveLength(3);
     expect(state().widgets).toHaveLength(0);
   });
 
-  it('右寄せでも画面内に収まる位置に出ること', () => {
+  it('右寄せでも画面内に収まる位置に出ること', async () => {
+    const user = setupUser();
     render(
       <AddPageMenu align="right">
         <button>open</button>
       </AddPageMenu>
     );
-    fireEvent.click(screen.getByText('open'));
+    await user.click(screen.getByText('open'));
     const menu = screen.getByRole('menu') as HTMLElement;
     expect(parseInt(menu.style.left, 10)).toBeGreaterThanOrEqual(8);
-    fireEvent(window, new Event('resize'));
+    fireEvent(window, new Event('resize')); // window event, not a user interaction
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 });
@@ -116,12 +120,13 @@ describe('AddPageMenu', () => {
 describe('PageSwitcher', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('ページが1つなら描画しないこと', () => {
+  it('ページが1つなら描画しないこと', async () => {
     const { container } = render(<PageSwitcher />);
     expect(container.firstChild).toBeNull();
   });
 
-  it('ページ切替・リネーム・削除・追加ができること', () => {
+  it('ページ切替・リネーム・削除・追加ができること', async () => {
+    const user = setupUser();
     act(() => {
       state().addPage();
       state().switchPage('page-1');
@@ -130,32 +135,33 @@ describe('PageSwitcher', () => {
     expect(screen.getByText('Page 1')).toBeInTheDocument();
     expect(screen.getByText('Page 2')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('Page 2'));
+    await user.click(screen.getByText('Page 2'));
     expect(state().activePageId).toBe(state().pages[1].id);
 
-    fireEvent.doubleClick(screen.getByText('Page 2'));
+    await user.dblClick(screen.getByText('Page 2'));
     const input = screen.getByRole('textbox') as HTMLInputElement;
     expect(input.placeholder).toBe('Page 2');
-    fireEvent.click(input);
-    fireEvent.change(input, { target: { value: 'Work' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
+    await user.click(input);
+    await user.clear(input);
+    await user.type(input, literal('Work'));
+    await user.keyboard('{Enter}');
     expect(state().pages[1].name).toBe('Work');
 
-    fireEvent.doubleClick(screen.getByText('Work'));
-    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
+    await user.dblClick(screen.getByText('Work'));
+    await user.keyboard('{Escape}');
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 
-    fireEvent.doubleClick(screen.getByText('Work'));
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: '' } });
-    fireEvent.blur(screen.getByRole('textbox'));
+    await user.dblClick(screen.getByText('Work'));
+    await user.clear(screen.getByRole('textbox'));
+    await user.tab();
     expect(state().pages[1].name).toBe('');
 
-    fireEvent.click(screen.getByTitle('Add page'));
-    fireEvent.click(screen.getByText('New empty page'));
+    await user.click(screen.getByTitle('Add page'));
+    await user.click(screen.getByText('New empty page'));
     expect(state().pages).toHaveLength(3);
 
     const removeButtons = screen.getAllByTitle('Remove page');
-    fireEvent.click(removeButtons[2]);
+    await user.click(removeButtons[2]);
     expect(state().pages).toHaveLength(2);
   });
 });
@@ -163,27 +169,29 @@ describe('PageSwitcher', () => {
 describe('EmptyPage', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('複数ページなら説明と「戻る」を出し、戻れること', () => {
+  it('複数ページなら説明と「戻る」を出し、戻れること', async () => {
+    const user = setupUser();
     act(() => state().addPage());
     render(<EmptyPage />);
     expect(screen.getByText('This page is empty')).toBeInTheDocument();
     expect(screen.getByText(/Nothing was deleted/)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('Back to Page 1'));
+    await user.click(screen.getByText('Back to Page 1'));
     expect(state().activePageId).toBe('page-1');
   });
 
-  it('「ウィジェット追加」で編集モードに入りモーダルを開くこと', () => {
+  it('「ウィジェット追加」で編集モードに入りモーダルを開くこと', async () => {
+    const user = setupUser();
     useDashboardStore.setState({ widgets: [] });
     render(<EmptyPage />);
     expect(screen.queryByText(/Nothing was deleted/)).not.toBeInTheDocument();
     expect(screen.queryByText(/Back to/)).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText('Add Widget'));
+    await user.click(screen.getByText('Add Widget'));
     expect(state().isEditMode).toBe(true);
     expect(state().activeSettingsModal).toBe('addWidget');
   });
 
-  it('先頭の空ページからは次のページへ戻れること', () => {
+  it('先頭の空ページからは次のページへ戻れること', async () => {
     act(() => {
       state().addPage();
       state().switchPage('page-1');
@@ -199,16 +207,17 @@ describe('EmptyPage', () => {
 describe('Dock', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('ドック項目をリンクで描画し、歯車で設定を開くこと', () => {
+  it('ドック項目をリンクで描画し、歯車で設定を開くこと', async () => {
+    const user = setupUser();
     render(<Dock />);
     expect(screen.getByTitle('Google')).toHaveAttribute('href', 'https://google.com');
     expect(screen.getByTitle('Wikipedia')).toHaveAttribute('target', '_blank');
-    fireEvent.click(screen.getByTitle('Quick Dock'));
+    await user.click(screen.getByTitle('Quick Dock'));
     expect(state().activeSettingsModal).toBe('settings');
     expect(state().editingWidgetId).toBe('dock');
   });
 
-  it('絵文字アイコンと位置設定を反映し、hidden なら描画しないこと', () => {
+  it('絵文字アイコンと位置設定を反映し、hidden なら描画しないこと', async () => {
     act(() => {
       state().addDockItem({ label: 'Game', url: 'https://g.example', icon: '🎮', openInNewTab: false });
       state().updateAppearance({ dockPosition: 'top' });
@@ -227,25 +236,28 @@ describe('Dock', () => {
 describe('WallpaperBackground', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('画像壁紙にぼかし・明るさ・オーバーレイを適用すること', () => {
+  it('画像壁紙にぼかし・明るさ・オーバーレイを適用すること', async () => {
     act(() => state().updateWallpaper({ blur: 8, brightness: 0.5, overlayOpacity: 0.2, currentWallpaperUrl: 'https://img.example/x.jpg' }));
     const { container } = render(<WallpaperBackground />);
-    const media = container.querySelector('.bg-cover') as HTMLElement;
+    const media = container.querySelector('[data-wallpaper-layer="top"]') as HTMLElement;
     expect(media.style.backgroundImage).toContain('https://img.example/x.jpg');
     expect(media.style.filter).toBe('blur(8px) brightness(0.5)');
   });
 
-  it('グラデーション壁紙は background として描画すること', () => {
+  it('グラデーション壁紙は background として描画すること', async () => {
     act(() => state().updateWallpaper({ source: 'gradient', currentWallpaperUrl: 'linear-gradient(135deg, #000 0%, #fff 100%)' }));
     const { container } = render(<WallpaperBackground />);
-    expect(container.querySelector('.bg-cover')).not.toBeInTheDocument();
+    const layer = container.querySelector('[data-wallpaper-layer="top"]') as HTMLElement;
+    // jsdom expands the `background` shorthand into backgroundImage.
+    expect(layer.style.backgroundImage).toContain('linear-gradient');
+    expect(layer.style.filter).toBe('');
   });
 });
 
 describe('GridContainer', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('全ウィジェット種別を描画し、空ページではプレースホルダを出すこと', () => {
+  it('全ウィジェット種別を描画し、空ページではプレースホルダを出すこと', async () => {
     useDashboardStore.setState((s) => ({
       widgets: [
         ...s.widgets,
@@ -255,8 +267,8 @@ describe('GridContainer', () => {
         { id: 'w-??', type: 'mystery' as any, title: '??', config: {}, layout: { i: 'w-??', x: 0, y: 0, w: 3, h: 4 } },
       ],
     }));
-    const { container, unmount } = render(<GridContainer />);
-    expect(container.querySelector('.react-grid-layout')).toBeInTheDocument();
+    const { unmount } = render(<GridContainer />);
+    expect(screen.getByTestId('dashboard-grid')).toBeInTheDocument();
     expect(screen.getByText('Unknown widget')).toBeInTheDocument();
     expect(screen.queryByText('This page is empty')).not.toBeInTheDocument();
     unmount();
@@ -270,24 +282,25 @@ describe('GridContainer', () => {
 describe('AddWidgetModal', () => {
   beforeEach(() => resetDashboardStore());
 
-  it('カタログの「追加」でウィジェットが追加されること', () => {
+  it('カタログの「追加」でウィジェットが追加されること', async () => {
+    const user = setupUser();
     act(() => state().openSettingsModal('addWidget'));
     render(<AddWidgetModal />);
     const before = state().widgets.length;
-    const card = screen.getByText('QR Code').closest('.group')!;
-    fireEvent.click(card.querySelector('button')!);
+    await user.click(within(screen.getByTestId('widget-card-qrcode')).getByRole('button', { name: 'Add Widget' }));
     expect(state().widgets).toHaveLength(before + 1);
     expect(state().widgets[before].type).toBe('qrcode');
   });
 
-  it('閉じている間は何も描画しないこと', () => {
+  it('閉じている間は何も描画しないこと', async () => {
     const { container } = render(<AddWidgetModal />);
     expect(container.firstChild).toBeNull();
   });
 });
 
 describe('common components', () => {
-  it('Modal は Escape / 背景クリック / × で閉じ、body のスクロールを止めること', () => {
+  it('Modal は Escape / 背景クリック / × で閉じ、body のスクロールを止めること', async () => {
+    const user = setupUser();
     const onClose = vi.fn();
     const { rerender } = render(
       <Modal isOpen title="Hi" onClose={onClose} maxWidth="sm">
@@ -295,9 +308,9 @@ describe('common components', () => {
       </Modal>
     );
     expect(document.body.style.overflow).toBe('hidden');
-    fireEvent.keyDown(document, { key: 'Escape' });
-    fireEvent.click(document.querySelector('.fixed.inset-0.bg-black\\/60')!);
-    fireEvent.click(screen.getByRole('button'));
+    await user.keyboard('{Escape}');
+    await user.click(screen.getByTestId('modal-backdrop'));
+    await user.click(screen.getByRole('button'));
     expect(onClose).toHaveBeenCalledTimes(3);
 
     rerender(
@@ -309,7 +322,7 @@ describe('common components', () => {
     expect(document.body.style.overflow).toBe('');
   });
 
-  it('GlassCard / Input / Button がクラスとプロパティを反映すること', () => {
+  it('GlassCard / Input / Button がクラスとプロパティを反映すること', async () => {
     render(
       <GlassCard className="custom">
         <Input label="Name" value="v" onChange={() => {}} />
@@ -328,6 +341,7 @@ describe('common components', () => {
 
 describe('ErrorBoundary', () => {
   it('描画クラッシュ時に復旧画面を出し、リセットでストレージを消してリロードすること', async () => {
+    const user = setupUser();
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const reload = vi.fn();
     Object.defineProperty(window, 'location', { configurable: true, value: { reload } });
@@ -343,7 +357,7 @@ describe('ErrorBoundary', () => {
     );
     expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText(/Reset to defaults/));
+    await user.click(screen.getByText(/Reset to defaults/));
     await act(async () => {
       await Promise.resolve();
     });
@@ -353,7 +367,7 @@ describe('ErrorBoundary', () => {
     vi.restoreAllMocks();
   });
 
-  it('正常時は子要素をそのまま描画すること', () => {
+  it('正常時は子要素をそのまま描画すること', async () => {
     render(
       <ErrorBoundary>
         <span>fine</span>

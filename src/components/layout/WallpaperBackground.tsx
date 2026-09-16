@@ -125,6 +125,7 @@ export const WallpaperBackground: React.FC = () => {
 
       {/* Dark / Tint Overlay */}
       <div
+        data-testid="wallpaper-overlay"
         className="absolute inset-0 bg-slate-950 transition-opacity duration-700"
         style={{ opacity: target.overlayOpacity }}
       />

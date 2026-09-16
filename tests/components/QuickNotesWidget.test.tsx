@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
+import { setupUser, literal } from '../helpers/user';
 import { QuickNotesWidget } from '../../src/components/widgets/QuickNotesWidget/QuickNotesWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { resetDashboardStore } from '../helpers/store';
@@ -17,24 +18,27 @@ function renderNotes() {
 describe('QuickNotesWidget', () => {
   beforeEach(() => {
     resetDashboardStore();
-    vi.useFakeTimers();
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it('旧形式の content を「Page 1」として表示すること', () => {
+  it('旧形式の content を「Page 1」として表示すること', async () => {
     renderNotes();
     expect(screen.getByText('Page 1')).toBeInTheDocument();
     expect((screen.getByRole('textbox') as HTMLTextAreaElement).value).toContain('Welcome to ZenithTab');
   });
 
-  it('入力は400ms後にデバウンス保存され、pages 形式へ移行すること', () => {
+  it('入力は400ms後にデバウンス保存され、pages 形式へ移行すること', async () => {
+    const user = setupUser();
     renderNotes();
     const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
 
-    fireEvent.change(textarea, { target: { value: 'hello' } });
+    await user.clear(textarea);
+
+    await user.type(textarea, literal('hello'));
     expect(textarea.value).toBe('hello');
     expect(config().pages).toBeUndefined();
 
@@ -51,58 +55,63 @@ describe('QuickNotesWidget', () => {
     expect(config().content).toBeUndefined();
   });
 
-  it('ページを追加・切り替え・閉じることができること', () => {
+  it('ページを追加・切り替え・閉じることができること', async () => {
+    const user = setupUser();
     renderNotes();
-    fireEvent.click(screen.getByTitle('Add page'));
+    await user.click(screen.getByTitle('Add page'));
 
     expect(config().pages).toHaveLength(2);
     expect(config().activePageId).toBe(config().pages[1].id);
     expect(screen.getByText('Page 2')).toBeInTheDocument();
     expect((screen.getByRole('textbox') as HTMLTextAreaElement).value).toBe('');
 
-    fireEvent.click(screen.getByText('Page 1'));
+    await user.click(screen.getByText('Page 1'));
     expect(config().activePageId).toBe(config().pages[0].id);
     expect((screen.getByRole('textbox') as HTMLTextAreaElement).value).toContain('Welcome');
 
-    const page2Tab = screen.getByText('Page 2').closest('.group')!;
-    fireEvent.click(page2Tab.querySelector('button')!);
+    await user.click(screen.getAllByTitle('Close page')[1]);
     expect(config().pages).toHaveLength(1);
     expect(screen.queryByText('Page 2')).not.toBeInTheDocument();
   });
 
-  it('ダブルクリックでページ名を変更でき、空なら元の名前を保つこと', () => {
+  it('ダブルクリックでページ名を変更でき、空なら元の名前を保つこと', async () => {
+    const user = setupUser();
     renderNotes();
-    fireEvent.doubleClick(screen.getByText('Page 1'));
+    await user.dblClick(screen.getByText('Page 1'));
     const input = screen.getAllByRole('textbox').find((el) => el.tagName === 'INPUT') as HTMLInputElement;
-    fireEvent.change(input, { target: { value: 'Ideas' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
+    await user.clear(input);
+    await user.type(input, literal('Ideas'));
+    await user.keyboard('{Enter}');
     expect(config().pages[0].title).toBe('Ideas');
 
-    fireEvent.doubleClick(screen.getByText('Ideas'));
+    await user.dblClick(screen.getByText('Ideas'));
     const again = screen.getAllByRole('textbox').find((el) => el.tagName === 'INPUT') as HTMLInputElement;
-    fireEvent.change(again, { target: { value: '   ' } });
-    fireEvent.blur(again);
+    await user.clear(again);
+    await user.type(again, literal('   '));
+    await user.tab();
     expect(config().pages[0].title).toBe('Ideas');
   });
 
-  it('Escape でリネームをキャンセルすること', () => {
+  it('Escape でリネームをキャンセルすること', async () => {
+    const user = setupUser();
     renderNotes();
-    fireEvent.doubleClick(screen.getByText('Page 1'));
+    await user.dblClick(screen.getByText('Page 1'));
     const input = screen.getAllByRole('textbox').find((el) => el.tagName === 'INPUT') as HTMLInputElement;
-    fireEvent.change(input, { target: { value: 'Nope' } });
-    fireEvent.keyDown(input, { key: 'Escape' });
+    await user.clear(input);
+    await user.type(input, literal('Nope'));
+    await user.keyboard('{Escape}');
     expect(screen.getByText('Page 1')).toBeInTheDocument();
     expect(config().pages).toBeUndefined();
   });
 
-  it('最大8ページで追加ボタンが消えること', () => {
+  it('最大8ページで追加ボタンが消えること', async () => {
     const pages = Array.from({ length: 8 }, (_, i) => ({ id: `p${i}`, title: `P${i}`, content: '' }));
     useDashboardStore.getState().updateWidgetConfig(WIDGET_ID, { pages, activePageId: 'p0', content: undefined });
     renderNotes();
     expect(screen.queryByTitle('Add page')).not.toBeInTheDocument();
   });
 
-  it('フォント設定がクラスに反映されること', () => {
+  it('フォント設定がクラスに反映されること', async () => {
     useDashboardStore.getState().updateWidgetConfig(WIDGET_ID, { fontSize: 'lg', fontFamily: 'mono' });
     renderNotes();
     const textarea = screen.getByRole('textbox');

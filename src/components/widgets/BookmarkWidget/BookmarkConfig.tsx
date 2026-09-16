@@ -30,6 +30,7 @@ export const BookmarkConfig: React.FC<ConfigFormProps> = ({ config, setConfig })
         <span className="text-xs text-slate-300">{t.widgets.bookmarks.showFavicons}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.bookmarks.showFavicons}
           checked={!!config.showFavicons}
           onChange={(e) => setConfig({ ...config, showFavicons: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"

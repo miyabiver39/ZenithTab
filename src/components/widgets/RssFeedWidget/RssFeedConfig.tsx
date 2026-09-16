@@ -40,6 +40,7 @@ export const RssFeedConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
         </div>
         <input
           type="checkbox"
+          aria-label={t.widgets.rss.googleNewsFeed}
           checked={!!config.isGoogleNews}
           onChange={(e) => setConfig({ ...config, isGoogleNews: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"
@@ -136,6 +137,7 @@ export const RssFeedConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
         <span className="text-xs text-slate-300">{t.widgets.rss.showThumbnails}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.rss.showThumbnails}
           checked={!!config.showThumbnail}
           onChange={(e) => setConfig({ ...config, showThumbnail: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"
@@ -146,6 +148,7 @@ export const RssFeedConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
         <span className="text-xs text-slate-300">{t.widgets.rss.showSnippet}</span>
         <input
           type="checkbox"
+          aria-label={t.widgets.rss.showSnippet}
           checked={!!config.showDescription}
           onChange={(e) => setConfig({ ...config, showDescription: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"

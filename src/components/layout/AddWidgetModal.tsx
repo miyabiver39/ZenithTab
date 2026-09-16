@@ -31,6 +31,7 @@ export const AddWidgetModal: React.FC = () => {
           return (
             <div
               key={widget.type}
+              data-testid={`widget-card-${widget.type}`}
               className="p-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-all flex flex-col justify-between group select-none"
             >
               <div className="flex items-start gap-2.5 mb-3">
