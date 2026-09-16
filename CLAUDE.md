@@ -12,7 +12,7 @@ ZenithTab(ゼニスタブ)は Manifest V3 の新しいタブ拡張です。ア�
    npm run typecheck
    npm run test:run
    ```
-   カバレッジは `npm run test:coverage`(`coverage/` は git 管理外)。
+   カバレッジは `npm run test:coverage`(`coverage/` は git 管理外)。E2E は `npm run test:e2e`(Playwright が dev サーバーを自動起動; UI に触る変更をしたら回す。CI では別ジョブで実行)。
 4. **振る舞いを変えないリファクタリング**では、既存テストを一切書き換えずに全件パスさせること。テストを変えなければ通らない場合は、それは振る舞いの変更なので理由を明記する。
 5. **Issue 対応**は Issue 本文の要件に沿い、対応した Issue 番号をコミットメッセージに `Closes #N` で入れる。
 

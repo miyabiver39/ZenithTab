@@ -29,3 +29,27 @@ jobs:
       # a missing _locales entry, or metadata that drifted out of range.
       - name: Verify build output
         run: npm run verify
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      # playwright.config.ts starts the Vite dev server itself.
+      - name: Run E2E tests
+        run: npm run test:e2e
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
