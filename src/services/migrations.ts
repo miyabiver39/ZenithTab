@@ -74,7 +74,7 @@ export const storageDataSource: MigrationDataSource = {
  * it. Export fields are named differently from storage keys; the map
  * translates between them.
  */
-const EXPORT_FIELD_BY_KEY: Record<string, string> = {
+export const EXPORT_FIELD_BY_KEY: Record<string, string> = {
   [STORAGE_KEYS.WIDGETS]: 'widgets',
   [STORAGE_KEYS.LAYOUTS]: 'layouts',
   [STORAGE_KEYS.WALLPAPER]: 'wallpaper',

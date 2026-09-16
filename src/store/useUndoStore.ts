@@ -35,6 +35,8 @@ interface UndoState {
   /** Undo one specific entry (the toast's button) rather than the latest. */
   undoEntry: (id: string) => boolean;
   dismissToast: () => void;
+  /** A plain notice in the same toast, with no button (e.g. "backup restored"). */
+  notify: (label: string) => void;
   /** Wipes both stacks — after anything that replaces the whole dashboard. */
   clear: () => void;
 }
@@ -103,6 +105,8 @@ export const useUndoStore = create<UndoState>((set, get) => ({
   },
 
   dismissToast: () => set({ toast: null }),
+
+  notify: (label) => set({ toast: { id: uniqueId('notice'), label, undoable: false } }),
 
   clear: () => set({ undoStack: [], redoStack: [], toast: null }),
 }));

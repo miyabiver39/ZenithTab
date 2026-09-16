@@ -43,6 +43,13 @@ import {
   withFreshWidgetId,
 } from '../services/trashService';
 import { GRID_BREAKPOINT_KEYS } from '../config/grid';
+import {
+  snapshotService,
+  snapshotDataFromState,
+  DEFAULT_BACKUP_SETTINGS,
+  BackupSettings,
+  SnapshotMeta,
+} from '../services/snapshotService';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -92,6 +99,12 @@ interface DashboardState {
   // Deleted widgets/pages, restorable from Settings > Trash for 30 days.
   trash: TrashEntry[];
 
+  // Whole-dashboard snapshots (Settings > Backup). The list is loaded on
+  // demand — it isn't needed to draw the dashboard — so null means "not
+  // fetched yet".
+  snapshots: SnapshotMeta[] | null;
+  backupSettings: BackupSettings;
+
   // Actions
   initialize: () => Promise<void>;
   setEditMode: (isEditMode: boolean) => void;
@@ -132,6 +145,14 @@ interface DashboardState {
   restoreFromTrash: (entryId: string) => void;
   deleteFromTrash: (entryId: string) => void;
   emptyTrash: () => void;
+
+  refreshSnapshots: () => Promise<void>;
+  /** "Back up now". Resolves false when nothing changed since the newest snapshot. */
+  takeSnapshot: () => Promise<boolean>;
+  /** Replaces the dashboard with the snapshot (after snapshotting the current state). */
+  restoreSnapshot: (id: string) => Promise<boolean>;
+  deleteSnapshot: (id: string) => Promise<void>;
+  updateBackupSettings: (partial: Partial<BackupSettings>) => Promise<void>;
 
   /**
    * Re-reads everything from storage and applies whatever differs. Used to
@@ -375,6 +396,43 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     storageService.saveKeyboardShortcuts(updated);
   };
 
+  /**
+   * Replaces the whole in-memory dashboard with what storage holds — after
+   * an import or a snapshot restore, where everything may have changed.
+   */
+  const reloadFromStorage = async () => {
+    const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts, trash] =
+      await Promise.all([
+        storageService.getPagesState(),
+        storageService.getWallpaper(),
+        storageService.getAppearance(),
+        storageService.getDockItems(),
+        storageService.getKeyboardShortcuts(),
+        storageService.getTrash(),
+      ]);
+
+    const hydrated = hydratePageData(pageData, getTranslation(appearance.language), resolveLanguageCode(appearance.language));
+    const active = hydrated[activePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
+
+    set({
+      pages,
+      activePageId,
+      pageData: hydrated,
+      widgets: active.widgets,
+      layouts: active.layouts,
+      wallpaper,
+      appearance,
+      dockItems,
+      keyboardShortcuts,
+      trash,
+      isEditMode: false,
+      activeSettingsModal: null,
+      editingWidgetId: null,
+    });
+    // Nothing on the old stack refers to what is on screen any more.
+    useUndoStore.getState().clear();
+  };
+
   return {
     isInitialized: false,
     isEditMode: false,
@@ -393,6 +451,8 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     activePageId: DEFAULT_PAGE_ID,
     pageData: {},
     trash: [],
+    snapshots: null,
+    backupSettings: DEFAULT_BACKUP_SETTINGS,
 
     toggleAppDrawer: (open) =>
       set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),
@@ -421,13 +481,14 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
         const appearance = await withTimeout(storageService.getAppearance(), 5000, DEFAULT_APPEARANCE);
         const defaults = localizedDefaults(appearance.language);
 
-        const [{ pages, activePageId, pageData }, wallpaper, dockItems, keyboardShortcuts, storedTrash] =
+        const [{ pages, activePageId, pageData }, wallpaper, dockItems, keyboardShortcuts, storedTrash, backupSettings] =
           await Promise.all([
             withTimeout(storageService.getPagesState(defaults), 5000, fallbackPagesState),
             withTimeout(storageService.getWallpaper(), 5000, DEFAULT_WALLPAPER),
             withTimeout(storageService.getDockItems(defaults.dockItems), 5000, defaults.dockItems),
             withTimeout(storageService.getKeyboardShortcuts(), 5000, DEFAULT_KEYBOARD_SHORTCUTS),
             withTimeout(storageService.getTrash(), 5000, []),
+            withTimeout(snapshotService.getSettings(), 5000, DEFAULT_BACKUP_SETTINGS),
           ]);
 
         // Expired trash is dropped here (new-tab page only, never the
@@ -465,6 +526,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
           dockItems,
           keyboardShortcuts,
           trash,
+          backupSettings,
           isInitialized: true,
         });
       } catch (err) {
@@ -890,6 +952,44 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
     saveTrash([]);
   },
 
+  refreshSnapshots: async () => {
+    try {
+      set({ snapshots: await snapshotService.list() });
+    } catch (err) {
+      console.error('Failed listing snapshots:', err);
+      set({ snapshots: [] });
+    }
+  },
+
+  takeSnapshot: async () => {
+    const taken = await snapshotService.take('manual', snapshotDataFromState(get()));
+    await get().refreshSnapshots();
+    return taken !== null;
+  },
+
+  restoreSnapshot: async (id) => {
+    const snapshot = await snapshotService.get(id);
+    if (!snapshot) return false;
+    // So the restore itself can be walked back from the same list.
+    const current = snapshotDataFromState(get());
+    await snapshotService.take('before-restore', current);
+    const ok = await snapshotService.restore(snapshot, current);
+    if (ok) await reloadFromStorage();
+    await get().refreshSnapshots();
+    return ok;
+  },
+
+  deleteSnapshot: async (id) => {
+    await snapshotService.remove(id);
+    await get().refreshSnapshots();
+  },
+
+  updateBackupSettings: async (partial) => {
+    const updated = { ...get().backupSettings, ...partial };
+    set({ backupSettings: updated });
+    await snapshotService.saveSettings(updated);
+  },
+
   renamePage: (id, name) => {
     // Clearing the name hands the page back to its localized "Page N".
     const trimmed = name.trim();
@@ -944,6 +1044,9 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   resetToDefault: async () => {
+    // Awaited first so the auto-snapshot subscriber sees it and doesn't
+    // store a duplicate of the same state.
+    await snapshotService.take('before-reset', snapshotDataFromState(get()));
     const { widgets: defaultWidgets, layouts: defaultLayouts, dockItems: defaultDock } = localizedDefaults(get().appearance.language);
     await storageService.resetDashboard({ widgets: defaultWidgets, layouts: defaultLayouts, dockItems: defaultDock });
     set({
@@ -965,36 +1068,12 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   importConfig: async (jsonData) => {
+    // Keep what is being replaced. An unparsable file fails below and the
+    // snapshot is simply one more (harmless) copy of the current state.
+    await snapshotService.take('before-import', snapshotDataFromState(get()));
     const success = await storageService.importDashboardData(jsonData);
     if (success) {
-      const [{ pages, activePageId, pageData }, wallpaper, appearance, dockItems, keyboardShortcuts, trash] =
-        await Promise.all([
-          storageService.getPagesState(),
-          storageService.getWallpaper(),
-          storageService.getAppearance(),
-          storageService.getDockItems(),
-          storageService.getKeyboardShortcuts(),
-          storageService.getTrash(),
-        ]);
-
-      const hydrated = hydratePageData(pageData, getTranslation(appearance.language), resolveLanguageCode(appearance.language));
-      const active = hydrated[activePageId] || { widgets: [], layouts: EMPTY_LAYOUTS };
-
-      set({
-        pages,
-        activePageId,
-        pageData: hydrated,
-        widgets: active.widgets,
-        layouts: active.layouts,
-        wallpaper,
-        appearance,
-        dockItems,
-        keyboardShortcuts,
-        trash,
-        activeSettingsModal: null,
-      });
-      // Nothing on the old stack refers to what is on screen any more.
-      useUndoStore.getState().clear();
+      await reloadFromStorage();
       return true;
     }
     return false;

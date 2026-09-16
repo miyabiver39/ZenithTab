@@ -57,7 +57,7 @@ export const UndoToast: React.FC = () => {
         dockPosition === 'bottom' ? 'bottom-28' : 'bottom-6'
       )}
     >
-      <span className="truncate">{toast.undoable ? toast.label : t.undo.undone}</span>
+      <span className="truncate">{toast.label || t.undo.undone}</span>
       {toast.undoable && (
         <button
           type="button"

@@ -14,6 +14,7 @@ import { UndoToast } from './components/common/UndoToast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
 import { useStorageSync } from './hooks/useStorageSync';
+import { useAutoSnapshot } from './hooks/useAutoSnapshot';
 import './index.css';
 
 export const App: React.FC = () => {
@@ -25,6 +26,7 @@ export const App: React.FC = () => {
 
   useGlobalKeyboardShortcuts();
   useStorageSync();
+  useAutoSnapshot();
 
   if (!isInitialized) {
     return (

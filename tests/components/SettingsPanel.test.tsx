@@ -6,6 +6,7 @@ import { AppDrawerModal } from '../../src/components/layout/AppDrawerModal';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { wallpaperService } from '../../src/services/wallpaperService';
 import { resetDashboardStore } from '../helpers/store';
+import { useUndoStore } from '../../src/store/useUndoStore';
 
 const state = () => useDashboardStore.getState();
 
@@ -21,6 +22,48 @@ function openSettings(tab?: 'dock') {
 
 describe('SettingsPanel', () => {
   beforeEach(() => resetDashboardStore());
+
+  it('バックアップタブ: 一覧・今すぐバックアップ・復元・削除・自動設定が動くこと', async () => {
+    const user = setupUser();
+    openSettings();
+    await user.click(screen.getByText('Backup & Sync'));
+    expect(await screen.findByText('No backups yet.')).toBeInTheDocument();
+
+    await user.click(screen.getByText('Back up now'));
+    expect(await screen.findByText('Backup saved.')).toBeInTheDocument();
+    const list = await screen.findByRole('list', { name: 'Automatic backups' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(1);
+    expect(list).toHaveTextContent('Manual');
+    expect(list).toHaveTextContent(`${state().widgets.length} widgets`);
+
+    await user.click(screen.getByText('Back up now'));
+    expect(await screen.findByText('Nothing has changed since the latest backup.')).toBeInTheDocument();
+
+    // Change something, then restore the backup: confirm first, then the
+    // dashboard is back and the panel closes with a notice.
+    const removedId = state().widgets[0].id;
+    act(() => state().removeWidget(removedId));
+    await user.click(screen.getByRole('button', { name: /^Restore: / }));
+    expect(screen.getByRole('alertdialog')).toHaveTextContent('Restore this backup?');
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Restore' }));
+    await waitFor(() => expect(state().widgets.some((w) => w.id === removedId)).toBe(true));
+    expect(state().activeSettingsModal).toBeNull();
+    expect(useUndoStore.getState().toast?.label).toMatch(/^Restored the backup from /);
+    expect(state().snapshots?.map((s) => s.reason)).toEqual(['before-restore', 'manual']);
+
+    openSettings();
+    await user.click(screen.getByText('Backup & Sync'));
+    const rows = await screen.findAllByRole('listitem');
+    expect(rows).toHaveLength(2);
+    await user.click(within(rows[0]).getByRole('button', { name: /^Delete: / }));
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Delete' }));
+    await waitFor(() => expect(screen.getAllByRole('listitem')).toHaveLength(1));
+
+    const toggle = screen.getByLabelText('Take automatic backups') as HTMLInputElement;
+    expect(toggle.checked).toBe(true);
+    await user.click(toggle);
+    expect(state().backupSettings.autoSnapshot).toBe(false);
+  });
 
   it('ごみ箱タブ: 件数バッジ・復元・完全削除・空にするが動くこと', async () => {
     const user = setupUser();

@@ -17,6 +17,12 @@ export const STORAGE_KEYS = {
   PAGE_DATA: 'dashboard_page_data',
   /** Deleted widgets/pages awaiting restore or expiry (services/trashService.ts). */
   TRASH: 'dashboard_trash',
+  /**
+   * Whole-dashboard snapshots (services/snapshotService.ts). Not part of
+   * USER_DATA_KEYS on purpose: a snapshot must not contain the snapshots.
+   */
+  SNAPSHOTS: 'dashboard_snapshots',
+  BACKUP_SETTINGS: 'dashboard_backup_settings',
   /** Schema generation of everything above; see services/migrations.ts. */
   SCHEMA_VERSION: 'schema_version',
 } as const;

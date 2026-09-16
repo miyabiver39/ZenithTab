@@ -18,7 +18,7 @@ import { sanitizeLayout, sanitizeResponsiveLayouts } from '../utils/layout';
 import { sanitizeTrash } from './trashService';
 
 /** The running extension version, so exports carry the version that produced them. */
-function currentVersion(): string {
+export function currentVersion(): string {
   try {
     if (typeof chrome !== 'undefined' && chrome.runtime?.getManifest) {
       return chrome.runtime.getManifest().version || '0.0.0';
