@@ -105,5 +105,12 @@ English
 
 | Version | Date | Changes Summary |
 |---------|------|-----------------|
+| 1.7.0 | 2026-09-16 | Schema versioning with a forward migration pipeline and pre-migration snapshots; upgrade regression tests against real 1.2/1.3/1.5 data; read-time hydration of settings written by older versions; unlimitedStorage; background feed refresh covers every page. |
+| 1.6.1 | 2026-09-16 | Quick Access permissions (topSites, sessions) moved to optional_permissions and requested when the widget is added, so updates never disable the extension; widget registry refactor (no behaviour change). |
+| 1.6.0 | 2026-09-16 | New Quick Access widget: most-visited sites and recently closed tabs, list or grid, one-click restore, Chrome-internal APIs only. |
+| 1.5.0 | 2026-09-16 | Time-aware dynamic wallpaper (morning/day/sunset/night) with a curated automatic mode and a per-slot custom mode, cross-fade, offline gradient fallback; configured column count now honoured in Shortcuts and Bookmarks. |
+| 1.4.1 | 2026-09-16 | Region-aware first-run presets for Dock, Shortcuts and weather city in 7 languages; collision-free ids for pages, widgets and items. |
+| 1.4.0 | 2026-09-16 | Google News headline / topic / keyword modes with per-language editions; widget titles, weekdays and weather conditions follow the UI language; Web Embed rejects non-http(s) URLs instead of crashing; test suite rebuilt (98% coverage). |
+| 1.3.3 | 2026-09-16 | Empty-page guidance and page duplication; localized first-run content (welcome note, sample tasks, news); general-audience default Dock and shortcuts; top-stories news default; multi-tab storage sync. |
 | 1.3.2 | 2026-09-04 | Unified built-in and custom search engine management; stability improvements for storage reads. |
 | 1.3.1 | 2026-09-03 | Search engine auto-detection, presets, and reduced memory footprint during workspace page switching. |
