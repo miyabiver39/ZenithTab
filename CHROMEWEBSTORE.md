@@ -23,6 +23,7 @@ Key Features:
 - RSS & News Feeds: Follow news topics and custom RSS/Atom feeds with automatic background cache refresh.
 - Live Weather: Real-time temperature, condition forecasts, and 3-day projections with on-demand location detection.
 - App Drawer & Quick Dock: Launch registered web apps categorized by tags, or use persistent top/bottom dock shortcuts.
+- Quick Access: Jump back to your most-visited sites or reopen recently closed tabs, straight from the new tab.
 - Focus & Utilities: Built-in Pomodoro timer, to-do checklist, quick scratchpad, and calculator.
 - Privacy-First: Zero telemetry, zero analytics, zero ad network requests.
 
@@ -69,9 +70,11 @@ English
 | Permission | Type | Justification |
 |------------|------|---------------|
 | storage | permissions | Saves user layout preferences, widget placements, custom search engines, notes, and theme options locally in chrome.storage.local. |
-| ookmarks | permissions | Reads the user's Chrome bookmark folders to display and search bookmarks inside the Bookmarks widget without uploading URLs anywhere. |
-| larms | permissions | Schedules background refresh cycles via chrome.alarms in the service worker for weather forecast and RSS feed updates. |
-| avicon | permissions | Fetches site favicons for bookmark entries and launcher shortcuts using the browser's built-in favicon utility. |
+| bookmarks | permissions | Reads the user's Chrome bookmark folders to display and search bookmarks inside the Bookmarks widget without uploading URLs anywhere. |
+| alarms | permissions | Schedules background refresh cycles via chrome.alarms in the service worker for weather forecast and RSS feed updates. |
+| favicon | permissions | Fetches site favicons for bookmark entries and launcher shortcuts using the browser's built-in favicon utility. |
+| topSites | permissions | Lists the sites Chrome already ranks as most visited so the Quick Access widget can offer them as one-click shortcuts; read locally, never uploaded. |
+| sessions | permissions | Lists and restores the user's recently closed tabs from inside the Quick Access widget; data stays in the browser. |
 | geolocation | permissions | Determines user coordinates only when the user clicks "Detect current location" in the Weather widget to configure local weather forecasts. |
 | https://api.open-meteo.com/* | host_permissions | Fetches weather forecasts and current meteorological conditions for the user's chosen location without requiring API keys. |
 | https://geocoding-api.open-meteo.com/* | host_permissions | Converts city names entered by the user into geographic coordinates for weather forecasting. |

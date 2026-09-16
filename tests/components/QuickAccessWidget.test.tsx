@@ -1,0 +1,139 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { QuickAccessWidget } from '../../src/components/widgets/QuickAccessWidget/QuickAccessWidget';
+import { WidgetConfigModal } from '../../src/components/layout/WidgetConfigModal';
+import { AddWidgetModal } from '../../src/components/layout/AddWidgetModal';
+import { quickAccessService } from '../../src/services/quickAccessService';
+import { useDashboardStore } from '../../src/store/useDashboardStore';
+import { resetDashboardStore } from '../helpers/store';
+import { chromeMock, installChromeMock, uninstallChromeMock } from '../helpers/chrome';
+
+const base = { defaultView: 'topSites' as const, maxItems: 8 as const, viewMode: 'list' as const, openInNewTab: true };
+
+describe('quickAccessService', () => {
+  afterEach(() => {
+    installChromeMock();
+    vi.restoreAllMocks();
+  });
+
+  it('よく見るサイトを http(s) のみ・上限件数で返し、タイトル無しはホスト名にすること', async () => {
+    const sites = await quickAccessService.getTopSites(2);
+    expect(sites.map((s) => s.title)).toEqual(['YouTube', 'Company Portal']);
+    const all = await quickAccessService.getTopSites(10);
+    expect(all.map((s) => s.title)).toEqual(['YouTube', 'Company Portal', 'news.example.com']);
+    expect(all[0].faviconUrl).toContain('_favicon');
+  });
+
+  it('最近閉じたタブをウィンドウも展開して返し、内部URLは除外すること', async () => {
+    const items = await quickAccessService.getRecentlyClosed(8);
+    expect(items.map((i) => i.sessionId)).toEqual(['s-1', 's-2']);
+    expect(items[0]).toMatchObject({ title: 'Closed article', url: 'https://blog.example.com/post', lastModified: 1700000000 });
+    expect(chromeMock.sessions.getRecentlyClosed).toHaveBeenCalledWith({ maxResults: 13 });
+    expect(await quickAccessService.getRecentlyClosed(1)).toHaveLength(1);
+  });
+
+  it('復元は sessions.restore を呼び、成功可否を返すこと', async () => {
+    expect(await quickAccessService.restoreSession('s-1')).toBe(true);
+    expect(chromeMock.sessions.restore).toHaveBeenCalledWith('s-1');
+    chromeMock.sessions.restore.mockRejectedValue(new Error('gone'));
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(await quickAccessService.restoreSession('s-1')).toBe(false);
+  });
+
+  it('API が失敗したら空配列を返すこと', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    chromeMock.topSites.get.mockRejectedValue(new Error('x'));
+    chromeMock.sessions.getRecentlyClosed.mockRejectedValue(new Error('y'));
+    expect(await quickAccessService.getTopSites()).toEqual([]);
+    expect(await quickAccessService.getRecentlyClosed()).toEqual([]);
+  });
+
+  it('Chrome API が無い環境ではモックデータにフォールバックし、復元は false になること', async () => {
+    uninstallChromeMock();
+    expect((await quickAccessService.getTopSites(2)).map((s) => s.title)).toEqual(['YouTube', 'Wikipedia']);
+    expect((await quickAccessService.getRecentlyClosed()).length).toBeGreaterThan(0);
+    expect(await quickAccessService.restoreSession('s-1')).toBe(false);
+  });
+});
+
+describe('QuickAccessWidget', () => {
+  beforeEach(() => resetDashboardStore());
+  afterEach(() => vi.restoreAllMocks());
+
+  it('既定タブでよく見るサイトをリスト表示すること', async () => {
+    render(<QuickAccessWidget widgetId="qa" config={base} />);
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('YouTube')).toBeInTheDocument());
+    expect(screen.getByTestId('quickaccess-list')).toBeInTheDocument();
+    expect(screen.getByText('youtube.com')).toBeInTheDocument();
+    const link = screen.getByText('YouTube').closest('a')!;
+    expect(link).toHaveAttribute('href', 'https://www.youtube.com/');
+    expect(link).toHaveAttribute('target', '_blank');
+  });
+
+  it('タブ切替で最近閉じたタブを表示し、クリックでセッションを復元すること', async () => {
+    render(<QuickAccessWidget widgetId="qa" config={base} />);
+    await waitFor(() => screen.getByText('YouTube'));
+    fireEvent.click(screen.getByText('Recently closed'));
+    await waitFor(() => expect(screen.getByText('Closed article')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByText('Closed article'));
+    await waitFor(() => expect(chromeMock.sessions.restore).toHaveBeenCalledWith('s-1'));
+  });
+
+  it('グリッド表示・件数上限・同一タブで開く設定を反映すること', async () => {
+    render(<QuickAccessWidget widgetId="qa" config={{ ...base, viewMode: 'grid', maxItems: 5, openInNewTab: false }} />);
+    await waitFor(() => screen.getByText('YouTube'));
+    expect(screen.getByTestId('quickaccess-grid')).toBeInTheDocument();
+    expect(chromeMock.topSites.get).toHaveBeenCalled();
+    expect(screen.getByText('YouTube').closest('a')).not.toHaveAttribute('target');
+  });
+
+  it('既定タブを最近閉じたタブにでき、空なら案内を出すこと', async () => {
+    chromeMock.sessions.getRecentlyClosed.mockResolvedValue([]);
+    render(<QuickAccessWidget widgetId="qa" config={{ ...base, defaultView: 'recentlyClosed' }} />);
+    await waitFor(() => expect(screen.getByText('No recently closed tabs.')).toBeInTheDocument());
+  });
+
+  it('更新ボタンで再取得すること', async () => {
+    render(<QuickAccessWidget widgetId="qa" config={base} />);
+    await waitFor(() => screen.getByText('YouTube'));
+    fireEvent.click(screen.getByTitle('Refresh'));
+    await waitFor(() => expect(chromeMock.topSites.get).toHaveBeenCalledTimes(2));
+  });
+
+  it('ファビコン読み込み失敗時はプレースホルダに差し替わること', async () => {
+    const { container } = render(<QuickAccessWidget widgetId="qa" config={base} />);
+    await waitFor(() => screen.getByText('YouTube'));
+    const img = container.querySelector('img')!;
+    fireEvent.error(img);
+    expect(container.querySelectorAll('img').length).toBeLessThan(3);
+  });
+});
+
+describe('Quick Access in catalogue and config modal', () => {
+  beforeEach(() => resetDashboardStore());
+
+  it('カタログから追加でき、設定モーダルで各項目を保存できること', () => {
+    act(() => useDashboardStore.getState().openSettingsModal('addWidget'));
+    const { unmount } = render(<AddWidgetModal />);
+    const card = screen.getByText('Quick Access').closest('.group')!;
+    fireEvent.click(card.querySelector('button')!);
+    unmount();
+
+    const added = useDashboardStore.getState().widgets.at(-1)!;
+    expect(added.type).toBe('quickaccess');
+    expect(added.config).toMatchObject({ defaultView: 'topSites', maxItems: 8, viewMode: 'list', openInNewTab: true });
+
+    act(() => useDashboardStore.getState().openSettingsModal('editWidget', added.id));
+    const { container } = render(<WidgetConfigModal />);
+    fireEvent.click(screen.getByText('Recently closed'));
+    fireEvent.click(screen.getByText('12'));
+    fireEvent.click(screen.getByText('Grid'));
+    fireEvent.click(container.querySelector('input[type="checkbox"]')!);
+    fireEvent.click(screen.getByText('Save Changes'));
+
+    const saved = useDashboardStore.getState().widgets.find((w) => w.id === added.id)!;
+    expect(saved.config).toMatchObject({ defaultView: 'recentlyClosed', maxItems: 12, viewMode: 'grid', openInNewTab: false });
+  });
+});

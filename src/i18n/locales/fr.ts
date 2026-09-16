@@ -15,6 +15,7 @@ export const fr: typeof en = {
     settings: 'Paramètres',
     changeWallpaper: 'Changer le fond d’écran',
     search: 'Rechercher',
+    refresh: 'Actualiser',
     loading: 'Chargement...',
     retry: 'Réessayer',
     reset: 'Réinitialiser',
@@ -159,7 +160,8 @@ export const fr: typeof en = {
       unavailable: 'Météo indisponible',
       locationDenied: 'L’accès à la localisation a été refusé. Vous pouvez définir une ville manuellement.',
       locationFailed: 'Impossible de déterminer votre position. Réessayez ou définissez une ville manuellement.',
-      loading: 'Chargement météo...',
+      refresh: 'Actualiser',
+    loading: 'Chargement météo...',
       // WMO weather codes as reported by Open-Meteo.
       conditions: {
         '0': 'Ciel dégagé',
@@ -311,6 +313,20 @@ export const fr: typeof en = {
       openInNewTab: 'Ouvrir dans un nouvel onglet',
       editShortcut: 'Modifier le raccourci',
       columns: 'Colonnes',
+    },
+    quickaccess: {
+      title: 'Accès rapide',
+      desc: 'Vos sites les plus visités et onglets récemment fermés en un clic ; rien à configurer, rien ne quitte le navigateur.',
+      topSites: 'Sites fréquents',
+      recentlyClosed: 'Récemment fermés',
+      emptyTopSites: 'Chrome n\'a pas encore de sites fréquents. Naviguez un peu et ils apparaîtront ici.',
+      emptyRecentlyClosed: 'Aucun onglet récemment fermé.',
+      defaultView: 'Ouvrir sur',
+      maxItems: 'Éléments affichés',
+      viewMode: 'Style d\'affichage',
+      list: 'Liste',
+      grid: 'Grille',
+      openInNewTab: 'Ouvrir dans un nouvel onglet',
     },
     qrcode: {
       title: 'Code QR',

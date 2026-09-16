@@ -13,6 +13,7 @@ export const ja = {
     settings: '設定',
     changeWallpaper: '壁紙を変更',
     search: '検索',
+    refresh: '更新',
     loading: '読み込み中...',
     retry: '再試行',
     reset: 'リセット',
@@ -157,7 +158,8 @@ export const ja = {
       unavailable: '天気情報を取得できませんでした',
       locationDenied: '位置情報の利用が許可されませんでした。都市名を手動で設定することもできます。',
       locationFailed: '現在地を取得できませんでした。もう一度試すか、都市名を手動で設定してください。',
-      loading: '天気を取得中...',
+      refresh: '更新',
+    loading: '天気を取得中...',
       // WMO weather codes as reported by Open-Meteo.
       conditions: {
         '0': '快晴',
@@ -309,6 +311,20 @@ export const ja = {
       openInNewTab: '新しいタブで開く',
       editShortcut: 'ショートカットを編集',
       columns: '表示列数',
+    },
+    quickaccess: {
+      title: 'クイックアクセス',
+      desc: 'よく見るサイトと最近閉じたタブへワンクリック。設定不要で、データはブラウザの外に出ません。',
+      topSites: 'よく見るサイト',
+      recentlyClosed: '最近閉じたタブ',
+      emptyTopSites: 'まだ「よく見るサイト」がありません。少しブラウジングするとここに表示されます。',
+      emptyRecentlyClosed: '最近閉じたタブはありません。',
+      defaultView: '最初に表示',
+      maxItems: '表示件数',
+      viewMode: '表示スタイル',
+      list: 'リスト',
+      grid: 'グリッド',
+      openInNewTab: '新しいタブで開く',
     },
     qrcode: {
       title: 'QRコード',

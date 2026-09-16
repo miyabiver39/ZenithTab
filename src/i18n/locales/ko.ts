@@ -15,6 +15,7 @@ export const ko: typeof en = {
     settings: '설정',
     changeWallpaper: '배경화면 변경',
     search: '검색',
+    refresh: '새로고침',
     loading: '로딩 중...',
     retry: '다시 시도',
     reset: '초기화',
@@ -159,7 +160,8 @@ export const ko: typeof en = {
       unavailable: '날씨 정보를 가져올 수 없습니다',
       locationDenied: '위치 권한이 거부되었습니다. 도시를 직접 설정할 수 있습니다.',
       locationFailed: '현재 위치를 확인할 수 없습니다. 다시 시도하거나 도시를 직접 설정하세요.',
-      loading: '날씨 불러오는 중...',
+      refresh: '새로고침',
+    loading: '날씨 불러오는 중...',
       // WMO weather codes as reported by Open-Meteo.
       conditions: {
         '0': '맑음',
@@ -311,6 +313,20 @@ export const ko: typeof en = {
       openInNewTab: '새 탭에서 열기',
       editShortcut: '바로가기 수정',
       columns: '표시 열 수',
+    },
+    quickaccess: {
+      title: '빠른 접근',
+      desc: '자주 방문한 사이트와 최근 닫은 탭을 한 번에. 설정 불필요, 데이터는 브라우저 밖으로 나가지 않습니다.',
+      topSites: '자주 방문',
+      recentlyClosed: '최근 닫은 탭',
+      emptyTopSites: '아직 자주 방문한 사이트가 없습니다. 조금 둘러보면 여기에 표시됩니다.',
+      emptyRecentlyClosed: '최근 닫은 탭이 없습니다.',
+      defaultView: '처음 표시',
+      maxItems: '표시 개수',
+      viewMode: '표시 스타일',
+      list: '목록',
+      grid: '그리드',
+      openInNewTab: '새 탭에서 열기',
     },
     qrcode: {
       title: 'QR 코드',

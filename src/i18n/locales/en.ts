@@ -13,6 +13,7 @@ export const en = {
     settings: 'Settings',
     changeWallpaper: 'Change Wallpaper',
     search: 'Search',
+    refresh: 'Refresh',
     loading: 'Loading...',
     retry: 'Retry',
     reset: 'Reset',
@@ -157,7 +158,8 @@ export const en = {
       unavailable: 'Weather info unavailable',
       locationDenied: 'Location access was denied. You can still set a city manually.',
       locationFailed: 'Could not determine your location. Try again or set a city manually.',
-      loading: 'Loading weather...',
+      refresh: 'Refresh',
+    loading: 'Loading weather...',
       // WMO weather codes as reported by Open-Meteo.
       conditions: {
         '0': 'Clear sky',
@@ -309,6 +311,20 @@ export const en = {
       openInNewTab: 'Open in New Tab',
       editShortcut: 'Edit Shortcut',
       columns: 'Columns',
+    },
+    quickaccess: {
+      title: 'Quick Access',
+      desc: 'Your most-visited sites and recently closed tabs, one click away — no setup, nothing leaves the browser.',
+      topSites: 'Top sites',
+      recentlyClosed: 'Recently closed',
+      emptyTopSites: 'Chrome has no most-visited sites yet. Browse a little and they will show up here.',
+      emptyRecentlyClosed: 'No recently closed tabs.',
+      defaultView: 'Open on',
+      maxItems: 'Items to show',
+      viewMode: 'Display style',
+      list: 'List',
+      grid: 'Grid',
+      openInNewTab: 'Open in a new tab',
     },
     qrcode: {
       title: 'QR Code',

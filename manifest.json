@@ -9,7 +9,9 @@
     "bookmarks",
     "alarms",
     "favicon",
-    "geolocation"
+    "geolocation",
+    "topSites",
+    "sessions"
   ],
   "host_permissions": [
     "https://api.open-meteo.com/*",

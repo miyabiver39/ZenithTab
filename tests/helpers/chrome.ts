@@ -123,6 +123,31 @@ const bookmarkSearchImpl = (query: string | chrome.bookmarks.BookmarkSearchQuery
   return Promise.resolve(hits);
 };
 
+export const MOCK_TOP_SITES: chrome.topSites.MostVisitedURL[] = [
+  { title: 'YouTube', url: 'https://www.youtube.com/' },
+  { title: 'Company Portal', url: 'https://portal.example.com/' },
+  { title: '', url: 'https://news.example.com/' },
+  { title: 'Not http', url: 'chrome://extensions' },
+];
+
+// Only the fields the service reads; cast because chrome.tabs.Tab has many more.
+export const MOCK_RECENTLY_CLOSED = [
+  { lastModified: 1700000000, tab: { sessionId: 's-1', title: 'Closed article', url: 'https://blog.example.com/post', index: 0, highlighted: false, active: false, pinned: false, incognito: false, selected: false, discarded: false, autoDiscardable: true, groupId: -1 } },
+  {
+    lastModified: 1699999000,
+    window: {
+      sessionId: 'w-1',
+      focused: false,
+      alwaysOnTop: false,
+      incognito: false,
+      tabs: [
+        { sessionId: 's-2', title: 'Docs', url: 'https://docs.example.com/', index: 0, highlighted: false, active: false, pinned: false, incognito: false, selected: false, discarded: false, autoDiscardable: true, groupId: -1 },
+        { sessionId: 's-3', title: 'Internal', url: 'chrome://settings', index: 1, highlighted: false, active: false, pinned: false, incognito: false, selected: false, discarded: false, autoDiscardable: true, groupId: -1 },
+      ],
+    },
+  },
+] as unknown as chrome.sessions.Session[];
+
 const storageListeners = new Set<(changes: Record<string, chrome.storage.StorageChange>, area: string) => void>();
 
 export const chromeMock = {
@@ -153,6 +178,13 @@ export const chromeMock = {
       removeListener: vi.fn(),
       hasListener: vi.fn(() => false),
     },
+  },
+  topSites: {
+    get: vi.fn(() => Promise.resolve(MOCK_TOP_SITES)),
+  },
+  sessions: {
+    getRecentlyClosed: vi.fn(() => Promise.resolve(MOCK_RECENTLY_CLOSED)),
+    restore: vi.fn(() => Promise.resolve(MOCK_RECENTLY_CLOSED[0])),
   },
   permissions: {
     contains: vi.fn(() => Promise.resolve(true)),
@@ -190,6 +222,9 @@ export function resetChromeMock() {
   chromeMock.storage.onChanged.removeListener.mockReset().mockImplementation((fn: any) => storageListeners.delete(fn));
   chromeMock.bookmarks.getTree.mockReset().mockImplementation(() => Promise.resolve(MOCK_BOOKMARK_TREE));
   chromeMock.bookmarks.search.mockReset().mockImplementation(bookmarkSearchImpl);
+  chromeMock.topSites.get.mockReset().mockImplementation(() => Promise.resolve(MOCK_TOP_SITES));
+  chromeMock.sessions.getRecentlyClosed.mockReset().mockImplementation(() => Promise.resolve(MOCK_RECENTLY_CLOSED));
+  chromeMock.sessions.restore.mockReset().mockImplementation(() => Promise.resolve(MOCK_RECENTLY_CLOSED[0]));
   chromeMock.permissions.contains.mockReset().mockImplementation(() => Promise.resolve(true));
   chromeMock.permissions.request.mockReset().mockImplementation(() => Promise.resolve(true));
   chromeMock.permissions.remove.mockReset().mockImplementation(() => Promise.resolve(true));

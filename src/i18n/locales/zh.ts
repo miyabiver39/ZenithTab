@@ -15,6 +15,7 @@ export const zh: typeof en = {
     settings: '设置',
     changeWallpaper: '更换壁纸',
     search: '搜索',
+    refresh: '刷新',
     loading: '加载中...',
     retry: '重试',
     reset: '重置',
@@ -159,7 +160,8 @@ export const zh: typeof en = {
       unavailable: '无法获取天气信息',
       locationDenied: '位置权限被拒绝。你仍可以手动设置城市。',
       locationFailed: '无法获取当前位置。请重试或手动设置城市。',
-      loading: '正在获取天气...',
+      refresh: '刷新',
+    loading: '正在获取天气...',
       // WMO weather codes as reported by Open-Meteo.
       conditions: {
         '0': '晴朗',
@@ -311,6 +313,20 @@ export const zh: typeof en = {
       openInNewTab: '在新标签页打开',
       editShortcut: '编辑快捷方式',
       columns: '显示列数',
+    },
+    quickaccess: {
+      title: '快速访问',
+      desc: '一键打开常用网站和最近关闭的标签页，无需设置，数据不离开浏览器。',
+      topSites: '常用网站',
+      recentlyClosed: '最近关闭',
+      emptyTopSites: 'Chrome 还没有常用网站记录，浏览一会儿后会显示在这里。',
+      emptyRecentlyClosed: '没有最近关闭的标签页。',
+      defaultView: '默认显示',
+      maxItems: '显示数量',
+      viewMode: '显示样式',
+      list: '列表',
+      grid: '网格',
+      openInNewTab: '在新标签页中打开',
     },
     qrcode: {
       title: '二维码',

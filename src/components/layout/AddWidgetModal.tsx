@@ -11,6 +11,7 @@ import {
   CheckSquare,
   Plus,
   QrCode,
+  History,
 } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { useDashboardStore } from '../../store/useDashboardStore';
@@ -99,6 +100,13 @@ export const AddWidgetModal: React.FC = () => {
       description: t.widgets.iframe.desc,
       icon: Globe,
       color: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+    },
+    {
+      type: 'quickaccess',
+      title: t.widgets.quickaccess.title,
+      description: t.widgets.quickaccess.desc,
+      icon: History,
+      color: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
     },
     {
       type: 'qrcode',

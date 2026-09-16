@@ -13,6 +13,7 @@ import { PomodoroWidget } from '../widgets/PomodoroWidget/PomodoroWidget';
 import { TodoWidget } from '../widgets/TodoWidget/TodoWidget';
 import { ShortcutsWidget } from '../widgets/ShortcutsWidget/ShortcutsWidget';
 import { QrCodeWidget } from '../widgets/QrCodeWidget/QrCodeWidget';
+import { QuickAccessWidget } from '../widgets/QuickAccessWidget/QuickAccessWidget';
 import { EmptyPage } from './EmptyPage';
 import { cn } from '../../utils/cn';
 
@@ -72,6 +73,8 @@ export const GridContainer: React.FC = () => {
         return <QuickNotesWidget widgetId={widget.id} config={widget.config} />;
       case 'qrcode':
         return <QrCodeWidget widgetId={widget.id} config={widget.config} />;
+      case 'quickaccess':
+        return <QuickAccessWidget widgetId={widget.id} config={widget.config} />;
       default:
         return (
           <div className="flex items-center justify-center h-full text-slate-400 text-xs">

@@ -120,6 +120,7 @@ const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: num
   iframe: { w: 6, h: 4, minW: 3, minH: 3 },
   notes: { w: 4, h: 4, minW: 3, minH: 2 },
   qrcode: { w: 3, h: 4, minW: 3, minH: 3 },
+  quickaccess: { w: 4, h: 4, minW: 3, minH: 3 },
 };
 
 // Language-neutral fallback (the global preset); a new Shortcuts widget
@@ -192,6 +193,12 @@ const DEFAULT_CONFIGS_BY_TYPE = (t: Translation, lang: string): Record<WidgetTyp
   qrcode: {
     mode: 'url',
     value: '',
+  },
+  quickaccess: {
+    defaultView: 'topSites',
+    maxItems: 8,
+    viewMode: 'list',
+    openInNewTab: true,
   },
 });
 

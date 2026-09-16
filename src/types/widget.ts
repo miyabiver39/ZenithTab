@@ -11,7 +11,8 @@ export type WidgetType =
   | 'pomodoro'
   | 'todo'
   | 'shortcuts'
-  | 'qrcode';
+  | 'qrcode'
+  | 'quickaccess';
 
 export interface BaseWidgetConfig {
   title?: string;
@@ -151,6 +152,15 @@ export interface ShortcutsWidgetConfig extends BaseWidgetConfig {
   viewMode: 'grid' | 'compact';
 }
 
+export type QuickAccessView = 'topSites' | 'recentlyClosed';
+
+export interface QuickAccessWidgetConfig extends BaseWidgetConfig {
+  defaultView: QuickAccessView;
+  maxItems: 5 | 8 | 12;
+  viewMode: 'list' | 'grid';
+  openInNewTab: boolean;
+}
+
 export interface QrCodeWidgetConfig extends BaseWidgetConfig {
   mode: 'url' | 'phone' | 'text';
   value: string;
@@ -167,7 +177,8 @@ export type WidgetConfig =
   | { type: 'pomodoro'; config: PomodoroWidgetConfig }
   | { type: 'todo'; config: TodoWidgetConfig }
   | { type: 'shortcuts'; config: ShortcutsWidgetConfig }
-  | { type: 'qrcode'; config: QrCodeWidgetConfig };
+  | { type: 'qrcode'; config: QrCodeWidgetConfig }
+  | { type: 'quickaccess'; config: QuickAccessWidgetConfig };
 
 export interface DashboardWidget {
   id: string;

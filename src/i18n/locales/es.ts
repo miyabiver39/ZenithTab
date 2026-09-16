@@ -15,6 +15,7 @@ export const es: typeof en = {
     settings: 'Ajustes',
     changeWallpaper: 'Cambiar fondo',
     search: 'Buscar',
+    refresh: 'Actualizar',
     loading: 'Cargando...',
     retry: 'Reintentar',
     reset: 'Restablecer',
@@ -159,7 +160,8 @@ export const es: typeof en = {
       unavailable: 'Información meteorológica no disponible',
       locationDenied: 'Se denegó el acceso a la ubicación. Puedes definir la ciudad manualmente.',
       locationFailed: 'No se pudo determinar tu ubicación. Inténtalo de nuevo o define la ciudad manualmente.',
-      loading: 'Cargando el clima...',
+      refresh: 'Actualizar',
+    loading: 'Cargando el clima...',
       // WMO weather codes as reported by Open-Meteo.
       conditions: {
         '0': 'Despejado',
@@ -311,6 +313,20 @@ export const es: typeof en = {
       openInNewTab: 'Abrir en nueva pestaña',
       editShortcut: 'Editar acceso directo',
       columns: 'Columnas',
+    },
+    quickaccess: {
+      title: 'Acceso rápido',
+      desc: 'Tus sitios más visitados y pestañas cerradas recientemente a un clic; sin configuración y nada sale del navegador.',
+      topSites: 'Más visitados',
+      recentlyClosed: 'Cerradas recientemente',
+      emptyTopSites: 'Chrome aún no tiene sitios más visitados. Navega un poco y aparecerán aquí.',
+      emptyRecentlyClosed: 'No hay pestañas cerradas recientemente.',
+      defaultView: 'Abrir en',
+      maxItems: 'Elementos a mostrar',
+      viewMode: 'Estilo de vista',
+      list: 'Lista',
+      grid: 'Cuadrícula',
+      openInNewTab: 'Abrir en una pestaña nueva',
     },
     qrcode: {
       title: 'Código QR',

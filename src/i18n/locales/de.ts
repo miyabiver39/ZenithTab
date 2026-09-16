@@ -15,6 +15,7 @@ export const de: typeof en = {
     settings: 'Einstellungen',
     changeWallpaper: 'Hintergrund wechseln',
     search: 'Suchen',
+    refresh: 'Aktualisieren',
     loading: 'Wird geladen...',
     retry: 'Wiederholen',
     reset: 'Zurücksetzen',
@@ -159,7 +160,8 @@ export const de: typeof en = {
       unavailable: 'Wetterdaten nicht verfügbar',
       locationDenied: 'Der Standortzugriff wurde abgelehnt. Du kannst die Stadt manuell festlegen.',
       locationFailed: 'Dein Standort konnte nicht ermittelt werden. Versuche es erneut oder lege die Stadt manuell fest.',
-      loading: 'Wetterdaten werden geladen...',
+      refresh: 'Aktualisieren',
+    loading: 'Wetterdaten werden geladen...',
       // WMO weather codes as reported by Open-Meteo.
       conditions: {
         '0': 'Klar',
@@ -311,6 +313,20 @@ export const de: typeof en = {
       openInNewTab: 'In neuem Tab öffnen',
       editShortcut: 'Verknüpfung bearbeiten',
       columns: 'Spalten',
+    },
+    quickaccess: {
+      title: 'Schnellzugriff',
+      desc: 'Meistbesuchte Seiten und kürzlich geschlossene Tabs mit einem Klick – ohne Einrichtung, nichts verlässt den Browser.',
+      topSites: 'Meistbesucht',
+      recentlyClosed: 'Kürzlich geschlossen',
+      emptyTopSites: 'Chrome kennt noch keine meistbesuchten Seiten. Surfe ein wenig, dann erscheinen sie hier.',
+      emptyRecentlyClosed: 'Keine kürzlich geschlossenen Tabs.',
+      defaultView: 'Öffnen mit',
+      maxItems: 'Anzahl Einträge',
+      viewMode: 'Darstellung',
+      list: 'Liste',
+      grid: 'Raster',
+      openInNewTab: 'In neuem Tab öffnen',
     },
     qrcode: {
       title: 'QR-Code',
