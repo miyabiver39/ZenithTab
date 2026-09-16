@@ -21,8 +21,10 @@ const RSS_XML = `<?xml version="1.0"?>
   </channel>
 </rss>`;
 
+// Re-spying an already spied function returns the same spy, so clear the
+// call history each time a test swaps the response.
 function mockFetch(body = RSS_XML, ok = true, status = 200) {
-  return vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+  return vi.spyOn(globalThis, 'fetch').mockClear().mockResolvedValue({
     ok,
     status,
     statusText: ok ? 'OK' : 'Error',
