@@ -36,7 +36,7 @@ export const WidgetConfigModal: React.FC = () => {
       setTitle(getLocalizedWidgetTitle(targetWidget, t));
       setConfig({ ...targetWidget.config });
     }
-  }, [targetWidget]);
+  }, [targetWidget, t]);
 
   if (!targetWidget) return null;
 

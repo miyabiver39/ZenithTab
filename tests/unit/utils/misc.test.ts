@@ -98,7 +98,8 @@ describe('utils/date', () => {
 
 describe('utils/cn', () => {
   it('clsx + tailwind-merge で後勝ちマージすること', () => {
-    expect(cn('p-2', false && 'hidden', 'p-4')).toBe('p-4');
+    const hidden = false as boolean;
+    expect(cn('p-2', hidden && 'hidden', 'p-4')).toBe('p-4');
     expect(cn('text-sm', { 'font-bold': true, italic: false })).toBe('text-sm font-bold');
   });
 });

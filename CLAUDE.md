@@ -8,6 +8,7 @@ ZenithTab(ゼニスタブ)は Manifest V3 の新しいタブ拡張です。ア�
 2. **コミット**: Conventional Commits(`feat:` `fix:` `refactor:` `test:` `docs:` `chore:`)。本文には「何が問題で、なぜこの形にしたか」を書く。
 3. **完了条件**(必ず両方を実行して緑にしてから報告する):
    ```bash
+   npm run lint
    npm run typecheck
    npm run test:run
    ```
