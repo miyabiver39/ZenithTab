@@ -315,6 +315,8 @@ export const fr: typeof en = {
       columns: 'Colonnes',
     },
     quickaccess: {
+      permissionNeeded: 'L\'accès rapide a besoin de l\'autorisation de lire vos sites fréquents et onglets récemment fermés. Rien ne quitte votre navigateur.',
+      grantAccess: 'Autoriser l\'accès rapide',
       title: 'Accès rapide',
       desc: 'Vos sites les plus visités et onglets récemment fermés en un clic ; rien à configurer, rien ne quitte le navigateur.',
       topSites: 'Sites fréquents',

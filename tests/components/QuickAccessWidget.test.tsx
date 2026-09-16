@@ -48,6 +48,27 @@ describe('quickAccessService', () => {
     expect(await quickAccessService.getRecentlyClosed()).toEqual([]);
   });
 
+  it('拡張内で権限未許可（API名前空間なし）の場合はモックではなく空配列を返すこと', async () => {
+    delete (chromeMock as any).topSites;
+    delete (chromeMock as any).sessions;
+    try {
+      expect(await quickAccessService.getTopSites()).toEqual([]);
+      expect(await quickAccessService.getRecentlyClosed()).toEqual([]);
+      expect(await quickAccessService.restoreSession('s-1')).toBe(false);
+    } finally {
+      (chromeMock as any).topSites = { get: vi.fn(() => Promise.resolve([])) };
+      (chromeMock as any).sessions = { getRecentlyClosed: vi.fn(() => Promise.resolve([])), restore: vi.fn() };
+    }
+  });
+
+  it('hasPermission / requestPermission が topSites と sessions をまとめて問い合わせること', async () => {
+    expect(await quickAccessService.hasPermission()).toBe(true);
+    expect(chromeMock.permissions.contains).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
+    chromeMock.permissions.request.mockResolvedValue(false);
+    expect(await quickAccessService.requestPermission()).toBe(false);
+    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
+  });
+
   it('Chrome API が無い環境ではモックデータにフォールバックし、復元は false になること', async () => {
     uninstallChromeMock();
     expect((await quickAccessService.getTopSites(2)).map((s) => s.title)).toEqual(['YouTube', 'Wikipedia']);
@@ -95,6 +116,32 @@ describe('QuickAccessWidget', () => {
     await waitFor(() => expect(screen.getByText('No recently closed tabs.')).toBeInTheDocument());
   });
 
+  it('権限が未許可なら案内と許可ボタンを出し、許可後にデータを読み込むこと', async () => {
+    chromeMock.permissions.contains.mockResolvedValue(false);
+    render(<QuickAccessWidget widgetId="qa" config={base} />);
+    await waitFor(() => expect(screen.getByText('Allow Quick Access')).toBeInTheDocument());
+    expect(screen.getByText(/needs permission/)).toBeInTheDocument();
+    expect(chromeMock.topSites.get).not.toHaveBeenCalled();
+
+    chromeMock.permissions.request.mockImplementation(() => {
+      chromeMock.permissions.contains.mockResolvedValue(true);
+      return Promise.resolve(true);
+    });
+    fireEvent.click(screen.getByText('Allow Quick Access'));
+    await waitFor(() => expect(screen.getByText('YouTube')).toBeInTheDocument());
+    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
+  });
+
+  it('許可を拒否されたら案内のままであること', async () => {
+    chromeMock.permissions.contains.mockResolvedValue(false);
+    chromeMock.permissions.request.mockResolvedValue(false);
+    render(<QuickAccessWidget widgetId="qa" config={base} />);
+    await waitFor(() => screen.getByText('Allow Quick Access'));
+    fireEvent.click(screen.getByText('Allow Quick Access'));
+    await waitFor(() => expect(chromeMock.permissions.request).toHaveBeenCalled());
+    expect(screen.getByText('Allow Quick Access')).toBeInTheDocument();
+  });
+
   it('更新ボタンで再取得すること', async () => {
     render(<QuickAccessWidget widgetId="qa" config={base} />);
     await waitFor(() => screen.getByText('YouTube'));
@@ -123,6 +170,8 @@ describe('Quick Access in catalogue and config modal', () => {
 
     const added = useDashboardStore.getState().widgets.at(-1)!;
     expect(added.type).toBe('quickaccess');
+    // Adding the widget is the user gesture that asks for its optional permissions.
+    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
     expect(added.config).toMatchObject({ defaultView: 'topSites', maxItems: 8, viewMode: 'list', openInNewTab: true });
 
     act(() => useDashboardStore.getState().openSettingsModal('editWidget', added.id));

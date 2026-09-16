@@ -315,6 +315,8 @@ export const de: typeof en = {
       columns: 'Spalten',
     },
     quickaccess: {
+      permissionNeeded: 'Der Schnellzugriff braucht die Berechtigung, meistbesuchte Seiten und kürzlich geschlossene Tabs zu lesen. Nichts verlässt den Browser.',
+      grantAccess: 'Schnellzugriff erlauben',
       title: 'Schnellzugriff',
       desc: 'Meistbesuchte Seiten und kürzlich geschlossene Tabs mit einem Klick – ohne Einrichtung, nichts verlässt den Browser.',
       topSites: 'Meistbesucht',

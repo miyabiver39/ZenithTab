@@ -315,6 +315,8 @@ export const ko: typeof en = {
       columns: '표시 열 수',
     },
     quickaccess: {
+      permissionNeeded: '빠른 접근을 사용하려면 자주 방문한 사이트와 최근 닫은 탭을 읽을 권한이 필요합니다. 데이터는 브라우저 밖으로 나가지 않습니다.',
+      grantAccess: '빠른 접근 허용',
       title: '빠른 접근',
       desc: '자주 방문한 사이트와 최근 닫은 탭을 한 번에. 설정 불필요, 데이터는 브라우저 밖으로 나가지 않습니다.',
       topSites: '자주 방문',

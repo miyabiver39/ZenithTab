@@ -73,8 +73,8 @@ English
 | bookmarks | permissions | Reads the user's Chrome bookmark folders to display and search bookmarks inside the Bookmarks widget without uploading URLs anywhere. |
 | alarms | permissions | Schedules background refresh cycles via chrome.alarms in the service worker for weather forecast and RSS feed updates. |
 | favicon | permissions | Fetches site favicons for bookmark entries and launcher shortcuts using the browser's built-in favicon utility. |
-| topSites | permissions | Lists the sites Chrome already ranks as most visited so the Quick Access widget can offer them as one-click shortcuts; read locally, never uploaded. |
-| sessions | permissions | Lists and restores the user's recently closed tabs from inside the Quick Access widget; data stays in the browser. |
+| topSites | optional_permissions | Requested only when the user adds the Quick Access widget: lists the sites Chrome already ranks as most visited so they can be offered as one-click shortcuts; read locally, never uploaded. |
+| sessions | optional_permissions | Requested only when the user adds the Quick Access widget: lists and restores the user's recently closed tabs; data stays in the browser. |
 | geolocation | permissions | Determines user coordinates only when the user clicks "Detect current location" in the Weather widget to configure local weather forecasts. |
 | https://api.open-meteo.com/* | host_permissions | Fetches weather forecasts and current meteorological conditions for the user's chosen location without requiring API keys. |
 | https://geocoding-api.open-meteo.com/* | host_permissions | Converts city names entered by the user into geographic coordinates for weather forecasting. |

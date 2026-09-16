@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { TrendingUp, History, RefreshCw, Globe } from 'lucide-react';
+import { TrendingUp, History, RefreshCw, Globe, ShieldCheck } from 'lucide-react';
 import { QuickAccessWidgetConfig, QuickAccessView } from '../../../types/widget';
 import { quickAccessService, QuickAccessItem } from '../../../services/quickAccessService';
 import { useTranslation } from '../../../i18n/i18n';
@@ -21,9 +21,17 @@ export const QuickAccessWidget: React.FC<QuickAccessWidgetProps> = ({ config }) 
   const [view, setView] = useState<QuickAccessView>(defaultView);
   const [items, setItems] = useState<QuickAccessItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [needsPermission, setNeedsPermission] = useState(false);
 
   const load = useCallback(async () => {
     setIsLoading(true);
+    if (!(await quickAccessService.hasPermission())) {
+      setNeedsPermission(true);
+      setItems([]);
+      setIsLoading(false);
+      return;
+    }
+    setNeedsPermission(false);
     const result =
       view === 'topSites' ? await quickAccessService.getTopSites(maxItems) : await quickAccessService.getRecentlyClosed(maxItems);
     setItems(result);
@@ -33,6 +41,12 @@ export const QuickAccessWidget: React.FC<QuickAccessWidgetProps> = ({ config }) 
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Must stay a direct click handler: Chrome only shows the permission
+  // prompt while the user gesture is in scope.
+  const handleGrant = async () => {
+    if (await quickAccessService.requestPermission()) void load();
+  };
 
   // Reopen a closed tab in place when Chrome lets us; otherwise the anchor's
   // own href does the job.
@@ -85,7 +99,19 @@ export const QuickAccessWidget: React.FC<QuickAccessWidgetProps> = ({ config }) 
       </div>
 
       <div className="flex-1 overflow-y-auto mt-2 pr-1 custom-scrollbar">
-        {isLoading && items.length === 0 ? (
+        {needsPermission ? (
+          <div className="h-full flex flex-col items-center justify-center text-center p-4 gap-2">
+            <ShieldCheck size={20} className="text-sky-400" />
+            <p className="text-[11px] text-slate-300 leading-relaxed">{t.widgets.quickaccess.permissionNeeded}</p>
+            <button
+              type="button"
+              onClick={() => void handleGrant()}
+              className="text-xs px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded-lg transition-colors font-medium"
+            >
+              {t.widgets.quickaccess.grantAccess}
+            </button>
+          </div>
+        ) : isLoading && items.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400 animate-pulse">{t.common.loading}</div>
         ) : items.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400 text-center p-4">{emptyText}</div>

@@ -315,6 +315,8 @@ export const zh: typeof en = {
       columns: '显示列数',
     },
     quickaccess: {
+      permissionNeeded: '快速访问需要读取常用网站和最近关闭标签页的权限。数据不会离开浏览器。',
+      grantAccess: '允许快速访问',
       title: '快速访问',
       desc: '一键打开常用网站和最近关闭的标签页，无需设置，数据不离开浏览器。',
       topSites: '常用网站',

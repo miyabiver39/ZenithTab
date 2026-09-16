@@ -50,6 +50,34 @@ export async function hasHostPermission(url: string): Promise<boolean> {
 }
 
 /**
+ * True when every listed API permission (e.g. "topSites") is granted.
+ * Optional API permissions are the same story as optional hosts: declared
+ * in `optional_permissions`, requested only when a feature needs them, so
+ * an update never adds a warning that would disable the extension.
+ */
+export async function hasApiPermissions(permissions: string[]): Promise<boolean> {
+  const api = permissionsApi();
+  if (!api) return true;
+  try {
+    return await api.contains({ permissions });
+  } catch {
+    return false;
+  }
+}
+
+/** Asks for API permissions. MUST run synchronously from a user gesture. */
+export async function requestApiPermissions(permissions: string[]): Promise<boolean> {
+  const api = permissionsApi();
+  if (!api) return true;
+  try {
+    return await api.request({ permissions });
+  } catch (error) {
+    console.warn('[ZenithTab] Permission request failed:', error);
+    return false;
+  }
+}
+
+/**
  * Asks the user to grant access to a single origin.
  * MUST be called synchronously from a user gesture (click / form submit),
  * otherwise Chrome rejects the request without showing a prompt.

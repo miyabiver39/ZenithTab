@@ -315,6 +315,8 @@ export const es: typeof en = {
       columns: 'Columnas',
     },
     quickaccess: {
+      permissionNeeded: 'Acceso rápido necesita permiso para leer tus sitios más visitados y pestañas cerradas recientemente. Nada sale de tu navegador.',
+      grantAccess: 'Permitir Acceso rápido',
       title: 'Acceso rápido',
       desc: 'Tus sitios más visitados y pestañas cerradas recientemente a un clic; sin configuración y nada sale del navegador.',
       topSites: 'Más visitados',

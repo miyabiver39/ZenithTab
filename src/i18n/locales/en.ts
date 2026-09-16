@@ -313,6 +313,8 @@ export const en = {
       columns: 'Columns',
     },
     quickaccess: {
+      permissionNeeded: 'Quick Access needs permission to read your most-visited sites and recently closed tabs. Nothing leaves your browser.',
+      grantAccess: 'Allow Quick Access',
       title: 'Quick Access',
       desc: 'Your most-visited sites and recently closed tabs, one click away — no setup, nothing leaves the browser.',
       topSites: 'Top sites',

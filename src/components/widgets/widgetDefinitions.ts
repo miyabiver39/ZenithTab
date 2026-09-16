@@ -34,6 +34,12 @@ export interface WidgetDefinitionMeta {
   urlKeys?: string[];
   /** Extra import-time cleanup for nested structures (item lists, engines…). */
   sanitizeConfig?: (config: Record<string, any>, isSafeUrl: (value: unknown) => boolean) => Record<string, any>;
+  /**
+   * Chrome API permissions from manifest `optional_permissions` this widget
+   * needs. Requested when the widget is added (a user gesture); the widget
+   * itself offers a "grant" button until they are given.
+   */
+  optionalPermissions?: string[];
 }
 
 const KNOWN_BUILTIN_ENGINES = ['google', 'bing', 'duckduckgo', 'github', 'youtube', 'chatgpt'];
@@ -184,6 +190,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
   quickaccess: {
     type: 'quickaccess',
     size: { w: 4, h: 4, minW: 3, minH: 3 },
+    optionalPermissions: ['topSites', 'sessions'],
     createDefaultConfig: () => ({
       defaultView: 'topSites',
       maxItems: 8,

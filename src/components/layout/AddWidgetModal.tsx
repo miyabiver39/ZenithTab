@@ -3,13 +3,24 @@ import { Plus } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { useTranslation } from '../../i18n/i18n';
-import { WIDGET_REGISTRY } from '../widgets/registry';
+import { WIDGET_REGISTRY, WidgetDefinition } from '../widgets/registry';
+import { requestApiPermissions } from '../../utils/permissions';
 
 /** The "Add Widget" catalogue — one card per registry entry, in registry order. */
 export const AddWidgetModal: React.FC = () => {
   const { activeSettingsModal, closeSettingsModal, addWidget } = useDashboardStore();
   const { t } = useTranslation();
   const isOpen = activeSettingsModal === 'addWidget';
+
+  const handleAdd = (widget: WidgetDefinition) => {
+    // Ask for any optional permission right here, inside the click, so
+    // Chrome shows its prompt; the widget also offers a "grant" button in
+    // case the user dismisses it.
+    if (widget.optionalPermissions?.length) {
+      void requestApiPermissions(widget.optionalPermissions);
+    }
+    addWidget(widget.type);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={closeSettingsModal} title={t.common.addWidget} maxWidth="2xl">
@@ -37,7 +48,7 @@ export const AddWidgetModal: React.FC = () => {
               </div>
 
               <button
-                onClick={() => addWidget(widget.type)}
+                onClick={() => handleAdd(widget)}
                 className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-sky-500/20 hover:bg-sky-500 text-sky-200 hover:text-white border border-sky-400/30 text-xs font-medium transition-all shadow-sm group-hover:shadow-sky-500/20"
               >
                 <Plus size={13} />

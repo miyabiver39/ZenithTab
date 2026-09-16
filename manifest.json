@@ -9,7 +9,9 @@
     "bookmarks",
     "alarms",
     "favicon",
-    "geolocation",
+    "geolocation"
+  ],
+  "optional_permissions": [
     "topSites",
     "sessions"
   ],

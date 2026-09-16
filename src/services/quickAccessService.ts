@@ -1,5 +1,12 @@
 import { getFaviconUrl } from '../utils/favicon';
 import { isSafeHttpUrl } from '../utils/url';
+import { hasApiPermissions, requestApiPermissions } from '../utils/permissions';
+
+/**
+ * Declared as optional permissions and requested when the widget is added,
+ * so shipping this widget never disabled anyone's extension on update.
+ */
+export const QUICK_ACCESS_PERMISSIONS = ['topSites', 'sessions'];
 
 /**
  * "Quick Access" data: Chrome's own most-visited list and recently closed
@@ -42,6 +49,11 @@ function hostnameTitle(url: string): string {
   }
 }
 
+// Inside the extension the API namespaces only exist once the optional
+// permission is granted, so "namespace missing" means "not granted" there
+// and "not an extension" everywhere else (dev server, tests).
+const inExtension = () => typeof chrome !== 'undefined' && !!chrome.runtime?.id;
+
 function topSitesApi(): typeof chrome.topSites | undefined {
   if (typeof chrome === 'undefined') return undefined;
   const api = (chrome as any).topSites;
@@ -55,9 +67,18 @@ function sessionsApi(): typeof chrome.sessions | undefined {
 }
 
 export const quickAccessService = {
+  hasPermission(): Promise<boolean> {
+    return hasApiPermissions(QUICK_ACCESS_PERMISSIONS);
+  },
+
+  /** Must be called from a click handler — Chrome only prompts inside a user gesture. */
+  requestPermission(): Promise<boolean> {
+    return requestApiPermissions(QUICK_ACCESS_PERMISSIONS);
+  },
+
   async getTopSites(limit = 8): Promise<QuickAccessItem[]> {
     const api = topSitesApi();
-    if (!api) return MOCK_TOP_SITES.slice(0, limit).map(withFavicon);
+    if (!api) return inExtension() ? [] : MOCK_TOP_SITES.slice(0, limit).map(withFavicon);
 
     try {
       const sites = await api.get();
@@ -75,7 +96,7 @@ export const quickAccessService = {
 
   async getRecentlyClosed(limit = 8): Promise<QuickAccessItem[]> {
     const api = sessionsApi();
-    if (!api) return MOCK_RECENTLY_CLOSED.slice(0, limit).map(withFavicon);
+    if (!api) return inExtension() ? [] : MOCK_RECENTLY_CLOSED.slice(0, limit).map(withFavicon);
 
     try {
       // Chrome caps maxResults at 25; ask for a few more than we show so
