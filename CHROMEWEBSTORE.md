@@ -105,6 +105,7 @@ English
 
 | Version | Date | Changes Summary |
 |---------|------|-----------------|
+| 1.7.1 | 2026-09-16 | Dependency updates (npm audit clean) and accessibility attributes across settings forms and widgets; lint, E2E and user-event test infrastructure. |
 | 1.7.0 | 2026-09-16 | Schema versioning with a forward migration pipeline and pre-migration snapshots; upgrade regression tests against real 1.2/1.3/1.5 data; read-time hydration of settings written by older versions; unlimitedStorage; background feed refresh covers every page. |
 | 1.6.1 | 2026-09-16 | Quick Access permissions (topSites, sessions) moved to optional_permissions and requested when the widget is added, so updates never disable the extension; widget registry refactor (no behaviour change). |
 | 1.6.0 | 2026-09-16 | New Quick Access widget: most-visited sites and recently closed tabs, list or grid, one-click restore, Chrome-internal APIs only. |

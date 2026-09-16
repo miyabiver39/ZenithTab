@@ -11,6 +11,18 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 
 ### Fixed
 
+## [1.7.1] - 2026-09-16
+
+### Changed
+- 依存関係の更新: `fast-xml-parser` 5.11 / `vitest` 5(`npm audit` の moderate 4件を解消。実害のあるものはなし)(#19)
+- 設定画面のチェックボックス・スライダー・ファイル入力、アイコンのみの削除ボタン、検索エンジンのドロップダウン、集中タイマーの進捗バーにアクセシビリティ属性(aria-label / role)を追加(#18)
+
+### Internal
+- ESLint(flat config + typescript-eslint + react-hooks)を導入し CI で実行(#15)
+- Playwright E2E を `npm run test:e2e` 一発で実行可能にし、9 シナリオを CI の別ジョブで実行(#16)
+- コンポーネントテストを `@testing-library/user-event` とロールベースのクエリに移行(#18)
+- CHROMEWEBSTORE.md の Version History と CHANGELOG のリンク定義を 1.7.0 まで同期(#17)
+
 ## [1.7.0] - 2026-09-16
 
 ### Added
@@ -181,7 +193,8 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 - 初回リリース(Manifest V3)
 - i18n(多言語)対応、現在地ベースの天気表示、検索・ポモドーロ・Todo ウィジェット
 
-[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/miyabiver39/ZenithTab/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.6.1...v1.7.0
 [1.6.1]: https://github.com/miyabiver39/ZenithTab/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.5.0...v1.6.0
