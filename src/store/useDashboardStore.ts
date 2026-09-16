@@ -20,6 +20,7 @@ import { rssService } from '../services/rssService';
 import { getTranslation, resolveLanguageCode, Translation } from '../i18n/resolve';
 import { getDefaultWidgetTitle } from '../utils/widgetTitle';
 import { getRegionalDockItems, getRegionalShortcuts, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
+import { uniqueId } from '../utils/id';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -334,7 +335,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   addWidget: (type, customTitle, initialConfig) => {
     const { widgets, layouts, appearance } = get();
-    const id = `widget-${type}-${Date.now()}`;
+    const id = uniqueId(`widget-${type}`);
     const size = DEFAULT_WIDGET_SIZES[type];
     const languageSetting = appearance.language || 'auto';
     const defaultConfig = DEFAULT_CONFIGS_BY_TYPE(getTranslation(languageSetting), resolveLanguageCode(languageSetting))[type];
@@ -466,7 +467,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   addDockItem: (item) => {
     const { dockItems } = get();
-    const newItem: DockItem = { ...item, id: `dock-${Date.now()}` };
+    const newItem: DockItem = { ...item, id: uniqueId('dock') };
     const updated = [...dockItems, newItem];
     set({ dockItems: updated });
     storageService.saveDockItems(updated);
@@ -512,7 +513,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   addKeyboardShortcut: (item) => {
     const { keyboardShortcuts } = get();
-    const newItem: KeyboardShortcutBinding = { ...item, id: `kbd-${Date.now()}` };
+    const newItem: KeyboardShortcutBinding = { ...item, id: uniqueId('kbd') };
     const updated = [...keyboardShortcuts, newItem];
     set({ keyboardShortcuts: updated });
     storageService.saveKeyboardShortcuts(updated);
@@ -549,7 +550,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
 
   addPage: (options) => {
     const { pages, pageData, activePageId, widgets, layouts } = get();
-    const newId = `page-${Date.now()}`;
+    const newId = uniqueId('page');
     // Empty name = "unnamed", rendered as the localized "Page N".
     const newPageMeta: DashboardPageMeta = { id: newId, name: options?.name?.trim() || '' };
     const newPages = [...pages, newPageMeta];

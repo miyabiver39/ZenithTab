@@ -3,6 +3,7 @@ import { Plus, Trash2, CheckCircle2, Circle } from 'lucide-react';
 import { TodoWidgetConfig, TodoItem } from '../../../types/widget';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
+import { uniqueId } from '../../../utils/id';
 
 interface TodoWidgetProps {
   widgetId: string;
@@ -22,7 +23,7 @@ export const TodoWidget: React.FC<TodoWidgetProps> = ({ widgetId, config }) => {
     if (!inputVal.trim()) return;
 
     const newItem: TodoItem = {
-      id: `todo-${Date.now()}`,
+      id: uniqueId('todo'),
       text: inputVal.trim(),
       completed: false,
       createdAt: Date.now(),

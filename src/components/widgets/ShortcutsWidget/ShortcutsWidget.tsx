@@ -7,6 +7,7 @@ import { useTranslation } from '../../../i18n/i18n';
 import { Modal } from '../../common/Modal';
 import { Input } from '../../common/Input';
 import { Button } from '../../common/Button';
+import { uniqueId } from '../../../utils/id';
 
 interface ShortcutsWidgetProps {
   widgetId: string;
@@ -75,7 +76,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
       updateWidgetConfig(widgetId, { items: updated });
     } else {
       const newItem: ShortcutItem = {
-        id: `shortcut-${Date.now()}`,
+        id: uniqueId('shortcut'),
         title: title.trim(),
         url: formattedUrl,
         category: category.trim() || undefined,

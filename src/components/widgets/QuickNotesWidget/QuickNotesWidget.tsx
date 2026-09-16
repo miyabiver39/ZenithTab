@@ -4,6 +4,7 @@ import { QuickNotesWidgetConfig, NotePage } from '../../../types/widget';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 import { cn } from '../../../utils/cn';
+import { uniqueId } from '../../../utils/id';
 
 interface QuickNotesWidgetProps {
   widgetId: string;
@@ -56,7 +57,7 @@ export const QuickNotesWidget: React.FC<QuickNotesWidgetProps> = ({ widgetId, co
   const handleAddPage = () => {
     if (pages.length >= MAX_PAGES) return;
     const newPage: NotePage = {
-      id: `page-${Date.now()}`,
+      id: uniqueId('page'),
       title: `${t.widgets.notes.pageLabel} ${pages.length + 1}`,
       content: '',
     };

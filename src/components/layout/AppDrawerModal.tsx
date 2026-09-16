@@ -8,6 +8,7 @@ import { ShortcutItem } from '../../types/widget';
 import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
+import { uniqueId } from '../../utils/id';
 
 export const AppDrawerModal: React.FC = () => {
   const { isAppDrawerOpen, toggleAppDrawer, widgets, updateWidgetConfig } = useDashboardStore();
@@ -46,7 +47,7 @@ export const AppDrawerModal: React.FC = () => {
     }
 
     const newItem: ShortcutItem = {
-      id: `shortcut-${Date.now()}`,
+      id: uniqueId('shortcut'),
       title: newTitle.trim(),
       url: formattedUrl,
       category: newCategory.trim() || undefined,

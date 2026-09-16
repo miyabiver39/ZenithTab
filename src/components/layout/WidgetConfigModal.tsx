@@ -12,6 +12,7 @@ import { getLocalizedWidgetTitle } from '../../utils/widgetTitle';
 import { useTranslation } from '../../i18n/i18n';
 import { CustomSearchEngine, SearchEngine, GoogleNewsMode, GoogleNewsTopic } from '../../types/widget';
 import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../utils/searchEnginePresets';
+import { uniqueId } from '../../utils/id';
 
 const BUILTIN_ENGINE_LABELS: Record<SearchEngine, string> = {
   google: 'Google',
@@ -105,7 +106,7 @@ export const WidgetConfigModal: React.FC = () => {
   const addCustomEngine = (name: string, urlTemplate: string, icon?: string) => {
     if (!name || !urlTemplate.includes('{query}')) return;
     const newEngine: CustomSearchEngine = {
-      id: `custom-${Date.now()}`,
+      id: uniqueId('custom'),
       name,
       urlTemplate,
       icon: icon || undefined,
