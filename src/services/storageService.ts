@@ -10,6 +10,7 @@ import { storageGet, storageSet } from '../utils/storage';
 import { rssService } from './rssService';
 import { en } from '../i18n/locales/en';
 import type { Translation } from '../i18n/resolve';
+import { getRegionalDockItems, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
 
 /** The running extension version, so exports carry the version that produced them. */
 function currentVersion(): string {
@@ -128,18 +129,13 @@ export const DEFAULT_PAGES: DashboardPageMeta[] = [{ id: DEFAULT_PAGE_ID, name: 
 export interface DashboardDefaults {
   widgets: DashboardWidget[];
   layouts: ResponsiveLayouts;
+  /** Region-appropriate Quick Dock; omitted → the global (English) preset. */
+  dockItems?: DockItem[];
 }
 
-// General-audience picks — the previous GitHub / Dev Docs set assumed a
-// developer at the keyboard, which most new-tab users are not.
-export const DEFAULT_DOCK_ITEMS: DockItem[] = [
-  { id: 'dock-google', label: 'Google', url: 'https://google.com', icon: 'globe', openInNewTab: true },
-  { id: 'dock-youtube', label: 'YouTube', url: 'https://youtube.com', icon: 'video', openInNewTab: true },
-  { id: 'dock-gmail', label: 'Gmail', url: 'https://mail.google.com', icon: 'mail', openInNewTab: true },
-  { id: 'dock-chatgpt', label: 'ChatGPT', url: 'https://chatgpt.com', icon: 'sparkles', openInNewTab: true },
-  { id: 'dock-maps', label: 'Google Maps', url: 'https://maps.google.com', icon: 'map', openInNewTab: true },
-  { id: 'dock-wikipedia', label: 'Wikipedia', url: 'https://www.wikipedia.org', icon: 'book', openInNewTab: true },
-];
+// Language-neutral fallback (the global preset). First launch and reset
+// go through the regional presets with the real language instead.
+export const DEFAULT_DOCK_ITEMS: DockItem[] = getRegionalDockItems('en');
 
 export const DEFAULT_WALLPAPER: WallpaperSettings = {
   source: 'unsplash',
@@ -227,9 +223,9 @@ export function createDefaultWidgets(t: Translation, lang = 'en'): DashboardWidg
       type: 'weather',
       title: t.widgets.weather.title,
       config: {
-        city: 'Tokyo',
-        latitude: 35.6762,
-        longitude: 139.6503,
+        // The region's largest city until the user picks their own or
+        // taps "detect location".
+        ...getRegionalWeatherDefault(lang),
         unit: 'celsius',
         showForecast: true,
       },
@@ -346,9 +342,9 @@ export const storageService = {
     await storageSet(STORAGE_KEYS.APPEARANCE, appearance);
   },
 
-  async getDockItems(): Promise<DockItem[]> {
-    const items = await storageGet<DockItem[]>(STORAGE_KEYS.DOCK_ITEMS, DEFAULT_DOCK_ITEMS);
-    return items || DEFAULT_DOCK_ITEMS;
+  async getDockItems(fallback: DockItem[] = DEFAULT_DOCK_ITEMS): Promise<DockItem[]> {
+    const items = await storageGet<DockItem[]>(STORAGE_KEYS.DOCK_ITEMS, fallback);
+    return items || fallback;
   },
 
   async saveDockItems(items: DockItem[]): Promise<void> {
@@ -518,7 +514,7 @@ export const storageService = {
     await this.saveLayouts(defaults.layouts);
     await this.saveWallpaper(DEFAULT_WALLPAPER);
     await this.saveAppearance(DEFAULT_APPEARANCE);
-    await this.saveDockItems(DEFAULT_DOCK_ITEMS);
+    await this.saveDockItems(defaults.dockItems || DEFAULT_DOCK_ITEMS);
     await this.saveKeyboardShortcuts(DEFAULT_KEYBOARD_SHORTCUTS);
     await this.savePages(DEFAULT_PAGES);
     await this.savePageData({ [DEFAULT_PAGE_ID]: { widgets: defaults.widgets, layouts: defaults.layouts } });

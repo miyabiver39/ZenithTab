@@ -19,6 +19,7 @@ import { wallpaperService } from '../services/wallpaperService';
 import { rssService } from '../services/rssService';
 import { getTranslation, resolveLanguageCode, Translation } from '../i18n/resolve';
 import { getDefaultWidgetTitle } from '../utils/widgetTitle';
+import { getRegionalDockItems, getRegionalShortcuts, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
 
@@ -120,19 +121,9 @@ const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: num
   qrcode: { w: 3, h: 4, minW: 3, minH: 3 },
 };
 
-// General-audience picks (no GitHub / Figma / Notion): the typical new-tab
-// user is not a developer, and every entry is editable anyway.
-export const DEFAULT_SHORTCUTS = [
-  { id: 'app-chatgpt', title: 'ChatGPT', url: 'https://chatgpt.com', category: 'AI & Tools' },
-  { id: 'app-youtube', title: 'YouTube', url: 'https://youtube.com', category: 'Media' },
-  { id: 'app-gmail', title: 'Gmail', url: 'https://mail.google.com', category: 'Productivity' },
-  { id: 'app-maps', title: 'Google Maps', url: 'https://maps.google.com', category: 'Productivity' },
-  { id: 'app-twitter', title: 'X (Twitter)', url: 'https://x.com', category: 'Social' },
-  { id: 'app-instagram', title: 'Instagram', url: 'https://instagram.com', category: 'Social' },
-  { id: 'app-spotify', title: 'Spotify', url: 'https://open.spotify.com', category: 'Media' },
-  { id: 'app-netflix', title: 'Netflix', url: 'https://netflix.com', category: 'Media' },
-  { id: 'app-wikipedia', title: 'Wikipedia', url: 'https://www.wikipedia.org', category: 'Reference' },
-];
+// Language-neutral fallback (the global preset); a new Shortcuts widget
+// gets the preset for the dashboard's current language instead.
+export const DEFAULT_SHORTCUTS = getRegionalShortcuts('en');
 
 // Built per call because the notes / todo / news defaults carry
 // user-visible text in the dashboard's current language.
@@ -143,7 +134,7 @@ const DEFAULT_CONFIGS_BY_TYPE = (t: Translation, lang: string): Record<WidgetTyp
     openInNewTab: true,
   },
   shortcuts: {
-    items: DEFAULT_SHORTCUTS,
+    items: getRegionalShortcuts(lang),
     columns: 4,
     openInNewTab: true,
     viewMode: 'grid',
@@ -155,9 +146,7 @@ const DEFAULT_CONFIGS_BY_TYPE = (t: Translation, lang: string): Record<WidgetTyp
     is24Hour: true,
   },
   weather: {
-    city: 'Tokyo',
-    latitude: 35.6762,
-    longitude: 139.6503,
+    ...getRegionalWeatherDefault(lang),
     unit: 'celsius',
     showForecast: true,
   },
@@ -209,7 +198,7 @@ const DEFAULT_CONFIGS_BY_TYPE = (t: Translation, lang: string): Record<WidgetTyp
 function localizedDefaults(languageSetting: AppearanceSettings['language']) {
   const lang = resolveLanguageCode(languageSetting);
   const widgets = createDefaultWidgets(getTranslation(languageSetting), lang);
-  return { widgets, layouts: createDefaultLayouts(widgets) };
+  return { widgets, layouts: createDefaultLayouts(widgets), dockItems: getRegionalDockItems(lang) };
 }
 
 /**
@@ -290,7 +279,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
           await Promise.all([
             withTimeout(storageService.getPagesState(defaults), 5000, fallbackPagesState),
             withTimeout(storageService.getWallpaper(), 5000, DEFAULT_WALLPAPER),
-            withTimeout(storageService.getDockItems(), 5000, DEFAULT_DOCK_ITEMS),
+            withTimeout(storageService.getDockItems(defaults.dockItems), 5000, defaults.dockItems),
             withTimeout(storageService.getKeyboardShortcuts(), 5000, DEFAULT_KEYBOARD_SHORTCUTS),
           ]);
 
@@ -645,7 +634,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
         storageService.getPagesState(defaults),
         storageService.getWallpaper(),
         storageService.getAppearance(),
-        storageService.getDockItems(),
+        storageService.getDockItems(current.dockItems),
         storageService.getKeyboardShortcuts(),
       ]);
 
@@ -676,8 +665,8 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   },
 
   resetToDefault: async () => {
-    const { widgets: defaultWidgets, layouts: defaultLayouts } = localizedDefaults(get().appearance.language);
-    await storageService.resetDashboard({ widgets: defaultWidgets, layouts: defaultLayouts });
+    const { widgets: defaultWidgets, layouts: defaultLayouts, dockItems: defaultDock } = localizedDefaults(get().appearance.language);
+    await storageService.resetDashboard({ widgets: defaultWidgets, layouts: defaultLayouts, dockItems: defaultDock });
     set({
       pages: DEFAULT_PAGES,
       activePageId: DEFAULT_PAGE_ID,
@@ -686,7 +675,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
       layouts: defaultLayouts,
       wallpaper: DEFAULT_WALLPAPER,
       appearance: DEFAULT_APPEARANCE,
-      dockItems: DEFAULT_DOCK_ITEMS,
+      dockItems: defaultDock,
       keyboardShortcuts: DEFAULT_KEYBOARD_SHORTCUTS,
       isEditMode: false,
       activeSettingsModal: null,

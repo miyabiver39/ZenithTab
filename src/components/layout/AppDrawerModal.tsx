@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Plus, Globe, X, ExternalLink } from 'lucide-react';
-import { useDashboardStore, DEFAULT_SHORTCUTS } from '../../store/useDashboardStore';
+import { useDashboardStore } from '../../store/useDashboardStore';
+import { getRegionalShortcuts } from '../../config/defaults/regionalPresets';
 import { getFaviconUrl } from '../../utils/favicon';
 import { useTranslation } from '../../i18n/i18n';
 import { ShortcutItem } from '../../types/widget';
@@ -10,7 +11,7 @@ import { Button } from '../common/Button';
 
 export const AppDrawerModal: React.FC = () => {
   const { isAppDrawerOpen, toggleAppDrawer, widgets, updateWidgetConfig } = useDashboardStore();
-  const { t } = useTranslation();
+  const { t, activeLanguageCode } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
@@ -23,7 +24,7 @@ export const AppDrawerModal: React.FC = () => {
 
   // Find shortcuts widget config or fallback to default
   const shortcutsWidget = widgets.find((w) => w.type === 'shortcuts');
-  const items: ShortcutItem[] = shortcutsWidget?.config?.items || DEFAULT_SHORTCUTS;
+  const items: ShortcutItem[] = shortcutsWidget?.config?.items || getRegionalShortcuts(activeLanguageCode);
 
   const categories = ['all', ...Array.from(new Set(items.map((it) => it.category).filter(Boolean))) as string[]];
 

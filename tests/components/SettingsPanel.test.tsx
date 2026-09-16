@@ -205,7 +205,7 @@ describe('AppDrawerModal', () => {
     expect(screen.queryByText('YouTube')).not.toBeInTheDocument();
     fireEvent.change(screen.getByPlaceholderText('Search apps & tools...'), { target: { value: '' } });
 
-    fireEvent.click(screen.getByText('Media', { selector: 'button' }));
+    fireEvent.click(screen.getByText('Entertainment', { selector: 'button' }));
     expect(screen.getByText('Netflix')).toBeInTheDocument();
     expect(screen.queryByText('Gmail')).not.toBeInTheDocument();
 
