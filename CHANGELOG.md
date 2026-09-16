@@ -11,6 +11,20 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 
 ### Fixed
 
+## [1.4.1] - 2026-09-16
+
+### Added
+- 国・言語別の初期プリセット(#9)。初回起動時と「デフォルトに戻す」実行時に、ブラウザ/設定言語に応じたクイックドック(6件)・ショートカット(12件)・天気の初期都市を生成
+  - 日本語: Google, YouTube, X, Yahoo! JAPAN, Amazon.co.jp, ChatGPT / 楽天市場, Instagram, Gmail, Google マップ, Spotify, Netflix など(東京)
+  - 韓国語: Naver, YouTube, Coupang, ChatGPT, Instagram, Google / Daum, 배달의민족, Musinsa など(ソウル)
+  - 中国語: Bilibili, YouTube, Baidu, Taobao, Xiaohongshu, ChatGPT / 微博, 京东, 知乎 など(上海)
+  - 英語・スペイン語・フランス語・ドイツ語: Google, YouTube, 各地域版 Amazon, ChatGPT, Google Maps, Wikipedia + 地域ポータル(NY / マドリード / パリ / ベルリン)
+  - 未対応言語はグローバル(英語)プリセットにフォールバック
+- カテゴリ名を各言語の日常的な表現に(「SNS・動画」「ショッピング」「AI・ツール」など)
+
+### Changed
+- 既存ユーザーの保存済みドック・ショートカットはそのまま維持(プリセットは未保存時とリセット時のみ適用)
+
 ## [1.4.0] - 2026-09-16
 
 ### Added
