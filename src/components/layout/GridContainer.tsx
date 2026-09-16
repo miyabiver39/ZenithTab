@@ -2,19 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { WidgetWrapper } from '../widgets/WidgetWrapper';
-import { ClockWidget } from '../widgets/ClockWidget/ClockWidget';
-import { WeatherWidget } from '../widgets/WeatherWidget/WeatherWidget';
-import { BookmarkWidget } from '../widgets/BookmarkWidget/BookmarkWidget';
-import { RssFeedWidget } from '../widgets/RssFeedWidget/RssFeedWidget';
-import { IframeWidget } from '../widgets/IframeWidget/IframeWidget';
-import { QuickNotesWidget } from '../widgets/QuickNotesWidget/QuickNotesWidget';
-import { SearchWidget } from '../widgets/SearchWidget/SearchWidget';
-import { PomodoroWidget } from '../widgets/PomodoroWidget/PomodoroWidget';
-import { TodoWidget } from '../widgets/TodoWidget/TodoWidget';
-import { ShortcutsWidget } from '../widgets/ShortcutsWidget/ShortcutsWidget';
-import { QrCodeWidget } from '../widgets/QrCodeWidget/QrCodeWidget';
-import { QuickAccessWidget } from '../widgets/QuickAccessWidget/QuickAccessWidget';
+import { getWidgetDefinition } from '../widgets/registry';
 import { EmptyPage } from './EmptyPage';
+import { DashboardWidget } from '../../types/widget';
 import { cn } from '../../utils/cn';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -49,39 +39,17 @@ export const GridContainer: React.FC = () => {
     });
   }, []);
 
-  const renderWidgetContent = (widget: any) => {
-    switch (widget.type) {
-      case 'search':
-        return <SearchWidget widgetId={widget.id} config={widget.config} />;
-      case 'shortcuts':
-        return <ShortcutsWidget widgetId={widget.id} config={widget.config} />;
-      case 'clock':
-        return <ClockWidget config={widget.config} />;
-      case 'weather':
-        return <WeatherWidget widgetId={widget.id} config={widget.config} />;
-      case 'bookmarks':
-        return <BookmarkWidget config={widget.config} />;
-      case 'rss':
-        return <RssFeedWidget widgetId={widget.id} config={widget.config} />;
-      case 'pomodoro':
-        return <PomodoroWidget config={widget.config} />;
-      case 'todo':
-        return <TodoWidget widgetId={widget.id} config={widget.config} />;
-      case 'iframe':
-        return <IframeWidget config={widget.config} />;
-      case 'notes':
-        return <QuickNotesWidget widgetId={widget.id} config={widget.config} />;
-      case 'qrcode':
-        return <QrCodeWidget widgetId={widget.id} config={widget.config} />;
-      case 'quickaccess':
-        return <QuickAccessWidget widgetId={widget.id} config={widget.config} />;
-      default:
-        return (
-          <div className="flex items-center justify-center h-full text-slate-400 text-xs">
-            Unknown widget
-          </div>
-        );
+  const renderWidgetContent = (widget: DashboardWidget) => {
+    const definition = getWidgetDefinition(widget.type);
+    if (!definition) {
+      return (
+        <div className="flex items-center justify-center h-full text-slate-400 text-xs">
+          Unknown widget
+        </div>
+      );
     }
+    const Component = definition.Component;
+    return <Component widgetId={widget.id} config={widget.config} />;
   };
 
   return (

@@ -44,7 +44,9 @@ zenith-tab/
 │   ├── components/
 │   │   ├── common/            # Button, Modal, Input, GlassCard
 │   │   ├── layout/            # Header, Dock, GridContainer, SettingsPanel, Modals
-│   │   └── widgets/           # Clock, Weather, Bookmarks, RSS, Search, Pomodoro, Todo, Iframe, Notes
+│   │   └── widgets/           # One folder per widget (<Name>Widget.tsx + <Name>Config.tsx)
+│   │       ├── registry.tsx       # Widget registry: icon, component, config form, beforeSave
+│   │       └── widgetDefinitions.ts # React-free part: size, default config, URL keys (used by store/storage)
 │   ├── hooks/                 # useBookmarks, useRssFeed, useWeather
 │   ├── i18n/                  # Localization engine and translation dictionaries
 │   ├── services/              # storageService, rssService, weatherService, bookmarkService, wallpaperService
@@ -119,5 +121,7 @@ git push origin main --tags
    - Always register translation keys in `src/i18n/locales/` (`en.ts`, `ja.ts`, etc.) and access them via `const { t } = useTranslation();`.
 3. **Storage & Fallbacks**:
    - Use `storageService` or `storageGet`/`storageSet` from `src/utils/storage.ts` so code works seamlessly in both Chrome Extension runtime and standard browser/testing environments.
-4. **Testing Mandatory**:
+4. **Widget Registry**:
+   - Never add a `switch (widget.type)`. New widgets register in `widgetDefinitions.ts` + `registry.tsx` (see CLAUDE.md §2).
+5. **Testing Mandatory**:
    - Run `npm run test:run` and `npm run typecheck` after every modification.

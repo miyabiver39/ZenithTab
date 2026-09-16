@@ -1,131 +1,22 @@
 import React from 'react';
-import {
-  Clock,
-  CloudSun,
-  Bookmark,
-  Newspaper,
-  Globe,
-  FileText,
-  Search,
-  Timer,
-  CheckSquare,
-  Plus,
-  QrCode,
-  History,
-} from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { useDashboardStore } from '../../store/useDashboardStore';
-import { WidgetType } from '../../types/widget';
 import { useTranslation } from '../../i18n/i18n';
+import { WIDGET_REGISTRY } from '../widgets/registry';
 
+/** The "Add Widget" catalogue — one card per registry entry, in registry order. */
 export const AddWidgetModal: React.FC = () => {
   const { activeSettingsModal, closeSettingsModal, addWidget } = useDashboardStore();
   const { t } = useTranslation();
-
   const isOpen = activeSettingsModal === 'addWidget';
-
-  const WIDGET_CATALOG: Array<{
-    type: WidgetType;
-    title: string;
-    description: string;
-    icon: React.ElementType;
-    color: string;
-  }> = [
-    {
-      type: 'search',
-      title: t.widgets.search.title,
-      description: t.widgets.search.desc,
-      icon: Search,
-      color: 'text-sky-400 bg-sky-400/10 border-sky-400/20',
-    },
-    {
-      type: 'shortcuts',
-      title: t.widgets.shortcuts.title,
-      description: t.widgets.shortcuts.desc,
-      icon: Globe,
-      color: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
-    },
-    {
-      type: 'clock',
-      title: t.widgets.clock.title,
-      description: t.widgets.clock.desc,
-      icon: Clock,
-      color: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20',
-    },
-    {
-      type: 'weather',
-      title: t.widgets.weather.title,
-      description: t.widgets.weather.desc,
-      icon: CloudSun,
-      color: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
-    },
-    {
-      type: 'bookmarks',
-      title: t.widgets.bookmarks.title,
-      description: t.widgets.bookmarks.desc,
-      icon: Bookmark,
-      color: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
-    },
-    {
-      type: 'rss',
-      title: t.widgets.rss.title,
-      description: t.widgets.rss.desc,
-      icon: Newspaper,
-      color: 'text-violet-400 bg-violet-400/10 border-violet-400/20',
-    },
-    {
-      type: 'pomodoro',
-      title: t.widgets.pomodoro.title,
-      description: t.widgets.pomodoro.desc,
-      icon: Timer,
-      color: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
-    },
-    {
-      type: 'todo',
-      title: t.widgets.todo.title,
-      description: t.widgets.todo.desc,
-      icon: CheckSquare,
-      color: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
-    },
-    {
-      type: 'notes',
-      title: t.widgets.notes.title,
-      description: t.widgets.notes.desc,
-      icon: FileText,
-      color: 'text-pink-400 bg-pink-400/10 border-pink-400/20',
-    },
-    {
-      type: 'iframe',
-      title: t.widgets.iframe.title,
-      description: t.widgets.iframe.desc,
-      icon: Globe,
-      color: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-    },
-    {
-      type: 'quickaccess',
-      title: t.widgets.quickaccess.title,
-      description: t.widgets.quickaccess.desc,
-      icon: History,
-      color: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
-    },
-    {
-      type: 'qrcode',
-      title: t.widgets.qrcode.title,
-      description: t.widgets.qrcode.desc,
-      icon: QrCode,
-      color: 'text-fuchsia-400 bg-fuchsia-400/10 border-fuchsia-400/20',
-    },
-  ];
-
-  const handleAdd = (type: WidgetType) => {
-    addWidget(type);
-  };
 
   return (
     <Modal isOpen={isOpen} onClose={closeSettingsModal} title={t.common.addWidget} maxWidth="2xl">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {WIDGET_CATALOG.map((widget) => {
+        {WIDGET_REGISTRY.map((widget) => {
           const Icon = widget.icon;
+          const copy = t.widgets[widget.type];
           return (
             <div
               key={widget.type}
@@ -137,16 +28,16 @@ export const AddWidgetModal: React.FC = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-xs font-semibold text-white group-hover:text-sky-300 transition-colors">
-                    {widget.title}
+                    {copy.title}
                   </h4>
                   <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed line-clamp-2">
-                    {widget.description}
+                    {copy.desc}
                   </p>
                 </div>
               </div>
 
               <button
-                onClick={() => handleAdd(widget.type)}
+                onClick={() => addWidget(widget.type)}
                 className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-sky-500/20 hover:bg-sky-500 text-sky-200 hover:text-white border border-sky-400/30 text-xs font-medium transition-all shadow-sm group-hover:shadow-sky-500/20"
               >
                 <Plus size={13} />

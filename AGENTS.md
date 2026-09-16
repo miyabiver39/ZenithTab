@@ -1,6 +1,6 @@
 # ZenithTab (ゼニスタブ) - AI Agent Operational Rules & Context
 
-See [AGENT.md](./AGENT.md) for full architecture and developer specifications.
+See [AGENT.md](./AGENT.md) for full architecture and developer specifications, and [CLAUDE.md](./CLAUDE.md) for the step-by-step rules AI assistants follow (widget registry, i18n, release).
 
 ## Core Rules for AI Assistants
 1. **GitHub Flow**: Always branch from `main` (`feature/...`, `fix/...`), ensure tests pass, and keep `main` production-ready.

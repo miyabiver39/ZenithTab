@@ -8,6 +8,7 @@ import {
 } from '../types/settings';
 import { storageGet, storageSet } from '../utils/storage';
 import { rssService } from './rssService';
+import { getWidgetMeta, GENERIC_URL_KEYS } from '../components/widgets/widgetDefinitions';
 import { en } from '../i18n/locales/en';
 import type { Translation } from '../i18n/resolve';
 import { getRegionalDockItems, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
@@ -40,48 +41,26 @@ function isSafeUrl(value: unknown): boolean {
   }
 }
 
-const URL_CONFIG_KEYS = ['feedUrl', 'url', 'targetUrl', 'iconUrl'] as const;
-
 function sanitizeWidget(raw: any): DashboardWidget | null {
   if (!raw || typeof raw !== 'object') return null;
   if (typeof raw.id !== 'string' || typeof raw.type !== 'string') return null;
   if (!raw.layout || typeof raw.layout !== 'object') return null;
 
-  const config: Record<string, any> = { ...(raw.config || {}) };
+  let config: Record<string, any> = { ...(raw.config || {}) };
 
-  for (const key of URL_CONFIG_KEYS) {
+  // Top-level URL fields: the widget's own keys from the registry, plus the
+  // generic set so unknown/old types are still scrubbed.
+  const meta = getWidgetMeta(raw.type);
+  for (const key of new Set([...GENERIC_URL_KEYS, ...(meta?.urlKeys || [])])) {
     if (config[key] !== undefined && !isSafeUrl(config[key])) {
       delete config[key];
     }
   }
 
-  // Shortcut and app-drawer entries are nested one level deeper.
-  if (Array.isArray(config.items)) {
-    config.items = config.items.filter(
-      (item: any) => !item || typeof item.url !== 'string' || isSafeUrl(item.url)
-    );
-  }
-
-  // Custom search engines: the URL is a template (contains a literal
-  // "{query}" placeholder), so validate it with that placeholder swapped
-  // for a harmless value rather than as a URL directly.
-  if (Array.isArray(config.customEngines)) {
-    config.customEngines = config.customEngines.filter(
-      (engine: any) =>
-        engine &&
-        typeof engine.id === 'string' &&
-        typeof engine.name === 'string' &&
-        typeof engine.urlTemplate === 'string' &&
-        engine.urlTemplate.includes('{query}') &&
-        isSafeUrl(engine.urlTemplate.replace('{query}', 'q'))
-    );
-  }
-
-  const KNOWN_BUILTIN_ENGINES = ['google', 'bing', 'duckduckgo', 'github', 'youtube', 'chatgpt'];
-  if (Array.isArray(config.hiddenBuiltinEngines)) {
-    config.hiddenBuiltinEngines = config.hiddenBuiltinEngines.filter(
-      (key: unknown) => typeof key === 'string' && KNOWN_BUILTIN_ENGINES.includes(key)
-    );
+  // Nested structures (shortcut items, custom search engines…) are the
+  // widget's business — each registry entry brings its own cleanup.
+  if (meta?.sanitizeConfig) {
+    config = meta.sanitizeConfig(config, isSafeUrl);
   }
 
   return {

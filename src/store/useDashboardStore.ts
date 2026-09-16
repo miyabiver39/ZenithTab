@@ -16,10 +16,10 @@ import {
   DEFAULT_PAGE_ID,
 } from '../services/storageService';
 import { wallpaperService } from '../services/wallpaperService';
-import { rssService } from '../services/rssService';
-import { getTranslation, resolveLanguageCode, Translation } from '../i18n/resolve';
+import { getTranslation, resolveLanguageCode } from '../i18n/resolve';
 import { getDefaultWidgetTitle } from '../utils/widgetTitle';
-import { getRegionalDockItems, getRegionalShortcuts, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
+import { getRegionalDockItems, getRegionalShortcuts } from '../config/defaults/regionalPresets';
+import { WIDGET_DEFINITIONS } from '../components/widgets/widgetDefinitions';
 import { uniqueId } from '../utils/id';
 
 const EMPTY_LAYOUTS: ResponsiveLayouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
@@ -108,99 +108,9 @@ interface DashboardState {
   exportConfig: () => Promise<string>;
 }
 
-const DEFAULT_WIDGET_SIZES: Record<WidgetType, { w: number; h: number; minW: number; minH: number }> = {
-  search: { w: 8, h: 1, minW: 4, minH: 1 },
-  shortcuts: { w: 6, h: 3, minW: 3, minH: 2 },
-  clock: { w: 4, h: 2, minW: 2, minH: 2 },
-  weather: { w: 4, h: 2, minW: 3, minH: 2 },
-  bookmarks: { w: 4, h: 4, minW: 3, minH: 3 },
-  rss: { w: 4, h: 4, minW: 3, minH: 3 },
-  pomodoro: { w: 4, h: 3, minW: 3, minH: 2 },
-  todo: { w: 4, h: 3, minW: 3, minH: 2 },
-  iframe: { w: 6, h: 4, minW: 3, minH: 3 },
-  notes: { w: 4, h: 4, minW: 3, minH: 2 },
-  qrcode: { w: 3, h: 4, minW: 3, minH: 3 },
-  quickaccess: { w: 4, h: 4, minW: 3, minH: 3 },
-};
-
 // Language-neutral fallback (the global preset); a new Shortcuts widget
 // gets the preset for the dashboard's current language instead.
 export const DEFAULT_SHORTCUTS = getRegionalShortcuts('en');
-
-// Built per call because the notes / todo / news defaults carry
-// user-visible text in the dashboard's current language.
-const DEFAULT_CONFIGS_BY_TYPE = (t: Translation, lang: string): Record<WidgetType, Record<string, any>> => ({
-  search: {
-    defaultEngine: 'google',
-    showEngineSelector: true,
-    openInNewTab: true,
-  },
-  shortcuts: {
-    items: getRegionalShortcuts(lang),
-    columns: 4,
-    openInNewTab: true,
-    viewMode: 'grid',
-  },
-  clock: {
-    style: 'digital',
-    showSeconds: true,
-    showDate: true,
-    is24Hour: true,
-  },
-  weather: {
-    ...getRegionalWeatherDefault(lang),
-    unit: 'celsius',
-    showForecast: true,
-  },
-  bookmarks: {
-    viewMode: 'grid',
-    showFavicons: true,
-    columns: 4,
-  },
-  rss: {
-    feedUrl: rssService.buildGoogleNewsTopStoriesUrl(lang),
-    isGoogleNews: true,
-    googleNewsMode: 'headlines',
-    searchQuery: '',
-    maxItems: 8,
-    refreshIntervalMinutes: 30,
-    showThumbnail: true,
-    showDate: true,
-    showDescription: true,
-  },
-  pomodoro: {
-    focusDurationMinutes: 25,
-    shortBreakDurationMinutes: 5,
-    longBreakDurationMinutes: 15,
-    autoStartBreaks: false,
-  },
-  todo: {
-    items: [
-      { id: '1', text: t.defaults.todoExplore, completed: false, createdAt: Date.now() },
-      { id: '2', text: t.defaults.todoCustomize, completed: true, createdAt: Date.now() - 1000 },
-    ],
-  },
-  iframe: {
-    url: 'https://developer.mozilla.org',
-    title: 'MDN Web Docs',
-    allowScroll: true,
-  },
-  notes: {
-    content: t.defaults.notes,
-    fontSize: 'base',
-    fontFamily: 'sans',
-  },
-  qrcode: {
-    mode: 'url',
-    value: '',
-  },
-  quickaccess: {
-    defaultView: 'topSites',
-    maxItems: 8,
-    viewMode: 'list',
-    openInNewTab: true,
-  },
-});
 
 /** Widgets/layouts for a fresh page-1 in the given language setting. */
 function localizedDefaults(languageSetting: AppearanceSettings['language']) {
@@ -343,9 +253,10 @@ export const useDashboardStore = create<DashboardState>((set, get) => {
   addWidget: (type, customTitle, initialConfig) => {
     const { widgets, layouts, appearance } = get();
     const id = uniqueId(`widget-${type}`);
-    const size = DEFAULT_WIDGET_SIZES[type];
+    const definition = WIDGET_DEFINITIONS[type];
+    const size = definition.size;
     const languageSetting = appearance.language || 'auto';
-    const defaultConfig = DEFAULT_CONFIGS_BY_TYPE(getTranslation(languageSetting), resolveLanguageCode(languageSetting))[type];
+    const defaultConfig = definition.createDefaultConfig(getTranslation(languageSetting), resolveLanguageCode(languageSetting));
     const config = { ...defaultConfig, ...initialConfig };
 
     // Stock titles are recognised by WidgetWrapper and re-localized on
