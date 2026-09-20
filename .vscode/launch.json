@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug new tab (dev server)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173/newtab.html",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "npm: dev",
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-profile",
+      "sourceMaps": true
+    },
+    {
+      "name": "Debug extension (dist)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "chrome://newtab",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "npm: build",
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-profile",
+      "runtimeArgs": [
+        "--load-extension=${workspaceFolder}/dist",
+        "--disable-extensions-except=${workspaceFolder}/dist"
+      ],
+      "sourceMaps": true
+    },
+    {
+      "name": "Vitest: current file",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${relativeFile}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Vitest: all",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+      "args": ["run"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}

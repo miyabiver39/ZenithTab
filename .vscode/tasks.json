@@ -1,0 +1,93 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: dev",
+      "detail": "Vite dev server on http://localhost:5173 (CRXJS dev mode — stop it before `npm run package`)",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^(.*):(\\d+):(\\d+): (.*)$", "file": 1, "line": 2, "column": 3, "message": 4 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE v",
+          "endsPattern": "(Local:|ready in)"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" }
+    },
+    {
+      "label": "npm: build",
+      "detail": "tsc + vite build → dist/ (Ctrl+Shift+B)",
+      "type": "npm",
+      "script": "build",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$tsc"],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "npm: typecheck",
+      "type": "npm",
+      "script": "typecheck",
+      "problemMatcher": ["$tsc"],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "npm: lint",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "npm: test:run",
+      "detail": "Vitest, single run",
+      "type": "npm",
+      "script": "test:run",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "npm: test (watch)",
+      "type": "npm",
+      "script": "test",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" }
+    },
+    {
+      "label": "npm: test:e2e",
+      "detail": "Playwright (starts the dev server itself)",
+      "type": "npm",
+      "script": "test:e2e",
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true }
+    },
+    {
+      "label": "check all",
+      "detail": "lint → typecheck → test:run (the CLAUDE.md completion gate)",
+      "dependsOrder": "sequence",
+      "dependsOn": ["npm: lint", "npm: typecheck", "npm: test:run"],
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: verify",
+      "detail": "Check the packed manifest against dist/",
+      "type": "npm",
+      "script": "verify",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: package",
+      "detail": "Write release/zenith-tab-v<version>.zip (make sure the dev server is NOT running)",
+      "type": "npm",
+      "script": "package",
+      "dependsOn": ["npm: build"],
+      "problemMatcher": []
+    }
+  ]
+}

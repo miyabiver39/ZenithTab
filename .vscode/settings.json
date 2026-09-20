@@ -1,0 +1,40 @@
+{
+  // Use the repo's TypeScript so editor diagnostics match `npm run typecheck`.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // ESLint (flat config) with fix-on-save; formatting stays with ESLint/Prettier defaults.
+  "eslint.useFlatConfig": true,
+  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // The repo has mixed CRLF/LF files; keep whatever each file already uses.
+  "files.eol": "auto",
+  "files.insertFinalNewline": true,
+
+  // Vitest extension (test explorer + inline run/debug).
+  "vitest.rootConfig": "vitest.config.ts",
+
+  // Tailwind IntelliSense for cn()/clsx class strings.
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "'([^']*)'"],
+    ["clsx\\(([^)]*)\\)", "'([^']*)'"]
+  ],
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "dist": true,
+    "coverage": true,
+    "release": true,
+    "test-results": true,
+    "playwright-report": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "dist/**": true,
+    "coverage/**": true,
+    "release/**": true
+  }
+}
