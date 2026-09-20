@@ -7,6 +7,7 @@ import { CustomSearchEngine, SearchEngine } from '../../../types/widget';
 import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../../utils/searchEnginePresets';
 import { uniqueId } from '../../../utils/id';
 import type { ConfigFormProps } from '../configForm';
+import { isSafeHttpUrl } from '../../../utils/url';
 import { SmartInputExamples } from './SmartInputExamples';
 
 const BUILTIN_ENGINE_LABELS: Record<SearchEngine, string> = {
@@ -19,6 +20,32 @@ const BUILTIN_ENGINE_LABELS: Record<SearchEngine, string> = {
 };
 const BUILTIN_ENGINE_KEYS = Object.keys(BUILTIN_ENGINE_LABELS) as SearchEngine[];
 
+/**
+ * A custom engine's URL template, cleaned for use: trimmed, `https://`
+ * assumed when no scheme was typed, and rejected (null) unless it holds
+ * a `{query}` placeholder and is an http(s) URL once that is filled in.
+ * The same rule runs on import (widgetDefinitions.sanitizeConfig); this
+ * is the copy that guards the settings form and the save path.
+ */
+export function normalizeSearchUrlTemplate(input: string): string | null {
+  const trimmed = input.trim();
+  if (!trimmed.includes('{query}')) return null;
+  const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  return isSafeHttpUrl(withScheme.replace('{query}', 'q')) ? withScheme : null;
+}
+
+/** Save-time double check: drop any custom engine whose template isn't a safe http(s) URL. */
+export function prepareSearchConfigForSave(config: Record<string, any>): Record<string, any> {
+  if (!Array.isArray(config.customEngines)) return config;
+  const customEngines = config.customEngines
+    .map((engine: CustomSearchEngine) => {
+      const urlTemplate = typeof engine?.urlTemplate === 'string' ? normalizeSearchUrlTemplate(engine.urlTemplate) : null;
+      return urlTemplate ? { ...engine, urlTemplate } : null;
+    })
+    .filter((engine: CustomSearchEngine | null): engine is CustomSearchEngine => engine !== null);
+  return { ...config, customEngines };
+}
+
 /** Default engine, built-in/custom engine management, presets. */
 export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) => {
   const { t } = useTranslation();
@@ -27,11 +54,12 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
   const [newEngineIcon, setNewEngineIcon] = useState('');
 
   const addCustomEngine = (name: string, urlTemplate: string, icon?: string) => {
-    if (!name || !urlTemplate.includes('{query}')) return;
+    const safeTemplate = normalizeSearchUrlTemplate(urlTemplate);
+    if (!name || !safeTemplate) return;
     const newEngine: CustomSearchEngine = {
       id: uniqueId('custom'),
       name,
-      urlTemplate,
+      urlTemplate: safeTemplate,
       icon: icon || undefined,
     };
     const customEngines: CustomSearchEngine[] = [...(config.customEngines || []), newEngine];
@@ -109,6 +137,8 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
     ...customEngines.map((e) => ({ id: e.id, label: e.name })),
   ];
   const urlMissingQuery = newEngineUrl.trim().length > 0 && !newEngineUrl.includes('{query}');
+  // Only http(s) may ever reach window.open / location.href.
+  const urlUnsafe = newEngineUrl.includes('{query}') && normalizeSearchUrlTemplate(newEngineUrl) === null;
 
   return (
     <div className="space-y-4">
@@ -286,12 +316,13 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
         {urlMissingQuery && (
           <p className="text-[11px] text-amber-400 leading-relaxed">{t.widgets.search.customEngineMissingQuery}</p>
         )}
+        {urlUnsafe && <p className="text-[11px] text-rose-400 leading-relaxed">{t.widgets.search.customEngineUnsafeUrl}</p>}
         <Button
           type="button"
           variant="secondary"
           size="sm"
           onClick={handleAddCustomEngine}
-          disabled={!newEngineName.trim() || !newEngineUrl.includes('{query}')}
+          disabled={!newEngineName.trim() || normalizeSearchUrlTemplate(newEngineUrl) === null}
           className="gap-1.5"
         >
           <Plus size={14} />

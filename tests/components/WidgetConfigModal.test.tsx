@@ -3,6 +3,7 @@ import { render, screen, act, waitFor } from '@testing-library/react';
 import { setupUser, literal } from '../helpers/user';
 import { WidgetConfigModal } from '../../src/components/layout/WidgetConfigModal';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
+import { prepareSearchConfigForSave } from '../../src/components/widgets/SearchWidget/SearchConfig';
 import { weatherService, GeolocationFailure } from '../../src/services/weatherService';
 import { resetDashboardStore } from '../helpers/store';
 import { chromeMock } from '../helpers/chrome';
@@ -61,6 +62,44 @@ describe('WidgetConfigModal', () => {
     await save(user);
     expect(widget('widget-clock-1').config.timezone).toBe('UTC');
     expect(widget('widget-clock-1').config.is24Hour).toBe(false);
+  });
+
+  it('検索: 危険なスキームのカスタムエンジンは追加も保存もできず、スキーム省略は https が補われること (#51)', async () => {
+    const user = setupUser();
+    openFor('widget-search-1');
+    const name = screen.getByPlaceholderText('Name');
+    const urlInput = screen.getByPlaceholderText('https://example.com/search?q={query}');
+    const addButton = () => screen.getByRole('button', { name: /Add Engine/ });
+
+    await user.type(name, literal('Evil'));
+    await user.type(urlInput, literal('javascript:alert({query})'));
+    expect(screen.getByText(/Only http:\/\/ or https:\/\//)).toBeInTheDocument();
+    expect(addButton()).toBeDisabled();
+
+    await user.clear(urlInput);
+    await user.type(urlInput, literal('data:text/html,{query}'));
+    expect(addButton()).toBeDisabled();
+
+    // No scheme → https:// is assumed.
+    await user.clear(urlInput);
+    await user.type(urlInput, literal('search.example/?q={query}'));
+    expect(addButton()).toBeEnabled();
+    await user.click(addButton());
+
+    await save(user);
+    const cfg = widget('widget-search-1').config;
+    expect(cfg.customEngines.map((e: any) => e.urlTemplate)).toEqual(['https://search.example/?q={query}']);
+
+    // Even a template smuggled into a draft is dropped by the save hook.
+    expect(
+      prepareSearchConfigForSave({
+        customEngines: [
+          { id: 'a', name: 'Ok', urlTemplate: 'https://ok.example/?q={query}' },
+          { id: 'b', name: 'Smuggled', urlTemplate: 'javascript:{query}' },
+          { id: 'c', name: 'NoQuery', urlTemplate: 'https://ok.example/' },
+        ],
+      }).customEngines.map((e: any) => e.id)
+    ).toEqual(['a']);
   });
 
   it('天気: 都市・座標・現在地検出を扱えること', async () => {

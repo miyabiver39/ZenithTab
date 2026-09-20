@@ -305,6 +305,7 @@ export const fr: typeof en = {
       customEngineName: 'Nom',
       customEngineHint: 'Utilisez {query} comme espace réservé pour le texte recherché, ex. https://example.com/search?q={query}',
       customEngineMissingQuery: '« Ajouter un moteur » est désactivé car l\'URL ne contient pas l\'espace réservé {query} — voir l\'indication ci-dessous.',
+      customEngineUnsafeUrl: 'Seules les adresses http:// ou https:// peuvent servir d\'URL de recherche.',
       customEngineAdd: 'Ajouter un moteur',
       builtinEngine: 'Intégré',
       hiddenEngines: 'Supprimés (cliquez pour restaurer) :',

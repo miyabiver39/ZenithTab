@@ -305,6 +305,7 @@ export const es: typeof en = {
       customEngineName: 'Nombre',
       customEngineHint: 'Usa {query} como marcador para el texto de búsqueda, p. ej. https://example.com/search?q={query}',
       customEngineMissingQuery: '«Añadir motor» está desactivado porque la URL no incluye el marcador {query} — consulta la pista de abajo.',
+      customEngineUnsafeUrl: 'Solo se pueden usar direcciones http:// o https:// como URL de búsqueda.',
       customEngineAdd: 'Añadir motor',
       builtinEngine: 'Integrado',
       hiddenEngines: 'Eliminados (haz clic para restaurar):',

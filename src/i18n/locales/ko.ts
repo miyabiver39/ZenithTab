@@ -305,6 +305,7 @@ export const ko: typeof en = {
       customEngineName: '이름',
       customEngineHint: '검색어 자리표시자로 {query}를 사용하세요. 예: https://example.com/search?q={query}',
       customEngineMissingQuery: 'URL에 {query} 자리표시자가 없어서 "엔진 추가"를 누를 수 없어요. 아래 안내를 확인하세요.',
+      customEngineUnsafeUrl: '검색 URL에는 http:// 또는 https:// 주소만 사용할 수 있어요.',
       customEngineAdd: '엔진 추가',
       builtinEngine: '기본 제공',
       hiddenEngines: '삭제됨 (클릭해서 복원):',

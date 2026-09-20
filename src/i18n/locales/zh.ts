@@ -305,6 +305,7 @@ export const zh: typeof en = {
       customEngineName: '名称',
       customEngineHint: '使用 {query} 作为搜索关键词的占位符,例如 https://example.com/search?q={query}',
       customEngineMissingQuery: '「添加引擎」按钮已禁用,因为 URL 中缺少 {query} 占位符——请参见下方提示。',
+      customEngineUnsafeUrl: '搜索网址只能使用 http:// 或 https:// 地址。',
       customEngineAdd: '添加引擎',
       builtinEngine: '内置',
       hiddenEngines: '已移除(点击可恢复)：',

@@ -303,6 +303,7 @@ export const ja = {
       customEngineName: '名前',
       customEngineHint: '{query} を検索キーワードのプレースホルダーとして使用します。例: https://example.com/search?q={query}',
       customEngineMissingQuery: 'URLに {query} のプレースホルダーが含まれていないため「エンジンを追加」を押せません。下のヒントを参照してください。',
+      customEngineUnsafeUrl: '検索 URL に使えるのは http:// または https:// のアドレスだけです。',
       customEngineAdd: 'エンジンを追加',
       builtinEngine: '標準搭載',
       hiddenEngines: '削除済み(クリックで復元):',

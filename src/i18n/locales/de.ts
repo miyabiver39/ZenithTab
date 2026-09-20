@@ -305,6 +305,7 @@ export const de: typeof en = {
       customEngineName: 'Name',
       customEngineHint: 'Verwende {query} als Platzhalter für den Suchtext, z. B. https://example.com/search?q={query}',
       customEngineMissingQuery: '„Suchmaschine hinzufügen“ ist deaktiviert, weil der URL der Platzhalter {query} fehlt — siehe Hinweis unten.',
+      customEngineUnsafeUrl: 'Als Such-URL sind nur http://- oder https://-Adressen möglich.',
       customEngineAdd: 'Suchmaschine hinzufügen',
       builtinEngine: 'Integriert',
       hiddenEngines: 'Entfernt (zum Wiederherstellen klicken):',

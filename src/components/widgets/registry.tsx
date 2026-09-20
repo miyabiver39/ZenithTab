@@ -20,7 +20,7 @@ import { WIDGET_DEFINITIONS, WidgetDefinitionMeta } from './widgetDefinitions';
 import type { ConfigFormProps } from './configForm';
 
 import { SearchWidget } from './SearchWidget/SearchWidget';
-import { SearchConfig } from './SearchWidget/SearchConfig';
+import { SearchConfig, prepareSearchConfigForSave } from './SearchWidget/SearchConfig';
 import { ShortcutsWidget } from './ShortcutsWidget/ShortcutsWidget';
 import { ShortcutsConfig } from './ShortcutsWidget/ShortcutsConfig';
 import { ClockWidget } from './ClockWidget/ClockWidget';
@@ -77,6 +77,7 @@ export const WIDGET_REGISTRY: WidgetDefinition[] = [
     color: 'text-sky-400 bg-sky-400/10 border-sky-400/20',
     Component: SearchWidget,
     ConfigForm: SearchConfig,
+    beforeSave: (config) => prepareSearchConfigForSave(config),
   },
   {
     ...WIDGET_DEFINITIONS.shortcuts,

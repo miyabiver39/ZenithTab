@@ -303,6 +303,7 @@ export const en = {
       customEngineName: 'Name',
       customEngineHint: 'Use {query} as a placeholder for the search text, e.g. https://example.com/search?q={query}',
       customEngineMissingQuery: 'Add Engine is disabled because the URL is missing a {query} placeholder — see the hint below.',
+      customEngineUnsafeUrl: 'Only http:// or https:// addresses can be used as a search URL.',
       customEngineAdd: 'Add Engine',
       builtinEngine: 'Built-in',
       hiddenEngines: 'Removed (click to bring back):',
