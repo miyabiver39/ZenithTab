@@ -4,7 +4,7 @@
     "description": "Extension name shown in the Chrome Web Store and the extensions page."
   },
   "extDescription": {
-    "message": "위젯을 자유롭게 배치하는 새 탭 대시보드. 북마크, RSS 피드, 날씨, 다이내믹 배경화면을 지원합니다.",
+    "message": "위젯을 자유롭게 배치하는 새 탭 대시보드. 북마크, 뉴스, 날씨, 캘린더, 습관 트래커, 다이내믹 배경화면을 지원합니다.",
     "description": "Short store description, shown under the extension name."
   }
 }

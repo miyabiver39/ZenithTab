@@ -1,6 +1,6 @@
 # ZenithTab Privacy Policy
 
-**Last updated: 2026-08-24 — applies to ZenithTab v1.2.2 and later.**
+**Last updated: 2026-09-20 — applies to ZenithTab v1.10.0 and later.**
 
 ZenithTab is a local-first new tab dashboard. It has no accounts, no analytics,
 no advertising, and no backend of its own. This document describes exactly what
@@ -31,6 +31,9 @@ on your own computer inside your Chrome profile:
 | Cached RSS articles | Show a populated feed instantly |
 | Weather readings and the resolved place name | Avoid refetching on every tab |
 | Shortcut and app drawer entries | Show your launcher tiles |
+| Cached calendar feeds (the raw .ics text) | Show your upcoming events instantly |
+| Habit check-offs and countdown dates | Keep your streaks and countdowns |
+| Trash and automatic backups (copies of your own dashboard data) | Undo deletes and restore after a reset or import |
 
 None of it is synced to a server. Uninstalling the extension removes it, and
 **Settings → Reset dashboard** clears it on demand. The JSON export feature
@@ -49,6 +52,7 @@ feature you enabled:
 | `news.google.com` | The news feed widget refreshes | The keyword you configured for the feed |
 | `images.unsplash.com` | A built-in wallpaper is displayed | A standard image request |
 | The site hosting an RSS/Atom feed **you added yourself** | That feed refreshes | A standard feed request. Chrome asks for your permission for that specific site before the first fetch, and you can revoke it at any time |
+| The site hosting an iCal (.ics) calendar **you added yourself** | The calendar widget refreshes (at most every 15 minutes) | A standard request for the calendar file. As with feeds, Chrome asks for your permission for that specific site when you add it, and you can revoke it at any time |
 
 No request carries an identifier, a cookie set by ZenithTab, your browsing
 history, your bookmarks, or the contents of your notes.
@@ -81,17 +85,29 @@ Favicons come exclusively from Chrome's own local favicon store. ZenithTab does
 not use any third-party favicon service, so the addresses of your bookmarks and
 shortcuts never leave your machine.
 
-## 7. Children
+## 7. Quick Access (most-visited sites and recently closed tabs)
+
+The `topSites`, `sessions` and `tabs` permissions are optional. They are not
+granted at install time; Chrome asks for them only when you add the Quick
+Access widget (and for `tabs` when you first open its "Recently closed" view —
+without it Chrome withholds the URLs and titles of closed tabs, so the list
+would be empty). The widget reads the lists each time it is shown, renders
+them locally, and lets you reopen a closed tab in place. Nothing from these
+lists is stored, aggregated, or transmitted, and ZenithTab never enumerates or
+monitors your open tabs. Removing the widget or revoking the permissions in
+`chrome://extensions` stops the reads entirely.
+
+## 8. Children
 
 ZenithTab is a general-purpose productivity tool. It does not knowingly collect
 information from anyone, of any age.
 
-## 8. Changes
+## 9. Changes
 
 Material changes to this policy will be published in this file and reflected in
 the extension's Chrome Web Store listing before they take effect.
 
-## 9. Contact
+## 10. Contact
 
 Questions or concerns: <miyabi.ver39@gmail.com>, or open an issue at
 <https://github.com/miyabiver39/ZenithTab/issues>.
@@ -124,6 +140,9 @@ ZenithTab が記憶する情報はすべて、お使いのパソコンの Chrome
 - RSS記事のキャッシュ
 - 天気の取得結果と地名
 - ショートカット／アプリドロワーの登録内容
+- カレンダーのキャッシュ（取得した .ics の内容）
+- 習慣トラッカーのチェック記録とカウントダウンの日付
+- ごみ箱と自動バックアップ（ダッシュボードのデータ自身の複製）
 
 これらがサーバーへ同期されることはありません。拡張機能をアンインストールすれば削除され、
 「設定 → ダッシュボードをリセット」でいつでも消去できます。JSONエクスポート機能で
@@ -141,6 +160,7 @@ ZenithTab が記憶する情報はすべて、お使いのパソコンの Chrome
 | `news.google.com` | ニュースフィードの更新時 | 設定したキーワード |
 | `images.unsplash.com` | 内蔵壁紙の表示時 | 通常の画像リクエスト |
 | **あなたが自分で追加した**RSS/Atomフィードの配信元 | そのフィードの更新時 | 通常のフィード取得リクエスト。初回取得前に、そのサイトに対する許可をChromeが確認します。許可はいつでも取り消せます |
+| **あなたが自分で追加した**iCal（.ics）カレンダーの配信元 | カレンダーウィジェットの更新時（最短15分間隔） | 通常のカレンダーファイル取得リクエスト。フィードと同様、追加した時点でそのサイトに対する許可をChromeが確認します。許可はいつでも取り消せます |
 
 いずれの通信にも、識別子、ZenithTab が発行するCookie、閲覧履歴、ブックマーク、
 メモの内容は含まれません。
@@ -165,6 +185,16 @@ ZenithTab が記憶する情報はすべて、お使いのパソコンの Chrome
 サービスは利用しないため、ブックマークやショートカットのアドレスが端末外へ出ることは
 ありません。
 
-## 7. お問い合わせ
+## 7. クイックアクセス（よく見るサイト・最近閉じたタブ）
+
+`topSites` `sessions` `tabs` は任意権限で、インストール時には付与されません。クイック
+アクセスウィジェットを追加したとき（`tabs` は「最近閉じたタブ」を初めて開いたとき。
+この権限がないと Chrome は閉じたタブの URL とタイトルを返さないため一覧が空になります）
+にのみ Chrome が確認します。ウィジェットは表示のたびに一覧を読み取ってローカルで描画し、
+閉じたタブをその場で復元できるようにするだけです。一覧の内容を保存・集計・送信することは
+なく、開いているタブを列挙したり監視したりすることもありません。ウィジェットを削除するか
+`chrome://extensions` で権限を取り消せば、読み取りは完全に止まります。
+
+## 8. お問い合わせ
 
 <miyabi.ver39@gmail.com> または <https://github.com/miyabiver39/ZenithTab/issues>

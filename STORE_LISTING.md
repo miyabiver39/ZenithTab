@@ -32,31 +32,31 @@ Chrome Web Store デベロッパーダッシュボードの各入力欄に貼り
 
 - **日本語 (ja)**:
   ```text
-  ウィジェットを自由に配置できる新しいタブのダッシュボード。ブックマーク、RSS、天気、ダイナミック壁紙に対応。
+  ウィジェットを自由に配置できる新しいタブ。ブックマーク、ニュース、天気、カレンダー、習慣トラッカー、ダイナミック壁紙に対応。
   ```
 - **英語 (en)**:
   ```text
-  A customizable new tab dashboard with drag-and-drop widgets, bookmarks, RSS feeds, weather and dynamic wallpapers.
+  A customizable new tab dashboard: drag-and-drop widgets, bookmarks, news, weather, calendar, habits and dynamic wallpapers.
   ```
 - **スペイン語 (es)**:
   ```text
-  Panel de nueva pestaña personalizable con widgets arrastrables, marcadores, RSS, clima y fondos dinámicos.
+  Panel de nueva pestaña personalizable: widgets, marcadores, noticias, clima, calendario, hábitos y fondos dinámicos.
   ```
 - **ドイツ語 (de)**:
   ```text
-  Anpassbares Neuer-Tab-Dashboard mit verschiebbaren Widgets, Lesezeichen, RSS-Feeds, Wetter und dynamischen Hintergründen.
+  Anpassbares Neuer-Tab-Dashboard: Widgets, Lesezeichen, Nachrichten, Wetter, Kalender, Gewohnheiten und dynamische Hintergründe.
   ```
 - **フランス語 (fr)**:
   ```text
-  Tableau de bord personnalisable pour le nouvel onglet : widgets, favoris, flux RSS, météo et fonds dynamiques.
+  Nouvel onglet personnalisable : widgets, favoris, actualités, météo, calendrier, habitudes et fonds d'écran dynamiques.
   ```
 - **韓国語 (ko)**:
   ```text
-  위젯을 자유롭게 배치하는 새 탭 대시보드. 북마크, RSS 피드, 날씨, 다이내믹 배경화면을 지원합니다.
+  위젯을 자유롭게 배치하는 새 탭 대시보드. 북마크, 뉴스, 날씨, 캘린더, 습관 트래커, 다이내믹 배경화면을 지원합니다.
   ```
 - **中国語簡体字 (zh_CN)**:
   ```text
-  可自由拖放组件的新标签页仪表板，支持书签、RSS 订阅、天气和动态壁纸。
+  可自由拖放组件的新标签页仪表板，支持书签、新闻、天气、日历、习惯打卡和动态壁纸。
   ```
 
 ---
@@ -83,10 +83,10 @@ ZenithTab は、新しいタブを「自分専用の作業台」に変えるダ�
 画面下部（または上部）に常時表示される最小限のショートカットバーです。表示するリンクは自由に追加・削除・並べ替えでき、アイコンは用意されたセットまたは絵文字から選べます。
 
 ■ 統合検索バー
-主要なWeb検索、コードリポジトリ検索、動画検索、AIチャットの入力先をワンクリックで切り替えられます。検索先は自分で追加することもでき、名前・検索用URL・アイコンを指定するだけで一覧に加わります。標準搭載の検索先も含め、使わないものは一覧から取り除いたり、いつでも呼び戻したりできます。キーボードの「/」キーを押すと、どこにいても検索欄にカーソルが移動します。
+主要なWeb検索、コードリポジトリ検索、動画検索、AIチャットの入力先をワンクリックで切り替えられます。検索先は自分で追加することもでき、名前・検索用URL・アイコンを指定するだけで一覧に加わります。標準搭載の検索先も含め、使わないものは一覧から取り除いたり、いつでも呼び戻したりできます。キーボードの「/」キーを押すと、どこにいても検索欄にカーソルが移動します。計算式（120*1.1）、パーセント、単位換算（10 km to mi）、進数変換、サイコロ、コイントス、乱数、候補からの選択、指定日までの日数などは、検索する前にその場で答えが表示されます。
 
 ■ キーボードショートカット
-好きなリンクにキーの組み合わせを割り当てておけば、キーボードだけで瞬時に開けます。
+好きなリンクにキーの組み合わせを割り当てておけば、キーボードだけで瞬時に開けます。組み込みのショートカット（検索欄へ移動、ページ切り替え、元に戻す／やり直す）は設定画面で一覧できます。
 
 ■ ブックマークエクスプローラー
 Chrome に保存済みのブックマークをそのまま表示します。フォルダの階層をたどり、パンくずで戻り、名前で絞り込めます。アイコンは Chrome 内部のキャッシュから取得するため、外部のアイコンサービスにアドレスが送信されることはありません。
@@ -106,14 +106,29 @@ Chrome に保存済みのブックマークをそのまま表示します。フ�
 ■ QRコード生成
 URL・電話番号・任意のテキストをその場でQRコードに変換できます。生成はすべて端末内で完結し、画像として保存したり、変換前の文字列をコピーしたりできます。
 
+■ クイックアクセス
+Chrome が把握している「よく見るサイト」と「最近閉じたタブ」を新しいタブに表示し、ワンクリックで開いたり、閉じたタブをその場で復元したりできます。必要な権限はこのウィジェットを追加したときにだけ求められ、一覧は表示のたびに読み取るだけで、保存も外部送信もしません。
+
+■ カウントダウン
+誕生日・旅行・試験・締切など、名前と日付を入れるだけで「あと何日」を表示します。毎年繰り返す記念日にも対応します。
+
+■ 習慣トラッカー
+「水を飲む」「運動する」のような日課を毎日チェックし、連続日数と直近 7 日の達成状況を表示します。
+
+■ カレンダー
+お使いのカレンダーサービスが発行する iCal（.ics）リンクを貼ると、今日から数日先までの予定を日付ごとに一覧します。複数のカレンダーを色分けでき、終日・繰り返しの予定にも対応します。リンク先へのアクセスは RSS と同様、追加した時点で Chrome がその都度確認します。
+
+■ 誤操作からの復元
+削除や配置の変更はすべて直後に「元に戻す」（Ctrl+Z）で取り消せます。削除したウィジェットとページは 30 日間ごみ箱に残り、リセットやインポートの前にはダッシュボード全体のバックアップが自動で保存されます。
+
 ■ ダイナミック壁紙とグラスモフィズム
-宇宙・自然・ミニマル・建築・抽象・サイバーパンクの各コレクション、グラデーションプリセット、手持ちの画像アップロードから選べます。すりガラスのぼかし量、明るさ、暗色オーバーレイの濃さはスライダーで調整できます。
+宇宙・自然・ミニマル・建築・抽象・サイバーパンクの各コレクション、グラデーションプリセット、手持ちの画像アップロードから選べます。すりガラスのぼかし量、明るさ、暗色オーバーレイの濃さはスライダーで調整できます。「時間帯で変える」をオンにすると、朝・昼・夕方・夜で壁紙と雰囲気が自動的に切り替わります。明るい壁紙では、壁紙の上に直接置かれた文字が自動で暗い色に変わり、読みやすさを保ちます。
 
 ■ 多言語対応
 日本語、英語、中国語（簡体字）、スペイン語、フランス語、ドイツ語、韓国語のインターフェースに対応しています。
 
 ■ ローカルファースト
-レイアウト、メモ、設定はすべてお使いのパソコンの chrome.storage.local に保存されます。ZenithTab には独自のサーバーがなく、アクセス解析も広告もトラッカーもありません。外部への通信は、天気の取得（選択した地点の座標）、ニュースとRSSの取得、壁紙画像の読み込みに限られます。詳細はプライバシーポリシーをご覧ください。
+レイアウト、メモ、設定はすべてお使いのパソコンの chrome.storage.local に保存されます。ZenithTab には独自のサーバーがなく、アクセス解析も広告もトラッカーもありません。外部への通信は、天気の取得（選択した地点の座標）、ニュースとRSSの取得、ユーザーが追加したカレンダー（iCal）の取得、壁紙画像の読み込みに限られます。詳細はプライバシーポリシーをご覧ください。
 
 設定はJSONとして書き出し・読み込みができるので、別のパソコンへ持ち運ぶこともバックアップすることもできます。
 
@@ -141,10 +156,10 @@ Pin the sites you use most as tiles and open them in one click. The app drawer f
 A minimal shortcut bar that stays visible at the bottom (or top) of the screen. Add, remove, and reorder its links freely, and pick an icon from a curated set or type your own emoji.
 
 ■ Unified search bar
-Switch in one click between general web search, code repository search, video search, and an AI chat prompt. Add your own search destinations too — a name, a search URL, and an icon is all it takes. Remove any engine you don't use, built-in or custom, and bring it back anytime. Press "/" anywhere on the page to jump straight into the search field.
+Switch in one click between general web search, code repository search, video search, and an AI chat prompt. Add your own search destinations too — a name, a search URL, and an icon is all it takes. Remove any engine you don't use, built-in or custom, and bring it back anytime. Press "/" anywhere on the page to jump straight into the search field.Type a calculation (120*1.1), a percentage, a unit conversion (10 km to mi), a number base, a dice roll, a coin flip, a random number, a list to pick from, or a date, and the answer appears inline before you search.
 
 ■ Keyboard shortcuts
-Bind any link to a key combo and open it instantly without touching the mouse.
+Bind any link to a key combo and open it instantly without touching the mouse.The built-in shortcuts (jump to search, switch pages, undo/redo) are listed in the settings.
 
 ■ Bookmark explorer
 Browse the bookmarks already in Chrome. Walk into folders, step back through breadcrumbs, and filter by name. Site icons come from Chrome's own local cache, so the addresses of your bookmarks never reach an outside icon service.
@@ -164,14 +179,29 @@ The auto-saving notes widget now holds several pages (tabs), so you can keep dif
 ■ QR code generator
 Turn a URL, phone number, or any text into a scannable QR code on the spot. Everything is generated locally — download it as an image or copy the source text.
 
+■ Quick Access
+See the sites Chrome already ranks as most visited and the tabs you closed recently, open them in one click, or restore a closed tab right where it was. The permissions involved are requested only when you add this widget; the lists are read each time they are shown and are never stored or sent anywhere.
+
+■ Countdown
+Give it a name and a date and it shows how many days are left until a birthday, a trip, an exam or a deadline. Yearly anniversaries repeat automatically.
+
+■ Habit tracker
+Tick off daily habits such as "drink water" or "exercise" and watch the streak and the last seven days at a glance.
+
+■ Calendar
+Paste the iCal (.ics) link your calendar service provides and the widget lists the coming days' events grouped by day. Several calendars can be shown side by side in different colours, with all-day and recurring events supported. As with feeds, Chrome asks for permission for that specific address when you add it.
+
+■ Undo, trash and backups
+Every delete and layout change can be undone right away (Ctrl+Z). Deleted widgets and pages stay in a trash for 30 days, and a backup of the whole dashboard is taken automatically before a reset or an import.
+
 ■ Dynamic wallpapers and glassmorphism
-Choose from curated collections (cosmos, nature, minimal, architecture, abstract, cyberpunk), gradient presets, or upload your own image. Sliders control backdrop blur, brightness, and the darkening overlay.
+Choose from curated collections (cosmos, nature, minimal, architecture, abstract, cyberpunk), gradient presets, or upload your own image. Sliders control backdrop blur, brightness, and the darkening overlay.Turn on the time-of-day mode and the wallpaper and mood shift automatically through morning, day, sunset and night. On a light wallpaper, text placed directly on it switches to a dark colour so it stays readable.
 
 ■ Available in seven languages
 English, Japanese, Simplified Chinese, Spanish, French, German, and Korean.
 
 ■ Local-first
-Your layout, notes, and settings live in chrome.storage.local on your machine. ZenithTab has no backend of its own, no analytics, no ads, and no trackers. Its only outbound requests are fetching weather for the location you chose, fetching the news and feeds you configured, and loading wallpaper images. The privacy policy spells this out in full.
+Your layout, notes, and settings live in chrome.storage.local on your machine. ZenithTab has no backend of its own, no analytics, no ads, and no trackers. Its only outbound requests are fetching weather for the location you chose, fetching the news, feeds and calendars (iCal) you configured, and loading wallpaper images. The privacy policy spells this out in full.
 
 Export your setup as JSON to back it up or move it to another computer.
 
@@ -199,10 +229,10 @@ Fija como mosaicos los sitios que más usas y ábrelos con un clic. El cajón de
 Una barra de accesos mínima que permanece visible en la parte inferior (o superior) de la pantalla. Añade, elimina y reordena sus enlaces libremente, y elige un icono de un conjunto seleccionado o escribe tu propio emoji.
 
 ■ Barra de búsqueda unificada
-Cambia con un clic entre búsqueda web general, búsqueda en repositorios de código, búsqueda de vídeos y una consulta de chat con IA. También puedes añadir tus propios motores de búsqueda: solo hace falta un nombre, una URL de búsqueda y un icono. Quita cualquier motor que no uses, sea predeterminado o propio, y recupéralo cuando quieras. Pulsa «/» en cualquier momento para saltar directamente al campo de búsqueda.
+Cambia con un clic entre búsqueda web general, búsqueda en repositorios de código, búsqueda de vídeos y una consulta de chat con IA. También puedes añadir tus propios motores de búsqueda: solo hace falta un nombre, una URL de búsqueda y un icono. Quita cualquier motor que no uses, sea predeterminado o propio, y recupéralo cuando quieras. Pulsa «/» en cualquier momento para saltar directamente al campo de búsqueda.Escribe un cálculo (120*1.1), un porcentaje, una conversión de unidades (10 km to mi), un cambio de base numérica, una tirada de dados, cara o cruz, un número aleatorio, una lista entre la que elegir o una fecha, y la respuesta aparece al instante antes de buscar.
 
 ■ Atajos de teclado
-Asigna cualquier enlace a una combinación de teclas y ábrelo al instante sin tocar el ratón.
+Asigna cualquier enlace a una combinación de teclas y ábrelo al instante sin tocar el ratón.Los atajos integrados (ir a la búsqueda, cambiar de página, deshacer/rehacer) se listan en los ajustes.
 
 ■ Explorador de marcadores
 Navega por los marcadores que ya tienes en Chrome. Entra en las carpetas, retrocede con las migas de pan y filtra por nombre. Los iconos de los sitios provienen de la caché local del propio Chrome, así que las direcciones de tus marcadores nunca llegan a un servicio de iconos externo.
@@ -222,14 +252,29 @@ El widget de notas autoguardadas ahora admite varias páginas (pestañas), para 
 ■ Generador de códigos QR
 Convierte al instante una URL, un número de teléfono o cualquier texto en un código QR escaneable. Todo se genera localmente: descárgalo como imagen o copia el texto de origen.
 
+■ Acceso rápido
+Muestra los sitios que Chrome ya considera más visitados y las pestañas que cerraste hace poco; ábrelos con un clic o restaura una pestaña cerrada justo donde estaba. Los permisos necesarios se piden solo al añadir este widget; las listas se leen cada vez que se muestran y nunca se guardan ni se envían.
+
+■ Cuenta atrás
+Ponle un nombre y una fecha y verás cuántos días faltan para un cumpleaños, un viaje, un examen o una fecha límite. Los aniversarios anuales se repiten solos.
+
+■ Hábitos
+Marca hábitos diarios como «beber agua» o «hacer ejercicio» y sigue la racha y los últimos siete días de un vistazo.
+
+■ Calendario
+Pega el enlace iCal (.ics) que ofrece tu servicio de calendario y el widget lista los eventos de los próximos días agrupados por día. Puedes mostrar varios calendarios con colores distintos, con eventos de todo el día y repetitivos. Igual que con los feeds, Chrome te pide permiso para esa dirección concreta al añadirla.
+
+■ Deshacer, papelera y copias de seguridad
+Cada borrado y cada cambio de disposición se puede deshacer al momento (Ctrl+Z). Los widgets y páginas borrados permanecen 30 días en una papelera, y antes de un reinicio o una importación se guarda automáticamente una copia de todo el panel.
+
 ■ Fondos dinámicos y glassmorphism
-Elige entre colecciones seleccionadas (cosmos, naturaleza, minimalismo, arquitectura, abstracto, cyberpunk), degradados predefinidos o sube tu propia imagen. Los controles deslizantes ajustan el desenfoque del fondo, el brillo y la capa de oscurecimiento.
+Elige entre colecciones seleccionadas (cosmos, naturaleza, minimalismo, arquitectura, abstracto, cyberpunk), degradados predefinidos o sube tu propia imagen. Los controles deslizantes ajustan el desenfoque del fondo, el brillo y la capa de oscurecimiento.Activa el modo según la hora del día y el fondo y el ambiente cambian solos por la mañana, el día, el atardecer y la noche. Sobre un fondo claro, el texto colocado directamente encima pasa a un color oscuro para seguir siendo legible.
 
 ■ Disponible en siete idiomas
 Español, inglés, japonés, chino simplificado, francés, alemán y coreano.
 
 ■ Prioridad a lo local
-Tu disposición, tus notas y tus ajustes viven en chrome.storage.local, en tu máquina. ZenithTab no tiene servidor propio, ni analíticas, ni anuncios, ni rastreadores. Sus únicas conexiones salientes son obtener el tiempo de la ubicación que elegiste, obtener las noticias y los feeds que configuraste, y cargar las imágenes de fondo. La política de privacidad lo detalla por completo.
+Tu disposición, tus notas y tus ajustes viven en chrome.storage.local, en tu máquina. ZenithTab no tiene servidor propio, ni analíticas, ni anuncios, ni rastreadores. Sus únicas conexiones salientes son obtener el tiempo de la ubicación que elegiste, obtener las noticias, los feeds y los calendarios (iCal) que configuraste, y cargar las imágenes de fondo. La política de privacidad lo detalla por completo.
 
 Exporta tu configuración en JSON para hacer una copia de seguridad o llevarla a otro ordenador.
 
@@ -257,10 +302,10 @@ Hefte die Seiten, die du am häufigsten brauchst, als Kacheln an und öffne sie 
 Eine minimalistische Verknüpfungsleiste, die dauerhaft am unteren (oder oberen) Bildschirmrand sichtbar bleibt. Füge Links frei hinzu, entferne sie oder ordne sie neu an, und wähle ein Symbol aus einer kuratierten Auswahl oder gib ein eigenes Emoji ein.
 
 ■ Vereinheitlichte Suchleiste
-Wechsle mit einem Klick zwischen allgemeiner Websuche, Suche in Code-Repositorys, Videosuche und einer KI-Chat-Eingabe. Du kannst auch eigene Suchziele hinzufügen – ein Name, eine Such-URL und ein Symbol genügen. Entferne jede Suchmaschine, die du nicht brauchst, ob voreingestellt oder eigene, und hol sie jederzeit zurück. Drück „/“ an beliebiger Stelle, um direkt ins Suchfeld zu springen.
+Wechsle mit einem Klick zwischen allgemeiner Websuche, Suche in Code-Repositorys, Videosuche und einer KI-Chat-Eingabe. Du kannst auch eigene Suchziele hinzufügen – ein Name, eine Such-URL und ein Symbol genügen. Entferne jede Suchmaschine, die du nicht brauchst, ob voreingestellt oder eigene, und hol sie jederzeit zurück. Drück „/“ an beliebiger Stelle, um direkt ins Suchfeld zu springen.Tipp eine Rechnung (120*1.1), einen Prozentsatz, eine Einheitenumrechnung (10 km to mi), eine Zahlenbasis, einen Würfelwurf, einen Münzwurf, eine Zufallszahl, eine Auswahlliste oder ein Datum ein – die Antwort erscheint direkt, noch vor der Suche.
 
 ■ Tastenkombinationen
-Verknüpfe einen beliebigen Link mit einer Tastenkombination und öffne ihn sofort, ganz ohne Maus.
+Verknüpfe einen beliebigen Link mit einer Tastenkombination und öffne ihn sofort, ganz ohne Maus.Die eingebauten Kombinationen (zur Suche springen, Seite wechseln, Rückgängig/Wiederholen) sind in den Einstellungen aufgelistet.
 
 ■ Lesezeichen-Explorer
 Durchstöbere die Lesezeichen, die bereits in Chrome liegen. Geh in Ordner hinein, über den Brotkrumenpfad wieder zurück, und filtere nach Namen. Die Website-Symbole stammen aus Chromes eigenem lokalem Cache – die Adressen deiner Lesezeichen erreichen also nie einen externen Icon-Dienst.
@@ -280,14 +325,29 @@ Das automatisch speichernde Notizen-Widget bietet jetzt mehrere Seiten (Tabs), s
 ■ QR-Code-Generator
 Verwandle eine URL, eine Telefonnummer oder beliebigen Text sofort in einen scanbaren QR-Code. Alles wird lokal erzeugt – lade ihn als Bild herunter oder kopiere den Ausgangstext.
 
+■ Schnellzugriff
+Zeigt die Seiten, die Chrome bereits als meistbesucht führt, und die zuletzt geschlossenen Tabs – zum Öffnen per Klick oder um einen geschlossenen Tab genau dort wiederherzustellen, wo er war. Die nötigen Berechtigungen werden erst angefragt, wenn du dieses Widget hinzufügst; die Listen werden bei jeder Anzeige neu gelesen und nie gespeichert oder gesendet.
+
+■ Countdown
+Name und Datum eingeben – schon siehst du, wie viele Tage bis zum Geburtstag, zur Reise, zur Prüfung oder zur Frist bleiben. Jährliche Jahrestage wiederholen sich automatisch.
+
+■ Gewohnheiten
+Hake tägliche Gewohnheiten wie „Wasser trinken“ oder „Sport“ ab und behalte Serie und die letzten sieben Tage im Blick.
+
+■ Kalender
+Füge den iCal-Link (.ics) deines Kalenderdienstes ein, und das Widget listet die Termine der nächsten Tage nach Tagen gruppiert. Mehrere Kalender lassen sich farblich getrennt nebeneinander zeigen, ganztägige und wiederkehrende Termine eingeschlossen. Wie bei Feeds fragt Chrome beim Hinzufügen um Erlaubnis für genau diese Adresse.
+
+■ Rückgängig, Papierkorb und Sicherungen
+Jedes Löschen und jede Layout-Änderung lässt sich sofort rückgängig machen (Strg+Z). Gelöschte Widgets und Seiten bleiben 30 Tage im Papierkorb, und vor einem Zurücksetzen oder Import wird automatisch das ganze Dashboard gesichert.
+
 ■ Dynamische Hintergründe und Glasoptik
-Wähle aus kuratierten Sammlungen (Weltall, Natur, Minimal, Architektur, Abstrakt, Cyberpunk), aus Verlaufsvorlagen oder lade dein eigenes Bild hoch. Schieberegler steuern Unschärfe, Helligkeit und die Abdunklung des Hintergrunds.
+Wähle aus kuratierten Sammlungen (Weltall, Natur, Minimal, Architektur, Abstrakt, Cyberpunk), aus Verlaufsvorlagen oder lade dein eigenes Bild hoch. Schieberegler steuern Unschärfe, Helligkeit und die Abdunklung des Hintergrunds.Mit dem Tageszeit-Modus wechseln Hintergrund und Stimmung automatisch zwischen Morgen, Tag, Abend und Nacht. Auf hellen Hintergründen wird direkt darauf liegender Text automatisch dunkel und bleibt lesbar.
 
 ■ In sieben Sprachen verfügbar
 Deutsch, Englisch, Japanisch, vereinfachtes Chinesisch, Spanisch, Französisch und Koreanisch.
 
 ■ Local-First
-Dein Layout, deine Notizen und deine Einstellungen liegen in chrome.storage.local auf deinem Rechner. ZenithTab hat kein eigenes Backend, keine Analyse, keine Werbung und keine Tracker. Die einzigen ausgehenden Anfragen holen das Wetter für den von dir gewählten Ort, die von dir eingerichteten Nachrichten und Feeds sowie die Hintergrundbilder. Die Datenschutzerklärung führt das vollständig aus.
+Dein Layout, deine Notizen und deine Einstellungen liegen in chrome.storage.local auf deinem Rechner. ZenithTab hat kein eigenes Backend, keine Analyse, keine Werbung und keine Tracker. Die einzigen ausgehenden Anfragen holen das Wetter für den von dir gewählten Ort, die von dir eingerichteten Nachrichten, Feeds und Kalender (iCal) sowie die Hintergrundbilder. Die Datenschutzerklärung führt das vollständig aus.
 
 Exportiere deine Einrichtung als JSON, um sie zu sichern oder auf einen anderen Rechner mitzunehmen.
 
@@ -315,10 +375,10 @@ Répartissez vos widgets et votre disposition sur des pages distinctes. Ajoutez 
 Une barre de raccourcis minimale qui reste visible en bas (ou en haut) de l'écran. Ajoutez, supprimez et réorganisez ses liens librement, et choisissez une icône dans une sélection ou saisissez votre propre emoji.
 
 ■ Barre de recherche unifiée
-Basculez d'un clic entre recherche web générale, recherche dans les dépôts de code, recherche vidéo et invite de chat IA. Vous pouvez aussi ajouter vos propres moteurs de recherche : un nom, une URL de recherche et une icône suffisent. Retirez tout moteur que vous n'utilisez pas, qu'il soit prédéfini ou personnalisé, et récupérez-le à tout moment. Appuyez sur « / » n'importe où pour placer directement le curseur dans le champ de recherche.
+Basculez d'un clic entre recherche web générale, recherche dans les dépôts de code, recherche vidéo et invite de chat IA. Vous pouvez aussi ajouter vos propres moteurs de recherche : un nom, une URL de recherche et une icône suffisent. Retirez tout moteur que vous n'utilisez pas, qu'il soit prédéfini ou personnalisé, et récupérez-le à tout moment. Appuyez sur « / » n'importe où pour placer directement le curseur dans le champ de recherche.Saisissez un calcul (120*1.1), un pourcentage, une conversion d'unités (10 km to mi), une base numérique, un lancer de dés, un pile ou face, un nombre aléatoire, une liste où choisir ou une date : la réponse s'affiche sur place, avant même de lancer la recherche.
 
 ■ Raccourcis clavier
-Associez n'importe quel lien à une combinaison de touches et ouvrez-le instantanément sans toucher la souris.
+Associez n'importe quel lien à une combinaison de touches et ouvrez-le instantanément sans toucher la souris.Les raccourcis intégrés (aller à la recherche, changer de page, annuler/rétablir) sont listés dans les réglages.
 
 ■ Explorateur de favoris
 Parcourez les favoris déjà présents dans Chrome. Entrez dans les dossiers, revenez en arrière par le fil d'Ariane, filtrez par nom. Les icônes des sites proviennent du cache local de Chrome : les adresses de vos favoris n'atteignent donc jamais un service d'icônes externe.
@@ -338,14 +398,29 @@ Le widget de notes à sauvegarde automatique gère désormais plusieurs pages (o
 ■ Générateur de code QR
 Transformez instantanément une URL, un numéro de téléphone ou un texte quelconque en code QR scannable. Tout est généré localement : téléchargez-le en image ou copiez le texte source.
 
+■ Accès rapide
+Affiche les sites que Chrome classe déjà comme les plus visités et les onglets fermés récemment, pour les ouvrir d'un clic ou restaurer un onglet fermé exactement là où il était. Les autorisations nécessaires ne sont demandées qu'à l'ajout de ce widget ; les listes sont relues à chaque affichage et ne sont jamais enregistrées ni envoyées.
+
+■ Compte à rebours
+Donnez un nom et une date, et le widget affiche le nombre de jours restants avant un anniversaire, un voyage, un examen ou une échéance. Les anniversaires annuels se répètent automatiquement.
+
+■ Habitudes
+Cochez des habitudes quotidiennes comme « boire de l'eau » ou « faire du sport » et suivez la série et les sept derniers jours d'un coup d'œil.
+
+■ Calendrier
+Collez le lien iCal (.ics) fourni par votre service d'agenda et le widget liste les événements des prochains jours, regroupés par jour. Plusieurs agendas peuvent s'afficher côte à côte dans des couleurs différentes, événements sur la journée entière et récurrents compris. Comme pour les flux, Chrome demande l'autorisation pour cette adresse précise au moment de l'ajout.
+
+■ Annulation, corbeille et sauvegardes
+Chaque suppression et chaque changement de disposition peut être annulé aussitôt (Ctrl+Z). Les widgets et pages supprimés restent 30 jours dans une corbeille, et une sauvegarde de tout le tableau de bord est faite automatiquement avant une réinitialisation ou un import.
+
 ■ Fonds dynamiques et effet verre dépoli
-Choisissez parmi des collections sélectionnées (cosmos, nature, minimal, architecture, abstrait, cyberpunk), des dégradés prédéfinis, ou importez votre propre image. Des curseurs règlent le flou de l'arrière-plan, la luminosité et le voile sombre.
+Choisissez parmi des collections sélectionnées (cosmos, nature, minimal, architecture, abstrait, cyberpunk), des dégradés prédéfinis, ou importez votre propre image. Des curseurs règlent le flou de l'arrière-plan, la luminosité et le voile sombre.Activez le mode selon l'heure et le fond ainsi que l'ambiance évoluent d'eux-mêmes entre le matin, la journée, le coucher du soleil et la nuit. Sur un fond clair, le texte posé directement dessus passe en couleur sombre pour rester lisible.
 
 ■ Disponible en sept langues
 Français, anglais, japonais, chinois simplifié, espagnol, allemand et coréen.
 
 ■ Priorité au local
-Votre disposition, vos notes et vos réglages résident dans chrome.storage.local, sur votre machine. ZenithTab n'a pas de serveur propre, pas d'analytique, pas de publicité, pas de traceurs. Ses seules requêtes sortantes servent à récupérer la météo du lieu que vous avez choisi, les actualités et les flux que vous avez configurés, et les images de fond. La politique de confidentialité le détaille intégralement.
+Votre disposition, vos notes et vos réglages résident dans chrome.storage.local, sur votre machine. ZenithTab n'a pas de serveur propre, pas d'analytique, pas de publicité, pas de traceurs. Ses seules requêtes sortantes servent à récupérer la météo du lieu que vous avez choisi, les actualités, les flux et les calendriers (iCal) que vous avez configurés, et les images de fond. La politique de confidentialité le détaille intégralement.
 
 Exportez votre configuration en JSON pour la sauvegarder ou l'emporter sur un autre ordinateur.
 
@@ -373,10 +448,10 @@ ZenithTab은 새 탭 페이지를 직접 꾸미는 작업 공간으로 바꿔줍
 화면 하단(또는 상단)에 항상 표시되는 간단한 바로가기 바입니다. 표시할 링크를 자유롭게 추가·삭제·정렬할 수 있고, 아이콘은 준비된 세트에서 고르거나 이모지로 직접 지정할 수 있습니다.
 
 ■ 통합 검색창
-일반 웹 검색, 코드 저장소 검색, 동영상 검색, AI 채팅 입력창을 한 번의 클릭으로 전환합니다. 이름·검색 URL·아이콘만 지정하면 원하는 검색 엔진을 직접 추가할 수도 있습니다. 기본 제공이든 직접 추가한 것이든 사용하지 않는 검색 엔진은 목록에서 제거하고 언제든 다시 불러올 수 있습니다. 페이지 어디서든 「/」 키를 누르면 곧바로 검색창으로 커서가 이동합니다.
+일반 웹 검색, 코드 저장소 검색, 동영상 검색, AI 채팅 입력창을 한 번의 클릭으로 전환합니다. 이름·검색 URL·아이콘만 지정하면 원하는 검색 엔진을 직접 추가할 수도 있습니다. 기본 제공이든 직접 추가한 것이든 사용하지 않는 검색 엔진은 목록에서 제거하고 언제든 다시 불러올 수 있습니다. 페이지 어디서든 「/」 키를 누르면 곧바로 검색창으로 커서가 이동합니다.계산식(120*1.1), 백분율, 단위 변환(10 km to mi), 진수 변환, 주사위, 동전 던지기, 난수, 후보 중 고르기, 특정 날짜까지의 일수를 입력하면 검색하기 전에 답이 바로 표시됩니다.
 
 ■ 키보드 단축키
-원하는 링크에 키 조합을 지정해두면 마우스 없이 즉시 열 수 있습니다.
+원하는 링크에 키 조합을 지정해두면 마우스 없이 즉시 열 수 있습니다.기본 제공 단축키(검색창으로 이동, 페이지 전환, 실행 취소/다시 실행)는 설정 화면에서 한눈에 볼 수 있습니다.
 
 ■ 북마크 탐색기
 Chrome에 이미 저장된 북마크를 그대로 표시합니다. 폴더 계층을 따라 들어가고, 이동 경로로 되돌아오고, 이름으로 걸러낼 수 있습니다. 사이트 아이콘은 Chrome 자체의 로컬 캐시에서 가져오므로 북마크 주소가 외부 아이콘 서비스로 전달되지 않습니다.
@@ -396,14 +471,29 @@ Chrome에 이미 저장된 북마크를 그대로 표시합니다. 폴더 계층
 ■ QR 코드 생성
 URL, 전화번호, 원하는 텍스트를 즉시 스캔 가능한 QR 코드로 변환합니다. 모든 생성은 기기 안에서 이루어지며, 이미지로 저장하거나 변환 전 텍스트를 복사할 수 있습니다.
 
+■ 빠른 액세스
+Chrome이 이미 파악하고 있는 「자주 방문한 사이트」와 「최근 닫은 탭」을 새 탭에 표시해, 한 번의 클릭으로 열거나 닫은 탭을 제자리에 복원할 수 있습니다. 필요한 권한은 이 위젯을 추가할 때만 요청되며, 목록은 표시할 때마다 읽기만 할 뿐 저장하거나 외부로 보내지 않습니다.
+
+■ 카운트다운
+이름과 날짜만 입력하면 생일, 여행, 시험, 마감까지 며칠 남았는지 표시합니다. 매년 반복되는 기념일도 지원합니다.
+
+■ 습관 트래커
+「물 마시기」「운동하기」 같은 일과를 매일 체크하고, 연속 일수와 최근 7일의 달성 현황을 한눈에 봅니다.
+
+■ 캘린더
+사용 중인 캘린더 서비스가 제공하는 iCal(.ics) 링크를 붙여넣으면 오늘부터 며칠간의 일정을 날짜별로 보여줍니다. 여러 캘린더를 색으로 구분해 함께 표시할 수 있고, 종일·반복 일정도 지원합니다. 피드와 마찬가지로 링크를 추가할 때 Chrome이 해당 주소에 대한 권한을 확인합니다.
+
+■ 실행 취소, 휴지통, 백업
+모든 삭제와 배치 변경은 직후에 실행 취소(Ctrl+Z)할 수 있습니다. 삭제한 위젯과 페이지는 30일 동안 휴지통에 남고, 초기화나 가져오기 전에는 대시보드 전체 백업이 자동으로 저장됩니다.
+
 ■ 다이내믹 배경화면과 글래스모피즘
-엄선된 컬렉션(우주, 자연, 미니멀, 건축, 추상, 사이버펑크), 그러데이션 프리셋, 직접 올린 이미지 중에서 고를 수 있습니다. 슬라이더로 배경 흐림 정도, 밝기, 어두운 오버레이 농도를 조절합니다.
+엄선된 컬렉션(우주, 자연, 미니멀, 건축, 추상, 사이버펑크), 그러데이션 프리셋, 직접 올린 이미지 중에서 고를 수 있습니다. 슬라이더로 배경 흐림 정도, 밝기, 어두운 오버레이 농도를 조절합니다.시간대 모드를 켜면 아침·낮·저녁·밤에 맞춰 배경화면과 분위기가 자동으로 바뀝니다. 밝은 배경화면에서는 배경 위에 직접 놓인 글자가 자동으로 어두운 색으로 바뀌어 읽기 쉬운 상태를 유지합니다.
 
 ■ 7개 언어 지원
 한국어, 영어, 일본어, 중국어 간체, 스페인어, 프랑스어, 독일어를 지원합니다.
 
 ■ 로컬 우선
-배치, 메모, 설정은 모두 사용자 기기의 chrome.storage.local에 저장됩니다. ZenithTab은 자체 서버가 없고 분석 도구도, 광고도, 트래커도 없습니다. 외부 통신은 선택한 지점의 날씨 가져오기, 설정한 뉴스와 피드 가져오기, 배경 이미지 불러오기로 한정됩니다. 자세한 내용은 개인정보처리방침을 참고하세요.
+배치, 메모, 설정은 모두 사용자 기기의 chrome.storage.local에 저장됩니다. ZenithTab은 자체 서버가 없고 분석 도구도, 광고도, 트래커도 없습니다. 외부 통신은 선택한 지점의 날씨 가져오기, 설정한 뉴스·피드·캘린더(iCal) 가져오기, 배경 이미지 불러오기로 한정됩니다. 자세한 내용은 개인정보처리방침을 참고하세요.
 
 설정을 JSON으로 내보내고 불러올 수 있어 백업하거나 다른 컴퓨터로 옮길 수 있습니다.
 
@@ -431,10 +521,10 @@ ZenithTab 把新标签页变成一块由你自己布置的工作台。
 始终显示在屏幕底部（或顶部）的极简快捷栏。可以自由添加、删除、重新排序其中的链接，图标可从预设集合中选择，也可以直接输入表情符号。
 
 ■ 聚合搜索栏
-一次点击即可在通用网页搜索、代码仓库搜索、视频搜索和 AI 对话输入之间切换。你也可以添加自己的搜索引擎，只需提供名称、搜索 URL 和图标即可。无论是内置还是自行添加的搜索引擎，只要用不到都可以从列表中移除，也可以随时恢复。在页面任意位置按下「/」键，光标会立刻跳到搜索框。
+一次点击即可在通用网页搜索、代码仓库搜索、视频搜索和 AI 对话输入之间切换。你也可以添加自己的搜索引擎，只需提供名称、搜索 URL 和图标即可。无论是内置还是自行添加的搜索引擎，只要用不到都可以从列表中移除，也可以随时恢复。在页面任意位置按下「/」键，光标会立刻跳到搜索框。输入算式（120*1.1）、百分比、单位换算（10 km to mi）、进制转换、掷骰子、抛硬币、随机数、从候选中选一个，或某个日期，答案会在搜索前直接显示出来。
 
 ■ 键盘快捷键
-为任意链接绑定按键组合，无需使用鼠标即可瞬间打开。
+为任意链接绑定按键组合，无需使用鼠标即可瞬间打开。内置快捷键（跳到搜索框、切换页面、撤销/重做）可在设置中查看。
 
 ■ 书签浏览器
 直接显示 Chrome 中已有的书签。可以逐层进入文件夹、通过面包屑返回、按名称筛选。网站图标取自 Chrome 自身的本地缓存，因此你的书签地址不会发送给任何第三方图标服务。
@@ -454,14 +544,29 @@ ZenithTab 把新标签页变成一块由你自己布置的工作台。
 ■ 生成二维码
 即时将网址、电话号码或任意文本转换为可扫描的二维码。全部在本地生成，可保存为图片，也可复制转换前的文本。
 
+■ 快速访问
+在新标签页中显示 Chrome 已记录的「常访问网站」和「最近关闭的标签页」，一键打开，或把关闭的标签页原地恢复。相关权限只在添加此组件时申请；列表在每次显示时读取，绝不保存或对外发送。
+
+■ 倒计时
+只需填写名称和日期，即可显示距离生日、旅行、考试或截止日期还有几天。每年重复的纪念日也支持。
+
+■ 习惯打卡
+每天勾选「喝水」「运动」之类的习惯，一眼看到连续天数和最近七天的完成情况。
+
+■ 日历
+粘贴你所用日历服务提供的 iCal（.ics）链接，组件会按天列出近几天的日程。可以用不同颜色同时显示多个日历，支持全天和重复日程。与订阅源一样，添加时 Chrome 会就该地址询问你的授权。
+
+■ 撤销、回收站与备份
+所有删除和布局更改都可以立即撤销（Ctrl+Z）。删除的组件和页面会在回收站保留 30 天，重置或导入前会自动备份整个仪表盘。
+
 ■ 动态壁纸与毛玻璃质感
-可从精选图集（宇宙、自然、极简、建筑、抽象、赛博朋克）、渐变预设或自行上传的图片中选择。滑块可调节背景模糊程度、亮度和暗色遮罩浓度。
+可从精选图集（宇宙、自然、极简、建筑、抽象、赛博朋克）、渐变预设或自行上传的图片中选择。滑块可调节背景模糊程度、亮度和暗色遮罩浓度。开启按时段切换后，壁纸和氛围会随早晨、白天、傍晚、夜晚自动变化。在浅色壁纸上，直接位于壁纸之上的文字会自动变为深色，保持清晰可读。
 
 ■ 支持七种语言
 简体中文、英语、日语、西班牙语、法语、德语、韩语。
 
 ■ 本地优先
-布局、笔记和设置全部保存在你设备上的 chrome.storage.local 中。ZenithTab 没有自己的服务器，没有统计分析，没有广告，没有跟踪器。对外通信仅限于获取你所选地点的天气、获取你配置的新闻与订阅源，以及加载壁纸图片。详情请参阅隐私权政策。
+布局、笔记和设置全部保存在你设备上的 chrome.storage.local 中。ZenithTab 没有自己的服务器，没有统计分析，没有广告，没有跟踪器。对外通信仅限于获取你所选地点的天气、获取你配置的新闻、订阅源与日历（iCal），以及加载壁纸图片。详情请参阅隐私权政策。
 
 设置可导出为 JSON，方便备份或迁移到另一台电脑。
 
@@ -518,6 +623,11 @@ ZenithTab replaces Chrome's new tab page with a single, user-arranged dashboard.
 optional_permissions として宣言し、ユーザーが「クイックアクセス」ウィジェットを追加した時点で chrome.permissions.request() により初めて要求します。用途は、Chrome が既に「よく訪れるサイト」として保持している一覧（既定 8 件）をウィジェットにワンクリックのショートカットとして表示することのみです。取得した一覧は表示のたびに読み取るだけで、保存も外部送信もしません。ウィジェットを使わないユーザーには要求されません。
 ```
 
+### `tabs が必要な理由`
+```text
+optional_permissions として宣言し、`sessions` と併せて、ユーザーが「クイックアクセス」ウィジェットで「最近閉じたタブ」を表示しようとした時点で chrome.permissions.request() により初めて要求します。Chrome は `tabs` 権限が無いと chrome.sessions.getRecentlyClosed() の結果からタブの URL とタイトルを省略するため、閉じたタブを一覧に表示するのに必要です。用途はその一覧の表示のみで、開いているタブの列挙・監視、閲覧履歴の保存、外部への送信は行いません。「よく見るサイト」だけを使うユーザーには要求されません。
+```
+
 ### `sessions が必要な理由`
 ```text
 optional_permissions として宣言し、ユーザーが「クイックアクセス」ウィジェットを追加した時点で chrome.permissions.request() により初めて要求します。用途は、最近閉じたタブの一覧を新しいタブ画面に表示し、クリックで chrome.sessions.restore() により復元できるようにすることの 2 点のみです。一覧は表示のたびに読み取るだけで、閲覧履歴として保存したり外部へ送信したりすることはありません。ウィジェットを使わないユーザーには要求されません。
@@ -549,7 +659,7 @@ optional_permissions として宣言し、ユーザーが「クイックアク�
 | 認証情報 | 収集しない |
 | 個人の通信内容 | 収集しない |
 | **位置情報** | **収集する（端末内のみ）** — 天気の表示のためにユーザーが明示的に要求した場合に限り座標を取得し、端末内に保存する。第三者へ販売・移転しない |
-| ウェブ閲覧履歴 | 収集しない |
+| ウェブ閲覧履歴 | 収集しない — クイックアクセスの「最近閉じたタブ」は任意権限で一覧を端末内に表示するだけで、保存・集計・送信は行わない |
 | ユーザーのアクティビティ | 収集しない |
 | ウェブサイトのコンテンツ | 収集しない |
 
@@ -567,6 +677,6 @@ optional_permissions として宣言し、ユーザーが「クイックアク�
 - [ ] 掲載文にブランド名の羅列がない
 - [ ] 掲載文に書いた機能がすべて実装されている
 - [ ] プライバシーポリシーURLが公開状態で開ける
-- [ ] `geolocation` `unlimitedStorage` と任意権限 `topSites` `sessions` を含む全権限の正当化理由を入力した
+- [ ] `geolocation` `unlimitedStorage` と任意権限 `topSites` `sessions` `tabs` を含む全権限の正当化理由を入力した
 - [ ] スクリーンショットが現在のUIと一致している
 - [ ] `manifest.json` と `package.json` のバージョンが一致している

@@ -4,7 +4,7 @@
     "description": "Extension name shown in the Chrome Web Store and the extensions page."
   },
   "extDescription": {
-    "message": "Panel de nueva pestaña personalizable con widgets arrastrables, marcadores, RSS, clima y fondos dinámicos.",
+    "message": "Panel de nueva pestaña personalizable: widgets, marcadores, noticias, clima, calendario, hábitos y fondos dinámicos.",
     "description": "Short store description, shown under the extension name."
   }
 }

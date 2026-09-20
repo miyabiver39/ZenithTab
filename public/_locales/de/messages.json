@@ -4,7 +4,7 @@
     "description": "Extension name shown in the Chrome Web Store and the extensions page."
   },
   "extDescription": {
-    "message": "Anpassbares Neuer-Tab-Dashboard mit verschiebbaren Widgets, Lesezeichen, RSS-Feeds, Wetter und dynamischen Hintergründen.",
+    "message": "Anpassbares Neuer-Tab-Dashboard: Widgets, Lesezeichen, Nachrichten, Wetter, Kalender, Gewohnheiten und dynamische Hintergründe.",
     "description": "Short store description, shown under the extension name."
   }
 }

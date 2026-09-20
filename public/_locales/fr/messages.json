@@ -4,7 +4,7 @@
     "description": "Extension name shown in the Chrome Web Store and the extensions page."
   },
   "extDescription": {
-    "message": "Tableau de bord personnalisable pour le nouvel onglet : widgets, favoris, flux RSS, météo et fonds dynamiques.",
+    "message": "Nouvel onglet personnalisable : widgets, favoris, actualités, météo, calendrier, habitudes et fonds d'écran dynamiques.",
     "description": "Short store description, shown under the extension name."
   }
 }
