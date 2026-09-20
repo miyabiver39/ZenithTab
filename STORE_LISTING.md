@@ -578,6 +578,16 @@ https://github.com/miyabiver39/ZenithTab
 
 ## 3. 単一用途の説明（Single Purpose Description）
 
+デベロッパーダッシュボードには日本語版を貼り付けます（英語版は参考）。
+
+### 日本語版
+
+```text
+ZenithTab の唯一の目的は、Chrome の「新しいタブ」ページを、ユーザー自身が配置したダッシュボードに置き換えることです。ウィジェット（時計・天気・ブックマーク・ニュース・タスク・メモ・カレンダーなど）、ショートカット、検索バー、壁紙といったすべての機能は、その 1 ページを表示するためだけに存在します。この拡張機能は、ユーザーが閲覧する Web サイトにスクリプトを挿入したり、表示中のページを改変したりすることはなく、自身の新しいタブページの外では一切動作しません。
+```
+
+### 英語版（参考）
+
 ```text
 ZenithTab replaces Chrome's new tab page with a single, user-arranged dashboard. Every feature — widgets, bookmarks, feeds, weather, shortcuts, wallpapers — exists to render that one page. The extension does not inject scripts into websites, modify pages you visit, or run anywhere outside its own new tab page.
 ```
