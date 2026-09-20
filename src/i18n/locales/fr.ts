@@ -261,7 +261,7 @@ export const fr: typeof en = {
     search: {
       title: 'Recherche rapide',
       desc: 'Barre de recherche multi-moteurs pour Google, Bing, YouTube et IA.',
-      placeholder: 'Rechercher sur le Web... (appuyez sur / pour cibler)',
+      placeholder: 'Rechercher sur le Web, ou tapez ? pour voir des exemples... (/ pour cibler)',
       google: 'Google',
       bing: 'Bing',
       duckduckgo: 'DuckDuckGo',
@@ -283,7 +283,8 @@ export const fr: typeof en = {
         rolled: '{notation} : {rolls}',
         randomRange: 'Aléatoire {min}–{max}',
         chosen: 'Parmi : {options}',
-        helpTitle: 'Ce que la barre de recherche sait répondre',
+        helpTitle: 'Ce que la barre de recherche sait répondre',
+        helpButton: 'Que puis-je taper ici ?',
         helpHint: 'Tapez ? à tout moment pour afficher cette liste',
         examplesDesc: "Tapez l'un de ces exemples dans la barre et la réponse apparaît avant la recherche. Cliquez sur un exemple pour le copier. Taper « ? » dans la barre affiche aussi cette liste.",
         copyExample: 'Cliquer pour copier',

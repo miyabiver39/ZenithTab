@@ -259,7 +259,7 @@ export const en = {
     search: {
       title: 'Quick Search',
       desc: 'Multi-engine instant search bar for Google, Bing, YouTube, AI, and more.',
-      placeholder: 'Search the web or press / to focus...',
+      placeholder: 'Search the web, or type ? to see what the bar can answer... (/ to focus)',
       google: 'Google',
       bing: 'Bing',
       duckduckgo: 'DuckDuckGo',
@@ -281,7 +281,8 @@ export const en = {
         rolled: '{notation}: {rolls}',
         randomRange: 'Random {min}–{max}',
         chosen: 'From: {options}',
-        helpTitle: 'What the search bar can answer',
+        helpTitle: 'What the search bar can answer',
+        helpButton: 'What can I type here?',
         helpHint: 'Type ? anytime to see this list',
         examplesDesc: 'Type any of these into the search bar and the answer appears before you search. Click an example to copy it. Typing "?" in the bar shows this list too.',
         copyExample: 'Click to copy',

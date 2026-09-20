@@ -181,6 +181,24 @@ describe('SearchWidget', () => {
     expect(within(screen.getByTestId('smart-result')).getByText('6.213711922 mi')).toBeInTheDocument();
   });
 
+  it('スマート回答: ✨ ボタンで一覧を開閉でき、Esc でも閉じること', async () => {
+    const user = setupUser();
+    render(<SearchWidget widgetId="s" config={base} />);
+    const button = screen.getByRole('button', { name: 'What can I type here?' });
+    expect(screen.queryByTestId('smart-help')).not.toBeInTheDocument();
+    await user.click(button);
+    expect(screen.getByTestId('smart-help')).toBeInTheDocument();
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    await user.keyboard('{Escape}');
+    expect(screen.queryByTestId('smart-help')).not.toBeInTheDocument();
+    await user.click(button);
+    await user.click(button);
+    expect(screen.queryByTestId('smart-help')).not.toBeInTheDocument();
+    // The button is part of the smart-answers feature and goes with it.
+    render(<SearchWidget widgetId="s2" config={{ ...base, smartTools: false }} />);
+    expect(screen.getAllByRole('button', { name: 'What can I type here?' })).toHaveLength(1);
+  });
+
   it('スマート回答: コイントスは「もう一度」で再抽選でき、設定でオフにできること', async () => {
     const user = setupUser();
     const random = vi.spyOn(Math, 'random').mockReturnValue(0.1);

@@ -261,7 +261,7 @@ export const de: typeof en = {
     search: {
       title: 'Schnellsuche',
       desc: 'Multi-Suchleiste für Google, Bing, YouTube und KI.',
-      placeholder: 'Web durchsuchen... (/ drücken zum Fokussieren)',
+      placeholder: 'Web durchsuchen, oder ? für Beispiele tippen... (/ zum Fokussieren)',
       google: 'Google',
       bing: 'Bing',
       duckduckgo: 'DuckDuckGo',
@@ -283,7 +283,8 @@ export const de: typeof en = {
         rolled: '{notation}: {rolls}',
         randomRange: 'Zufall {min}–{max}',
         chosen: 'Aus: {options}',
-        helpTitle: 'Was die Suchleiste beantworten kann',
+        helpTitle: 'Was die Suchleiste beantworten kann',
+        helpButton: 'Was kann ich hier eingeben?',
         helpHint: 'Tippe jederzeit ? für diese Liste',
         examplesDesc: 'Tipp eines dieser Beispiele in die Suchleiste, und die Antwort erscheint vor der Suche. Klick auf ein Beispiel, um es zu kopieren. Ein „?“ in der Leiste zeigt diese Liste ebenfalls.',
         copyExample: 'Klicken zum Kopieren',

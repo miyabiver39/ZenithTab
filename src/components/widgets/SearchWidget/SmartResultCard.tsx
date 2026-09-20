@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Calculator, Ruler, Binary, Dices, Coins, Shuffle, ListChecks, CalendarDays, Percent, Copy, Check, RefreshCw, Sparkles } from 'lucide-react';
 import { useTranslation } from '../../../i18n/i18n';
@@ -29,15 +29,37 @@ interface SmartHelpCardProps {
   anchorRef: React.RefObject<HTMLElement | null>;
   /** Puts the clicked example into the search box. */
   onPick: (input: string) => void;
+  /** Escape or a click outside the card and its anchor. */
+  onClose?: () => void;
 }
 
-/** Shown when the user types "?" — the cheat sheet of things the bar can answer. */
-export const SmartHelpCard: React.FC<SmartHelpCardProps> = ({ anchorRef, onPick }) => {
+/** The cheat sheet of things the bar can answer — opened with "?" or the ✨ button. */
+export const SmartHelpCard: React.FC<SmartHelpCardProps> = ({ anchorRef, onPick, onClose }) => {
   const { t } = useTranslation();
   const rect = useAnchorRect(anchorRef, null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!onClose) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (!cardRef.current?.contains(target) && !anchorRef.current?.contains(target)) onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onClick);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onClick);
+    };
+  }, [onClose, anchorRef]);
+
   if (!rect) return null;
   return createPortal(
     <div
+      ref={cardRef}
       role="dialog"
       aria-label={t.widgets.search.smart.helpTitle}
       data-testid="smart-help"

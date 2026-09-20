@@ -261,7 +261,7 @@ export const ko: typeof en = {
     search: {
       title: '빠른 검색',
       desc: 'Google, Bing, YouTube, AI 검색을 한 번에 전환하는 통합 검색창.',
-      placeholder: '웹 검색... (/ 키로 포커스)',
+      placeholder: '웹 검색, ? 를 입력하면 사용법 표시... (/ 키로 포커스)',
       google: 'Google',
       bing: 'Bing',
       duckduckgo: 'DuckDuckGo',
@@ -283,7 +283,8 @@ export const ko: typeof en = {
         rolled: '{notation}: {rolls}',
         randomRange: '난수 {min}–{max}',
         chosen: '후보: {options}',
-        helpTitle: '검색창이 답할 수 있는 것',
+        helpTitle: '검색창이 답할 수 있는 것',
+        helpButton: '여기에 무엇을 입력할 수 있나요?',
         helpHint: '언제든 ? 를 입력하면 이 목록이 나와요',
         examplesDesc: '아래 예시를 검색창에 입력하면 검색 전에 답이 표시돼요. 예시를 클릭하면 복사돼요. 검색창에 "?"를 입력해도 이 목록이 나와요.',
         copyExample: '클릭하여 복사',

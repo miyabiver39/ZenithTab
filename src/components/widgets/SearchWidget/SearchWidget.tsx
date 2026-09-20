@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, Globe, Code2, Video, Sparkles, Compass, ChevronDown, Settings } from 'lucide-react';
+import { cn } from '../../../utils/cn';
 import { SearchWidgetConfig, SearchEngine } from '../../../types/widget';
 import { useTranslation } from '../../../i18n/i18n';
 import { useDashboardStore } from '../../../store/useDashboardStore';
@@ -111,6 +112,9 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
   // Inline answer for "120*1.1", "10 km to mi", "dice"… `rollSeed` only
   // exists to force a fresh evaluation for the random kinds.
   const [rollSeed, setRollSeed] = useState(0);
+  // The ✨ button next to the search field: a first-time user has no way to
+  // guess that "?" exists, so the cheat sheet gets a visible entry point too.
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const smartResult = useMemo(
     () => (smartTools ? evaluateSmartInput(query) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -302,6 +306,22 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
             className="flex-1 bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none min-w-0 px-1"
           />
 
+          {smartTools && (
+            <button
+              type="button"
+              onClick={() => setIsHelpOpen((open) => !open)}
+              title={t.widgets.search.smart.helpButton}
+              aria-label={t.widgets.search.smart.helpButton}
+              aria-expanded={isHelpOpen || isHelpQuery(query)}
+              className={cn(
+                'p-2 rounded-xl transition-colors flex-shrink-0',
+                isHelpOpen || isHelpQuery(query) ? 'text-sky-300 bg-sky-500/15' : 'text-slate-400 hover:text-sky-300 hover:bg-white/10'
+              )}
+            >
+              <Sparkles size={15} />
+            </button>
+          )}
+
           <button
             type="submit"
             className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white transition-colors flex-shrink-0 shadow-md shadow-sky-500/20 ml-1.5 active:scale-95"
@@ -312,11 +332,13 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
         </div>
 
         {smartResult && <SmartResultCard result={smartResult} anchorRef={barRef} onReroll={() => setRollSeed((s) => s + 1)} />}
-        {smartTools && !smartResult && isHelpQuery(query) && (
+        {smartTools && !smartResult && (isHelpOpen || isHelpQuery(query)) && (
           <SmartHelpCard
             anchorRef={barRef}
+            onClose={() => setIsHelpOpen(false)}
             onPick={(input) => {
               setQuery(input);
+              setIsHelpOpen(false);
               inputRef.current?.focus();
             }}
           />

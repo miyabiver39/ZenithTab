@@ -261,7 +261,7 @@ export const zh: typeof en = {
     search: {
       title: '快捷搜索',
       desc: '支持 Google、Bing、YouTube、AI 的一键聚合搜索。',
-      placeholder: '搜索网页... (按 / 聚焦)',
+      placeholder: '搜索网页，输入 ? 查看用法... (按 / 聚焦)',
       google: 'Google',
       bing: '必应',
       duckduckgo: 'DuckDuckGo',
@@ -283,7 +283,8 @@ export const zh: typeof en = {
         rolled: '{notation}: {rolls}',
         randomRange: '随机 {min}–{max}',
         chosen: '候选: {options}',
-        helpTitle: '搜索栏能回答什么',
+        helpTitle: '搜索栏能回答什么',
+        helpButton: '这里能输入什么？',
         helpHint: '随时输入 ? 查看此列表',
         examplesDesc: '在搜索栏输入以下内容，答案会在搜索前显示。点击示例即可复制。在搜索栏输入“?”也会显示此列表。',
         copyExample: '点击复制',

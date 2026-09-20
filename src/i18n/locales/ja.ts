@@ -259,7 +259,7 @@ export const ja = {
     search: {
       title: 'クイック検索',
       desc: 'Google、Bing、YouTube、AI検索などをワンクリックで切り替え可能な検索バー。',
-      placeholder: 'Webを検索... (/ キーでフォーカス)',
+      placeholder: 'Webを検索、? で使い方を表示... (/ キーでフォーカス)',
       google: 'Google',
       bing: 'Bing',
       duckduckgo: 'DuckDuckGo',
@@ -281,7 +281,8 @@ export const ja = {
         rolled: '{notation}: {rolls}',
         randomRange: '乱数 {min}〜{max}',
         chosen: '候補: {options}',
-        helpTitle: '検索バーでできること',
+        helpTitle: '検索バーでできること',
+        helpButton: 'ここに何が入力できる？',
         helpHint: '「?」と入力するといつでも表示',
         examplesDesc: '次のように検索欄に入力すると、検索する前に答えが表示されます。例をクリックするとコピーできます。検索欄に「?」と入力してもこの一覧が出ます。',
         copyExample: 'クリックでコピー',

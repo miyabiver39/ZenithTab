@@ -261,7 +261,7 @@ export const es: typeof en = {
     search: {
       title: 'Búsqueda rápida',
       desc: 'Barra de búsqueda con soporte para Google, Bing, YouTube e IA.',
-      placeholder: 'Buscar en la web... (presiona / para enfocar)',
+      placeholder: 'Buscar en la web, o escribe ? para ver ejemplos... (/ para enfocar)',
       google: 'Google',
       bing: 'Bing',
       duckduckgo: 'DuckDuckGo',
@@ -283,7 +283,8 @@ export const es: typeof en = {
         rolled: '{notation}: {rolls}',
         randomRange: 'Aleatorio {min}–{max}',
         chosen: 'Opciones: {options}',
-        helpTitle: 'Qué puede responder la barra de búsqueda',
+        helpTitle: 'Qué puede responder la barra de búsqueda',
+        helpButton: '¿Qué puedo escribir aquí?',
         helpHint: 'Escribe ? en cualquier momento para ver esta lista',
         examplesDesc: 'Escribe cualquiera de estos en la barra y la respuesta aparece antes de buscar. Haz clic en un ejemplo para copiarlo. Escribir «?» en la barra también muestra esta lista.',
         copyExample: 'Clic para copiar',
