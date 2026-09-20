@@ -24,7 +24,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
 
     const variantStyles = {
       solid: 'bg-slate-900/80 border-white/10',
-      translucent: 'bg-slate-900/40 border-white/10 shadow-xl shadow-black/20',
+      translucent: 'bg-glass border-white/10 shadow-xl shadow-black/20',
       transparent: 'bg-transparent border-transparent',
     }[variant];
 

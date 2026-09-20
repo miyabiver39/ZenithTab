@@ -511,6 +511,8 @@ export const en = {
     quickDockPos: 'Quick Dock Position',
     widgetCornerRounding: 'Widget Corner Rounding',
     glassBlur: 'Glassmorphism Frosted Blur',
+    adaptiveTextColor: 'Match text colour to the wallpaper',
+    adaptiveTextColorDesc: 'Switches the header and other text on the wallpaper to a dark colour when the wallpaper is light, so it stays readable.',
     languageSelect: 'Interface Language',
     exportTitle: 'Export & Backup Configuration',
     exportDesc: 'Download a JSON backup of your current widgets, grid layout, wallpapers, and appearance.',

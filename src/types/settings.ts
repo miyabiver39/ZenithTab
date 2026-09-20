@@ -50,6 +50,11 @@ export interface AppearanceSettings {
   borderRadius: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   compactMode: boolean;
   dockPosition: 'bottom' | 'top' | 'hidden';
+  /**
+   * Flip text that sits directly on the wallpaper to a dark colour when the
+   * wallpaper reads as light. Optional (added in 1.9); absent means on.
+   */
+  adaptiveTextColor?: boolean;
 }
 
 export interface DockItem {

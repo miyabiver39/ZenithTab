@@ -513,6 +513,8 @@ export const zh: typeof en = {
     quickDockPos: '快捷底栏位置',
     widgetCornerRounding: '组件圆角弧度',
     glassBlur: '毛玻璃磨砂效果',
+    adaptiveTextColor: '文字颜色随壁纸自动调整',
+    adaptiveTextColorDesc: '壁纸较亮时,将页眉等直接位于壁纸上的文字切换为深色,保持可读。',
     languageSelect: '界面语言',
     exportTitle: '导出与备份配置',
     exportDesc: '将当前的组件布局、壁纸和偏好导出为 JSON 文件。',

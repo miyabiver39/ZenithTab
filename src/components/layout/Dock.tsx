@@ -18,7 +18,7 @@ export const Dock: React.FC = () => {
         appearance.dockPosition === 'top' ? 'top-14' : 'bottom-4'
       } left-1/2 -translate-x-1/2 z-30 transition-all select-none`}
     >
-      <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/40 border border-white/10 shadow-2xl backdrop-blur-2xl">
+      <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-glass border border-white/10 shadow-2xl backdrop-blur-2xl">
         {dockItems.map((item) => {
           const Icon = DOCK_ICON_LIBRARY[item.icon];
           return (

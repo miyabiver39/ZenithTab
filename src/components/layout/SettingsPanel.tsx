@@ -702,6 +702,21 @@ export const SettingsPanel: React.FC = () => {
                 className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
               />
             </div>
+
+            {/* Adaptive text colour on light wallpapers */}
+            <label className="flex items-start gap-3 p-3 rounded-xl bg-slate-800/40 border border-white/10 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={appearance.adaptiveTextColor !== false}
+                onChange={(e) => updateAppearance({ adaptiveTextColor: e.target.checked })}
+                aria-label={t.settings.adaptiveTextColor}
+                className="mt-0.5 w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20 flex-shrink-0"
+              />
+              <span>
+                <span className="block text-xs font-medium text-slate-200">{t.settings.adaptiveTextColor}</span>
+                <span className="block text-[11px] text-slate-400 mt-0.5">{t.settings.adaptiveTextColorDesc}</span>
+              </span>
+            </label>
           </div>
         )}
 

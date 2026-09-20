@@ -513,6 +513,8 @@ export const es: typeof en = {
     quickDockPos: 'Posición del muelle rápido',
     widgetCornerRounding: 'Bordes redondeados de widgets',
     glassBlur: 'Efecto cristal esmerilado',
+    adaptiveTextColor: 'Adaptar el color del texto al fondo',
+    adaptiveTextColorDesc: 'Cuando el fondo es claro, el encabezado y otros textos sobre el fondo pasan a un color oscuro para seguir siendo legibles.',
     languageSelect: 'Idioma de la interfaz',
     exportTitle: 'Exportar configuración',
     exportDesc: 'Descarga una copia de seguridad JSON de tus widgets y ajustes.',

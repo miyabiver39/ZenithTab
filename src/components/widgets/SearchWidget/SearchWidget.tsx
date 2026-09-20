@@ -312,8 +312,8 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
                   onClick={() => setSelectedEngine(key)}
                   className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[11px] font-medium transition-all ${
                     isSelected
-                      ? 'bg-sky-500/20 text-sky-200 border border-sky-400/30 shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
+                      ? 'bg-sky-500/20 text-on-wallpaper-accent border border-sky-400/30 shadow-sm'
+                      : 'text-on-wallpaper-faint hover:text-on-wallpaper-muted hover:bg-white/5 border border-transparent'
                   }`}
                 >
                   {Icon ? (

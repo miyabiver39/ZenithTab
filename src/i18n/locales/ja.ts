@@ -511,6 +511,8 @@ export const ja = {
     quickDockPos: 'クイックドックの位置',
     widgetCornerRounding: 'ウィジェットの角丸',
     glassBlur: 'グラスモフィズム すりガラス効果 (Blur)',
+    adaptiveTextColor: '壁紙に合わせて文字色を自動調整',
+    adaptiveTextColorDesc: '壁紙が明るいときはヘッダーなど壁紙の上の文字を暗い色に切り替え、読みやすさを保ちます。',
     languageSelect: '表示言語 (Language)',
     exportTitle: '設定のエクスポート & バックアップ',
     exportDesc: '現在のウィジェット配置、壁紙、外観設定をJSON形式でダウンロードします。',

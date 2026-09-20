@@ -127,6 +127,7 @@ export const DEFAULT_APPEARANCE: AppearanceSettings = {
   borderRadius: '2xl',
   compactMode: false,
   dockPosition: 'bottom',
+  adaptiveTextColor: true,
 };
 
 /**

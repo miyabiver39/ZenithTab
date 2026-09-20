@@ -29,7 +29,7 @@ export const EmptyPage: React.FC = () => {
 
   return (
     <div className="w-full flex items-center justify-center py-16 sm:py-24">
-      <div className="max-w-md w-full flex flex-col items-center text-center gap-4 px-6 py-8 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-white/10 shadow-xl">
+      <div className="max-w-md w-full flex flex-col items-center text-center gap-4 px-6 py-8 rounded-2xl bg-glass backdrop-blur-md border border-white/10 shadow-xl">
         <div className="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-400/20 flex items-center justify-center text-sky-300">
           <LayoutGrid size={22} />
         </div>

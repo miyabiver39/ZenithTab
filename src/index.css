@@ -8,11 +8,49 @@
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
+
+    /* Colours for text that sits directly on the wallpaper, and the alpha
+       of the glass chrome around it. WallpaperBackground stamps
+       data-backdrop="light" on <html> when the wallpaper reads as light
+       (see services/wallpaperLuminance.ts); these are the dark defaults. */
+    --on-wallpaper: 255 255 255;        /* white */
+    --on-wallpaper-muted: 203 213 225;  /* slate-300 */
+    --on-wallpaper-faint: 148 163 184;  /* slate-400 */
+    --on-wallpaper-accent: 186 230 253; /* sky-200 */
+    --glass-alpha: 0.4;
+  }
+
+  :root[data-backdrop="light"] {
+    --on-wallpaper: 15 23 42;           /* slate-900 */
+    --on-wallpaper-muted: 51 65 85;     /* slate-700 */
+    --on-wallpaper-faint: 71 85 105;    /* slate-600 */
+    --on-wallpaper-accent: 7 89 133;    /* sky-800 */
+    --glass-alpha: 0.7;
   }
 
   body {
     @apply bg-slate-950 text-slate-100 antialiased overflow-x-hidden m-0 p-0 select-none;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-on-wallpaper {
+    color: rgb(var(--on-wallpaper));
+  }
+  .text-on-wallpaper-muted {
+    color: rgb(var(--on-wallpaper-muted));
+  }
+  .text-on-wallpaper-faint {
+    color: rgb(var(--on-wallpaper-faint));
+  }
+  .text-on-wallpaper-accent {
+    color: rgb(var(--on-wallpaper-accent));
+  }
+  /* slate-900 at an alpha that deepens on light wallpapers so the white
+     text inside the glass keeps its contrast. */
+  .bg-glass {
+    background-color: rgb(15 23 42 / var(--glass-alpha));
   }
 }
 

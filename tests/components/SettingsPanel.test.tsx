@@ -162,6 +162,12 @@ describe('SettingsPanel', () => {
       fireEvent.change(sliders[0], { target: { value: '24' } }); // range input
       expect(state().appearance.glassBlur).toBe(24);
     }
+
+    // Adaptive text colour is on unless the user turns it off.
+    const adaptive = screen.getByRole('checkbox', { name: 'Match text colour to the wallpaper' });
+    expect(adaptive).toBeChecked();
+    await user.click(adaptive);
+    expect(state().appearance.adaptiveTextColor).toBe(false);
   });
 
   it('言語タブ: 言語を切り替えると UI が追従すること', async () => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { wallpaperService } from '../../services/wallpaperService';
+import { resolveBackdropTone } from '../../services/wallpaperLuminance';
 
 const CROSSFADE_MS = 700;
 
@@ -15,7 +16,8 @@ interface Layer {
 }
 
 export const WallpaperBackground: React.FC = () => {
-  const { wallpaper } = useDashboardStore();
+  const { wallpaper, appearance } = useDashboardStore();
+  const adaptiveText = appearance.adaptiveTextColor !== false;
   const {
     source = 'unsplash',
     currentWallpaperUrl,
@@ -56,6 +58,25 @@ export const WallpaperBackground: React.FC = () => {
     // `wallpaper` covers every field the resolver reads.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallpaper, now]);
+
+  // Tell the rest of the UI whether the composited wallpaper is light, so
+  // text placed straight on it (header, page strip, search pills) can turn
+  // dark. Set on <html> so portaled menus see it too; absent = dark.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!adaptiveText) {
+      delete root.dataset.backdrop;
+      return;
+    }
+    let cancelled = false;
+    const { url, isGradient, brightness: imageBrightness, overlayOpacity: overlay } = target;
+    void resolveBackdropTone({ url, isGradient, brightness: imageBrightness, overlayOpacity: overlay }).then((tone) => {
+      if (!cancelled) root.dataset.backdrop = tone;
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [adaptiveText, target]);
 
   // Keep the previous layer mounted underneath the new one for a short
   // cross-fade instead of a hard cut when the time slot (or the user's

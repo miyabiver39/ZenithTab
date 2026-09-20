@@ -513,6 +513,8 @@ export const de: typeof en = {
     quickDockPos: 'Dock-Position',
     widgetCornerRounding: 'Widget-Eckenabrundung',
     glassBlur: 'Glassmorphism Mattglas-Effekt',
+    adaptiveTextColor: 'Textfarbe an das Hintergrundbild anpassen',
+    adaptiveTextColorDesc: 'Bei hellem Hintergrund wechseln Kopfzeile und anderer Text auf dem Hintergrund zu einer dunklen Farbe, damit sie lesbar bleiben.',
     languageSelect: 'Oberflächensprache',
     exportTitle: 'Konfiguration exportieren',
     exportDesc: 'Lade ein JSON-Backup deiner Widgets und Einstellungen herunter.',

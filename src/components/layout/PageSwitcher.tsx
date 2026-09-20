@@ -49,7 +49,7 @@ export const PageSwitcher: React.FC = () => {
       {/* A small glyph so the strip reads as "pages" at a glance rather
           than as two stray chips — kept muted so it doesn't compete with
           the tabs themselves. */}
-      <Layers size={13} className="text-slate-500 flex-shrink-0 mr-0.5" aria-hidden />
+      <Layers size={13} className="text-on-wallpaper-faint flex-shrink-0 mr-0.5" aria-hidden />
       {pages.map((page, index) => (
         <div
           key={page.id}
@@ -62,7 +62,7 @@ export const PageSwitcher: React.FC = () => {
             'group flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap cursor-pointer transition-all border flex-shrink-0',
             activePageId === page.id
               ? 'bg-sky-500/20 text-sky-100 border-sky-400/40 shadow-sm'
-              : 'bg-slate-900/40 text-slate-300 border-white/10 hover:text-white hover:bg-slate-900/60'
+              : 'bg-glass text-slate-300 border-white/10 hover:text-white hover:bg-slate-900/60'
           )}
         >
           {renamingId === page.id ? (
@@ -101,7 +101,7 @@ export const PageSwitcher: React.FC = () => {
         <button
           type="button"
           title={t.pages.add}
-          className="flex-shrink-0 p-1.5 rounded-xl text-slate-500 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10 transition-colors"
+          className="flex-shrink-0 p-1.5 rounded-xl text-on-wallpaper-faint hover:text-on-wallpaper hover:bg-white/10 border border-transparent hover:border-white/10 transition-colors"
         >
           <Plus size={13} />
         </button>

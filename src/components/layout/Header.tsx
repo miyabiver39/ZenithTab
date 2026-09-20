@@ -47,12 +47,12 @@ export const Header: React.FC = () => {
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-sm font-bold text-white tracking-wide">ZenithTab</h1>
-            <span className="text-xs text-slate-400 font-normal hidden md:inline">
+            <h1 className="text-sm font-bold text-on-wallpaper tracking-wide">ZenithTab</h1>
+            <span className="text-xs text-on-wallpaper-faint font-normal hidden md:inline">
               • {greeting}
             </span>
           </div>
-          <p className="text-[10px] text-slate-300 font-medium tracking-wider uppercase">
+          <p className="text-[10px] text-on-wallpaper-muted font-medium tracking-wider uppercase">
             {t.common.dashboard}
           </p>
         </div>
@@ -62,7 +62,7 @@ export const Header: React.FC = () => {
       <div className="flex items-center gap-2">
         <button
           onClick={() => toggleAppDrawer(true)}
-          className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95 flex items-center gap-1.5 px-3 text-xs font-medium"
+          className="p-2 rounded-xl bg-glass hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95 flex items-center gap-1.5 px-3 text-xs font-medium"
           title={t.appDrawer.title}
         >
           <LayoutGrid size={14} className="text-sky-400" />
@@ -71,7 +71,7 @@ export const Header: React.FC = () => {
 
         <button
           onClick={rotateWallpaper}
-          className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95"
+          className="p-2 rounded-xl bg-glass hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95"
           title={t.common.changeWallpaper}
         >
           <RefreshCw size={15} />
@@ -87,7 +87,7 @@ export const Header: React.FC = () => {
         {pages.length === 1 && (
           <AddPageMenu align="right">
             <button
-              className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95 flex items-center gap-1.5 px-3 text-xs font-medium"
+              className="p-2 rounded-xl bg-glass hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95 flex items-center gap-1.5 px-3 text-xs font-medium"
               title={t.pages.add}
             >
               <Layers size={14} />
@@ -120,7 +120,7 @@ export const Header: React.FC = () => {
         ) : (
           <button
             onClick={() => setEditMode(true)}
-            className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95 flex items-center gap-1.5 px-3 text-xs font-medium"
+            className="p-2 rounded-xl bg-glass hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95 flex items-center gap-1.5 px-3 text-xs font-medium"
             title={t.common.editLayout}
           >
             <LayoutGrid size={14} />
@@ -130,7 +130,7 @@ export const Header: React.FC = () => {
 
         <button
           onClick={() => openSettingsModal('settings')}
-          className="p-2 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95"
+          className="p-2 rounded-xl bg-glass hover:bg-slate-900/60 border border-white/10 text-slate-300 hover:text-white backdrop-blur-md transition-all shadow-md active:scale-95"
           title={t.common.settings}
         >
           <Settings size={15} />

@@ -513,6 +513,8 @@ export const fr: typeof en = {
     quickDockPos: 'Position du dock rapide',
     widgetCornerRounding: 'Arrondi des widgets',
     glassBlur: 'Effet verre dépoli',
+    adaptiveTextColor: "Adapter la couleur du texte au fond d'écran",
+    adaptiveTextColorDesc: "Quand le fond est clair, l'en-tête et les autres textes posés dessus passent en couleur sombre pour rester lisibles.",
     languageSelect: 'Langue de l’interface',
     exportTitle: 'Exporter la configuration',
     exportDesc: 'Téléchargez une sauvegarde JSON de vos widgets et réglages.',

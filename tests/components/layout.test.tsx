@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, act, fireEvent, within } from '@testing-library/react';
+import { render, screen, act, fireEvent, within, waitFor } from '@testing-library/react';
 import { setupUser, literal } from '../helpers/user';
 import React from 'react';
 import { Header } from '../../src/components/layout/Header';
@@ -8,6 +8,7 @@ import { EmptyPage } from '../../src/components/layout/EmptyPage';
 import { AddPageMenu } from '../../src/components/layout/AddPageMenu';
 import { Dock } from '../../src/components/layout/Dock';
 import { WallpaperBackground } from '../../src/components/layout/WallpaperBackground';
+import * as wallpaperLuminance from '../../src/services/wallpaperLuminance';
 import { GridContainer } from '../../src/components/layout/GridContainer';
 import { AddWidgetModal } from '../../src/components/layout/AddWidgetModal';
 import { ErrorBoundary } from '../../src/components/ErrorBoundary';
@@ -276,6 +277,16 @@ describe('WallpaperBackground', () => {
     // jsdom expands the `background` shorthand into backgroundImage.
     expect(layer.style.backgroundImage).toContain('linear-gradient');
     expect(layer.style.filter).toBe('');
+  });
+  it('壁紙の明るさを <html data-backdrop> に反映し、設定でオフにすると外すこと', async () => {
+    const tone = vi.spyOn(wallpaperLuminance, 'resolveBackdropTone').mockResolvedValue('light');
+    act(() => state().updateWallpaper({ brightness: 0.9, overlayOpacity: 0.2, currentWallpaperUrl: 'https://img.example/bright.jpg' }));
+    render(<WallpaperBackground />);
+    await waitFor(() => expect(document.documentElement.dataset.backdrop).toBe('light'));
+    expect(tone).toHaveBeenCalledWith({ url: 'https://img.example/bright.jpg', isGradient: false, brightness: 0.9, overlayOpacity: 0.2 });
+
+    act(() => state().updateAppearance({ adaptiveTextColor: false }));
+    await waitFor(() => expect(document.documentElement.dataset.backdrop).toBeUndefined());
   });
 });
 

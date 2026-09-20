@@ -513,6 +513,8 @@ export const ko: typeof en = {
     quickDockPos: '빠른 실행 독 위치',
     widgetCornerRounding: '위젯 모서리 둥글기',
     glassBlur: '글래스모피즘 반투명 블러',
+    adaptiveTextColor: '배경화면에 맞춰 글자색 자동 조정',
+    adaptiveTextColorDesc: '배경화면이 밝을 때 헤더 등 배경 위의 글자를 어두운 색으로 바꿔 읽기 쉽게 유지해요.',
     languageSelect: '인터페이스 언어',
     exportTitle: '설정 내보내기 & 백업',
     exportDesc: '현재 위젯 배치, 배경화면 및 설정을 JSON 파일로 다운로드합니다.',
