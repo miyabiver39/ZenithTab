@@ -224,8 +224,21 @@ function addDays(date: Date, days: number): Date {
   return d;
 }
 
-/** Start times (epoch ms) of a recurring event's occurrences up to `rangeEnd`, honouring COUNT/UNTIL. */
-function* occurrenceStarts(event: ICalEvent, rule: RecurrenceRule, rangeEnd: Date): Generator<Date> {
+/** Whole months from `a` to `b` by calendar position (Jan 31 → Mar 1 = 1). */
+function monthsBetween(a: Date, b: Date): number {
+  return (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
+}
+
+/**
+ * Start times of a recurring event's occurrences that can overlap
+ * [windowStart, rangeEnd), honouring COUNT/UNTIL.
+ *
+ * Expansion jumps straight to the period just before `windowStart`
+ * instead of walking from DTSTART: a daily stand-up created years ago
+ * would otherwise exhaust MAX_OCCURRENCES before reaching today and
+ * vanish from the widget. Skipped periods still count towards COUNT.
+ */
+function* occurrenceStarts(event: ICalEvent, rule: RecurrenceRule, windowStart: Date, rangeEnd: Date): Generator<Date> {
   const limit = rule.until && rule.until < rangeEnd ? rule.until : rangeEnd;
   let produced = 0;
   const emit = function* (d: Date) {
@@ -243,7 +256,21 @@ function* occurrenceStarts(event: ICalEvent, rule: RecurrenceRule, rangeEnd: Dat
     // week emit the BYDAY days in order.
     const weekStart = addDays(event.start, -event.start.getDay());
     const days = [...rule.byDay].sort((a, b) => a - b);
-    for (let week = 0; week < MAX_OCCURRENCES; week += rule.interval) {
+    // Weeks (in steps of INTERVAL) that end before the window: skip them,
+    // crediting the occurrences they would have produced against COUNT.
+    // The first week only yields the BYDAY days on/after DTSTART.
+    const weeksToWindow = Math.floor((windowStart.getTime() - weekStart.getTime()) / (7 * DAY_MS));
+    let firstWeek = 0;
+    if (weeksToWindow > 0) {
+      const skipSteps = Math.max(0, Math.floor((weeksToWindow - 1) / rule.interval));
+      if (skipSteps > 0) {
+        const firstWeekDays = days.filter((day) => day >= event.start.getDay()).length;
+        produced = firstWeekDays + (skipSteps - 1) * days.length;
+        firstWeek = skipSteps * rule.interval;
+        if (rule.count !== undefined && produced >= rule.count) return;
+      }
+    }
+    for (let week = firstWeek; week < firstWeek + MAX_OCCURRENCES * rule.interval; week += rule.interval) {
       const base = addDays(weekStart, week * 7);
       if (base > limit) return;
       for (const day of days) {
@@ -256,7 +283,21 @@ function* occurrenceStarts(event: ICalEvent, rule: RecurrenceRule, rangeEnd: Dat
     return;
   }
 
-  for (let i = 0; i < MAX_OCCURRENCES; i++) {
+  // How many INTERVAL steps fit between DTSTART and the window; start one
+  // step early so an occurrence straddling the window edge isn't lost.
+  const periodsToWindow =
+    rule.freq === 'DAILY'
+      ? Math.floor((windowStart.getTime() - event.start.getTime()) / DAY_MS)
+      : rule.freq === 'WEEKLY'
+        ? Math.floor((windowStart.getTime() - event.start.getTime()) / (7 * DAY_MS))
+        : rule.freq === 'MONTHLY'
+          ? monthsBetween(event.start, windowStart)
+          : Math.floor(monthsBetween(event.start, windowStart) / 12);
+  const firstIndex = Math.max(0, Math.floor(periodsToWindow / rule.interval) - 1);
+  produced = firstIndex;
+  if (rule.count !== undefined && produced >= rule.count) return;
+
+  for (let i = firstIndex; i < firstIndex + MAX_OCCURRENCES; i++) {
     const n = i * rule.interval;
     const d =
       rule.freq === 'DAILY' ? addDays(event.start, n) : rule.freq === 'WEEKLY' ? addDays(event.start, n * 7) : rule.freq === 'MONTHLY' ? addMonths(event.start, n) : addMonths(event.start, n * 12);
@@ -289,7 +330,9 @@ export function expandOccurrences(events: ICalEvent[], rangeStart: Date, rangeEn
       push(event, event.start, event.end);
       continue;
     }
-    for (const start of occurrenceStarts(event, event.rrule, rangeEnd)) {
+    // Occurrences that begin before the range but run into it still count.
+    const windowStart = new Date(rangeStart.getTime() - duration);
+    for (const start of occurrenceStarts(event, event.rrule, windowStart, rangeEnd)) {
       const key = `${event.uid}@${start.getTime()}`;
       if (event.exdates.includes(start.getTime()) || overridden.has(key)) continue;
       push(event, start, new Date(start.getTime() + duration));

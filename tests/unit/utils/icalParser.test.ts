@@ -145,3 +145,122 @@ END:VEVENT
     expect(occ.map((o) => o.summary)).toEqual(['Trip', 'Call']);
   });
 });
+
+describe('utils/icalParser — 何年も前に始まった繰り返し (#48)', () => {
+  const ics2 = (body: string) => `BEGIN:VCALENDAR\r\n${body.trim().replace(/\n/g, '\r\n')}\r\nEND:VCALENDAR\r\n`;
+  const d2 = (y: number, m: number, day: number, h = 0, mi = 0) => new Date(y, m - 1, day, h, mi);
+  const week = [d2(2026, 9, 20), d2(2026, 9, 27)]; // Sun–Sat
+
+  it('5 年前に始まった毎日・毎週(BYDAY)・毎月・毎年の予定が今週に表示されること', () => {
+    const events = parseIcal(
+      ics2(`
+BEGIN:VEVENT
+UID:daily
+SUMMARY:Standup
+DTSTART:20210104T090000
+DTEND:20210104T091500
+RRULE:FREQ=DAILY
+END:VEVENT
+BEGIN:VEVENT
+UID:weekly
+SUMMARY:Gym
+DTSTART:20210105T190000
+DTEND:20210105T200000
+RRULE:FREQ=WEEKLY;BYDAY=TU,TH
+END:VEVENT
+BEGIN:VEVENT
+UID:biweekly
+SUMMARY:Sprint
+DTSTART:20210105T100000
+DTEND:20210105T110000
+RRULE:FREQ=WEEKLY;INTERVAL=2
+END:VEVENT
+BEGIN:VEVENT
+UID:monthly
+SUMMARY:Rent
+DTSTART;VALUE=DATE:20190125
+RRULE:FREQ=MONTHLY
+END:VEVENT
+BEGIN:VEVENT
+UID:yearly
+SUMMARY:Birthday
+DTSTART;VALUE=DATE:19850922
+RRULE:FREQ=YEARLY
+END:VEVENT
+`)
+    );
+    const occ = expandOccurrences(events, week[0], week[1]);
+    const by = (uid: string) => occ.filter((o) => o.uid === uid).map((o) => `${o.start.getMonth() + 1}/${o.start.getDate()}`);
+    expect(by('daily')).toEqual(['9/20', '9/21', '9/22', '9/23', '9/24', '9/25', '9/26']);
+    expect(by('weekly')).toEqual(['9/22', '9/24']);
+    // 2021-01-05 is a Tuesday; every second Tuesday lands on 9/22 (299 weeks later... 300 weeks = even).
+    expect(by('biweekly')).toEqual(['9/22']);
+    expect(by('yearly')).toEqual(['9/22']);
+    expect(by('monthly')).toEqual(['9/25']);
+  });
+
+  it('スキップした回数も COUNT に数え、既に終わった繰り返しは表示しないこと', () => {
+    const events = parseIcal(
+      ics2(`
+BEGIN:VEVENT
+UID:short
+SUMMARY:Ten days only
+DTSTART:20210104T090000
+RRULE:FREQ=DAILY;COUNT=10
+END:VEVENT
+BEGIN:VEVENT
+UID:until
+SUMMARY:Ended last year
+DTSTART:20210104T090000
+RRULE:FREQ=DAILY;UNTIL=20251231T000000
+END:VEVENT
+BEGIN:VEVENT
+UID:bydaycount
+SUMMARY:Five gym sessions
+DTSTART:20210105T190000
+RRULE:FREQ=WEEKLY;BYDAY=TU,TH;COUNT=5
+END:VEVENT
+BEGIN:VEVENT
+UID:bigcount
+SUMMARY:Still running
+DTSTART:20210104T090000
+RRULE:FREQ=DAILY;COUNT=5000
+END:VEVENT
+`)
+    );
+    const occ = expandOccurrences(events, week[0], week[1]);
+    expect(occ.map((o) => o.uid)).not.toContain('short');
+    expect(occ.map((o) => o.uid)).not.toContain('until');
+    expect(occ.map((o) => o.uid)).not.toContain('bydaycount');
+    expect(occ.filter((o) => o.uid === 'bigcount')).toHaveLength(7);
+  });
+
+  it('COUNT の境界がちょうど表示範囲にかかる場合、正確な回数で止まること', () => {
+    // Daily from 2026-09-01 with COUNT=22 → last occurrence 2026-09-22.
+    const events = parseIcal(ics2(`
+BEGIN:VEVENT
+UID:edge
+SUMMARY:Edge
+DTSTART:20260901T090000
+RRULE:FREQ=DAILY;COUNT=22
+END:VEVENT
+`));
+    const occ = expandOccurrences(events, week[0], week[1]);
+    expect(occ.map((o) => o.start.getDate())).toEqual([20, 21, 22]);
+  });
+
+  it('範囲より前に始まり範囲に食い込む複数日の繰り返しも拾うこと', () => {
+    // A 3-day event every week from 2021, occurrence starting Sat 9/19 runs into Sun 9/20.
+    const events = parseIcal(ics2(`
+BEGIN:VEVENT
+UID:long
+SUMMARY:Weekend trip
+DTSTART;VALUE=DATE:20210109
+DTEND;VALUE=DATE:20210112
+RRULE:FREQ=WEEKLY
+END:VEVENT
+`));
+    const occ = expandOccurrences(events, d2(2026, 9, 20), d2(2026, 9, 21));
+    expect(occ.map((o) => `${o.start.getMonth() + 1}/${o.start.getDate()}`)).toEqual(['9/19']);
+  });
+});
