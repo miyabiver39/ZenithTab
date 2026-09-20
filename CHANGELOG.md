@@ -11,6 +11,14 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 
 ### Fixed
 
+## [1.10.2] - 2026-09-21
+
+### Added
+- 検索バーのスマート回答の使い方をアプリ内で確認できるように(#39)。検索欄の ✨ ボタン、または `?` の入力で「検索バーでできること」(種類ごとの入力例)を表示し、例をクリックするとそのまま検索欄に入る。検索ウィジェットの設定にも同じ一覧(クリックでコピー)を掲載。プレースホルダーにも `?` の案内を追加
+
+### Changed
+- CI: GitHub Actions を Node 24 対応版(checkout v7 / setup-node v7 / upload-artifact v7 / action-gh-release v3)に更新し、Node 22・`ubuntu-24.04` に固定(#38)
+
 ## [1.10.1] - 2026-09-20
 
 ### Changed
@@ -245,7 +253,8 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 - 初回リリース(Manifest V3)
 - i18n(多言語)対応、現在地ベースの天気表示、検索・ポモドーロ・Todo ウィジェット
 
-[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.1...HEAD
+[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.2...HEAD
+[1.10.2]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.1...v1.10.2
 [1.10.1]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.0...v1.10.1
 [1.10.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.8.1...v1.9.0
