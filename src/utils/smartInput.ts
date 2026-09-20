@@ -441,3 +441,25 @@ export function evaluateSmartInput(input: string, options: SmartInputOptions = {
 
   return null;
 }
+
+/**
+ * One representative input per kind, for the in-app help (settings and the
+ * "?" cheat sheet under the search bar). Every entry must evaluate to a
+ * result — tests check that, so the help never advertises a dead example.
+ */
+export const SMART_INPUT_EXAMPLES: { kind: SmartResult['kind']; inputs: string[] }[] = [
+  { kind: 'calc', inputs: ['120*1.1', '(3+4)^2', 'sqrt(2)'] },
+  { kind: 'percent', inputs: ['20% of 150'] },
+  { kind: 'unit', inputs: ['10 km to mi', '72 f to c', '1 GB to MB'] },
+  { kind: 'base', inputs: ['0xff', '255 to hex'] },
+  { kind: 'dice', inputs: ['dice', '2d6', 'd20'] },
+  { kind: 'coin', inputs: ['coin'] },
+  { kind: 'random', inputs: ['random', 'random 1-100'] },
+  { kind: 'choose', inputs: ['choose tea, coffee, water'] },
+  { kind: 'days', inputs: ['days until 2026-12-31'] },
+];
+
+/** True when the user asked for the cheat sheet itself. */
+export function isHelpQuery(input: string): boolean {
+  return /^[?？]$/.test(input.trim());
+}

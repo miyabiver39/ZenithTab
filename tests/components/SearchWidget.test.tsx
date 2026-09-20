@@ -166,6 +166,21 @@ describe('SearchWidget', () => {
     expect(screen.queryByTestId('smart-result')).not.toBeInTheDocument();
   });
 
+  it('スマート回答: "?" で入力例の一覧が出て、例をクリックすると検索欄に入り答えが出ること', async () => {
+    const user = setupUser();
+    render(<SearchWidget widgetId="s" config={base} />);
+    const input = screen.getByPlaceholderText(/Search the web/i);
+    await user.type(input, '?');
+    const help = within(screen.getByTestId('smart-help'));
+    expect(help.getByText('What the search bar can answer')).toBeInTheDocument();
+    expect(help.getByText('Convert units')).toBeInTheDocument();
+
+    await user.click(help.getByRole('button', { name: '10 km to mi' }));
+    expect(input).toHaveValue('10 km to mi');
+    expect(screen.queryByTestId('smart-help')).not.toBeInTheDocument();
+    expect(within(screen.getByTestId('smart-result')).getByText('6.213711922 mi')).toBeInTheDocument();
+  });
+
   it('スマート回答: コイントスは「もう一度」で再抽選でき、設定でオフにできること', async () => {
     const user = setupUser();
     const random = vi.spyOn(Math, 'random').mockReturnValue(0.1);

@@ -7,6 +7,7 @@ import { CustomSearchEngine, SearchEngine } from '../../../types/widget';
 import { SEARCH_ENGINE_PRESETS, guessSearchUrlTemplate } from '../../../utils/searchEnginePresets';
 import { uniqueId } from '../../../utils/id';
 import type { ConfigFormProps } from '../configForm';
+import { SmartInputExamples } from './SmartInputExamples';
 
 const BUILTIN_ENGINE_LABELS: Record<SearchEngine, string> = {
   google: 'Google',
@@ -155,6 +156,12 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20 flex-shrink-0"
         />
       </div>
+      {config.smartTools !== false && (
+        <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 space-y-2">
+          <div className="text-[11px] text-slate-400">{t.widgets.search.smart.examplesDesc}</div>
+          <SmartInputExamples />
+        </div>
+      )}
 
       <div className="pt-3 border-t border-white/10 space-y-3">
         <label className="block text-xs font-medium text-slate-300">{t.widgets.search.customEngines}</label>

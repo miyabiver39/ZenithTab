@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { evaluateSmartInput, evaluateExpression, convertUnits, formatNumber } from '../../../src/utils/smartInput';
+import { evaluateSmartInput, evaluateExpression, convertUnits, formatNumber, SMART_INPUT_EXAMPLES, isHelpQuery } from '../../../src/utils/smartInput';
 
 const fixed = (values: number[]) => {
   let i = 0;
@@ -77,6 +77,17 @@ describe('utils/smartInput', () => {
     expect(evalAt('2026年10月1日まで')).toMatchObject({ days: 11, date: '2026-10-01' });
     expect(evalAt('2026/09/10')).toMatchObject({ days: -10 });
     expect(evalAt('2026-02-30')).toBeNull();
+  });
+
+  it('ヘルプの入力例はすべて実際に評価でき、種類が一致すること', () => {
+    for (const { kind, inputs } of SMART_INPUT_EXAMPLES) {
+      for (const input of inputs) {
+        expect(evalAt(input)?.kind, input).toBe(kind);
+      }
+    }
+    expect(isHelpQuery('?')).toBe(true);
+    expect(isHelpQuery(' ？ ')).toBe(true);
+    expect(isHelpQuery('?x')).toBe(false);
   });
 
   it('formatNumber は有効数字 10 桁・末尾ゼロなし・極端な値は指数表記', () => {

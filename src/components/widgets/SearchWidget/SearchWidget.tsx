@@ -4,8 +4,8 @@ import { Search, Globe, Code2, Video, Sparkles, Compass, ChevronDown, Settings }
 import { SearchWidgetConfig, SearchEngine } from '../../../types/widget';
 import { useTranslation } from '../../../i18n/i18n';
 import { useDashboardStore } from '../../../store/useDashboardStore';
-import { evaluateSmartInput } from '../../../utils/smartInput';
-import { SmartResultCard } from './SmartResultCard';
+import { evaluateSmartInput, isHelpQuery } from '../../../utils/smartInput';
+import { SmartResultCard, SmartHelpCard } from './SmartResultCard';
 
 interface SearchWidgetProps {
   widgetId: string;
@@ -312,6 +312,15 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
         </div>
 
         {smartResult && <SmartResultCard result={smartResult} anchorRef={barRef} onReroll={() => setRollSeed((s) => s + 1)} />}
+        {smartTools && !smartResult && isHelpQuery(query) && (
+          <SmartHelpCard
+            anchorRef={barRef}
+            onPick={(input) => {
+              setQuery(input);
+              inputRef.current?.focus();
+            }}
+          />
+        )}
 
         {/* Optional Pill Switchers (only rendered when showEngineSelector is true) */}
         {showEngineSelector && (

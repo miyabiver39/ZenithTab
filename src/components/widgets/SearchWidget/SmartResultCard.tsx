@@ -1,9 +1,59 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Calculator, Ruler, Binary, Dices, Coins, Shuffle, ListChecks, CalendarDays, Percent, Copy, Check, RefreshCw } from 'lucide-react';
+import { Calculator, Ruler, Binary, Dices, Coins, Shuffle, ListChecks, CalendarDays, Percent, Copy, Check, RefreshCw, Sparkles } from 'lucide-react';
 import { useTranslation } from '../../../i18n/i18n';
 import { SmartResult, REROLLABLE_KINDS } from '../../../utils/smartInput';
 import { cn } from '../../../utils/cn';
+import { SmartInputExamples } from './SmartInputExamples';
+
+/** Fixed-position box just under the search bar, kept in place on scroll/resize. */
+function useAnchorRect(anchorRef: React.RefObject<HTMLElement | null>, dep: unknown) {
+  const [rect, setRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const update = useCallback(() => {
+    const box = anchorRef.current?.getBoundingClientRect();
+    if (box) setRect({ top: box.bottom + 6, left: box.left, width: box.width });
+  }, [anchorRef]);
+  useEffect(() => {
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, true);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update, true);
+    };
+  }, [update, dep]);
+  return rect;
+}
+
+interface SmartHelpCardProps {
+  anchorRef: React.RefObject<HTMLElement | null>;
+  /** Puts the clicked example into the search box. */
+  onPick: (input: string) => void;
+}
+
+/** Shown when the user types "?" — the cheat sheet of things the bar can answer. */
+export const SmartHelpCard: React.FC<SmartHelpCardProps> = ({ anchorRef, onPick }) => {
+  const { t } = useTranslation();
+  const rect = useAnchorRect(anchorRef, null);
+  if (!rect) return null;
+  return createPortal(
+    <div
+      role="dialog"
+      aria-label={t.widgets.search.smart.helpTitle}
+      data-testid="smart-help"
+      style={{ position: 'fixed', top: rect.top, left: rect.left, width: rect.width }}
+      className="z-[9998] px-3 py-2.5 rounded-2xl bg-slate-900/95 border border-white/15 shadow-2xl backdrop-blur-2xl animate-fade-in max-h-[60vh] overflow-y-auto custom-scrollbar"
+    >
+      <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-white">
+        <Sparkles size={13} className="text-sky-300" />
+        {t.widgets.search.smart.helpTitle}
+        <span className="text-[10px] font-normal text-slate-500 ml-auto">{t.widgets.search.smart.helpHint}</span>
+      </div>
+      <SmartInputExamples compact onPick={onPick} />
+    </div>,
+    document.body
+  );
+};
 
 interface SmartResultCardProps {
   result: SmartResult;
@@ -31,23 +81,8 @@ const ICONS: Record<SmartResult['kind'], React.ElementType> = {
  */
 export const SmartResultCard: React.FC<SmartResultCardProps> = ({ result, anchorRef, onReroll }) => {
   const { t } = useTranslation();
-  const [rect, setRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const rect = useAnchorRect(anchorRef, result);
   const [copied, setCopied] = useState(false);
-
-  const updatePosition = useCallback(() => {
-    const box = anchorRef.current?.getBoundingClientRect();
-    if (box) setRect({ top: box.bottom + 6, left: box.left, width: box.width });
-  }, [anchorRef]);
-
-  useEffect(() => {
-    updatePosition();
-    window.addEventListener('resize', updatePosition);
-    window.addEventListener('scroll', updatePosition, true);
-    return () => {
-      window.removeEventListener('resize', updatePosition);
-      window.removeEventListener('scroll', updatePosition, true);
-    };
-  }, [updatePosition, result]);
 
   const smart = t.widgets.search.smart;
   const view = describe(result, smart);
