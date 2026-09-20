@@ -341,6 +341,22 @@ export const en = {
       download: 'Download',
       copy: 'Copy',
       copied: 'Copied!',
+    },
+    countdown: {
+      title: 'Countdown',
+      desc: 'Days left until a birthday, trip, exam or deadline — add a name and a date.',
+      empty: 'No dates yet. Add one below.',
+      add: 'Add date',
+      nameField: 'Name',
+      namePlaceholder: 'e.g. Trip to Kyoto',
+      dateField: 'Date',
+      emojiField: 'Emoji',
+      repeatYearly: 'Repeats every year',
+      repeatYearlyShort: 'Yearly',
+      today: 'Today!',
+      tomorrow: 'Tomorrow',
+      daysLeft: '{n} days left',
+      daysAgo: '{n} days ago',
     },
   },
   appDrawer: {
@@ -372,6 +388,7 @@ export const en = {
     movedWidget: 'Moved a widget',
     resizedWidget: 'Resized a widget',
     removedTask: 'Removed a task',
+    removedCountdown: 'Removed "{name}"',
     clearedCompleted: 'Cleared completed tasks',
     removedSite: 'Removed shortcut "{name}"',
     closedNotePage: 'Closed note page "{name}"',
@@ -541,6 +558,7 @@ export const en = {
     newsTitle: 'News',
     todoExplore: 'Explore ZenithTab settings',
     todoCustomize: 'Customize widgets & wallpapers',
+    countdownNewYear: "New Year's Day",
     notes: `# 🌌 Welcome to ZenithTab!
 
 > *"The secret of getting ahead is getting started."*

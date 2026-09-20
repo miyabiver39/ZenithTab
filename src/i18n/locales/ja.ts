@@ -341,6 +341,22 @@ export const ja = {
       download: 'ダウンロード',
       copy: 'コピー',
       copied: 'コピーしました！',
+    },
+    countdown: {
+      title: 'カウントダウン',
+      desc: '誕生日・旅行・試験・締切まであと何日かを表示。名前と日付を入れるだけ。',
+      empty: 'まだ日付がありません。下から追加してください。',
+      add: '日付を追加',
+      nameField: '名前',
+      namePlaceholder: '例: 京都旅行',
+      dateField: '日付',
+      emojiField: '絵文字',
+      repeatYearly: '毎年繰り返す',
+      repeatYearlyShort: '毎年',
+      today: '今日！',
+      tomorrow: '明日',
+      daysLeft: 'あと {n} 日',
+      daysAgo: '{n} 日前',
     },
   },
   appDrawer: {
@@ -372,6 +388,7 @@ export const ja = {
     movedWidget: 'ウィジェットを移動しました',
     resizedWidget: 'ウィジェットのサイズを変更しました',
     removedTask: 'タスクを削除しました',
+    removedCountdown: '「{name}」を削除しました',
     clearedCompleted: '完了したタスクを削除しました',
     removedSite: 'ショートカット「{name}」を削除しました',
     closedNotePage: 'メモページ「{name}」を閉じました',
@@ -541,6 +558,7 @@ export const ja = {
     newsTitle: 'ニュース',
     todoExplore: 'ZenithTab の設定を見てみる',
     todoCustomize: 'ウィジェットと壁紙をカスタマイズする',
+    countdownNewYear: '元日',
     notes: `# 🌌 ZenithTab へようこそ！
 
 > *「千里の道も一歩から」*

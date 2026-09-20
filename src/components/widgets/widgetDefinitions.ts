@@ -221,6 +221,24 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       value: '',
     }),
   },
+
+  countdown: {
+    type: 'countdown',
+    size: { w: 3, h: 3, minW: 2, minH: 2 },
+    createDefaultConfig: (t) => ({
+      // One yearly example so the widget isn't an empty box on first add.
+      events: [{ id: 'countdown-newyear', name: t.defaults.countdownNewYear, date: `${new Date().getFullYear() + 1}-01-01`, emoji: '🎍', repeatYearly: true }],
+    }),
+    sanitizeConfig: (config) => {
+      if (!Array.isArray(config.events)) return config;
+      return {
+        ...config,
+        events: config.events.filter(
+          (event: any) => event && typeof event.id === 'string' && typeof event.name === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(String(event.date))
+        ),
+      };
+    },
+  },
 };
 
 export const WIDGET_TYPES = Object.keys(WIDGET_DEFINITIONS) as WidgetType[];

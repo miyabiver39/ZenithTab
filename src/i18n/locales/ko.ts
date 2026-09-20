@@ -343,6 +343,22 @@ export const ko: typeof en = {
       download: '다운로드',
       copy: '복사',
       copied: '복사했어요!',
+    },
+    countdown: {
+      title: '카운트다운',
+      desc: '생일·여행·시험·마감까지 남은 날짜를 표시해요. 이름과 날짜만 입력하면 끝.',
+      empty: '아직 날짜가 없어요. 아래에서 추가해 보세요.',
+      add: '날짜 추가',
+      nameField: '이름',
+      namePlaceholder: '예: 교토 여행',
+      dateField: '날짜',
+      emojiField: '이모지',
+      repeatYearly: '매년 반복',
+      repeatYearlyShort: '매년',
+      today: '오늘!',
+      tomorrow: '내일',
+      daysLeft: '{n}일 남음',
+      daysAgo: '{n}일 전',
     },
   },
   appDrawer: {
@@ -374,6 +390,7 @@ export const ko: typeof en = {
     movedWidget: '위젯을 이동했습니다',
     resizedWidget: '위젯 크기를 변경했습니다',
     removedTask: '할 일을 삭제했습니다',
+    removedCountdown: '"{name}" 삭제됨',
     clearedCompleted: '완료된 할 일을 삭제했습니다',
     removedSite: '바로가기 "{name}"을(를) 삭제했습니다',
     closedNotePage: '메모 페이지 "{name}"을(를) 닫았습니다',
@@ -543,6 +560,7 @@ export const ko: typeof en = {
     newsTitle: '뉴스',
     todoExplore: 'ZenithTab 설정 둘러보기',
     todoCustomize: '위젯과 배경화면 꾸미기',
+    countdownNewYear: '새해 첫날',
     notes: `# 🌌 ZenithTab에 오신 것을 환영합니다!
 
 > *"시작이 반이다."*

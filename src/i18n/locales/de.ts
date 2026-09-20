@@ -343,6 +343,22 @@ export const de: typeof en = {
       download: 'Herunterladen',
       copy: 'Kopieren',
       copied: 'Kopiert!',
+    },
+    countdown: {
+      title: 'Countdown',
+      desc: 'Verbleibende Tage bis zu Geburtstag, Reise, Prüfung oder Frist – nur Name und Datum eingeben.',
+      empty: 'Noch keine Termine. Füge unten einen hinzu.',
+      add: 'Datum hinzufügen',
+      nameField: 'Name',
+      namePlaceholder: 'z. B. Reise nach Kyoto',
+      dateField: 'Datum',
+      emojiField: 'Emoji',
+      repeatYearly: 'Wiederholt sich jährlich',
+      repeatYearlyShort: 'Jährlich',
+      today: 'Heute!',
+      tomorrow: 'Morgen',
+      daysLeft: 'Noch {n} Tage',
+      daysAgo: 'Vor {n} Tagen',
     },
   },
   appDrawer: {
@@ -374,6 +390,7 @@ export const de: typeof en = {
     movedWidget: 'Widget verschoben',
     resizedWidget: 'Widget-Größe geändert',
     removedTask: 'Aufgabe entfernt',
+    removedCountdown: '„{name}“ entfernt',
     clearedCompleted: 'Erledigte Aufgaben entfernt',
     removedSite: 'Verknüpfung „{name}“ entfernt',
     closedNotePage: 'Notizseite „{name}“ geschlossen',
@@ -543,6 +560,7 @@ export const de: typeof en = {
     newsTitle: 'Nachrichten',
     todoExplore: 'ZenithTab-Einstellungen erkunden',
     todoCustomize: 'Widgets & Hintergründe anpassen',
+    countdownNewYear: 'Neujahr',
     notes: `# 🌌 Willkommen bei ZenithTab!
 
 > *„Das Geheimnis des Vorankommens ist das Anfangen.“*

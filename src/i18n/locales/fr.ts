@@ -343,6 +343,22 @@ export const fr: typeof en = {
       download: 'Télécharger',
       copy: 'Copier',
       copied: 'Copié !',
+    },
+    countdown: {
+      title: 'Compte à rebours',
+      desc: 'Jours restants avant un anniversaire, un voyage, un examen ou une échéance : un nom et une date suffisent.',
+      empty: 'Aucune date pour le moment. Ajoutez-en une ci-dessous.',
+      add: 'Ajouter une date',
+      nameField: 'Nom',
+      namePlaceholder: 'ex. Voyage à Kyoto',
+      dateField: 'Date',
+      emojiField: 'Emoji',
+      repeatYearly: 'Se répète chaque année',
+      repeatYearlyShort: 'Annuel',
+      today: "C'est aujourd'hui !",
+      tomorrow: 'Demain',
+      daysLeft: 'Encore {n} jours',
+      daysAgo: 'Il y a {n} jours',
     },
   },
   appDrawer: {
@@ -374,6 +390,7 @@ export const fr: typeof en = {
     movedWidget: 'Widget déplacé',
     resizedWidget: 'Widget redimensionné',
     removedTask: 'Tâche supprimée',
+    removedCountdown: '« {name} » supprimé',
     clearedCompleted: 'Tâches terminées supprimées',
     removedSite: 'Raccourci « {name} » supprimé',
     closedNotePage: 'Page de notes « {name} » fermée',
@@ -543,6 +560,7 @@ export const fr: typeof en = {
     newsTitle: 'Actualités',
     todoExplore: 'Explorer les réglages de ZenithTab',
     todoCustomize: 'Personnaliser les widgets et fonds d\'écran',
+    countdownNewYear: "Jour de l'An",
     notes: `# 🌌 Bienvenue sur ZenithTab !
 
 > *« Le secret pour avancer, c'est de commencer. »*

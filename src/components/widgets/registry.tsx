@@ -7,6 +7,7 @@ import {
   FileText,
   Globe,
   History,
+  Hourglass,
   Newspaper,
   QrCode,
   Search,
@@ -38,6 +39,7 @@ import { IframeConfig, prepareIframeConfigForSave } from './IframeWidget/IframeC
 import { QuickAccessWidget } from './QuickAccessWidget/QuickAccessWidget';
 import { QuickAccessConfig } from './QuickAccessWidget/QuickAccessConfig';
 import { QrCodeWidget } from './QrCodeWidget/QrCodeWidget';
+import { CountdownWidget } from './CountdownWidget/CountdownWidget';
 
 /**
  * The single place that knows what a widget type looks like on screen.
@@ -146,6 +148,12 @@ export const WIDGET_REGISTRY: WidgetDefinition[] = [
     icon: QrCode,
     color: 'text-fuchsia-400 bg-fuchsia-400/10 border-fuchsia-400/20',
     Component: QrCodeWidget,
+  },
+  {
+    ...WIDGET_DEFINITIONS.countdown,
+    icon: Hourglass,
+    color: 'text-rose-400 bg-rose-400/10 border-rose-400/20',
+    Component: CountdownWidget,
   },
 ];
 

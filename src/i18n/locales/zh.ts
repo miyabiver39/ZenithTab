@@ -343,6 +343,22 @@ export const zh: typeof en = {
       download: '下载',
       copy: '复制',
       copied: '已复制!',
+    },
+    countdown: {
+      title: '倒计时',
+      desc: '显示距离生日、旅行、考试或截止日期还有几天,只需填写名称和日期。',
+      empty: '还没有日期,请在下方添加。',
+      add: '添加日期',
+      nameField: '名称',
+      namePlaceholder: '例: 京都之旅',
+      dateField: '日期',
+      emojiField: '表情',
+      repeatYearly: '每年重复',
+      repeatYearlyShort: '每年',
+      today: '就是今天!',
+      tomorrow: '明天',
+      daysLeft: '还有 {n} 天',
+      daysAgo: '{n} 天前',
     },
   },
   appDrawer: {
@@ -374,6 +390,7 @@ export const zh: typeof en = {
     movedWidget: '已移动小组件',
     resizedWidget: '已调整小组件大小',
     removedTask: '已删除任务',
+    removedCountdown: '已删除“{name}”',
     clearedCompleted: '已清除已完成的任务',
     removedSite: '已删除快捷方式“{name}”',
     closedNotePage: '已关闭笔记页“{name}”',
@@ -543,6 +560,7 @@ export const zh: typeof en = {
     newsTitle: '新闻',
     todoExplore: '浏览 ZenithTab 设置',
     todoCustomize: '自定义小部件与壁纸',
+    countdownNewYear: '元旦',
     notes: `# 🌌 欢迎使用 ZenithTab！
 
 > *「千里之行，始于足下。」*

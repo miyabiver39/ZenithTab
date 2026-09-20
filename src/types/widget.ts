@@ -12,7 +12,8 @@ export type WidgetType =
   | 'todo'
   | 'shortcuts'
   | 'qrcode'
-  | 'quickaccess';
+  | 'quickaccess'
+  | 'countdown';
 
 export interface BaseWidgetConfig {
   title?: string;
@@ -166,6 +167,20 @@ export interface QrCodeWidgetConfig extends BaseWidgetConfig {
   value: string;
 }
 
+export interface CountdownEvent {
+  id: string;
+  name: string;
+  /** Local calendar date, "YYYY-MM-DD". */
+  date: string;
+  emoji?: string;
+  /** Count towards next year's date once this year's has passed (birthdays, holidays). */
+  repeatYearly?: boolean;
+}
+
+export interface CountdownWidgetConfig extends BaseWidgetConfig {
+  events: CountdownEvent[];
+}
+
 export type WidgetConfig =
   | { type: 'clock'; config: ClockWidgetConfig }
   | { type: 'weather'; config: WeatherWidgetConfig }
@@ -178,7 +193,8 @@ export type WidgetConfig =
   | { type: 'todo'; config: TodoWidgetConfig }
   | { type: 'shortcuts'; config: ShortcutsWidgetConfig }
   | { type: 'qrcode'; config: QrCodeWidgetConfig }
-  | { type: 'quickaccess'; config: QuickAccessWidgetConfig };
+  | { type: 'quickaccess'; config: QuickAccessWidgetConfig }
+  | { type: 'countdown'; config: CountdownWidgetConfig };
 
 export interface DashboardWidget {
   id: string;
