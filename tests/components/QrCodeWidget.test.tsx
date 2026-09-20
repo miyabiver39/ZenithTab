@@ -85,6 +85,40 @@ describe('QrCodeWidget', () => {
     expect(config().mode).toBe('text');
   });
 
+  it('横長のウィジェットでも QR は短辺に合わせた正方形で表示されること', async () => {
+    // jsdom has no layout: fake the free area as 300×120 and a ResizeObserver
+    // that fires once on observe, the way the real one does.
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      width: 300, height: 120, top: 0, left: 0, right: 300, bottom: 120, x: 0, y: 0, toJSON: () => ({}),
+    } as DOMRect);
+    const observe = vi.fn();
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe = observe;
+        disconnect = vi.fn();
+        unobserve = vi.fn();
+      }
+    );
+    // The library pins the CSS size to the drawn size; the widget must undo that.
+    toCanvas.mockImplementation(async (canvas: HTMLCanvasElement) => {
+      canvas.style.width = '220px';
+      canvas.style.height = '220px';
+    });
+
+    renderQr({ value: 'example.com' });
+    await waitFor(() => expect(toCanvas).toHaveBeenCalled());
+
+    const frame = screen.getByTestId('qrcode-frame');
+    expect(frame.style.width).toBe('120px');
+    expect(frame.style.height).toBe('120px');
+    expect(observe).toHaveBeenCalled();
+    const canvas = frame.querySelector('canvas')!;
+    await waitFor(() => expect(canvas.style.width).toBe(''));
+    expect(canvas.style.height).toBe('');
+    vi.unstubAllGlobals();
+  });
+
   it('ダウンロードで PNG のリンクをクリックすること', async () => {
     const user = setupUser();
     renderQr({ value: 'example.com' });

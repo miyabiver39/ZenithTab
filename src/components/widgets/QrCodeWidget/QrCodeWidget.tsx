@@ -6,6 +6,9 @@ import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 import { cn } from '../../../utils/cn';
 
+/** Pixel size of the drawn code; the canvas is scaled down with CSS on smaller widgets. */
+const QR_RENDER_SIZE = 220;
+
 interface QrCodeWidgetProps {
   widgetId: string;
   config: QrCodeWidgetConfig;
@@ -18,9 +21,27 @@ export const QrCodeWidget: React.FC<QrCodeWidgetProps> = ({ widgetId, config }) 
   const [input, setInput] = useState(value);
   const [copied, setCopied] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const areaRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  // Displayed edge length of the code: the shorter side of the free area,
+  // so the code stays a square whatever shape the widget is resized to.
+  const [side, setSide] = useState(QR_RENDER_SIZE);
 
   useEffect(() => setInput(value), [value]);
+
+  useEffect(() => {
+    const area = areaRef.current;
+    if (!area || typeof ResizeObserver === 'undefined') return;
+    const measure = () => {
+      const { width, height } = area.getBoundingClientRect();
+      const next = Math.floor(Math.min(width, height));
+      if (next > 0) setSide(next);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(area);
+    return () => observer.disconnect();
+  }, []);
 
   // What actually gets encoded depends on the selected mode: a bare URL
   // gets a scheme, a phone number becomes a `tel:` link so scanning it
@@ -41,12 +62,20 @@ export const QrCodeWidget: React.FC<QrCodeWidgetProps> = ({ widgetId, config }) 
       return;
     }
     QRCode.toCanvas(canvas, payload, {
-      width: 220,
+      width: QR_RENDER_SIZE,
       margin: 1,
       color: { dark: '#0f172a', light: '#ffffff' },
-    }).catch(() => {
-      // Invalid/oversized payload for a QR code — leave the previous canvas as-is.
-    });
+    })
+      .then(() => {
+        // The renderer pins the CSS size to the drawn size; with only the
+        // width capped by the widget that stretched the code. Let the
+        // square wrapper decide the displayed size instead.
+        canvas.style.width = '';
+        canvas.style.height = '';
+      })
+      .catch(() => {
+        // Invalid/oversized payload for a QR code — leave the previous canvas as-is.
+      });
   }, [payload]);
 
   const handleInputChange = (val: string) => {
@@ -125,9 +154,11 @@ export const QrCodeWidget: React.FC<QrCodeWidgetProps> = ({ widgetId, config }) 
         className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/60 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-400/50 flex-shrink-0"
       />
 
-      <div className="flex-1 min-h-0 flex items-center justify-center">
+      <div ref={areaRef} className="flex-1 min-h-0 flex items-center justify-center">
         {payload ? (
-          <canvas ref={canvasRef} className="rounded-lg bg-white p-1.5 max-w-full max-h-full" />
+          <div data-testid="qrcode-frame" style={{ width: side, height: side }} className="flex-shrink-0">
+            <canvas ref={canvasRef} className="w-full h-full rounded-lg bg-white p-1.5" />
+          </div>
         ) : (
           <p className="text-[11px] text-slate-500 text-center px-4">{t.widgets.qrcode.empty}</p>
         )}
