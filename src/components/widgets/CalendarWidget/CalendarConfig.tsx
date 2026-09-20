@@ -31,6 +31,10 @@ export const CalendarConfig: React.FC<ConfigFormProps> = ({ config, setConfig })
   const [url, setUrl] = useState('');
   const [color, setColor] = useState(FEED_COLORS[feeds.length % FEED_COLORS.length]);
   const [error, setError] = useState<string | null>(null);
+  // What the link will become on save (Google's embed / "add by URL" links are unwrapped).
+  const normalisedPreview = calendarService.normalizeCalendarUrl(url);
+  const unwrapped = normalisedPreview !== null && normalisedPreview !== url.trim().replace(/^webcal:\/\//i, 'https://');
+  const suspicious = normalisedPreview !== null && !calendarService.looksLikeICalUrl(normalisedPreview);
 
   const addFeed = () => {
     const normalised = calendarService.normalizeCalendarUrl(url);
@@ -101,6 +105,12 @@ export const CalendarConfig: React.FC<ConfigFormProps> = ({ config, setConfig })
           className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900/60 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-400/50"
         />
         {error && <p className="text-[11px] text-rose-400">{error}</p>}
+        {!error && unwrapped && normalisedPreview && (
+          <p className="text-[11px] text-emerald-300 break-all" data-testid="calendar-url-preview">
+            {t.widgets.calendar.willUse} {normalisedPreview}
+          </p>
+        )}
+        {!error && suspicious && <p className="text-[11px] text-amber-300">{t.widgets.calendar.notIcsHint}</p>}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1" role="radiogroup" aria-label={t.widgets.calendar.colorField}>
             {FEED_COLORS.map((c) => (

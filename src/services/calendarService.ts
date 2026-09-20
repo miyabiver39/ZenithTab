@@ -17,6 +17,14 @@ interface CalendarCacheEntry {
  * Raised when the calendar's origin hasn't been granted. Same idea as the
  * RSS feed: the widget shows an "Allow access" button instead of an error.
  */
+/** The response wasn't an .ics document — usually a calendar's web page was pasted instead of its iCal link. */
+export class NotAnICalDocument extends Error {
+  constructor(url: string) {
+    super(`${url} did not return an iCalendar document`);
+    this.name = 'NotAnICalDocument';
+  }
+}
+
 export class CalendarPermissionRequired extends Error {
   url: string;
 
@@ -41,7 +49,40 @@ export const calendarService = {
    */
   normalizeCalendarUrl(input: string): string | null {
     const trimmed = input.trim().replace(/^webcal:\/\//i, 'https://');
-    return isSafeHttpUrl(trimmed) ? trimmed : null;
+    if (!isSafeHttpUrl(trimmed)) return null;
+    return this.unwrapGoogleCalendarUrl(trimmed);
+  },
+
+  /**
+   * Google Calendar hands out two links people paste by mistake: the
+   * "add by URL" link (`…/r?cid=<ics url>`) and the embed page
+   * (`…/embed?src=<calendar id>`). Both can be turned into the .ics they
+   * point at; the embed form only works for public calendars, which is
+   * what those links are for anyway.
+   */
+  unwrapGoogleCalendarUrl(url: string): string {
+    let parsed: URL;
+    try {
+      parsed = new URL(url);
+    } catch {
+      return url;
+    }
+    if (!/(^|\.)calendar\.google\.com$/i.test(parsed.hostname)) return url;
+    const cid = parsed.searchParams.get('cid');
+    if (cid) {
+      const inner = cid.trim().replace(/^webcal:\/\//i, 'https://');
+      return isSafeHttpUrl(inner) ? inner : url;
+    }
+    const src = parsed.searchParams.get('src');
+    if (/\/calendar\/embed$/.test(parsed.pathname) && src) {
+      return `https://calendar.google.com/calendar/ical/${encodeURIComponent(src)}/public/basic.ics`;
+    }
+    return url;
+  },
+
+  /** Heuristic for the settings form: warn when the link doesn't look like an iCal feed. */
+  looksLikeICalUrl(url: string): boolean {
+    return /\.ics(\?|#|$)|\/ical\/|ical|\/dav\//i.test(url);
   },
 
   async fetchCalendar(url: string, bypassCache = false): Promise<ICalEvent[]> {
@@ -61,7 +102,7 @@ export const calendarService = {
       const response = await fetchWithTimeout(url, { headers: { Accept: 'text/calendar, text/plain, */*' } });
       if (!response.ok) throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
       const text = await response.text();
-      if (!/BEGIN:VCALENDAR/i.test(text)) throw new Error('Not an iCalendar document.');
+      if (!/BEGIN:VCALENDAR/i.test(text)) throw new NotAnICalDocument(url);
 
       cacheStore[url] = { text, lastUpdated: now };
       await storageSet(CALENDAR_CACHE_KEY, cacheStore);

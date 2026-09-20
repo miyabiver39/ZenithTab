@@ -417,6 +417,10 @@ export const fr: typeof en = {
       grantAccess: 'Autoriser ce calendrier',
       someBlocked: 'Certains calendriers nécessitent une autorisation — cliquez pour autoriser',
       failed: 'Impossible de charger le calendrier.',
+      willUse: 'Lien utilisé :',
+      notIcsHint: "Ceci ne ressemble pas à un lien iCal (.ics). Les pages web d'agenda ne fonctionnent pas : utilisez « l'adresse secrète au format iCal » (ou le lien iCal public).",
+      notIcal: "Ce lien n'est pas un flux iCal (.ics). Collez l'adresse iCal de l'agenda, pas sa page web.",
+      fixLink: 'Modifier le lien',
     },
   },
   appDrawer: {

@@ -415,6 +415,10 @@ export const ja = {
       grantAccess: 'このカレンダーを許可',
       someBlocked: '一部のカレンダーに許可が必要です — クリックして許可',
       failed: 'カレンダーを読み込めませんでした。',
+      willUse: '使用する URL:',
+      notIcsHint: 'iCal(.ics)のリンクではないようです。カレンダーの Web ページの URL では動きません。「iCal 形式の非公開 URL」(または公開 iCal リンク)を貼ってください。',
+      notIcal: 'このリンクは iCal(.ics)ではありません。カレンダーの Web ページではなく iCal のアドレスを貼ってください。',
+      fixLink: 'リンクを変更',
     },
   },
   appDrawer: {

@@ -3,7 +3,7 @@ import { RefreshCw, ShieldCheck, MapPin, CalendarPlus, Settings } from 'lucide-r
 import { CalendarWidgetConfig, CalendarFeed } from '../../../types/widget';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
-import { calendarService, CalendarPermissionRequired } from '../../../services/calendarService';
+import { calendarService, CalendarPermissionRequired, NotAnICalDocument } from '../../../services/calendarService';
 import { expandOccurrences, CalendarOccurrence, ICalEvent } from '../../../utils/icalParser';
 import { requestHostPermissions } from '../../../utils/permissions';
 import { formatTime, getIntlLocale } from '../../../utils/date';
@@ -38,7 +38,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ widgetId, config
   const [loaded, setLoaded] = useState<FeedEvents[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [blockedUrls, setBlockedUrls] = useState<string[]>([]);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<'network' | 'notIcal' | null>(null);
   const [now, setNow] = useState(() => new Date());
 
   const feedKey = feeds.map((f) => `${f.id}:${f.url}`).join('|');
@@ -48,14 +48,16 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ widgetId, config
       setIsLoading(true);
       const results: FeedEvents[] = [];
       const blocked: string[] = [];
-      let anyFailed = false;
+      let anyFailed: 'network' | 'notIcal' | null = null;
       await Promise.all(
         feeds.map(async (feed) => {
           try {
             results.push({ feed, events: await calendarService.fetchCalendar(feed.url, bypassCache) });
           } catch (err) {
             if (err instanceof CalendarPermissionRequired) blocked.push(feed.url);
-            else anyFailed = true;
+            // "Not iCal" is the more useful message when both kinds happen.
+            else if (err instanceof NotAnICalDocument) anyFailed = 'notIcal';
+            else anyFailed = anyFailed || 'network';
           }
         })
       );
@@ -182,7 +184,14 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ widgetId, config
         ) : isLoading && loaded.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400 animate-pulse">{t.common.loading}</div>
         ) : failed && loaded.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-xs text-rose-400 text-center p-4">{t.widgets.calendar.failed}</div>
+          <div className="h-full flex flex-col items-center justify-center gap-2 text-xs text-rose-400 text-center p-4">
+            <span>{failed === 'notIcal' ? t.widgets.calendar.notIcal : t.widgets.calendar.failed}</span>
+            {failed === 'notIcal' && (
+              <button type="button" onClick={() => openSettingsModal('editWidget', widgetId)} className="text-[11px] text-sky-300 hover:text-sky-200 underline">
+                {t.widgets.calendar.fixLink}
+              </button>
+            )}
+          </div>
         ) : groups.length === 0 ? (
           <div className="h-full flex items-center justify-center text-xs text-slate-400 text-center p-4">{t.widgets.calendar.empty}</div>
         ) : (

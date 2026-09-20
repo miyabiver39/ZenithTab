@@ -417,6 +417,10 @@ export const zh: typeof en = {
       grantAccess: '允许此日历',
       someBlocked: '部分日历需要授权 — 点击允许',
       failed: '无法加载日历。',
+      willUse: '将使用:',
+      notIcsHint: '这看起来不是 iCal(.ics)链接。日历网页地址无法使用,请粘贴“iCal 格式的私密地址”(或公开 iCal 链接)。',
+      notIcal: '此链接不是 iCal(.ics)日历。请粘贴日历的 iCal 地址,而不是网页地址。',
+      fixLink: '更改链接',
     },
   },
   appDrawer: {

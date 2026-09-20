@@ -417,6 +417,10 @@ export const de: typeof en = {
       grantAccess: 'Diesen Kalender erlauben',
       someBlocked: 'Einige Kalender brauchen eine Erlaubnis – zum Erlauben klicken',
       failed: 'Kalender konnte nicht geladen werden.',
+      willUse: 'Verwendet wird:',
+      notIcsHint: 'Das sieht nicht nach einem iCal-Link (.ics) aus. Kalender-Webseiten funktionieren nicht – nutze die „Privatadresse im iCal-Format“ (oder den öffentlichen iCal-Link).',
+      notIcal: 'Dieser Link ist kein iCal-Feed (.ics). Füge die iCal-Adresse des Kalenders ein, nicht seine Webseite.',
+      fixLink: 'Link ändern',
     },
   },
   appDrawer: {

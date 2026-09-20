@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-import { calendarService, CalendarPermissionRequired } from '../../../src/services/calendarService';
+import { calendarService, CalendarPermissionRequired, NotAnICalDocument } from '../../../src/services/calendarService';
 import { chromeMock, chromeStorageData } from '../../helpers/chrome';
 
 const CAL_URL = 'https://calendar.example.com/private/basic.ics';
@@ -31,6 +31,22 @@ describe('calendarService', () => {
     expect(calendarService.normalizeCalendarUrl('  https://cal.example.com/x.ics ')).toBe('https://cal.example.com/x.ics');
     expect(calendarService.normalizeCalendarUrl('javascript:alert(1)')).toBeNull();
     expect(calendarService.normalizeCalendarUrl('')).toBeNull();
+  });
+
+  it('Google カレンダーの「URL で追加」リンクと埋め込みページ URL を .ics に変換すること', () => {
+    expect(calendarService.normalizeCalendarUrl('https://calendar.google.com/calendar/u/0/r?cid=https://bestcalendar.jp/ical/2026/holidays.ics')).toBe(
+      'https://bestcalendar.jp/ical/2026/holidays.ics'
+    );
+    expect(calendarService.normalizeCalendarUrl('https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fx.example%2Fa.ics')).toBe('https://x.example/a.ics');
+    expect(calendarService.normalizeCalendarUrl('https://calendar.google.com/calendar/embed?src=ja.japanese%23holiday%40group.v.calendar.google.com&ctz=Asia%2FTokyo')).toBe(
+      'https://calendar.google.com/calendar/ical/ja.japanese%23holiday%40group.v.calendar.google.com/public/basic.ics'
+    );
+    // Real iCal links and other hosts pass through untouched.
+    expect(calendarService.normalizeCalendarUrl('https://calendar.google.com/calendar/ical/abc/private-123/basic.ics')).toBe('https://calendar.google.com/calendar/ical/abc/private-123/basic.ics');
+    expect(calendarService.normalizeCalendarUrl('https://example.com/page?cid=https://evil.example/x')).toBe('https://example.com/page?cid=https://evil.example/x');
+    expect(calendarService.looksLikeICalUrl('https://calendar.google.com/calendar/embed?src=x')).toBe(false);
+    expect(calendarService.looksLikeICalUrl('https://x.example/feed.ics?token=1')).toBe(true);
+    expect(calendarService.looksLikeICalUrl('https://outlook.live.com/owa/calendar/abc/calendar.ics')).toBe(true);
   });
 
   it('取得して解析し、生テキストをキャッシュすること', async () => {
@@ -65,7 +81,7 @@ describe('calendarService', () => {
 
   it('HTTP エラーや iCalendar でない応答はキャッシュが無ければ例外、あれば古いデータを返すこと', async () => {
     mockFetch('<html>nope</html>');
-    await expect(calendarService.fetchCalendar(CAL_URL)).rejects.toThrow('Not an iCalendar');
+    await expect(calendarService.fetchCalendar(CAL_URL)).rejects.toBeInstanceOf(NotAnICalDocument);
     mockFetch(ICS, false, 500);
     await expect(calendarService.fetchCalendar(CAL_URL)).rejects.toThrow('HTTP error 500');
 

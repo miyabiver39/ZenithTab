@@ -417,6 +417,10 @@ export const ko: typeof en = {
       grantAccess: '이 캘린더 허용',
       someBlocked: '일부 캘린더에 권한이 필요해요 — 클릭하여 허용',
       failed: '캘린더를 불러오지 못했어요.',
+      willUse: '사용할 주소:',
+      notIcsHint: 'iCal(.ics) 링크가 아닌 것 같아요. 캘린더 웹페이지 주소는 동작하지 않아요. "iCal 형식의 비공개 주소"(또는 공개 iCal 링크)를 붙여넣으세요.',
+      notIcal: '이 링크는 iCal(.ics) 피드가 아니에요. 캘린더 웹페이지가 아니라 iCal 주소를 붙여넣으세요.',
+      fixLink: '링크 변경',
     },
   },
   appDrawer: {

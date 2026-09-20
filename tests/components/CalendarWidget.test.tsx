@@ -4,7 +4,7 @@ import { setupUser, literal } from '../helpers/user';
 import { CalendarWidget } from '../../src/components/widgets/CalendarWidget/CalendarWidget';
 import { prepareCalendarConfigForSave } from '../../src/components/widgets/CalendarWidget/CalendarConfig';
 import { WidgetConfigModal } from '../../src/components/layout/WidgetConfigModal';
-import { calendarService, CalendarPermissionRequired } from '../../src/services/calendarService';
+import { calendarService, CalendarPermissionRequired, NotAnICalDocument } from '../../src/services/calendarService';
 import { parseIcal } from '../../src/utils/icalParser';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { resetDashboardStore } from '../helpers/store';
@@ -110,6 +110,28 @@ describe('CalendarWidget', () => {
     expect(config().feeds[0]).toMatchObject({ label: 'Home', url: 'https://cal.example.com/home.ics' });
     expect(config().daysAhead).toBe(7);
     expect(chromeMock.permissions.request).toHaveBeenCalledWith({ origins: ['https://cal.example.com/*'] });
+  });
+
+  it('設定フォームは Google の埋め込み URL を変換して見せ、.ics らしくないリンクには注意を出すこと', async () => {
+    const user = setupUser();
+    renderCalendar({ feeds: [] });
+    act(() => useDashboardStore.getState().openSettingsModal('editWidget', WIDGET_ID));
+    render(<WidgetConfigModal />);
+    const url = screen.getByLabelText('iCal URL');
+    await user.type(url, literal('https://calendar.google.com/calendar/embed?src=ja.japanese%23holiday%40group.v.calendar.google.com'));
+    expect(screen.getByTestId('calendar-url-preview')).toHaveTextContent('/calendar/ical/ja.japanese%23holiday%40group.v.calendar.google.com/public/basic.ics');
+    expect(screen.queryByText(/does not look like an iCal/)).not.toBeInTheDocument();
+
+    await user.clear(url);
+    await user.type(url, literal('https://example.com/my-calendar'));
+    expect(screen.getByText(/does not look like an iCal/)).toBeInTheDocument();
+  });
+
+  it('iCal でない応答のときは原因を示し、設定へのリンクを出すこと', async () => {
+    (calendarService.fetchCalendar as any).mockRejectedValue(new NotAnICalDocument(FEED.url));
+    renderCalendar();
+    expect(await screen.findByText(/not an iCal/)).toBeInTheDocument();
+    expect(screen.getByText('Change the link')).toBeInTheDocument();
   });
 
   it('prepareCalendarConfigForSave は http(s) 以外のフィードを落とすこと', () => {

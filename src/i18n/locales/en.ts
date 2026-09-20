@@ -415,6 +415,10 @@ export const en = {
       grantAccess: 'Allow this calendar',
       someBlocked: 'Some calendars need permission — click to allow',
       failed: 'Could not load the calendar.',
+      willUse: 'Will use:',
+      notIcsHint: 'This does not look like an iCal (.ics) link. Calendar web pages will not work — use the "Secret address in iCal format" (or the public iCal link).',
+      notIcal: 'This link is not an iCal (.ics) feed. Paste the calendar\'s iCal address, not its web page.',
+      fixLink: 'Change the link',
     },
   },
   appDrawer: {
