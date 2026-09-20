@@ -25,7 +25,7 @@ export const QuickAccessWidget: React.FC<QuickAccessWidgetProps> = ({ config }) 
 
   const load = useCallback(async () => {
     setIsLoading(true);
-    if (!(await quickAccessService.hasPermission())) {
+    if (!(await quickAccessService.hasPermission(view))) {
       setNeedsPermission(true);
       setItems([]);
       setIsLoading(false);
@@ -45,7 +45,7 @@ export const QuickAccessWidget: React.FC<QuickAccessWidgetProps> = ({ config }) 
   // Must stay a direct click handler: Chrome only shows the permission
   // prompt while the user gesture is in scope.
   const handleGrant = async () => {
-    if (await quickAccessService.requestPermission()) void load();
+    if (await quickAccessService.requestPermission(view)) void load();
   };
 
   // Reopen a closed tab in place when Chrome lets us; otherwise the anchor's

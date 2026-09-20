@@ -62,12 +62,19 @@ describe('quickAccessService', () => {
     }
   });
 
-  it('hasPermission / requestPermission が topSites と sessions をまとめて問い合わせること', async () => {
+  it('hasPermission / requestPermission がビュー別（省略時は全部）の権限を問い合わせること', async () => {
     expect(await quickAccessService.hasPermission()).toBe(true);
-    expect(chromeMock.permissions.contains).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
+    expect(chromeMock.permissions.contains).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions', 'tabs'] });
+    expect(await quickAccessService.hasPermission('topSites')).toBe(true);
+    expect(chromeMock.permissions.contains).toHaveBeenLastCalledWith({ permissions: ['topSites'] });
+    // Closed tabs come back without url/title unless `tabs` is granted too.
+    expect(await quickAccessService.hasPermission('recentlyClosed')).toBe(true);
+    expect(chromeMock.permissions.contains).toHaveBeenLastCalledWith({ permissions: ['sessions', 'tabs'] });
     chromeMock.permissions.request.mockResolvedValue(false);
     expect(await quickAccessService.requestPermission()).toBe(false);
-    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
+    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions', 'tabs'] });
+    expect(await quickAccessService.requestPermission('recentlyClosed')).toBe(false);
+    expect(chromeMock.permissions.request).toHaveBeenLastCalledWith({ permissions: ['sessions', 'tabs'] });
   });
 
   it('Chrome API が無い環境ではモックデータにフォールバックし、復元は false になること', async () => {
@@ -132,7 +139,28 @@ describe('QuickAccessWidget', () => {
     });
     await user.click(screen.getByText('Allow Quick Access'));
     await waitFor(() => expect(screen.getByText('YouTube')).toBeInTheDocument());
-    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
+    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites'] });
+  });
+
+  it('topSites と sessions だけ許可済み（旧バージョン）でも、最近閉じたタブを開いたときだけ tabs を求めること', async () => {
+    const user = setupUser();
+    const granted = new Set(['topSites', 'sessions']);
+    chromeMock.permissions.contains.mockImplementation(({ permissions = [] }: { permissions?: string[] }) =>
+      Promise.resolve(permissions.every((p) => granted.has(p)))
+    );
+    chromeMock.permissions.request.mockImplementation(({ permissions = [] }: { permissions?: string[] }) => {
+      permissions.forEach((p) => granted.add(p));
+      return Promise.resolve(true);
+    });
+    render(<QuickAccessWidget widgetId="qa" config={base} />);
+    await waitFor(() => screen.getByText('YouTube'));
+    expect(chromeMock.permissions.request).not.toHaveBeenCalled();
+
+    await user.click(screen.getByText('Recently closed'));
+    await waitFor(() => screen.getByText('Allow Quick Access'));
+    await user.click(screen.getByText('Allow Quick Access'));
+    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['sessions', 'tabs'] });
+    await waitFor(() => expect(screen.getByText('Closed article')).toBeInTheDocument());
   });
 
   it('許可を拒否されたら案内のままであること', async () => {
@@ -176,7 +204,7 @@ describe('Quick Access in catalogue and config modal', () => {
     const added = useDashboardStore.getState().widgets.at(-1)!;
     expect(added.type).toBe('quickaccess');
     // Adding the widget is the user gesture that asks for its optional permissions.
-    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions'] });
+    expect(chromeMock.permissions.request).toHaveBeenCalledWith({ permissions: ['topSites', 'sessions', 'tabs'] });
     expect(added.config).toMatchObject({ defaultView: 'topSites', maxItems: 8, viewMode: 'list', openInNewTab: true });
 
     act(() => useDashboardStore.getState().openSettingsModal('editWidget', added.id));

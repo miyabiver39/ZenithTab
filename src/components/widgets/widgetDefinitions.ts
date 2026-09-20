@@ -204,7 +204,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
   quickaccess: {
     type: 'quickaccess',
     size: { w: 4, h: 4, minW: 3, minH: 3 },
-    optionalPermissions: ['topSites', 'sessions'],
+    optionalPermissions: ['topSites', 'sessions', 'tabs'],
     createDefaultConfig: () => ({
       defaultView: 'topSites',
       maxItems: 8,

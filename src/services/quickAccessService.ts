@@ -1,12 +1,21 @@
 import { getFaviconUrl } from '../utils/favicon';
 import { isSafeHttpUrl } from '../utils/url';
 import { hasApiPermissions, requestApiPermissions } from '../utils/permissions';
+import type { QuickAccessView } from '../types/widget';
 
 /**
  * Declared as optional permissions and requested when the widget is added,
  * so shipping this widget never disabled anyone's extension on update.
+ * Grouped per view: `sessions` alone returns closed tabs with no `url` or
+ * `title` (those fields need `tabs`), which is why the list came back empty
+ * before `tabs` was added. Users who granted the old pair are only asked
+ * for the missing permission when they open the recently-closed view.
  */
-export const QUICK_ACCESS_PERMISSIONS = ['topSites', 'sessions'];
+export const QUICK_ACCESS_VIEW_PERMISSIONS: Record<QuickAccessView, string[]> = {
+  topSites: ['topSites'],
+  recentlyClosed: ['sessions', 'tabs'],
+};
+export const QUICK_ACCESS_PERMISSIONS = [...QUICK_ACCESS_VIEW_PERMISSIONS.topSites, ...QUICK_ACCESS_VIEW_PERMISSIONS.recentlyClosed];
 
 /**
  * "Quick Access" data: Chrome's own most-visited list and recently closed
@@ -67,13 +76,14 @@ function sessionsApi(): typeof chrome.sessions | undefined {
 }
 
 export const quickAccessService = {
-  hasPermission(): Promise<boolean> {
-    return hasApiPermissions(QUICK_ACCESS_PERMISSIONS);
+  /** Whether everything the given view needs is granted (all views when omitted). */
+  hasPermission(view?: QuickAccessView): Promise<boolean> {
+    return hasApiPermissions(view ? QUICK_ACCESS_VIEW_PERMISSIONS[view] : QUICK_ACCESS_PERMISSIONS);
   },
 
   /** Must be called from a click handler — Chrome only prompts inside a user gesture. */
-  requestPermission(): Promise<boolean> {
-    return requestApiPermissions(QUICK_ACCESS_PERMISSIONS);
+  requestPermission(view?: QuickAccessView): Promise<boolean> {
+    return requestApiPermissions(view ? QUICK_ACCESS_VIEW_PERMISSIONS[view] : QUICK_ACCESS_PERMISSIONS);
   },
 
   async getTopSites(limit = 8): Promise<QuickAccessItem[]> {

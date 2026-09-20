@@ -187,9 +187,9 @@ export const chromeMock = {
     restore: vi.fn(() => Promise.resolve(MOCK_RECENTLY_CLOSED[0])),
   },
   permissions: {
-    contains: vi.fn(() => Promise.resolve(true)),
-    request: vi.fn(() => Promise.resolve(true)),
-    remove: vi.fn(() => Promise.resolve(true)),
+    contains: vi.fn((_perms: chrome.permissions.Permissions) => Promise.resolve(true)),
+    request: vi.fn((_perms: chrome.permissions.Permissions) => Promise.resolve(true)),
+    remove: vi.fn((_perms: chrome.permissions.Permissions) => Promise.resolve(true)),
     getAll: vi.fn(() => Promise.resolve({ permissions: [], origins: [] })),
   },
   runtime: {

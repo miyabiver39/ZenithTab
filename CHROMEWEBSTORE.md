@@ -77,6 +77,7 @@ English
 | unlimitedStorage | permissions | Lifts the 10 MB chrome.storage.local cap so a user-uploaded wallpaper plus cached feeds can never fail to save; no data leaves the device. Shows no install warning. |
 | topSites | optional_permissions | Requested only when the user adds the Quick Access widget: lists the sites Chrome already ranks as most visited so they can be offered as one-click shortcuts; read locally, never uploaded. |
 | sessions | optional_permissions | Requested only when the user adds the Quick Access widget: lists and restores the user's recently closed tabs; data stays in the browser. |
+| tabs | optional_permissions | Requested together with `sessions` for the Quick Access widget's "Recently closed" view: Chrome omits the `url` and `title` of a closed tab unless this permission is granted, so without it the list has nothing to show. Used only to display those closed tabs locally; the extension never enumerates or reads open tabs. |
 | geolocation | permissions | Determines user coordinates only when the user clicks "Detect current location" in the Weather widget to configure local weather forecasts. |
 | https://api.open-meteo.com/* | host_permissions | Fetches weather forecasts and current meteorological conditions for the user's chosen location without requiring API keys. |
 | https://geocoding-api.open-meteo.com/* | host_permissions | Converts city names entered by the user into geographic coordinates for weather forecasting. |
