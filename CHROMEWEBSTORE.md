@@ -107,6 +107,7 @@ English
 
 | Version | Date | Changes Summary |
 |---------|------|-----------------|
+| 1.9.0 | 2026-09-20 | New widgets: Calendar (iCal/.ics links, recurring events, multiple calendars), Habit Tracker (daily check-off with streaks) and Countdown (days until a date, yearly repeats). Search bar smart answers (calculator, unit/base conversion, dice, coin flip, random, choose, days until). Text on light wallpapers switches to a dark colour automatically. Built-in keyboard shortcuts listed in settings. Fixes: QR code stays square at any widget size; "Recently closed" tabs now show (new optional `tabs` permission). |
 | 1.8.1 | 2026-09-17 | Pomodoro widget: completed-session counter no longer clips at the default two-row height (spacing, font size and layout tuned). |
 | 1.8.0 | 2026-09-17 | Undo for every delete and layout change (toast + Ctrl+Z); 30-day trash for widgets and pages; automatic whole-dashboard backups before reset/import/restore and after quiet periods, with a restore UI; in-app confirm dialogs replace window.confirm. Fixes the tab freeze after adding a widget or removing a page (finite layout coordinates, self-repairing stored layouts). |
 | 1.7.1 | 2026-09-16 | Dependency updates (npm audit clean) and accessibility attributes across settings forms and widgets; lint, E2E and user-event test infrastructure. |
