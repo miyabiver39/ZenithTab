@@ -11,6 +11,14 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 
 ### Fixed
 
+## [1.10.0] - 2026-09-20
+
+### Added
+- ウィジェットの最小サイズを見直し、**横 2 列**(検索のみ 3 列)・**縦 1〜2 行**まで縮められるように(#32)。時計・カウントダウン・ショートカットは 1 行まで。最小サイズはレジストリの定義を優先するため、以前のバージョンで追加したウィジェットもそのまま縮められる。1 行の高さではヘッダーと余白を詰め、時計は時刻のみ、カウントダウンは 1 行表示に自動で切り替わる
+
+### Fixed
+- カレンダーウィジェットに Google カレンダーの埋め込みページ URL(`…/embed?src=…`)や「URL で追加」のリンク(`…/r?cid=…`)を貼ると取得に失敗していた問題を修正(#33)。保存時に .ics のリンクへ自動変換し、設定画面で変換後の URL を表示、.ics らしくないリンクには注意を出す。取得結果が iCal でない場合はその旨を表示して設定へ誘導する
+
 ## [1.9.0] - 2026-09-20
 
 ### Added
@@ -228,7 +236,8 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 - 初回リリース(Manifest V3)
 - i18n(多言語)対応、現在地ベースの天気表示、検索・ポモドーロ・Todo ウィジェット
 
-[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.0...HEAD
+[1.10.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/miyabiver39/ZenithTab/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.7.1...v1.8.0
