@@ -470,6 +470,17 @@ export const fr: typeof en = {
       openInNewTab: 'Ouvrir dans un nouvel onglet',
       addBtn: 'Ajouter le raccourci',
       empty: "Aucun raccourci clavier pour l'instant. Ajoutez-en un ci-dessous.",
+      builtInTitle: 'Raccourcis intégrés',
+      builtInDesc: 'Toujours actifs et non modifiables. Ignorés pendant la saisie dans un champ.',
+      builtIn: {
+        focusSearch: 'Placer le curseur dans la recherche',
+        nextPage: 'Page suivante',
+        prevPage: 'Page précédente',
+        undo: 'Annuler la dernière modification',
+        redo: 'Rétablir',
+        closeOverlay: 'Fermer la boîte de dialogue, le menu ou la notification',
+        confirmRename: "Valider le renommage d'une page / d'un onglet de notes (Échap annule)",
+      },
     },
     dynamic: {
       title: 'Fond d\'écran selon l\'heure',

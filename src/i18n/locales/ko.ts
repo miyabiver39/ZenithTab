@@ -470,6 +470,17 @@ export const ko: typeof en = {
       openInNewTab: '새 탭에서 열기',
       addBtn: '단축키 추가',
       empty: '아직 키보드 단축키가 없어요. 아래에서 추가해 보세요.',
+      builtInTitle: '기본 단축키',
+      builtInDesc: '항상 켜져 있으며 변경할 수 없어요. 입력란에 입력하는 동안에는 무시돼요.',
+      builtIn: {
+        focusSearch: '검색창에 포커스',
+        nextPage: '다음 페이지',
+        prevPage: '이전 페이지',
+        undo: '마지막 변경 취소',
+        redo: '다시 실행',
+        closeOverlay: '열린 대화상자·메뉴·알림 닫기',
+        confirmRename: '페이지 / 메모 탭 이름 변경 확정 (Esc 취소)',
+      },
     },
     dynamic: {
       title: '시간대 연동 배경화면',

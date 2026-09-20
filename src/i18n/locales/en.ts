@@ -468,6 +468,17 @@ export const en = {
       openInNewTab: 'Open in a new tab',
       addBtn: 'Add Shortcut',
       empty: 'No keyboard shortcuts yet. Add one below.',
+      builtInTitle: 'Built-in shortcuts',
+      builtInDesc: 'These are always on and cannot be changed. They are ignored while you are typing in a field.',
+      builtIn: {
+        focusSearch: 'Focus the search box',
+        nextPage: 'Next page',
+        prevPage: 'Previous page',
+        undo: 'Undo the last change',
+        redo: 'Redo',
+        closeOverlay: 'Close the open dialog, menu or toast',
+        confirmRename: 'Confirm a page / note tab rename (Esc cancels)',
+      },
     },
     dynamic: {
       title: 'Time-aware wallpaper',

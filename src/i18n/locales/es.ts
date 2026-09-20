@@ -470,6 +470,17 @@ export const es: typeof en = {
       openInNewTab: 'Abrir en una pestaña nueva',
       addBtn: 'Añadir atajo',
       empty: 'Todavía no hay atajos de teclado. Añade uno a continuación.',
+      builtInTitle: 'Atajos integrados',
+      builtInDesc: 'Siempre activos y no se pueden cambiar. Se ignoran mientras escribes en un campo.',
+      builtIn: {
+        focusSearch: 'Enfocar el cuadro de búsqueda',
+        nextPage: 'Página siguiente',
+        prevPage: 'Página anterior',
+        undo: 'Deshacer el último cambio',
+        redo: 'Rehacer',
+        closeOverlay: 'Cerrar el diálogo, menú o aviso abierto',
+        confirmRename: 'Confirmar el cambio de nombre de página / pestaña de notas (Esc cancela)',
+      },
     },
     dynamic: {
       title: 'Fondo según la hora',

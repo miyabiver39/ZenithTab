@@ -468,6 +468,17 @@ export const ja = {
       openInNewTab: '新しいタブで開く',
       addBtn: 'ショートカットを追加',
       empty: 'まだショートカットキーがありません。下のフォームから追加してください。',
+      builtInTitle: '組み込みショートカット',
+      builtInDesc: '常に有効で、変更はできません。入力欄にタイプしている間は無視されます。',
+      builtIn: {
+        focusSearch: '検索ボックスにフォーカス',
+        nextPage: '次のページへ',
+        prevPage: '前のページへ',
+        undo: '直前の操作を元に戻す',
+        redo: 'やり直す',
+        closeOverlay: '開いているダイアログ・メニュー・通知を閉じる',
+        confirmRename: 'ページ名 / メモタブ名の変更を確定(Esc で取消)',
+      },
     },
     dynamic: {
       title: '時間帯連動の壁紙',

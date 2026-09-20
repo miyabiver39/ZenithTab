@@ -13,7 +13,7 @@ import { wallpaperService, GRADIENT_PRESETS, TIME_SLOTS } from '../../services/w
 import { TimeSlot, TimeSlotConfig } from '../../types/settings';
 import { useTranslation, SupportedLanguage } from '../../i18n/i18n';
 import { DOCK_ICON_LIBRARY, DOCK_ICON_KEYS } from '../../utils/dockIcons';
-import { getComboFromEvent } from '../../utils/keyboardShortcuts';
+import { getComboFromEvent, BUILT_IN_SHORTCUTS, comboToKeyLabels, displayCombos, isMacPlatform } from '../../utils/keyboardShortcuts';
 import { cn } from '../../utils/cn';
 
 export const SettingsPanel: React.FC = () => {
@@ -50,6 +50,8 @@ export const SettingsPanel: React.FC = () => {
   } = useDashboardStore();
 
   const { t, activeLanguageCode } = useTranslation();
+  // Resolved once: the key-cap labels differ on macOS (⌘ / ⌥).
+  const [isMac] = useState(() => isMacPlatform());
   const [activeTab, setActiveTab] = useState<'wallpaper' | 'appearance' | 'language' | 'backup' | 'dock' | 'keys' | 'trash'>('wallpaper');
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [backupStatus, setBackupStatus] = useState<string | null>(null);
@@ -1192,6 +1194,39 @@ export const SettingsPanel: React.FC = () => {
 
         {activeTab === 'keys' && (
           <div className="space-y-5">
+            {/* Read-only reference for the shortcuts that ship with ZenithTab;
+                the "/" and Ctrl+Alt+arrow combos were otherwise undiscoverable. */}
+            <section data-testid="builtin-shortcuts" className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-3">
+              <div>
+                <h4 className="text-xs font-semibold text-white">{t.settings.keys.builtInTitle}</h4>
+                <p className="text-[11px] text-slate-400 mt-0.5">{t.settings.keys.builtInDesc}</p>
+              </div>
+              <ul className="space-y-1.5">
+                {BUILT_IN_SHORTCUTS.map((shortcut) => (
+                  <li key={shortcut.id} className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 flex-shrink-0 min-w-[9rem]">
+                      {displayCombos(shortcut, isMac).map((combo, index) => (
+                        <React.Fragment key={combo}>
+                          {index > 0 && <span className="text-[10px] text-slate-500 px-0.5">/</span>}
+                          <span className="flex items-center gap-0.5">
+                            {comboToKeyLabels(combo, isMac).map((label, i) => (
+                              <kbd
+                                key={`${combo}-${i}`}
+                                className="font-mono text-[10px] leading-none px-1.5 py-1 rounded-md bg-slate-800/80 text-slate-200 border border-white/10 border-b-2 shadow-sm"
+                              >
+                                {label}
+                              </kbd>
+                            ))}
+                          </span>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                    <span className="text-xs text-slate-300 min-w-0">{t.settings.keys.builtIn[shortcut.id]}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
             <p className="text-xs text-slate-400">{t.settings.keys.desc}</p>
 
             <div className="space-y-2">

@@ -219,6 +219,23 @@ describe('SettingsPanel', () => {
     expect(state().dockItems[2].id).toBe(ids[0]);
   });
 
+  it('ショートカットキータブ: 組み込みショートカットの一覧を閲覧専用で表示すること', async () => {
+    const user = setupUser();
+    openSettings();
+    await user.click(screen.getByText('Keyboard Shortcuts'));
+    const section = within(screen.getByTestId('builtin-shortcuts'));
+    expect(section.getByText('Built-in shortcuts')).toBeInTheDocument();
+    expect(section.getByText('Focus the search box')).toBeInTheDocument();
+    expect(section.getByText('Next page')).toBeInTheDocument();
+    expect(section.getByText('Undo the last change')).toBeInTheDocument();
+    // Keys are rendered as key caps, arrows as glyphs.
+    // <kbd> carries no ARIA role, so select it by element name.
+    const caps = Array.from(screen.getByTestId('builtin-shortcuts').querySelectorAll('kbd')).map((el) => el.textContent);
+    expect(caps).toEqual(expect.arrayContaining(['/', 'Ctrl', 'Alt', '→', '←', 'Z', 'Esc', 'Enter']));
+    // Nothing to edit here: no delete buttons inside the section.
+    expect(section.queryByTitle('Delete')).not.toBeInTheDocument();
+  });
+
   it('ショートカットキータブ: コンボを記録して追加・削除できること', async () => {
     const user = setupUser();
     openSettings();

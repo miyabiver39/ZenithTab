@@ -470,6 +470,17 @@ export const de: typeof en = {
       openInNewTab: 'In neuem Tab öffnen',
       addBtn: 'Shortcut hinzufügen',
       empty: 'Noch keine Tastenkombinationen. Füge unten eine hinzu.',
+      builtInTitle: 'Integrierte Tastenkombinationen',
+      builtInDesc: 'Immer aktiv und nicht änderbar. Beim Tippen in ein Feld werden sie ignoriert.',
+      builtIn: {
+        focusSearch: 'Suchfeld fokussieren',
+        nextPage: 'Nächste Seite',
+        prevPage: 'Vorherige Seite',
+        undo: 'Letzte Änderung rückgängig machen',
+        redo: 'Wiederholen',
+        closeOverlay: 'Offenen Dialog, Menü oder Hinweis schließen',
+        confirmRename: 'Umbenennen einer Seite / eines Notiz-Tabs bestätigen (Esc bricht ab)',
+      },
     },
     dynamic: {
       title: 'Tageszeit-Hintergrund',

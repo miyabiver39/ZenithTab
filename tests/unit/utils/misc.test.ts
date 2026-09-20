@@ -1,5 +1,16 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { getComboFromEvent, isEditableElement } from '../../../src/utils/keyboardShortcuts';
+import {
+  getComboFromEvent,
+  isEditableElement,
+  BUILT_IN_SHORTCUTS,
+  PAGE_NEXT_COMBO,
+  PAGE_PREV_COMBO,
+  UNDO_COMBOS,
+  REDO_COMBOS,
+  comboToKeyLabels,
+  displayCombos,
+  isMacPlatform,
+} from '../../../src/utils/keyboardShortcuts';
 import { getFaviconUrl } from '../../../src/utils/favicon';
 import { formatTime, formatDate, formatRelativeTime, getIntlLocale } from '../../../src/utils/date';
 import { cn } from '../../../src/utils/cn';
@@ -33,6 +44,32 @@ describe('utils/keyboardShortcuts', () => {
     expect(isEditableElement(div)).toBe(false);
     Object.defineProperty(div, 'isContentEditable', { value: true });
     expect(isEditableElement(div)).toBe(true);
+  });
+
+  it('組み込みショートカットの表は各リスナーの定数と一致すること', () => {
+    const byId = Object.fromEntries(BUILT_IN_SHORTCUTS.map((s) => [s.id, s]));
+    expect(byId.nextPage.combos).toEqual([PAGE_NEXT_COMBO]);
+    expect(byId.prevPage.combos).toEqual([PAGE_PREV_COMBO]);
+    for (const combo of [...byId.undo.combos, ...(byId.undo.macCombos || [])]) expect(UNDO_COMBOS).toContain(combo);
+    for (const combo of [...byId.redo.combos, ...(byId.redo.macCombos || [])]) expect(REDO_COMBOS).toContain(combo);
+  });
+
+  it('キーキャップ表示: 矢印や Esc は記号に、macOS では修飾キーが ⌘ / ⌥ になること', () => {
+    expect(comboToKeyLabels('Ctrl+Alt+ArrowRight', false)).toEqual(['Ctrl', 'Alt', '→']);
+    expect(comboToKeyLabels('Escape', false)).toEqual(['Esc']);
+    expect(comboToKeyLabels('/', false)).toEqual(['/']);
+    expect(comboToKeyLabels('Meta+Shift+Z', true)).toEqual(['⌘', '⇧', 'Z']);
+    expect(comboToKeyLabels('Ctrl+Alt+ArrowLeft', true)).toEqual(['⌃', '⌥', '←']);
+  });
+
+  it('macOS では macCombos を、それ以外では combos を表示すること', () => {
+    const undo = BUILT_IN_SHORTCUTS.find((s) => s.id === 'undo')!;
+    expect(displayCombos(undo, false)).toEqual(['Ctrl+Z']);
+    expect(displayCombos(undo, true)).toEqual(['Meta+Z']);
+    expect(isMacPlatform({ platform: 'MacIntel', userAgent: '' })).toBe(true);
+    expect(isMacPlatform({ platform: '', userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' })).toBe(true);
+    expect(isMacPlatform({ platform: 'Win32', userAgent: 'Mozilla/5.0 (Windows NT 10.0)' })).toBe(false);
+    expect(isMacPlatform(undefined)).toBe(false);
   });
 });
 

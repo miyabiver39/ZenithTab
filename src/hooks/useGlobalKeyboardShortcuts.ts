@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
 import { useUndoStore } from '../store/useUndoStore';
-import { getComboFromEvent, isEditableElement } from '../utils/keyboardShortcuts';
+import {
+  getComboFromEvent,
+  isEditableElement,
+  PAGE_NEXT_COMBO,
+  PAGE_PREV_COMBO,
+  UNDO_COMBOS as UNDO_COMBO_LIST,
+  REDO_COMBOS as REDO_COMBO_LIST,
+} from '../utils/keyboardShortcuts';
 
-const PAGE_NEXT_COMBO = 'Ctrl+Alt+ArrowRight';
-const PAGE_PREV_COMBO = 'Ctrl+Alt+ArrowLeft';
-// Ctrl on Windows/Linux, Cmd on macOS.
-const UNDO_COMBOS = new Set(['Ctrl+Z', 'Meta+Z']);
-const REDO_COMBOS = new Set(['Ctrl+Shift+Z', 'Meta+Shift+Z', 'Ctrl+Y']);
+const UNDO_COMBOS = new Set(UNDO_COMBO_LIST);
+const REDO_COMBOS = new Set(REDO_COMBO_LIST);
 
 /**
  * Listens for two things anywhere on the dashboard:

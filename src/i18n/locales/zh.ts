@@ -470,6 +470,17 @@ export const zh: typeof en = {
       openInNewTab: '在新标签页中打开',
       addBtn: '添加快捷键',
       empty: '暂无键盘快捷键,请在下方添加。',
+      builtInTitle: '内置快捷键',
+      builtInDesc: '始终有效,无法更改。在输入框中输入时会被忽略。',
+      builtIn: {
+        focusSearch: '聚焦搜索框',
+        nextPage: '下一页',
+        prevPage: '上一页',
+        undo: '撤销上一步操作',
+        redo: '重做',
+        closeOverlay: '关闭打开的对话框、菜单或提示',
+        confirmRename: '确认页面 / 便签标签的重命名(Esc 取消)',
+      },
     },
     dynamic: {
       title: '随时间变化的壁纸',
