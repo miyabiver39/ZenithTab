@@ -58,6 +58,29 @@ describe('calendarService', () => {
     expect(chromeStorageData.zenith_calendar_cache[CAL_URL].text).toContain('Dentist');
   });
 
+  it('複数フィードを並列取得しても、互いのキャッシュを上書きして消さないこと (#49)', async () => {
+    const urls = ['https://a.example/a.ics', 'https://b.example/b.ics', 'https://c.example/c.ics'];
+    // Responses resolve in reverse order so the slowest fetch writes last.
+    const gates: Array<() => void> = [];
+    vi.spyOn(globalThis, 'fetch').mockImplementation((input) =>
+      new Promise((resolve) => {
+        gates.push(() =>
+          resolve({ ok: true, status: 200, statusText: 'OK', text: async () => ICS.replace('Dentist', String(input)) } as Response)
+        );
+      })
+    );
+    const all = Promise.all(urls.map((u) => calendarService.fetchCalendar(u)));
+    await vi.waitFor(() => expect(gates).toHaveLength(3));
+    [...gates].reverse().forEach((open) => open());
+    await all;
+
+    expect(Object.keys(chromeStorageData.zenith_calendar_cache).sort()).toEqual([...urls].sort());
+    // And every entry is served from cache now.
+    const fetchSpy = mockFetch(ICS_NEWER);
+    for (const u of urls) expect((await calendarService.fetchCalendar(u))[0].summary).toBe(u);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it('TTL 内はキャッシュを使い、bypassCache で再取得すること', async () => {
     mockFetch();
     await calendarService.fetchCalendar(CAL_URL);

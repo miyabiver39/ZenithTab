@@ -1,7 +1,8 @@
 import { RssFeedData } from '../types/rss';
 import { GoogleNewsMode, GoogleNewsTopic } from '../types/widget';
 import { parseRssXml } from '../utils/rssParser';
-import { storageGet, storageSet } from '../utils/storage';
+import { storageGet } from '../utils/storage';
+import { updateStoredMapEntry } from '../utils/storageMap';
 import { hasHostPermission } from '../utils/permissions';
 
 const RSS_CACHE_KEY = 'zenith_rss_cache';
@@ -159,8 +160,8 @@ export const rssService = {
         items,
       };
 
-      cacheStore[url] = feedData;
-      await storageSet(RSS_CACHE_KEY, cacheStore);
+      // Serialised per key so parallel feeds can't clobber each other's entry.
+      await updateStoredMapEntry<RssFeedData>(RSS_CACHE_KEY, url, feedData);
 
       return feedData;
     } catch (error) {

@@ -1,5 +1,6 @@
 import { parseIcal, ICalEvent } from '../utils/icalParser';
-import { storageGet, storageSet } from '../utils/storage';
+import { storageGet } from '../utils/storage';
+import { updateStoredMapEntry } from '../utils/storageMap';
 import { hasHostPermission } from '../utils/permissions';
 import { isSafeHttpUrl } from '../utils/url';
 
@@ -104,8 +105,8 @@ export const calendarService = {
       const text = await response.text();
       if (!/BEGIN:VCALENDAR/i.test(text)) throw new NotAnICalDocument(url);
 
-      cacheStore[url] = { text, lastUpdated: now };
-      await storageSet(CALENDAR_CACHE_KEY, cacheStore);
+      // Serialised per key so parallel feeds can't clobber each other's entry.
+      await updateStoredMapEntry<CalendarCacheEntry>(CALENDAR_CACHE_KEY, url, { text, lastUpdated: now });
       return parseIcal(text);
     } catch (error) {
       console.error(`Failed to fetch calendar from ${url}:`, error);
