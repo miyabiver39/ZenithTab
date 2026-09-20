@@ -11,6 +11,15 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 
 ### Fixed
 
+## [1.10.1] - 2026-09-20
+
+### Changed
+- ストアの短い説明(`_locales` の `extDescription`)を更新し、カレンダー・習慣トラッカーなど 1.9〜1.10 の機能を反映(#37)。あわせて掲載文(7 言語)と PRIVACY.md をクイックアクセス / カレンダー / スマート回答 / Undo・ごみ箱・バックアップ / 任意権限 `tabs` の内容に更新
+
+### Internal
+- README を 1.10 の内容に全面更新し、6 言語の翻訳(`docs/readme/`)とバッジ付きヘッダーを追加(#34, #36)。翻訳の構成ズレを検出するテストを追加
+- VS Code 用の `tasks.json` / `launch.json` / `settings.json` / `extensions.json` を追加(#35)
+
 ## [1.10.0] - 2026-09-20
 
 ### Added
@@ -236,7 +245,8 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 - 初回リリース(Manifest V3)
 - i18n(多言語)対応、現在地ベースの天気表示、検索・ポモドーロ・Todo ウィジェット
 
-[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.0...HEAD
+[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.1...HEAD
+[1.10.1]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.0...v1.10.1
 [1.10.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/miyabiver39/ZenithTab/compare/v1.8.0...v1.8.1

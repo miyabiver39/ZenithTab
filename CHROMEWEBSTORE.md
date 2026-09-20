@@ -107,6 +107,7 @@ English
 
 | Version | Date | Changes Summary |
 |---------|------|-----------------|
+| 1.10.1 | 2026-09-20 | Store listing refresh: short description and detailed copy (7 languages) plus the privacy policy now cover Calendar, Habit tracker, Countdown, Quick Access, smart answers and the optional `tabs` permission. No functional changes. |
 | 1.10.0 | 2026-09-20 | Widgets can be resized down to 2 columns and 1–2 rows (registry minimums apply to existing widgets; compact one-row layouts for clock and countdown). Calendar widget accepts Google Calendar embed / "add by URL" links (auto-converted to the .ics feed) and explains non-iCal responses. |
 | 1.9.0 | 2026-09-20 | New widgets: Calendar (iCal/.ics links, recurring events, multiple calendars), Habit Tracker (daily check-off with streaks) and Countdown (days until a date, yearly repeats). Search bar smart answers (calculator, unit/base conversion, dice, coin flip, random, choose, days until). Text on light wallpapers switches to a dark colour automatically. Built-in keyboard shortcuts listed in settings. Fixes: QR code stays square at any widget size; "Recently closed" tabs now show (new optional `tabs` permission). |
 | 1.8.1 | 2026-09-17 | Pomodoro widget: completed-session counter no longer clips at the default two-row height (spacing, font size and layout tuned). |
