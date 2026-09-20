@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Bookmark,
+  CalendarDays,
   CheckSquare,
   Clock,
   CloudSun,
@@ -43,6 +44,8 @@ import { QrCodeWidget } from './QrCodeWidget/QrCodeWidget';
 import { CountdownWidget } from './CountdownWidget/CountdownWidget';
 import { HabitWidget } from './HabitWidget/HabitWidget';
 import { HabitConfig } from './HabitWidget/HabitConfig';
+import { CalendarWidget } from './CalendarWidget/CalendarWidget';
+import { CalendarConfig, prepareCalendarConfigForSave } from './CalendarWidget/CalendarConfig';
 
 /**
  * The single place that knows what a widget type looks like on screen.
@@ -164,6 +167,14 @@ export const WIDGET_REGISTRY: WidgetDefinition[] = [
     color: 'text-lime-400 bg-lime-400/10 border-lime-400/20',
     Component: HabitWidget,
     ConfigForm: HabitConfig,
+  },
+  {
+    ...WIDGET_DEFINITIONS.calendar,
+    icon: CalendarDays,
+    color: 'text-red-400 bg-red-400/10 border-red-400/20',
+    Component: CalendarWidget,
+    ConfigForm: CalendarConfig,
+    beforeSave: (config) => prepareCalendarConfigForSave(config),
   },
 ];
 

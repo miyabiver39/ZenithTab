@@ -78,6 +78,24 @@ export async function requestApiPermissions(permissions: string[]): Promise<bool
 }
 
 /**
+ * Asks for several origins in one prompt (Chrome shows one dialog listing
+ * them all). Same user-gesture rule as `requestHostPermission`.
+ */
+export async function requestHostPermissions(urls: string[]): Promise<boolean> {
+  const api = permissionsApi();
+  const origins = Array.from(new Set(urls.map(originPatternFor).filter((p): p is string => p !== null)));
+  if (origins.length === 0) return false;
+  if (!api) return true;
+
+  try {
+    return await api.request({ origins });
+  } catch (error) {
+    console.warn('[ZenithTab] Host permission request failed:', error);
+    return false;
+  }
+}
+
+/**
  * Asks the user to grant access to a single origin.
  * MUST be called synchronously from a user gesture (click / form submit),
  * otherwise Chrome rejects the request without showing a prompt.

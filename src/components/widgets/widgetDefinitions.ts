@@ -265,6 +265,23 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       };
     },
   },
+
+  calendar: {
+    type: 'calendar',
+    size: { w: 4, h: 4, minW: 3, minH: 3 },
+    createDefaultConfig: () => ({
+      feeds: [],
+      daysAhead: 3,
+      showLocation: true,
+    }),
+    sanitizeConfig: (config, isSafeUrl) => {
+      if (!Array.isArray(config.feeds)) return config;
+      return {
+        ...config,
+        feeds: config.feeds.filter((feed: any) => feed && typeof feed.id === 'string' && typeof feed.url === 'string' && isSafeUrl(feed.url)),
+      };
+    },
+  },
 };
 
 export const WIDGET_TYPES = Object.keys(WIDGET_DEFINITIONS) as WidgetType[];

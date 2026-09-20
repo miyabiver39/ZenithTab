@@ -14,7 +14,8 @@ export type WidgetType =
   | 'qrcode'
   | 'quickaccess'
   | 'countdown'
-  | 'habits';
+  | 'habits'
+  | 'calendar';
 
 export interface BaseWidgetConfig {
   title?: string;
@@ -199,6 +200,23 @@ export interface HabitWidgetConfig extends BaseWidgetConfig {
   showWeek: boolean;
 }
 
+export interface CalendarFeed {
+  id: string;
+  /** https:// URL of an .ics file (webcal:// is normalised on save). */
+  url: string;
+  label: string;
+  /** Tailwind-free hex colour for the feed's dot. */
+  color: string;
+}
+
+export type CalendarDaysAhead = 1 | 3 | 7;
+
+export interface CalendarWidgetConfig extends BaseWidgetConfig {
+  feeds: CalendarFeed[];
+  daysAhead: CalendarDaysAhead;
+  showLocation: boolean;
+}
+
 export type WidgetConfig =
   | { type: 'clock'; config: ClockWidgetConfig }
   | { type: 'weather'; config: WeatherWidgetConfig }
@@ -213,7 +231,8 @@ export type WidgetConfig =
   | { type: 'qrcode'; config: QrCodeWidgetConfig }
   | { type: 'quickaccess'; config: QuickAccessWidgetConfig }
   | { type: 'countdown'; config: CountdownWidgetConfig }
-  | { type: 'habits'; config: HabitWidgetConfig };
+  | { type: 'habits'; config: HabitWidgetConfig }
+  | { type: 'calendar'; config: CalendarWidgetConfig };
 
 export interface DashboardWidget {
   id: string;
