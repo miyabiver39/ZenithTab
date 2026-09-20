@@ -27,10 +27,13 @@ describe('useLayoutUndo', () => {
     const { result } = renderHook(() => useLayoutUndo());
 
     act(() => result.current.onDragStart());
-    const after = moveFirstWidget();
+    let after: any;
+    act(() => {
+      after = moveFirstWidget();
+    });
     // A second intermediate change during the same gesture must not add
     // another entry.
-    state().updateLayouts(after.lg, { ...after, lg: after.lg.map((l: any) => ({ ...l })) });
+    act(() => state().updateLayouts(after.lg, { ...after, lg: after.lg.map((l: any) => ({ ...l })) }));
     act(() => result.current.onDragStop());
     act(() => vi.runAllTimers());
 
@@ -48,7 +51,7 @@ describe('useLayoutUndo', () => {
   it('リサイズは別ラベルになること', () => {
     const { result } = renderHook(() => useLayoutUndo());
     act(() => result.current.onResizeStart());
-    moveFirstWidget();
+    act(() => moveFirstWidget());
     act(() => result.current.onResizeStop());
     act(() => vi.runAllTimers());
     expect(useUndoStore.getState().toast?.label).toBe('Resized a widget');
@@ -64,7 +67,7 @@ describe('useLayoutUndo', () => {
 
   it('開始なしの終了は無視すること', () => {
     const { result } = renderHook(() => useLayoutUndo());
-    moveFirstWidget();
+    act(() => moveFirstWidget());
     act(() => result.current.onDragStop());
     act(() => vi.runAllTimers());
     expect(useUndoStore.getState().undoStack).toHaveLength(0);

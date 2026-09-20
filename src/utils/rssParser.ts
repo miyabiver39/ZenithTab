@@ -156,12 +156,20 @@ export function parseRssXml(xmlText: string): RssFeedItem[] {
           imageUrl = extractImageFromHtml(typeof summary === 'string' ? summary : summary?.['#text']);
         }
 
+        // An unparsable date must not take the whole feed down (toISOString
+        // throws on Invalid Date, and that used to escape to the outer catch).
+        let isoDate: string | undefined;
+        if (pubDate) {
+          const d = new Date(pubDate);
+          if (!isNaN(d.getTime())) isoDate = d.toISOString();
+        }
+
         items.push({
           id: entry.id?.['#text'] || entry.id || link || `atom-item-${i}-${Date.now()}`,
           title,
           link: String(link).trim(),
           pubDate: String(pubDate),
-          isoDate: pubDate ? new Date(pubDate).toISOString() : undefined,
+          isoDate,
           contentSnippet,
           imageUrl,
           creator: entry.author?.name || entry.author?.['#text'],

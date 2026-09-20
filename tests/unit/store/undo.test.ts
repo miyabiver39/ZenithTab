@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useDashboardStore } from '../../../src/store/useDashboardStore';
 import { useUndoStore, MAX_UNDO_ENTRIES } from '../../../src/store/useUndoStore';
 import { STORAGE_KEYS, DEFAULT_PAGE_ID } from '../../../src/services/storageService';
@@ -57,6 +57,8 @@ describe('useUndoStore', () => {
     expect(calls).toEqual(['a']);
     expect(undoState().undoStack.map((e) => e.label)).toEqual(['b']);
 
+    // The store logs the failure; keep the test output clean.
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     undoState().pushUndo({ label: 'boom', undo: () => { throw new Error('nope'); } });
     expect(undoState().undo()).toBe(false);
     expect(undoState().undoStack.map((e) => e.label)).toEqual(['b']);

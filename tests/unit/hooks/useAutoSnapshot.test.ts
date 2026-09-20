@@ -43,7 +43,7 @@ describe('useAutoSnapshot', () => {
     act(() => state().addWidget('clock', 'x'));
     expect(spy).not.toHaveBeenCalled();
 
-    useDashboardStore.setState({ backupSettings: { autoSnapshot: true }, isInitialized: false });
+    act(() => useDashboardStore.setState({ backupSettings: { autoSnapshot: true }, isInitialized: false }));
     const { rerender } = renderHook(() => useAutoSnapshot());
     act(() => useDashboardStore.setState({ widgets: [] }));
     rerender();
