@@ -107,6 +107,7 @@ English
 
 | Version | Date | Changes Summary |
 |---------|------|-----------------|
+| 1.10.3 | 2026-09-21 | Internal quality release: per-field store subscriptions (fewer re-renders), vendor chunk splitting and lazy-loaded dialogs (largest chunk 824 kB → 388 kB), accessible modal dialogs with a focus trap, more test coverage; fixes an Atom feed going blank on an unparsable date. |
 | 1.10.2 | 2026-09-21 | Smart answers are discoverable: a ✨ button in the search bar (or typing "?") shows the list of things the bar can answer, with clickable examples; the same list appears in the widget settings. CI moved to Node 24-ready actions. |
 | 1.10.1 | 2026-09-20 | Store listing refresh: short description and detailed copy (7 languages) plus the privacy policy now cover Calendar, Habit tracker, Countdown, Quick Access, smart answers and the optional `tabs` permission. No functional changes. |
 | 1.10.0 | 2026-09-20 | Widgets can be resized down to 2 columns and 1–2 rows (registry minimums apply to existing widgets; compact one-row layouts for clock and countdown). Calendar widget accepts Google Calendar embed / "add by URL" links (auto-converted to the .ics feed) and explains non-iCal responses. |

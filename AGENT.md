@@ -43,14 +43,14 @@ zenith-tab/
 │   ├── background/            # Service worker (RSS alarm sync)
 │   ├── components/
 │   │   ├── common/            # Button, Modal, Input, GlassCard, ConfirmDialog, UndoToast
-│   │   ├── layout/            # Header, Dock, GridContainer, SettingsPanel, Modals
+│   │   ├── layout/            # Header, Dock, GridContainer, SettingsPanel (shell) + settings/<Tab>.tsx, Modals
 │   │   └── widgets/           # One folder per widget (<Name>Widget.tsx + <Name>Config.tsx)
 │   │       ├── registry.tsx       # Widget registry: icon, component, config form, beforeSave
 │   │       └── widgetDefinitions.ts # React-free part: size, default config, URL keys (used by store/storage)
 │   ├── hooks/                 # useBookmarks, useRssFeed, useWeather, useLayoutUndo, useAutoSnapshot
 │   ├── i18n/                  # Localization engine and translation dictionaries
 │   ├── services/              # storageService, migrations, trashService, snapshotService, rssService, weatherService, …
-│   ├── store/                 # useDashboardStore.ts (Zustand), useUndoStore.ts (in-memory undo/redo stack)
+│   ├── store/                 # useDashboardStore.ts composes slices/ (ui, widget, page, settings, trash, snapshot, persistence; types.ts = DashboardState), useUndoStore.ts (in-memory undo/redo stack)
 │   ├── types/                 # TypeScript type contracts
 │   ├── utils/                 # cn, date, rssParser, storage, favicon
 │   ├── newtab.html            # Entry HTML

@@ -11,6 +11,22 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 
 ### Fixed
 
+## [1.10.3] - 2026-09-21
+
+### Changed
+- パフォーマンス: ストアの購読をフィールド単位のセレクターに統一(#41)。時計の秒更新やメモの入力で、無関係なウィジェットカードや翻訳フックが再描画されなくなった
+- パフォーマンス: 本番バンドルをベンダー別チャンク(react / grid / icons / xml / qrcode)に分割し、設定・ウィジェット追加・ウィジェット設定・アプリドロワーの各ダイアログを初回オープン時に遅延ロード(#40)。最大チャンクは 824 kB → 388 kB
+- アクセシビリティ: 共通モーダルに `role="dialog"` / `aria-modal` / タイトル参照を付与し、閉じるボタンに名前を追加。Tab / Shift+Tab がモーダル内で循環し、閉じると開いた要素にフォーカスが戻る(#45)。共通 Input のラベルをコントロールに関連付け
+- ストア掲載文: 計算機能を検索バーのスマート回答として記述(#46)
+
+### Fixed
+- Atom フィードに日付を解釈できないエントリがあると、フィード全体が空になっていた問題を修正(日付だけ省略して他のエントリを表示)(#44)
+
+### Internal
+- `SettingsPanel.tsx`(1,355 行)をタブごとのコンポーネント(`layout/settings/`)に分割(#42)
+- `useDashboardStore.ts`(1,087 行)を Zustand の Slices パターン(`store/slices/`)に分割。公開インターフェースは不変(#43)
+- ウィジェット設定フォームと `rssParser` の分岐テストを追加、React 19 の `act(...)` 警告を解消(#44)
+
 ## [1.10.2] - 2026-09-21
 
 ### Added
@@ -253,7 +269,8 @@ Chrome ウェブストアのリリースノートは、公開のたびにこの�
 - 初回リリース(Manifest V3)
 - i18n(多言語)対応、現在地ベースの天気表示、検索・ポモドーロ・Todo ウィジェット
 
-[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.2...HEAD
+[Unreleased]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.3...HEAD
+[1.10.3]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.2...v1.10.3
 [1.10.2]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.1...v1.10.2
 [1.10.1]: https://github.com/miyabiver39/ZenithTab/compare/v1.10.0...v1.10.1
 [1.10.0]: https://github.com/miyabiver39/ZenithTab/compare/v1.9.0...v1.10.0
