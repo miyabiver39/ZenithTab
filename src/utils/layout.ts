@@ -1,5 +1,6 @@
 import { Layout } from 'react-grid-layout';
 import { ResponsiveLayouts } from '../types/widget';
+import { getWidgetMeta } from '../components/widgets/widgetDefinitions';
 
 /**
  * Returns a valid non-negative finite integer, falling back to a default if the
@@ -84,4 +85,23 @@ export function sanitizeResponsiveLayouts(layouts: any): ResponsiveLayouts {
     xs: sanitizeList(layouts.xs),
     xxs: sanitizeList(layouts.xxs),
   };
+}
+
+/**
+ * Layouts with every item's `minW` / `minH` taken from the widget registry.
+ * Stored layouts carry the minimums that applied when the widget was
+ * added; the registry's are the ones that apply now (they were lowered in
+ * 1.9), so the grid must read them from here rather than from storage.
+ * Items whose widget type is unknown keep whatever they have.
+ */
+export function applyRegistryMinimums(layouts: ResponsiveLayouts, widgets: { id: string; type: string }[]): ResponsiveLayouts {
+  const typeById = new Map(widgets.map((w) => [w.id, w.type]));
+  const out = {} as ResponsiveLayouts;
+  for (const key of Object.keys(layouts)) {
+    out[key] = (layouts[key] || []).map((item) => {
+      const size = getWidgetMeta(typeById.get(item.i) || '')?.size;
+      return size ? { ...item, minW: size.minW, minH: size.minH } : item;
+    });
+  }
+  return out;
 }

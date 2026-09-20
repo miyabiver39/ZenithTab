@@ -219,7 +219,7 @@ export const CountdownWidget: React.FC<CountdownWidgetProps> = ({ widgetId, conf
         <button
           type="button"
           onClick={() => setIsAdding(true)}
-          className="mt-2 flex items-center justify-center gap-1 py-1 rounded-lg text-[11px] text-slate-400 hover:text-white hover:bg-white/5 transition-colors flex-shrink-0"
+          className="hide-when-short mt-2 flex items-center justify-center gap-1 py-1 rounded-lg text-[11px] text-slate-400 hover:text-white hover:bg-white/5 transition-colors flex-shrink-0"
         >
           <Plus size={12} />
           {t.widgets.countdown.add}
@@ -236,17 +236,17 @@ const HeroEvent: React.FC<{ item: Resolved; label: string; dateText: string; del
   deleteTitle,
   onRemove,
 }) => (
-  <div className="group relative flex flex-col items-center text-center gap-1 py-2" data-testid="countdown-hero">
+  <div className="countdown-hero group relative flex flex-col items-center text-center gap-1 py-2" data-testid="countdown-hero">
     <span className="text-3xl leading-none">{item.event.emoji || '📅'}</span>
-    <div className={cn('text-5xl font-black tabular-nums leading-none mt-1', item.days === 0 ? 'text-rose-300' : 'text-white')}>
+    <div className={cn('countdown-hero-number text-5xl font-black tabular-nums leading-none mt-1', item.days === 0 ? 'text-rose-300' : 'text-white')}>
       {item.days === 0 ? '🎉' : Math.abs(item.days)}
     </div>
-    <div className="text-xs text-slate-300 font-medium">{label}</div>
-    <div className="text-sm font-semibold text-white mt-1 truncate max-w-full px-4 flex items-center gap-1">
+    <div className="countdown-hero-label text-xs text-slate-300 font-medium">{label}</div>
+    <div className="countdown-hero-name text-sm font-semibold text-white mt-1 truncate max-w-full px-4 flex items-center gap-1">
       {item.event.name}
       {item.event.repeatYearly && <Repeat size={11} className="text-slate-500" />}
     </div>
-    <div className="text-[10px] text-slate-500">{dateText}</div>
+    <div className="hide-when-short text-[10px] text-slate-500">{dateText}</div>
     <button
       type="button"
       onClick={onRemove}

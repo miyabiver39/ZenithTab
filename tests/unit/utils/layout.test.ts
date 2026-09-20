@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toSafeInt, sanitizeLayout, calculateBottomY, sanitizeResponsiveLayouts } from '../../../src/utils/layout';
+import { toSafeInt, sanitizeLayout, calculateBottomY, sanitizeResponsiveLayouts, applyRegistryMinimums } from '../../../src/utils/layout';
 
 describe('layout utils', () => {
   describe('toSafeInt', () => {
@@ -122,5 +122,28 @@ describe('layout utils', () => {
       expect(sanitized.xs).toEqual([]);
       expect(sanitized.xxs).toEqual([]);
     });
+  });
+});
+
+describe('applyRegistryMinimums', () => {
+  it('保存済みの minW / minH をレジストリの現在値で上書きし、未知の型はそのまま残すこと', () => {
+    const layouts = {
+      lg: [
+        { i: 'clock', x: 0, y: 0, w: 4, h: 2, minW: 3, minH: 2 },
+        { i: 'mystery', x: 4, y: 0, w: 4, h: 2, minW: 3, minH: 3 },
+      ],
+      md: [{ i: 'clock', x: 0, y: 0, w: 4, h: 2, minW: 3, minH: 2 }],
+      sm: [],
+      xs: [],
+    };
+    const out = applyRegistryMinimums(layouts, [
+      { id: 'clock', type: 'clock' },
+      { id: 'mystery', type: 'nope' },
+    ]);
+    expect(out.lg[0]).toMatchObject({ minW: 2, minH: 1, w: 4, h: 2 });
+    expect(out.lg[1]).toMatchObject({ minW: 3, minH: 3 });
+    expect(out.md[0]).toMatchObject({ minW: 2, minH: 1 });
+    // Input untouched.
+    expect(layouts.lg[0].minW).toBe(3);
   });
 });

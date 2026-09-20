@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { WidgetWrapper } from '../widgets/WidgetWrapper';
 import { getWidgetDefinition } from '../widgets/registry';
+import { applyRegistryMinimums } from '../../utils/layout';
 import { EmptyPage } from './EmptyPage';
 import { DashboardWidget } from '../../types/widget';
 import { cn } from '../../utils/cn';
@@ -18,6 +19,11 @@ export const GridContainer: React.FC = () => {
     updateLayouts,
     appearance,
   } = useDashboardStore();
+
+  // Minimum sizes come from the registry, not from the stored layout: the
+  // limits were lowered after widgets had already been saved with the old
+  // ones, and a stored `minW` would otherwise keep those widgets stuck.
+  const constrainedLayouts = useMemo(() => applyRegistryMinimums(layouts, widgets), [layouts, widgets]);
 
   const handleLayoutChange = (currentLayout: Layout[], allLayouts: any) => {
     if (isEditMode) {
@@ -68,7 +74,7 @@ export const GridContainer: React.FC = () => {
       {widgets.length === 0 && <EmptyPage />}
       <ResponsiveGridLayout
         className={cn('layout', isEditMode && 'is-editing', suppressTransition && 'no-breakpoint-transition')}
-        layouts={layouts}
+        layouts={constrainedLayouts}
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
         rowHeight={90}

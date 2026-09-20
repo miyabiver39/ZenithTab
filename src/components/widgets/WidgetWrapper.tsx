@@ -22,14 +22,14 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }
   return (
     <GlassCard
       className={cn(
-        'w-full h-full flex flex-col overflow-hidden relative group select-none transition-shadow',
+        'widget-card w-full h-full flex flex-col overflow-hidden relative group select-none transition-shadow',
         isEditMode && 'ring-2 ring-sky-400/50 shadow-sky-500/20',
         isSearch && !isEditMode && 'bg-transparent border-transparent backdrop-blur-none shadow-none'
       )}
     >
       {/* Widget Header - Show for normal widgets, or in edit mode for search */}
       {(!isSearch || isEditMode) && (
-        <div className="flex items-center justify-between px-3 py-2 border-b border-white/5 bg-white/[0.02] flex-shrink-0">
+        <div className="widget-card-header flex items-center justify-between px-3 py-2 border-b border-white/5 bg-white/[0.02] flex-shrink-0">
           <div className="flex items-center gap-2 overflow-hidden">
             {isEditMode && (
               <div data-testid="drag-handle" className="grid-drag-handle cursor-grab active:cursor-grabbing text-slate-400 hover:text-white p-0.5 rounded hover:bg-white/10 transition-colors">
@@ -67,7 +67,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }
       <div
         className={cn(
           'flex-1 min-h-0 overflow-hidden relative flex flex-col',
-          isSearch ? 'p-0.5 justify-center' : 'p-3.5'
+          isSearch ? 'p-0.5 justify-center' : 'widget-card-body p-3.5'
         )}
       >
         {children}

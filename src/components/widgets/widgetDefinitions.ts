@@ -54,7 +54,7 @@ const KNOWN_BUILTIN_ENGINES = ['google', 'bing', 'duckduckgo', 'github', 'youtub
 export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
   search: {
     type: 'search',
-    size: { w: 8, h: 1, minW: 4, minH: 1 },
+    size: { w: 8, h: 1, minW: 3, minH: 1 },
     createDefaultConfig: () => ({
       defaultEngine: 'google',
       showEngineSelector: true,
@@ -88,7 +88,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   shortcuts: {
     type: 'shortcuts',
-    size: { w: 6, h: 3, minW: 3, minH: 2 },
+    size: { w: 6, h: 3, minW: 2, minH: 1 },
     createDefaultConfig: (_t, lang) => ({
       items: getRegionalShortcuts(lang),
       columns: 4,
@@ -106,7 +106,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   clock: {
     type: 'clock',
-    size: { w: 4, h: 2, minW: 2, minH: 2 },
+    size: { w: 4, h: 2, minW: 2, minH: 1 },
     createDefaultConfig: () => ({
       style: 'digital',
       showSeconds: true,
@@ -117,7 +117,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   weather: {
     type: 'weather',
-    size: { w: 4, h: 2, minW: 3, minH: 2 },
+    size: { w: 4, h: 2, minW: 2, minH: 2 },
     createDefaultConfig: (_t, lang) => ({
       ...getRegionalWeatherDefault(lang),
       unit: 'celsius',
@@ -127,7 +127,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   bookmarks: {
     type: 'bookmarks',
-    size: { w: 4, h: 4, minW: 3, minH: 3 },
+    size: { w: 4, h: 4, minW: 2, minH: 2 },
     createDefaultConfig: () => ({
       viewMode: 'grid',
       showFavicons: true,
@@ -137,7 +137,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   rss: {
     type: 'rss',
-    size: { w: 4, h: 4, minW: 3, minH: 3 },
+    size: { w: 4, h: 4, minW: 2, minH: 2 },
     urlKeys: ['feedUrl'],
     // Pre-1.4 configs have no googleNewsMode: derive it from the keyword
     // they did have, so "technology" keeps searching instead of becoming
@@ -161,7 +161,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   pomodoro: {
     type: 'pomodoro',
-    size: { w: 4, h: 3, minW: 3, minH: 2 },
+    size: { w: 4, h: 3, minW: 2, minH: 2 },
     createDefaultConfig: () => ({
       focusDurationMinutes: 25,
       shortBreakDurationMinutes: 5,
@@ -172,7 +172,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   todo: {
     type: 'todo',
-    size: { w: 4, h: 3, minW: 3, minH: 2 },
+    size: { w: 4, h: 3, minW: 2, minH: 2 },
     createDefaultConfig: (t) => ({
       items: [
         { id: '1', text: t.defaults.todoExplore, completed: false, createdAt: Date.now() },
@@ -183,7 +183,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   iframe: {
     type: 'iframe',
-    size: { w: 6, h: 4, minW: 3, minH: 3 },
+    size: { w: 6, h: 4, minW: 2, minH: 2 },
     urlKeys: ['url'],
     createDefaultConfig: () => ({
       url: 'https://developer.mozilla.org',
@@ -194,7 +194,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   notes: {
     type: 'notes',
-    size: { w: 4, h: 4, minW: 3, minH: 2 },
+    size: { w: 4, h: 4, minW: 2, minH: 2 },
     createDefaultConfig: (t) => ({
       content: t.defaults.notes,
       fontSize: 'base',
@@ -204,7 +204,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   quickaccess: {
     type: 'quickaccess',
-    size: { w: 4, h: 4, minW: 3, minH: 3 },
+    size: { w: 4, h: 4, minW: 2, minH: 2 },
     optionalPermissions: ['topSites', 'sessions', 'tabs'],
     createDefaultConfig: () => ({
       defaultView: 'topSites',
@@ -216,7 +216,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   qrcode: {
     type: 'qrcode',
-    size: { w: 3, h: 4, minW: 3, minH: 3 },
+    size: { w: 3, h: 4, minW: 2, minH: 2 },
     createDefaultConfig: () => ({
       mode: 'url',
       value: '',
@@ -225,7 +225,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   countdown: {
     type: 'countdown',
-    size: { w: 3, h: 3, minW: 2, minH: 2 },
+    size: { w: 3, h: 3, minW: 2, minH: 1 },
     createDefaultConfig: (t) => ({
       // One yearly example so the widget isn't an empty box on first add.
       events: [{ id: 'countdown-newyear', name: t.defaults.countdownNewYear, date: `${new Date().getFullYear() + 1}-01-01`, emoji: '🎍', repeatYearly: true }],
@@ -243,7 +243,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   habits: {
     type: 'habits',
-    size: { w: 4, h: 3, minW: 3, minH: 2 },
+    size: { w: 4, h: 3, minW: 2, minH: 2 },
     createDefaultConfig: (t) => ({
       habits: [
         { id: 'habit-water', name: t.defaults.habitWater, emoji: '💧', history: [], createdAt: Date.now() },
@@ -268,7 +268,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
 
   calendar: {
     type: 'calendar',
-    size: { w: 4, h: 4, minW: 3, minH: 3 },
+    size: { w: 4, h: 4, minW: 2, minH: 2 },
     createDefaultConfig: () => ({
       feeds: [],
       daysAhead: 3,

@@ -93,16 +93,16 @@ export const ClockWidget: React.FC<ClockWidgetProps> = ({ config }) => {
       className="w-full h-full flex flex-col items-center justify-center text-center select-none"
       data-widget-type="clock"
     >
-      <div className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-md font-mono">
+      <div className="clock-time text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-md font-mono">
         {timeFormatted}
       </div>
       {showDate && (
-        <div className="text-xs sm:text-sm font-medium text-slate-300 mt-1.5 drop-shadow">
+        <div className="hide-when-short text-xs sm:text-sm font-medium text-slate-300 mt-1.5 drop-shadow">
           {dateFormatted}
         </div>
       )}
       {timezone && (
-        <div className="text-[10px] text-sky-400/80 font-mono mt-0.5 uppercase tracking-wider">
+        <div className="hide-when-short text-[10px] text-sky-400/80 font-mono mt-0.5 uppercase tracking-wider">
           {timezone}
         </div>
       )}

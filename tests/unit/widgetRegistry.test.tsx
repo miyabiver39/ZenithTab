@@ -17,6 +17,16 @@ describe('widget registry', () => {
     expect(getWidgetMeta('mystery')).toBeUndefined();
   });
 
+  it('最小サイズは横 2 列(検索は 3)・縦 1〜2 行まで縮められること', () => {
+    for (const type of WIDGET_TYPES) {
+      const { size } = WIDGET_DEFINITIONS[type];
+      expect(size.minW, `${type}.minW`).toBeLessThanOrEqual(type === 'search' ? 3 : 2);
+      expect(size.minH, `${type}.minH`).toBeLessThanOrEqual(2);
+      expect(size.w).toBeGreaterThanOrEqual(size.minW);
+      expect(size.h).toBeGreaterThanOrEqual(size.minH);
+    }
+  });
+
   it('全ウィジェット型に7言語分のタイトルと説明があること', () => {
     for (const [code, locale] of Object.entries(LOCALES)) {
       for (const type of WIDGET_TYPES) {
