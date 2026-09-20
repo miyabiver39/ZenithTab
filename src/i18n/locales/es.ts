@@ -360,6 +360,21 @@ export const es: typeof en = {
       daysLeft: 'Faltan {n} días',
       daysAgo: 'Hace {n} días',
     },
+    habits: {
+      title: 'Hábitos',
+      desc: 'Marca tus hábitos diarios y mantén la racha: se reinicia cada día.',
+      empty: 'Todavía no hay hábitos. Añade uno abajo.',
+      placeholder: 'Nuevo hábito, p. ej. Beber agua',
+      nameField: 'Hábito',
+      emojiField: 'Emoji',
+      add: 'Añadir hábito',
+      check: 'Hecho hoy',
+      uncheck: 'Deshacer hoy',
+      streak: 'Racha de {n} días',
+      todayProgress: 'Hoy: {done} / {total}',
+      showWeek: 'Mostrar los últimos 7 días',
+      showWeekDesc: 'Un punto por día junto a cada hábito.',
+    },
   },
   appDrawer: {
     title: 'Cajón de aplicaciones',
@@ -391,6 +406,7 @@ export const es: typeof en = {
     resizedWidget: 'Tamaño del widget cambiado',
     removedTask: 'Tarea eliminada',
     removedCountdown: 'Se eliminó "{name}"',
+    removedHabit: 'Se eliminó el hábito "{name}"',
     clearedCompleted: 'Tareas completadas eliminadas',
     removedSite: 'Acceso directo "{name}" eliminado',
     closedNotePage: 'Página de notas "{name}" cerrada',
@@ -561,6 +577,9 @@ export const es: typeof en = {
     todoExplore: 'Explorar los ajustes de ZenithTab',
     todoCustomize: 'Personalizar widgets y fondos',
     countdownNewYear: 'Año Nuevo',
+    habitWater: 'Beber agua',
+    habitExercise: 'Hacer ejercicio',
+    habitRead: 'Leer 10 minutos',
     notes: `# 🌌 ¡Bienvenido a ZenithTab!
 
 > *"El secreto para avanzar es empezar."*

@@ -6,6 +6,7 @@ import {
   CloudSun,
   FileText,
   Globe,
+  Flame,
   History,
   Hourglass,
   Newspaper,
@@ -40,6 +41,8 @@ import { QuickAccessWidget } from './QuickAccessWidget/QuickAccessWidget';
 import { QuickAccessConfig } from './QuickAccessWidget/QuickAccessConfig';
 import { QrCodeWidget } from './QrCodeWidget/QrCodeWidget';
 import { CountdownWidget } from './CountdownWidget/CountdownWidget';
+import { HabitWidget } from './HabitWidget/HabitWidget';
+import { HabitConfig } from './HabitWidget/HabitConfig';
 
 /**
  * The single place that knows what a widget type looks like on screen.
@@ -154,6 +157,13 @@ export const WIDGET_REGISTRY: WidgetDefinition[] = [
     icon: Hourglass,
     color: 'text-rose-400 bg-rose-400/10 border-rose-400/20',
     Component: CountdownWidget,
+  },
+  {
+    ...WIDGET_DEFINITIONS.habits,
+    icon: Flame,
+    color: 'text-lime-400 bg-lime-400/10 border-lime-400/20',
+    Component: HabitWidget,
+    ConfigForm: HabitConfig,
   },
 ];
 

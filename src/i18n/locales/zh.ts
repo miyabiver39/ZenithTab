@@ -360,6 +360,21 @@ export const zh: typeof en = {
       daysLeft: '还有 {n} 天',
       daysAgo: '{n} 天前',
     },
+    habits: {
+      title: '习惯打卡',
+      desc: '每天勾选日常习惯,保持连续记录,每天重置。',
+      empty: '还没有习惯,请在下方添加。',
+      placeholder: '新习惯,例如: 喝水',
+      nameField: '习惯',
+      emojiField: '表情',
+      add: '添加习惯',
+      check: '今天已完成',
+      uncheck: '取消今天的完成',
+      streak: '连续 {n} 天',
+      todayProgress: '今天: {done} / {total}',
+      showWeek: '显示最近 7 天',
+      showWeekDesc: '在每个习惯旁边按天显示圆点。',
+    },
   },
   appDrawer: {
     title: '应用抽屉',
@@ -391,6 +406,7 @@ export const zh: typeof en = {
     resizedWidget: '已调整小组件大小',
     removedTask: '已删除任务',
     removedCountdown: '已删除“{name}”',
+    removedHabit: '已删除习惯“{name}”',
     clearedCompleted: '已清除已完成的任务',
     removedSite: '已删除快捷方式“{name}”',
     closedNotePage: '已关闭笔记页“{name}”',
@@ -561,6 +577,9 @@ export const zh: typeof en = {
     todoExplore: '浏览 ZenithTab 设置',
     todoCustomize: '自定义小部件与壁纸',
     countdownNewYear: '元旦',
+    habitWater: '喝水',
+    habitExercise: '运动',
+    habitRead: '阅读 10 分钟',
     notes: `# 🌌 欢迎使用 ZenithTab！
 
 > *「千里之行，始于足下。」*

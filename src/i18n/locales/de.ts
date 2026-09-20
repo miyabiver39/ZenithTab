@@ -360,6 +360,21 @@ export const de: typeof en = {
       daysLeft: 'Noch {n} Tage',
       daysAgo: 'Vor {n} Tagen',
     },
+    habits: {
+      title: 'Gewohnheiten',
+      desc: 'Tägliche Gewohnheiten abhaken und die Serie halten – jeden Tag von vorn.',
+      empty: 'Noch keine Gewohnheiten. Füge unten eine hinzu.',
+      placeholder: 'Neue Gewohnheit, z. B. Wasser trinken',
+      nameField: 'Gewohnheit',
+      emojiField: 'Emoji',
+      add: 'Gewohnheit hinzufügen',
+      check: 'Heute erledigt',
+      uncheck: 'Heute zurücknehmen',
+      streak: '{n} Tage in Folge',
+      todayProgress: 'Heute: {done} / {total}',
+      showWeek: 'Letzte 7 Tage anzeigen',
+      showWeekDesc: 'Ein Punkt pro Tag neben jeder Gewohnheit.',
+    },
   },
   appDrawer: {
     title: 'App-Übersicht',
@@ -391,6 +406,7 @@ export const de: typeof en = {
     resizedWidget: 'Widget-Größe geändert',
     removedTask: 'Aufgabe entfernt',
     removedCountdown: '„{name}“ entfernt',
+    removedHabit: 'Gewohnheit „{name}“ entfernt',
     clearedCompleted: 'Erledigte Aufgaben entfernt',
     removedSite: 'Verknüpfung „{name}“ entfernt',
     closedNotePage: 'Notizseite „{name}“ geschlossen',
@@ -561,6 +577,9 @@ export const de: typeof en = {
     todoExplore: 'ZenithTab-Einstellungen erkunden',
     todoCustomize: 'Widgets & Hintergründe anpassen',
     countdownNewYear: 'Neujahr',
+    habitWater: 'Wasser trinken',
+    habitExercise: 'Sport machen',
+    habitRead: '10 Minuten lesen',
     notes: `# 🌌 Willkommen bei ZenithTab!
 
 > *„Das Geheimnis des Vorankommens ist das Anfangen.“*

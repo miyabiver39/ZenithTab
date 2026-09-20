@@ -360,6 +360,21 @@ export const ko: typeof en = {
       daysLeft: '{n}일 남음',
       daysAgo: '{n}일 전',
     },
+    habits: {
+      title: '습관 트래커',
+      desc: '매일 습관을 체크하고 연속 기록을 이어가요. 매일 초기화돼요.',
+      empty: '아직 습관이 없어요. 아래에서 추가해 보세요.',
+      placeholder: '새 습관 (예: 물 마시기)',
+      nameField: '습관',
+      emojiField: '이모지',
+      add: '습관 추가',
+      check: '오늘 완료',
+      uncheck: '오늘 완료 취소',
+      streak: '{n}일 연속',
+      todayProgress: '오늘: {done} / {total}',
+      showWeek: '최근 7일 표시',
+      showWeekDesc: '각 습관 옆에 하루에 점 하나씩 표시해요.',
+    },
   },
   appDrawer: {
     title: '앱 서랍',
@@ -391,6 +406,7 @@ export const ko: typeof en = {
     resizedWidget: '위젯 크기를 변경했습니다',
     removedTask: '할 일을 삭제했습니다',
     removedCountdown: '"{name}" 삭제됨',
+    removedHabit: '습관 "{name}" 삭제됨',
     clearedCompleted: '완료된 할 일을 삭제했습니다',
     removedSite: '바로가기 "{name}"을(를) 삭제했습니다',
     closedNotePage: '메모 페이지 "{name}"을(를) 닫았습니다',
@@ -561,6 +577,9 @@ export const ko: typeof en = {
     todoExplore: 'ZenithTab 설정 둘러보기',
     todoCustomize: '위젯과 배경화면 꾸미기',
     countdownNewYear: '새해 첫날',
+    habitWater: '물 마시기',
+    habitExercise: '운동하기',
+    habitRead: '10분 독서',
     notes: `# 🌌 ZenithTab에 오신 것을 환영합니다!
 
 > *"시작이 반이다."*

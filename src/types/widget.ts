@@ -13,7 +13,8 @@ export type WidgetType =
   | 'shortcuts'
   | 'qrcode'
   | 'quickaccess'
-  | 'countdown';
+  | 'countdown'
+  | 'habits';
 
 export interface BaseWidgetConfig {
   title?: string;
@@ -181,6 +182,21 @@ export interface CountdownWidgetConfig extends BaseWidgetConfig {
   events: CountdownEvent[];
 }
 
+export interface HabitItem {
+  id: string;
+  name: string;
+  emoji?: string;
+  /** Local calendar days ("YYYY-MM-DD") the habit was checked off. */
+  history: string[];
+  createdAt: number;
+}
+
+export interface HabitWidgetConfig extends BaseWidgetConfig {
+  habits: HabitItem[];
+  /** Show the last-7-days dots next to each habit. */
+  showWeek: boolean;
+}
+
 export type WidgetConfig =
   | { type: 'clock'; config: ClockWidgetConfig }
   | { type: 'weather'; config: WeatherWidgetConfig }
@@ -194,7 +210,8 @@ export type WidgetConfig =
   | { type: 'shortcuts'; config: ShortcutsWidgetConfig }
   | { type: 'qrcode'; config: QrCodeWidgetConfig }
   | { type: 'quickaccess'; config: QuickAccessWidgetConfig }
-  | { type: 'countdown'; config: CountdownWidgetConfig };
+  | { type: 'countdown'; config: CountdownWidgetConfig }
+  | { type: 'habits'; config: HabitWidgetConfig };
 
 export interface DashboardWidget {
   id: string;

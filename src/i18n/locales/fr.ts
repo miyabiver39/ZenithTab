@@ -360,6 +360,21 @@ export const fr: typeof en = {
       daysLeft: 'Encore {n} jours',
       daysAgo: 'Il y a {n} jours',
     },
+    habits: {
+      title: 'Habitudes',
+      desc: 'Cochez vos habitudes quotidiennes et gardez la série en vie : remise à zéro chaque jour.',
+      empty: "Aucune habitude pour l'instant. Ajoutez-en une ci-dessous.",
+      placeholder: "Nouvelle habitude, ex. Boire de l'eau",
+      nameField: 'Habitude',
+      emojiField: 'Emoji',
+      add: 'Ajouter une habitude',
+      check: "Fait aujourd'hui",
+      uncheck: "Annuler aujourd'hui",
+      streak: 'Série de {n} jours',
+      todayProgress: "Aujourd'hui : {done} / {total}",
+      showWeek: 'Afficher les 7 derniers jours',
+      showWeekDesc: 'Un point par jour à côté de chaque habitude.',
+    },
   },
   appDrawer: {
     title: 'Tiroir d’applications',
@@ -391,6 +406,7 @@ export const fr: typeof en = {
     resizedWidget: 'Widget redimensionné',
     removedTask: 'Tâche supprimée',
     removedCountdown: '« {name} » supprimé',
+    removedHabit: 'Habitude « {name} » supprimée',
     clearedCompleted: 'Tâches terminées supprimées',
     removedSite: 'Raccourci « {name} » supprimé',
     closedNotePage: 'Page de notes « {name} » fermée',
@@ -561,6 +577,9 @@ export const fr: typeof en = {
     todoExplore: 'Explorer les réglages de ZenithTab',
     todoCustomize: 'Personnaliser les widgets et fonds d\'écran',
     countdownNewYear: "Jour de l'An",
+    habitWater: "Boire de l'eau",
+    habitExercise: 'Faire du sport',
+    habitRead: 'Lire 10 minutes',
     notes: `# 🌌 Bienvenue sur ZenithTab !
 
 > *« Le secret pour avancer, c'est de commencer. »*

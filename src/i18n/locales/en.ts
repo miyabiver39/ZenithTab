@@ -358,6 +358,21 @@ export const en = {
       daysLeft: '{n} days left',
       daysAgo: '{n} days ago',
     },
+    habits: {
+      title: 'Habit Tracker',
+      desc: 'Tick off daily habits and keep the streak alive — resets every day.',
+      empty: 'No habits yet. Add one below.',
+      placeholder: 'New habit, e.g. Drink water',
+      nameField: 'Habit',
+      emojiField: 'Emoji',
+      add: 'Add habit',
+      check: 'Done today',
+      uncheck: 'Undo today',
+      streak: '{n}-day streak',
+      todayProgress: 'Today: {done} / {total}',
+      showWeek: 'Show the last 7 days',
+      showWeekDesc: 'A dot per day next to each habit.',
+    },
   },
   appDrawer: {
     title: 'App Drawer',
@@ -389,6 +404,7 @@ export const en = {
     resizedWidget: 'Resized a widget',
     removedTask: 'Removed a task',
     removedCountdown: 'Removed "{name}"',
+    removedHabit: 'Removed habit "{name}"',
     clearedCompleted: 'Cleared completed tasks',
     removedSite: 'Removed shortcut "{name}"',
     closedNotePage: 'Closed note page "{name}"',
@@ -559,6 +575,9 @@ export const en = {
     todoExplore: 'Explore ZenithTab settings',
     todoCustomize: 'Customize widgets & wallpapers',
     countdownNewYear: "New Year's Day",
+    habitWater: 'Drink water',
+    habitExercise: 'Exercise',
+    habitRead: 'Read 10 minutes',
     notes: `# 🌌 Welcome to ZenithTab!
 
 > *"The secret of getting ahead is getting started."*

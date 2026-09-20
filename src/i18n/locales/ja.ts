@@ -358,6 +358,21 @@ export const ja = {
       daysLeft: 'あと {n} 日',
       daysAgo: '{n} 日前',
     },
+    habits: {
+      title: '習慣トラッカー',
+      desc: '日課を毎日チェックして連続日数をキープ。毎日リセットされます。',
+      empty: 'まだ習慣がありません。下から追加してください。',
+      placeholder: '新しい習慣(例: 水を飲む)',
+      nameField: '習慣',
+      emojiField: '絵文字',
+      add: '習慣を追加',
+      check: '今日は達成',
+      uncheck: '今日の達成を取り消す',
+      streak: '{n} 日連続',
+      todayProgress: '今日: {done} / {total}',
+      showWeek: '直近 7 日を表示',
+      showWeekDesc: '各習慣の横に 1 日 1 つのドットを表示します。',
+    },
   },
   appDrawer: {
     title: 'アプリドロワー',
@@ -389,6 +404,7 @@ export const ja = {
     resizedWidget: 'ウィジェットのサイズを変更しました',
     removedTask: 'タスクを削除しました',
     removedCountdown: '「{name}」を削除しました',
+    removedHabit: '習慣「{name}」を削除しました',
     clearedCompleted: '完了したタスクを削除しました',
     removedSite: 'ショートカット「{name}」を削除しました',
     closedNotePage: 'メモページ「{name}」を閉じました',
@@ -559,6 +575,9 @@ export const ja = {
     todoExplore: 'ZenithTab の設定を見てみる',
     todoCustomize: 'ウィジェットと壁紙をカスタマイズする',
     countdownNewYear: '元日',
+    habitWater: '水を飲む',
+    habitExercise: '運動する',
+    habitRead: '10 分読書',
     notes: `# 🌌 ZenithTab へようこそ！
 
 > *「千里の道も一歩から」*

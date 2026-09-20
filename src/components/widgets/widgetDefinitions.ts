@@ -239,6 +239,31 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       };
     },
   },
+
+  habits: {
+    type: 'habits',
+    size: { w: 4, h: 3, minW: 3, minH: 2 },
+    createDefaultConfig: (t) => ({
+      habits: [
+        { id: 'habit-water', name: t.defaults.habitWater, emoji: '💧', history: [], createdAt: Date.now() },
+        { id: 'habit-exercise', name: t.defaults.habitExercise, emoji: '🏃', history: [], createdAt: Date.now() - 1 },
+        { id: 'habit-read', name: t.defaults.habitRead, emoji: '📖', history: [], createdAt: Date.now() - 2 },
+      ],
+      showWeek: true,
+    }),
+    sanitizeConfig: (config) => {
+      if (!Array.isArray(config.habits)) return config;
+      return {
+        ...config,
+        habits: config.habits
+          .filter((habit: any) => habit && typeof habit.id === 'string' && typeof habit.name === 'string')
+          .map((habit: any) => ({
+            ...habit,
+            history: Array.isArray(habit.history) ? habit.history.filter((d: unknown) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) : [],
+          })),
+      };
+    },
+  },
 };
 
 export const WIDGET_TYPES = Object.keys(WIDGET_DEFINITIONS) as WidgetType[];
