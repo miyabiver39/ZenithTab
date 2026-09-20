@@ -12,13 +12,11 @@ import { useLayoutUndo } from '../../hooks/useLayoutUndo';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export const GridContainer: React.FC = () => {
-  const {
-    widgets,
-    layouts,
-    isEditMode,
-    updateLayouts,
-    appearance,
-  } = useDashboardStore();
+  const widgets = useDashboardStore((s) => s.widgets);
+  const layouts = useDashboardStore((s) => s.layouts);
+  const isEditMode = useDashboardStore((s) => s.isEditMode);
+  const updateLayouts = useDashboardStore((s) => s.updateLayouts);
+  const appearance = useDashboardStore((s) => s.appearance);
 
   // Minimum sizes come from the registry, not from the stored layout: the
   // limits were lowered after widgets had already been saved with the old

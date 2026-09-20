@@ -5,8 +5,9 @@ export { LOCALES, detectBrowserLanguage, getTranslation, resolveLanguageCode } f
 export type { SupportedLanguage, Translation } from './resolve';
 
 export function useTranslation() {
-  const { appearance } = useDashboardStore();
-  const currentLang = appearance.language || 'auto';
+  // Subscribe to the language only: this hook is called by nearly every
+  // component, so re-rendering on any store change was a page-wide cost.
+  const currentLang = useDashboardStore((s) => s.appearance.language || 'auto');
   const t = getTranslation(currentLang);
   const activeLanguageCode = resolveLanguageCode(currentLang);
 

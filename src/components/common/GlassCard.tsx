@@ -10,7 +10,10 @@ export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
   ({ className, children, variant = 'translucent', hoverEffect = false, style, ...props }, ref) => {
-    const { appearance } = useDashboardStore();
+    // Every widget sits in a GlassCard, so subscribe to the two fields it
+    // reads rather than to appearance (or the store) as a whole.
+    const borderRadius = useDashboardStore((s) => s.appearance.borderRadius);
+    const glassBlur = useDashboardStore((s) => s.appearance.glassBlur);
 
     const radiusClasses = {
       none: 'rounded-none',
@@ -20,7 +23,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       xl: 'rounded-xl',
       '2xl': 'rounded-2xl',
       full: 'rounded-3xl',
-    }[appearance.borderRadius || '2xl'];
+    }[borderRadius || '2xl'];
 
     const variantStyles = {
       solid: 'bg-slate-900/80 border-white/10',
@@ -39,7 +42,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
           className
         )}
         style={{
-          backdropFilter: variant !== 'transparent' ? `blur(${appearance.glassBlur}px)` : undefined,
+          backdropFilter: variant !== 'transparent' ? `blur(${glassBlur}px)` : undefined,
           ...style,
         }}
         {...props}

@@ -18,7 +18,9 @@ import { useAutoSnapshot } from './hooks/useAutoSnapshot';
 import './index.css';
 
 export const App: React.FC = () => {
-  const { isInitialized, initialize, appearance } = useDashboardStore();
+  const isInitialized = useDashboardStore((s) => s.isInitialized);
+  const initialize = useDashboardStore((s) => s.initialize);
+  const appearance = useDashboardStore((s) => s.appearance);
 
   useEffect(() => {
     initialize();

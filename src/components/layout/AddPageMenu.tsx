@@ -23,7 +23,7 @@ const MENU_WIDTH = 240;
  * `overflow-x-auto` would otherwise clip it.
  */
 export const AddPageMenu: React.FC<AddPageMenuProps> = ({ children, align = 'left' }) => {
-  const { addPage } = useDashboardStore();
+  const addPage = useDashboardStore((s) => s.addPage);
   const { t } = useTranslation();
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);

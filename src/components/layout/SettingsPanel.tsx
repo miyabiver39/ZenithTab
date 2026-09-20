@@ -17,37 +17,35 @@ import { getComboFromEvent, BUILT_IN_SHORTCUTS, comboToKeyLabels, displayCombos,
 import { cn } from '../../utils/cn';
 
 export const SettingsPanel: React.FC = () => {
-  const {
-    activeSettingsModal,
-    editingWidgetId,
-    closeSettingsModal,
-    wallpaper,
-    appearance,
-    dockItems,
-    keyboardShortcuts,
-    updateWallpaper,
-    updateAppearance,
-    addDockItem,
-    removeDockItem,
-    moveDockItem,
-    reorderDockItem,
-    addKeyboardShortcut,
-    removeKeyboardShortcut,
-    resetToDefault,
-    exportConfig,
-    importConfig,
-    trash,
-    restoreFromTrash,
-    deleteFromTrash,
-    emptyTrash,
-    snapshots,
-    backupSettings,
-    refreshSnapshots,
-    takeSnapshot,
-    restoreSnapshot,
-    deleteSnapshot,
-    updateBackupSettings,
-  } = useDashboardStore();
+  const activeSettingsModal = useDashboardStore((s) => s.activeSettingsModal);
+  const editingWidgetId = useDashboardStore((s) => s.editingWidgetId);
+  const closeSettingsModal = useDashboardStore((s) => s.closeSettingsModal);
+  const wallpaper = useDashboardStore((s) => s.wallpaper);
+  const appearance = useDashboardStore((s) => s.appearance);
+  const dockItems = useDashboardStore((s) => s.dockItems);
+  const keyboardShortcuts = useDashboardStore((s) => s.keyboardShortcuts);
+  const updateWallpaper = useDashboardStore((s) => s.updateWallpaper);
+  const updateAppearance = useDashboardStore((s) => s.updateAppearance);
+  const addDockItem = useDashboardStore((s) => s.addDockItem);
+  const removeDockItem = useDashboardStore((s) => s.removeDockItem);
+  const moveDockItem = useDashboardStore((s) => s.moveDockItem);
+  const reorderDockItem = useDashboardStore((s) => s.reorderDockItem);
+  const addKeyboardShortcut = useDashboardStore((s) => s.addKeyboardShortcut);
+  const removeKeyboardShortcut = useDashboardStore((s) => s.removeKeyboardShortcut);
+  const resetToDefault = useDashboardStore((s) => s.resetToDefault);
+  const exportConfig = useDashboardStore((s) => s.exportConfig);
+  const importConfig = useDashboardStore((s) => s.importConfig);
+  const trash = useDashboardStore((s) => s.trash);
+  const restoreFromTrash = useDashboardStore((s) => s.restoreFromTrash);
+  const deleteFromTrash = useDashboardStore((s) => s.deleteFromTrash);
+  const emptyTrash = useDashboardStore((s) => s.emptyTrash);
+  const snapshots = useDashboardStore((s) => s.snapshots);
+  const backupSettings = useDashboardStore((s) => s.backupSettings);
+  const refreshSnapshots = useDashboardStore((s) => s.refreshSnapshots);
+  const takeSnapshot = useDashboardStore((s) => s.takeSnapshot);
+  const restoreSnapshot = useDashboardStore((s) => s.restoreSnapshot);
+  const deleteSnapshot = useDashboardStore((s) => s.deleteSnapshot);
+  const updateBackupSettings = useDashboardStore((s) => s.updateBackupSettings);
 
   const { t, activeLanguageCode } = useTranslation();
   // Resolved once: the key-cap labels differ on macOS (⌘ / ⌥).

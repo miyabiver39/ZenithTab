@@ -15,7 +15,8 @@ const MAX_PAGES = 8;
 
 export const QuickNotesWidget: React.FC<QuickNotesWidgetProps> = ({ widgetId, config }) => {
   const { content, pages: configPages, activePageId, fontSize = 'base', fontFamily = 'sans' } = config;
-  const { updateWidgetConfig, updateWidgetConfigUndoable } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
+  const updateWidgetConfigUndoable = useDashboardStore((s) => s.updateWidgetConfigUndoable);
   const { t } = useTranslation();
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);

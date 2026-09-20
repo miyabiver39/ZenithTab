@@ -13,7 +13,13 @@ import { cn } from '../../utils/cn';
  * the QuickNotes tab-strip UX: click to switch, double-click to rename.
  */
 export const PageSwitcher: React.FC = () => {
-  const { pages, activePageId, switchPage, removePage, renamePage, pageData, widgets } = useDashboardStore();
+  const pages = useDashboardStore((s) => s.pages);
+  const activePageId = useDashboardStore((s) => s.activePageId);
+  const switchPage = useDashboardStore((s) => s.switchPage);
+  const removePage = useDashboardStore((s) => s.removePage);
+  const renamePage = useDashboardStore((s) => s.renamePage);
+  const pageData = useDashboardStore((s) => s.pageData);
+  const widgets = useDashboardStore((s) => s.widgets);
   const { t } = useTranslation();
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');

@@ -26,7 +26,8 @@ interface Resolved {
  */
 export const CountdownWidget: React.FC<CountdownWidgetProps> = ({ widgetId, config }) => {
   const { events = [] } = config;
-  const { updateWidgetConfig, updateWidgetConfigUndoable } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
+  const updateWidgetConfigUndoable = useDashboardStore((s) => s.updateWidgetConfigUndoable);
   const { t, activeLanguageCode } = useTranslation();
   const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState('');

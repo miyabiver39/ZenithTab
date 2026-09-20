@@ -12,7 +12,8 @@ interface TodoWidgetProps {
 
 export const TodoWidget: React.FC<TodoWidgetProps> = ({ widgetId, config }) => {
   const { items = [] } = config;
-  const { updateWidgetConfig, updateWidgetConfigUndoable } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
+  const updateWidgetConfigUndoable = useDashboardStore((s) => s.updateWidgetConfigUndoable);
   const { t } = useTranslation();
 
   const [inputVal, setInputVal] = useState('');

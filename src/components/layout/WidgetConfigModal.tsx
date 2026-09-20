@@ -14,13 +14,11 @@ import { getWidgetDefinition } from '../widgets/registry';
  * definition's `beforeSave`.
  */
 export const WidgetConfigModal: React.FC = () => {
-  const {
-    activeSettingsModal,
-    editingWidgetId,
-    widgets,
-    closeSettingsModal,
-    updateWidgetConfig,
-  } = useDashboardStore();
+  const activeSettingsModal = useDashboardStore((s) => s.activeSettingsModal);
+  const editingWidgetId = useDashboardStore((s) => s.editingWidgetId);
+  const widgets = useDashboardStore((s) => s.widgets);
+  const closeSettingsModal = useDashboardStore((s) => s.closeSettingsModal);
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
 
   const { t, activeLanguageCode } = useTranslation();
   const isOpen = activeSettingsModal === 'editWidget' && !!editingWidgetId;

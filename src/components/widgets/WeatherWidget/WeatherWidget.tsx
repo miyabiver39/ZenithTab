@@ -16,7 +16,7 @@ interface WeatherWidgetProps {
 export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }) => {
   const { city = 'Tokyo', latitude = 35.6762, longitude = 139.6503, unit = 'celsius', showForecast = true } = config;
   const { weather, isLoading, error, refresh } = useWeather(latitude, longitude, city);
-  const { updateWidgetConfig } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
   const { t, activeLanguageCode } = useTranslation();
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);

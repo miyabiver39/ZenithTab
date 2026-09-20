@@ -6,14 +6,12 @@ import { AddPageMenu } from './AddPageMenu';
 import { useTranslation } from '../../i18n/i18n';
 
 export const Header: React.FC = () => {
-  const {
-    isEditMode,
-    setEditMode,
-    openSettingsModal,
-    rotateWallpaper,
-    toggleAppDrawer,
-    pages,
-  } = useDashboardStore();
+  const isEditMode = useDashboardStore((s) => s.isEditMode);
+  const setEditMode = useDashboardStore((s) => s.setEditMode);
+  const openSettingsModal = useDashboardStore((s) => s.openSettingsModal);
+  const rotateWallpaper = useDashboardStore((s) => s.rotateWallpaper);
+  const toggleAppDrawer = useDashboardStore((s) => s.toggleAppDrawer);
+  const pages = useDashboardStore((s) => s.pages);
 
   const { t } = useTranslation();
   const [greeting, setGreeting] = useState('');

@@ -11,7 +11,10 @@ import { Button } from '../common/Button';
 import { uniqueId } from '../../utils/id';
 
 export const AppDrawerModal: React.FC = () => {
-  const { isAppDrawerOpen, toggleAppDrawer, widgets, updateWidgetConfig } = useDashboardStore();
+  const isAppDrawerOpen = useDashboardStore((s) => s.isAppDrawerOpen);
+  const toggleAppDrawer = useDashboardStore((s) => s.toggleAppDrawer);
+  const widgets = useDashboardStore((s) => s.widgets);
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
   const { t, activeLanguageCode } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState('');

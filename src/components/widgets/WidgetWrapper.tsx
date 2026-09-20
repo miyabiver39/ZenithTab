@@ -13,7 +13,9 @@ interface WidgetWrapperProps {
 }
 
 export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }) => {
-  const { isEditMode, removeWidget, openSettingsModal } = useDashboardStore();
+  const isEditMode = useDashboardStore((s) => s.isEditMode);
+  const removeWidget = useDashboardStore((s) => s.removeWidget);
+  const openSettingsModal = useDashboardStore((s) => s.openSettingsModal);
   const { t } = useTranslation();
   const isSearch = widget.type === 'search';
   // Stock titles follow the language setting; user-typed ones are kept.

@@ -20,7 +20,8 @@ interface HabitWidgetProps {
  */
 export const HabitWidget: React.FC<HabitWidgetProps> = ({ widgetId, config }) => {
   const { habits = [], showWeek = true } = config;
-  const { updateWidgetConfig, updateWidgetConfigUndoable } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
+  const updateWidgetConfigUndoable = useDashboardStore((s) => s.updateWidgetConfigUndoable);
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('');

@@ -12,7 +12,11 @@ import { Button } from '../common/Button';
  * widget, or hop back to the page you came from.
  */
 export const EmptyPage: React.FC = () => {
-  const { pages, activePageId, switchPage, setEditMode, openSettingsModal } = useDashboardStore();
+  const pages = useDashboardStore((s) => s.pages);
+  const activePageId = useDashboardStore((s) => s.activePageId);
+  const switchPage = useDashboardStore((s) => s.switchPage);
+  const setEditMode = useDashboardStore((s) => s.setEditMode);
+  const openSettingsModal = useDashboardStore((s) => s.openSettingsModal);
   const { t } = useTranslation();
 
   // "Back" targets the nearest page to the left (or the first page when the

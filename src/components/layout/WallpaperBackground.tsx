@@ -16,7 +16,8 @@ interface Layer {
 }
 
 export const WallpaperBackground: React.FC = () => {
-  const { wallpaper, appearance } = useDashboardStore();
+  const wallpaper = useDashboardStore((s) => s.wallpaper);
+  const appearance = useDashboardStore((s) => s.appearance);
   const adaptiveText = appearance.adaptiveTextColor !== false;
   const {
     source = 'unsplash',

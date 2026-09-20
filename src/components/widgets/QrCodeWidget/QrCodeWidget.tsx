@@ -16,7 +16,7 @@ interface QrCodeWidgetProps {
 
 export const QrCodeWidget: React.FC<QrCodeWidgetProps> = ({ widgetId, config }) => {
   const { mode = 'url', value = '' } = config;
-  const { updateWidgetConfig } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
   const { t } = useTranslation();
   const [input, setInput] = useState(value);
   const [copied, setCopied] = useState(false);

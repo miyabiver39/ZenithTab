@@ -8,7 +8,9 @@ import { requestApiPermissions } from '../../utils/permissions';
 
 /** The "Add Widget" catalogue — one card per registry entry, in registry order. */
 export const AddWidgetModal: React.FC = () => {
-  const { activeSettingsModal, closeSettingsModal, addWidget } = useDashboardStore();
+  const activeSettingsModal = useDashboardStore((s) => s.activeSettingsModal);
+  const closeSettingsModal = useDashboardStore((s) => s.closeSettingsModal);
+  const addWidget = useDashboardStore((s) => s.addWidget);
   const { t } = useTranslation();
   const isOpen = activeSettingsModal === 'addWidget';
 

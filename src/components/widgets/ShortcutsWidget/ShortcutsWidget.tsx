@@ -20,7 +20,9 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
   // Applied as an inline style: a computed `grid-cols-${n}` class would be
   // purged by Tailwind at build time and silently do nothing.
   const columns = Math.min(8, Math.max(2, config.columns || 4));
-  const { updateWidgetConfig, updateWidgetConfigUndoable, isEditMode } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
+  const updateWidgetConfigUndoable = useDashboardStore((s) => s.updateWidgetConfigUndoable);
+  const isEditMode = useDashboardStore((s) => s.isEditMode);
   const { t } = useTranslation();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

@@ -5,7 +5,9 @@ import { useTranslation } from '../../i18n/i18n';
 import { DOCK_ICON_LIBRARY } from '../../utils/dockIcons';
 
 export const Dock: React.FC = () => {
-  const { appearance, dockItems, openSettingsModal } = useDashboardStore();
+  const appearance = useDashboardStore((s) => s.appearance);
+  const dockItems = useDashboardStore((s) => s.dockItems);
+  const openSettingsModal = useDashboardStore((s) => s.openSettingsModal);
   const { t } = useTranslation();
 
   if (appearance.dockPosition === 'hidden') {

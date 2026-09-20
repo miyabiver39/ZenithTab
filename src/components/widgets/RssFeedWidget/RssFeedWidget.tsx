@@ -27,7 +27,7 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
     showDescription = true,
   } = config;
 
-  const { updateWidgetConfig } = useDashboardStore();
+  const updateWidgetConfig = useDashboardStore((s) => s.updateWidgetConfig);
   const { t, activeLanguageCode } = useTranslation();
   const [searchInput, setSearchInput] = useState(searchQuery);
   const [isSearching, setIsSearching] = useState(false);
