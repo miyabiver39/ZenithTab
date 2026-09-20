@@ -18,13 +18,13 @@ Arrange widgets freely with drag-and-drop, pick dynamic wallpapers, and launch y
 Key Features:
 - Flexible Grid Layout: Drag, drop, and resize widgets with responsive breakpoints across laptops and external monitors.
 - Multi-Page Workspaces: Organize widgets across distinct named pages for work, personal, and research workflows.
-- Unified Search Bar: Quick-toggle between web search, repository search, video search, and AI assistant targets.
+- Unified Search Bar: Quick-toggle between web search, repository search, video search, and AI assistant targets, with inline smart answers (calculator, percentages, unit and number-base conversions, dice, coin flips, random picks, day countdowns) shown before you search.
 - Bookmarks Explorer: Browse and search Chrome bookmarks with breadcrumb navigation and zero URL leakage.
 - RSS & News Feeds: Follow news topics and custom RSS/Atom feeds with automatic background cache refresh.
 - Live Weather: Real-time temperature, condition forecasts, and 3-day projections with on-demand location detection.
 - App Drawer & Quick Dock: Launch registered web apps categorized by tags, or use persistent top/bottom dock shortcuts.
 - Quick Access: Jump back to your most-visited sites or reopen recently closed tabs, straight from the new tab.
-- Focus & Utilities: Built-in Pomodoro timer, to-do checklist, quick scratchpad, and calculator.
+- Focus & Utilities: Built-in Pomodoro timer, to-do checklist, quick scratchpad, habit tracker, countdowns, QR codes and an iCal calendar view.
 - Safe to Experiment: Undo any delete or move (toast or Ctrl+Z), restore deleted widgets and pages from the trash for 30 days, and roll the whole dashboard back to an automatic backup.
 - Privacy-First: Zero telemetry, zero analytics, zero ad network requests.
 
