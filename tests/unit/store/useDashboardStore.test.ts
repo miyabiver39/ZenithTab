@@ -193,7 +193,7 @@ describe('useDashboardStore', () => {
       expect(chromeStorageData[STORAGE_KEYS.WIDGETS].some((w: any) => w.id === target)).toBe(false);
     });
 
-    it('updateWidgetConfig が設定をマージし、タイトル更新とモーダル閉鎖を行うこと', () => {
+    it('updateWidgetConfig が設定をマージし、タイトルを更新すること(モーダルは閉じない — #47)', () => {
       const target = state().widgets.find((w) => w.type === 'clock')!;
       state().openSettingsModal('editWidget', target.id);
 
@@ -203,8 +203,23 @@ describe('useDashboardStore', () => {
       expect(updated.config.showSeconds).toBe(false);
       expect(updated.config.style).toBe('digital');
       expect(updated.title).toBe('Wall Clock');
-      expect(state().activeSettingsModal).toBeNull();
-      expect(state().editingWidgetId).toBeNull();
+      // Closing the dialog is WidgetConfigModal's job, not the store's.
+      expect(state().activeSettingsModal).toBe('editWidget');
+      expect(state().editingWidgetId).toBe(target.id);
+    });
+
+    it('updateWidgetConfig は開いている設定ダイアログを閉じないこと', () => {
+      // Widgets save config from timers/debounces (weather location, QR
+      // input); that must not dismiss a settings panel the user is using.
+      state().openSettingsModal('settings');
+      const target = state().widgets[0];
+      state().updateWidgetConfig(target.id, { showSeconds: false });
+      expect(state().activeSettingsModal).toBe('settings');
+
+      state().openSettingsModal('editWidget', target.id);
+      state().updateWidgetConfig(target.id, { showSeconds: true });
+      expect(state().activeSettingsModal).toBe('editWidget');
+      expect(state().editingWidgetId).toBe(target.id);
     });
 
     it('updateWidgetConfig はタイトル省略時に既存タイトルを保持すること', () => {

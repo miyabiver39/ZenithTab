@@ -110,8 +110,10 @@ export const createWidgetSlice: DashboardSliceCreator<WidgetSlice> = (set, get) 
         return w;
       });
 
+      // Deliberately no UI side effect here: widgets call this from timers
+      // and debounced inputs, and it used to slam whatever settings dialog
+      // the user had open. Closing is the config modal's own job.
       persistPageState(updatedWidgets, layouts);
-      set({ activeSettingsModal: null, editingWidgetId: null });
     },
 
     updateWidgetConfigUndoable: (id, config, label) => {

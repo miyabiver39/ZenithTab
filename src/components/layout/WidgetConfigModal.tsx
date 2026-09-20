@@ -46,6 +46,7 @@ export const WidgetConfigModal: React.FC = () => {
     if (!editingWidgetId) return;
     const prepared = definition?.beforeSave ? definition.beforeSave(config, { activeLanguageCode }) : config;
     updateWidgetConfig(editingWidgetId, prepared, title);
+    closeSettingsModal();
   };
 
   return (
