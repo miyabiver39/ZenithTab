@@ -28,6 +28,22 @@ export default defineConfig({
       input: {
         newtab: path.resolve(__dirname, 'newtab.html'),
       },
+      output: {
+        // The new tab is loaded from disk, so this isn't about download size:
+        // splitting the rarely-changing libraries out keeps the app chunk
+        // small enough to parse quickly and lets Chrome cache the vendor
+        // chunks' compiled code across updates.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          const normalized = id.replace(/\\/g, '/');
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(normalized)) return 'vendor-react';
+          if (id.includes('react-grid-layout') || id.includes('react-draggable') || id.includes('react-resizable')) return 'vendor-grid';
+          if (id.includes('lucide-react')) return 'vendor-icons';
+          if (id.includes('fast-xml-parser')) return 'vendor-xml';
+          if (normalized.includes('/qrcode/')) return 'vendor-qrcode';
+          return 'vendor';
+        },
+      },
     },
   },
 });

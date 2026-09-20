@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { useDashboardStore } from './store/useDashboardStore';
 import { WallpaperBackground } from './components/layout/WallpaperBackground';
@@ -6,10 +6,13 @@ import { Header } from './components/layout/Header';
 import { PageSwitcher } from './components/layout/PageSwitcher';
 import { Dock } from './components/layout/Dock';
 import { GridContainer } from './components/layout/GridContainer';
-import { SettingsPanel } from './components/layout/SettingsPanel';
-import { AddWidgetModal } from './components/layout/AddWidgetModal';
-import { WidgetConfigModal } from './components/layout/WidgetConfigModal';
-import { AppDrawerModal } from './components/layout/AppDrawerModal';
+
+// The dialogs are big (SettingsPanel alone is the largest component) and
+// not needed to paint the page, so they load on first open.
+const SettingsPanel = lazy(() => import('./components/layout/SettingsPanel').then((m) => ({ default: m.SettingsPanel })));
+const AddWidgetModal = lazy(() => import('./components/layout/AddWidgetModal').then((m) => ({ default: m.AddWidgetModal })));
+const WidgetConfigModal = lazy(() => import('./components/layout/WidgetConfigModal').then((m) => ({ default: m.WidgetConfigModal })));
+const AppDrawerModal = lazy(() => import('./components/layout/AppDrawerModal').then((m) => ({ default: m.AppDrawerModal })));
 import { UndoToast } from './components/common/UndoToast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
@@ -21,6 +24,8 @@ export const App: React.FC = () => {
   const isInitialized = useDashboardStore((s) => s.isInitialized);
   const initialize = useDashboardStore((s) => s.initialize);
   const appearance = useDashboardStore((s) => s.appearance);
+  const activeSettingsModal = useDashboardStore((s) => s.activeSettingsModal);
+  const isAppDrawerOpen = useDashboardStore((s) => s.isAppDrawerOpen);
 
   useEffect(() => {
     initialize();
@@ -51,11 +56,13 @@ export const App: React.FC = () => {
       </main>
       <Dock />
 
-      {/* Modals */}
-      <SettingsPanel />
-      <AddWidgetModal />
-      <WidgetConfigModal />
-      <AppDrawerModal />
+      {/* Modals — mounted only while open so their code is fetched lazily. */}
+      <Suspense fallback={null}>
+        {activeSettingsModal === 'settings' && <SettingsPanel />}
+        {activeSettingsModal === 'addWidget' && <AddWidgetModal />}
+        {activeSettingsModal === 'editWidget' && <WidgetConfigModal />}
+        {isAppDrawerOpen && <AppDrawerModal />}
+      </Suspense>
       <UndoToast />
     </div>
   );
