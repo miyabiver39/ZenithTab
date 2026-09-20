@@ -115,3 +115,61 @@ describe('PomodoroWidget', () => {
     expect(screen.getByText('0')).toBeInTheDocument();
   });
 });
+
+describe('PomodoroWidget — 実時間ベース (#53)', () => {
+  beforeEach(() => {
+    resetDashboardStore();
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it('バックグラウンドでインターバルが間引かれても、復帰時に実経過時間が反映されセッションが完了すること', async () => {
+    const user = setupUser();
+    render(<PomodoroWidget config={config} />);
+    await user.click(screen.getByText('Start'));
+    tick(5);
+    expect(screen.getByText('00:55')).toBeInTheDocument();
+
+    // A throttled tab: the clock moves 70 s but no interval callback runs.
+    act(() => {
+      vi.setSystemTime(Date.now() + 70_000);
+    });
+    expect(screen.getByText('00:55')).toBeInTheDocument();
+    // …until the tab is shown again.
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    // Focus session over → short break, one session counted.
+    expect(screen.getByText('02:00')).toBeInTheDocument();
+    expect(screen.getByText('Start')).toBeInTheDocument();
+    expect(screen.getByText('1')).toBeInTheDocument();
+  });
+
+  it('一時停止中は時計が進んでも残り時間が減らないこと', async () => {
+    const user = setupUser();
+    render(<PomodoroWidget config={config} />);
+    await user.click(screen.getByText('Start'));
+    tick(10);
+    await user.click(screen.getByText('Pause'));
+    act(() => {
+      vi.setSystemTime(Date.now() + 600_000);
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    expect(screen.getByText('00:50')).toBeInTheDocument();
+    await user.click(screen.getByText('Start'));
+    tick(1);
+    expect(screen.getByText('00:49')).toBeInTheDocument();
+  });
+
+  it('停止中に設定の時間を変えると表示が新しい長さになり、動作中は変わらないこと', async () => {
+    const user = setupUser();
+    const { rerender } = render(<PomodoroWidget config={config} />);
+    rerender(<PomodoroWidget config={{ ...config, focusDurationMinutes: 2 }} />);
+    expect(screen.getByText('02:00')).toBeInTheDocument();
+
+    await user.click(screen.getByText('Start'));
+    tick(3);
+    rerender(<PomodoroWidget config={{ ...config, focusDurationMinutes: 5 }} />);
+    expect(screen.getByText('01:57')).toBeInTheDocument();
+  });
+});

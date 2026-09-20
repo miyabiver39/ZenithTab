@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 import { PomodoroWidgetConfig } from '../../../types/widget';
 import { useTranslation } from '../../../i18n/i18n';
@@ -19,7 +19,12 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
   const { t } = useTranslation();
   const [mode, setMode] = useState<PomodoroMode>('focus');
   const [timeLeft, setTimeLeft] = useState(focusDurationMinutes * 60);
-  const [isActive, setIsActive] = useState(false);
+  // While running, the wall-clock time the session ends at. Deriving the
+  // remaining seconds from this — rather than decrementing once per tick —
+  // keeps the timer honest in a background tab, where Chrome throttles
+  // setInterval to about once a minute.
+  const [endAt, setEndAt] = useState<number | null>(null);
+  const isActive = endAt !== null;
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
 
   const getDurationSeconds = (m: PomodoroMode) => {
@@ -35,45 +40,71 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
 
   const currentTotal = getDurationSeconds(mode);
 
+  // Re-sync from the clock every second and whenever the tab comes back,
+  // so a throttled tab catches up the moment it is visible again.
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (isActive && timeLeft === 0) {
-      // Completed session
-      setIsActive(false);
-      if (mode === 'focus') {
-        const nextSessions = sessionsCompleted + 1;
-        setSessionsCompleted(nextSessions);
-        if (nextSessions % 4 === 0) {
-          setMode('longBreak');
-          setTimeLeft(longBreakDurationMinutes * 60);
-        } else {
-          setMode('shortBreak');
-          setTimeLeft(shortBreakDurationMinutes * 60);
-        }
-      } else {
-        setMode('focus');
-        setTimeLeft(focusDurationMinutes * 60);
-      }
-    }
-
+    if (endAt === null) return;
+    const sync = () => setTimeLeft(Math.max(0, Math.round((endAt - Date.now()) / 1000)));
+    sync();
+    const interval = setInterval(sync, 1000);
+    document.addEventListener('visibilitychange', sync);
+    window.addEventListener('focus', sync);
     return () => {
-      if (interval) clearInterval(interval);
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', sync);
+      window.removeEventListener('focus', sync);
     };
+  }, [endAt]);
+
+  useEffect(() => {
+    if (!isActive || timeLeft > 0) return;
+    // Completed session
+    setEndAt(null);
+    if (mode === 'focus') {
+      const nextSessions = sessionsCompleted + 1;
+      setSessionsCompleted(nextSessions);
+      if (nextSessions % 4 === 0) {
+        setMode('longBreak');
+        setTimeLeft(longBreakDurationMinutes * 60);
+      } else {
+        setMode('shortBreak');
+        setTimeLeft(shortBreakDurationMinutes * 60);
+      }
+    } else {
+      setMode('focus');
+      setTimeLeft(focusDurationMinutes * 60);
+    }
   }, [isActive, timeLeft, mode, sessionsCompleted, focusDurationMinutes, shortBreakDurationMinutes, longBreakDurationMinutes]);
+
+  // A duration changed in the settings while the timer is idle: show the
+  // new length instead of a stale count from the old one.
+  const durationsRef = useRef([focusDurationMinutes, shortBreakDurationMinutes, longBreakDurationMinutes]);
+  useEffect(() => {
+    const next = [focusDurationMinutes, shortBreakDurationMinutes, longBreakDurationMinutes];
+    const changed = next.some((v, i) => v !== durationsRef.current[i]);
+    durationsRef.current = next;
+    if (!changed || isActive) return;
+    setTimeLeft(mode === 'focus' ? focusDurationMinutes * 60 : mode === 'shortBreak' ? shortBreakDurationMinutes * 60 : longBreakDurationMinutes * 60);
+  }, [focusDurationMinutes, shortBreakDurationMinutes, longBreakDurationMinutes, mode, isActive]);
+
+  const handleToggle = () => {
+    if (isActive) {
+      // Freeze the remaining time as of now.
+      setTimeLeft(Math.max(0, Math.round((endAt - Date.now()) / 1000)));
+      setEndAt(null);
+    } else if (timeLeft > 0) {
+      setEndAt(Date.now() + timeLeft * 1000);
+    }
+  };
 
   const handleModeChange = (newMode: PomodoroMode) => {
     setMode(newMode);
-    setIsActive(false);
+    setEndAt(null);
     setTimeLeft(getDurationSeconds(newMode));
   };
 
   const handleReset = () => {
-    setIsActive(false);
+    setEndAt(null);
     setTimeLeft(getDurationSeconds(mode));
   };
 
@@ -130,7 +161,7 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({ config }) => {
       {/* Controls */}
       <div className="flex items-center gap-2.5 flex-shrink-0">
         <button
-          onClick={() => setIsActive(!isActive)}
+          onClick={handleToggle}
           className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-semibold text-xs transition-all shadow-md active:scale-95 ${
             isActive
               ? 'bg-amber-500/80 hover:bg-amber-500 text-white shadow-amber-500/20'
