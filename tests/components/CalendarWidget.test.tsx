@@ -81,6 +81,22 @@ describe('CalendarWidget', () => {
     expect(screen.queryByText('Far away')).not.toBeInTheDocument();
   });
 
+  it('フィードの色を変えると再取得なしにイベントの色が変わること (#50)', async () => {
+    renderCalendar();
+    await waitFor(() => expect(screen.getByTestId('calendar-days')).toBeInTheDocument());
+    const bar = () => screen.getAllByText('Standup')[0].closest('li')!.querySelector('span[style]') as HTMLElement;
+    expect(bar().style.backgroundColor).toBe('rgb(56, 189, 248)');
+    expect(calendarService.fetchCalendar).toHaveBeenCalledTimes(1);
+
+    act(() =>
+      useDashboardStore.getState().updateWidgetConfig(WIDGET_ID, { feeds: [{ ...FEED, color: '#f472b6', label: 'Renamed' }] })
+    );
+    await waitFor(() => expect(bar().style.backgroundColor).toBe('rgb(244, 114, 182)'));
+    expect(screen.getByText('Renamed')).toBeInTheDocument();
+    // Same id + url → no refetch.
+    expect(calendarService.fetchCalendar).toHaveBeenCalledTimes(1);
+  });
+
   it('カレンダー未登録なら設定への誘導、権限が無ければ許可ボタンを出すこと', async () => {
     const user = setupUser();
     const { unmount } = renderCalendar({ feeds: [] });

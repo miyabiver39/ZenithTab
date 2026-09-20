@@ -97,7 +97,15 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ widgetId, config
   const groups = useMemo<DayGroup[]>(() => {
     const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + daysAhead);
-    const items = loaded.flatMap(({ feed, events }) => expandOccurrences(events, start, end).map((o) => ({ ...o, color: feed.color })));
+    // Colour comes from the *current* feed config, not the one captured
+    // when the feed was fetched, so a colour change in settings shows at
+    // once without a refetch (a removed feed's events disappear the same way).
+    const colorById = new Map(feeds.map((f) => [f.id, f.color]));
+    const items = loaded.flatMap(({ feed, events }) => {
+      const color = colorById.get(feed.id);
+      if (color === undefined) return [];
+      return expandOccurrences(events, start, end).map((o) => ({ ...o, color }));
+    });
     items.sort((a, b) => a.start.getTime() - b.start.getTime() || Number(b.allDay) - Number(a.allDay));
 
     const byDay = new Map<string, DayGroup>();
@@ -113,7 +121,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({ widgetId, config
       }
     }
     return Array.from(byDay.values()).filter((g) => g.items.length > 0);
-  }, [loaded, now, daysAhead]);
+  }, [loaded, feeds, now, daysAhead]);
 
   const locale = getIntlLocale(activeLanguageCode);
   const dayFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { weekday: 'short', month: 'short', day: 'numeric' }), [locale]);
