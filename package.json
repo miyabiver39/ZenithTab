@@ -3,6 +3,9 @@
   "private": true,
   "version": "1.10.1",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "description": "A customizable new tab dashboard with drag-and-drop widgets, bookmarks, RSS feeds, weather and dynamic wallpapers.",
   "scripts": {
     "dev": "vite",
