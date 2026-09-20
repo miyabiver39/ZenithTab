@@ -176,6 +176,7 @@ export function createDefaultWidgets(t: Translation, lang = 'en'): DashboardWidg
         defaultEngine: 'google',
         showEngineSelector: true,
         openInNewTab: true,
+        smartTools: true,
       },
       layout: { i: 'widget-search-1', x: 2, y: 0, w: 8, h: 1, minW: 4, minH: 1 },
     },

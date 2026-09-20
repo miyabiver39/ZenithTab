@@ -59,6 +59,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       defaultEngine: 'google',
       showEngineSelector: true,
       openInNewTab: true,
+      smartTools: true,
     }),
     sanitizeConfig: (config, isSafeUrl) => {
       const next = { ...config };

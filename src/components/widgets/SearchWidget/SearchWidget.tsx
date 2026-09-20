@@ -4,6 +4,8 @@ import { Search, Globe, Code2, Video, Sparkles, Compass, ChevronDown, Settings }
 import { SearchWidgetConfig, SearchEngine } from '../../../types/widget';
 import { useTranslation } from '../../../i18n/i18n';
 import { useDashboardStore } from '../../../store/useDashboardStore';
+import { evaluateSmartInput } from '../../../utils/smartInput';
+import { SmartResultCard } from './SmartResultCard';
 
 interface SearchWidgetProps {
   widgetId: string;
@@ -68,6 +70,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
     showEngineSelector = true,
     customEngines = [],
     hiddenBuiltinEngines = [],
+    smartTools = true,
   } = config;
   const openSettingsModal = useDashboardStore((s) => s.openSettingsModal);
 
@@ -102,7 +105,17 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+
+  // Inline answer for "120*1.1", "10 km to mi", "dice"… `rollSeed` only
+  // exists to force a fresh evaluation for the random kinds.
+  const [rollSeed, setRollSeed] = useState(0);
+  const smartResult = useMemo(
+    () => (smartTools ? evaluateSmartInput(query) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [query, smartTools, rollSeed]
+  );
 
   // The dropdown is portaled to <body>, so its position must be tracked
   // manually — it can no longer rely on CSS `absolute` positioning relative
@@ -205,7 +218,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
     <div className="w-full h-full flex flex-col justify-center select-none py-1">
       <form onSubmit={handleSearch} className="w-full relative">
         {/* Search Bar Input Container */}
-        <div className="relative flex items-center bg-slate-900/60 border border-white/10 hover:border-white/20 focus-within:border-sky-400/50 focus-within:ring-2 focus-within:ring-sky-400/20 rounded-2xl p-1.5 transition-all shadow-lg backdrop-blur-md">
+        <div ref={barRef} className="relative flex items-center bg-slate-900/60 border border-white/10 hover:border-white/20 focus-within:border-sky-400/50 focus-within:ring-2 focus-within:ring-sky-400/20 rounded-2xl p-1.5 transition-all shadow-lg backdrop-blur-md">
           {/* Current Engine Selector Button / Dropdown Toggle */}
           <div className="relative" ref={triggerRef}>
             <button
@@ -297,6 +310,8 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
             <Search size={15} />
           </button>
         </div>
+
+        {smartResult && <SmartResultCard result={smartResult} anchorRef={barRef} onReroll={() => setRollSeed((s) => s + 1)} />}
 
         {/* Optional Pill Switchers (only rendered when showEngineSelector is true) */}
         {showEngineSelector && (

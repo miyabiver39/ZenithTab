@@ -117,6 +117,8 @@ export interface SearchWidgetConfig extends BaseWidgetConfig {
   customEngines?: CustomSearchEngine[];
   /** Built-in engines the user removed — managed the same way as custom ones. */
   hiddenBuiltinEngines?: SearchEngine[];
+  /** Inline answers for maths, unit conversions, dice… (utils/smartInput). Absent = on. */
+  smartTools?: boolean;
 }
 
 export interface PomodoroWidgetConfig extends BaseWidgetConfig {

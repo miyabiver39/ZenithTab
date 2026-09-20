@@ -142,6 +142,20 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
         />
       </div>
 
+      <div className="flex items-center justify-between py-1 gap-3">
+        <div>
+          <div className="text-xs text-slate-300">{t.widgets.search.smart.setting}</div>
+          <div className="text-[11px] text-slate-500">{t.widgets.search.smart.settingDesc}</div>
+        </div>
+        <input
+          type="checkbox"
+          aria-label={t.widgets.search.smart.setting}
+          checked={config.smartTools !== false}
+          onChange={(e) => setConfig({ ...config, smartTools: e.target.checked })}
+          className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20 flex-shrink-0"
+        />
+      </div>
+
       <div className="pt-3 border-t border-white/10 space-y-3">
         <label className="block text-xs font-medium text-slate-300">{t.widgets.search.customEngines}</label>
 

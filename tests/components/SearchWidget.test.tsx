@@ -138,4 +138,49 @@ describe('SearchWidget', () => {
     await user.keyboard('/');
     expect(document.activeElement).toBe(input);
   });
+
+  it('スマート回答: 式を打つと結果カードが出て、クリックでコピーでき、Enter は従来どおり検索すること', async () => {
+    const user = setupUser();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+    render(<SearchWidget widgetId="s" config={base} />);
+    expect(screen.queryByTestId('smart-result')).not.toBeInTheDocument();
+
+    const input = screen.getByPlaceholderText(/Search the web/i);
+    await user.type(input, literal('120*1.1'));
+    const card = within(screen.getByTestId('smart-result'));
+    expect(card.getByText('132')).toBeInTheDocument();
+    expect(card.getByText('120*1.1 =')).toBeInTheDocument();
+
+    await user.click(card.getByText('132'));
+    expect(writeText).toHaveBeenCalledWith('132');
+    expect(await card.findByText('Copied!')).toBeInTheDocument();
+
+    await user.click(input);
+    await user.keyboard('{Enter}');
+    expect(open).toHaveBeenCalledWith('https://www.google.com/search?q=120*1.1', '_blank');
+
+    // An ordinary query shows nothing.
+    await user.clear(input);
+    await user.type(input, literal('zenith tab'));
+    expect(screen.queryByTestId('smart-result')).not.toBeInTheDocument();
+  });
+
+  it('スマート回答: コイントスは「もう一度」で再抽選でき、設定でオフにできること', async () => {
+    const user = setupUser();
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    const { unmount } = render(<SearchWidget widgetId="s" config={base} />);
+    const input = screen.getByPlaceholderText(/Search the web/i);
+    await user.type(input, literal('coin'));
+    expect(within(screen.getByTestId('smart-result')).getByText('Heads')).toBeInTheDocument();
+
+    random.mockReturnValue(0.9);
+    await user.click(screen.getByTitle('Again'));
+    expect(within(screen.getByTestId('smart-result')).getByText('Tails')).toBeInTheDocument();
+    unmount();
+
+    render(<SearchWidget widgetId="s" config={{ ...base, smartTools: false }} />);
+    await user.type(screen.getByPlaceholderText(/Search the web/i), literal('1+1'));
+    expect(screen.queryByTestId('smart-result')).not.toBeInTheDocument();
+  });
 });
