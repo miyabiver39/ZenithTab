@@ -1,0 +1,2403 @@
+{
+  "version": "1.8.1",
+  "schemaVersion": 1,
+  "exportedAt": "2026-09-20T00:00:00.000Z",
+  "widgets": [
+    {
+      "id": "w-search",
+      "type": "search",
+      "title": "検索",
+      "config": {
+        "defaultEngine": "google",
+        "showEngineSelector": true,
+        "openInNewTab": false,
+        "customEngines": [
+          {
+            "id": "amazon-jp",
+            "name": "Amazon.co.jp",
+            "urlTemplate": "https://www.amazon.co.jp/s?k={query}",
+            "icon": "🛒"
+          },
+          {
+            "id": "wikipedia-ja",
+            "name": "Wikipedia 日本語",
+            "urlTemplate": "https://ja.wikipedia.org/w/index.php?search={query}",
+            "icon": "📚"
+          },
+          {
+            "id": "yahoo-jp",
+            "name": "Yahoo! JAPAN",
+            "urlTemplate": "https://search.yahoo.co.jp/search?p={query}",
+            "icon": "🟥"
+          }
+        ]
+      },
+      "layout": {
+        "i": "w-search",
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      }
+    },
+    {
+      "id": "w-clock",
+      "type": "clock",
+      "title": "時計",
+      "config": {
+        "style": "digital",
+        "showSeconds": true,
+        "showDate": true,
+        "is24Hour": true,
+        "timezone": "Asia/Tokyo"
+      },
+      "layout": {
+        "i": "w-clock",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      }
+    },
+    {
+      "id": "w-weather",
+      "type": "weather",
+      "title": "東京の天気",
+      "config": {
+        "city": "東京",
+        "latitude": 35.6762,
+        "longitude": 139.6503,
+        "unit": "celsius",
+        "showForecast": true,
+        "autoDetectLocation": false
+      },
+      "layout": {
+        "i": "w-weather",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "w-todo",
+      "type": "todo",
+      "title": "今日のタスク",
+      "config": {
+        "items": [
+          {
+            "id": "t1",
+            "text": "ZenithTabの紹介記事をnoteに投稿する",
+            "priority": "high",
+            "completed": false,
+            "createdAt": 1789858800000
+          },
+          {
+            "id": "t2",
+            "text": "10:30 週次ミーティング（資料を先に共有）",
+            "priority": "high",
+            "completed": false,
+            "createdAt": 1789855200000
+          },
+          {
+            "id": "t3",
+            "text": "経費精算を今週中に済ませる",
+            "priority": "medium",
+            "completed": false,
+            "createdAt": 1789851600000
+          },
+          {
+            "id": "t4",
+            "text": "本の返却期限（9/25）を確認",
+            "priority": "low",
+            "completed": false,
+            "createdAt": 1789848000000
+          },
+          {
+            "id": "t5",
+            "text": "ダッシュボードの壁紙を時間帯連動にする",
+            "priority": "medium",
+            "completed": true,
+            "createdAt": 1789790400000
+          },
+          {
+            "id": "t6",
+            "text": "ショートカットに毎日使うサイトを登録",
+            "priority": "low",
+            "completed": true,
+            "createdAt": 1789776000000
+          }
+        ]
+      },
+      "layout": {
+        "i": "w-todo",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "w-shortcuts",
+      "type": "shortcuts",
+      "title": "よく使うサイト",
+      "config": {
+        "columns": 6,
+        "openInNewTab": true,
+        "viewMode": "grid",
+        "items": [
+          {
+            "id": "app-gmail",
+            "title": "Gmail",
+            "url": "https://mail.google.com",
+            "category": "仕事・日常"
+          },
+          {
+            "id": "app-calendar",
+            "title": "Googleカレンダー",
+            "url": "https://calendar.google.com",
+            "category": "仕事・日常"
+          },
+          {
+            "id": "app-drive",
+            "title": "Googleドライブ",
+            "url": "https://drive.google.com",
+            "category": "仕事・日常"
+          },
+          {
+            "id": "app-notion",
+            "title": "Notion",
+            "url": "https://www.notion.so",
+            "category": "仕事・日常"
+          },
+          {
+            "id": "app-slack",
+            "title": "Slack",
+            "url": "https://slack.com",
+            "category": "仕事・日常"
+          },
+          {
+            "id": "app-maps",
+            "title": "Google マップ",
+            "url": "https://maps.google.com",
+            "category": "仕事・日常"
+          },
+          {
+            "id": "app-chatgpt",
+            "title": "ChatGPT",
+            "url": "https://chatgpt.com",
+            "category": "AI・ツール"
+          },
+          {
+            "id": "app-claude",
+            "title": "Claude",
+            "url": "https://claude.ai",
+            "category": "AI・ツール"
+          },
+          {
+            "id": "app-github",
+            "title": "GitHub",
+            "url": "https://github.com",
+            "category": "AI・ツール"
+          },
+          {
+            "id": "app-youtube",
+            "title": "YouTube",
+            "url": "https://youtube.com",
+            "category": "SNS・動画"
+          },
+          {
+            "id": "app-twitter",
+            "title": "X (Twitter)",
+            "url": "https://x.com",
+            "category": "SNS・動画"
+          },
+          {
+            "id": "app-amazon-jp",
+            "title": "Amazon",
+            "url": "https://www.amazon.co.jp",
+            "category": "ショッピング"
+          }
+        ]
+      },
+      "layout": {
+        "i": "w-shortcuts",
+        "x": 0,
+        "y": 3,
+        "w": 8,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "w-rss-tech",
+      "type": "rss",
+      "title": "テクノロジーニュース",
+      "config": {
+        "isGoogleNews": true,
+        "searchQuery": "",
+        "maxItems": 8,
+        "refreshIntervalMinutes": 30,
+        "showThumbnail": true,
+        "showDate": true,
+        "showDescription": true,
+        "feedUrl": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=ja&gl=JP&ceid=JP:ja",
+        "googleNewsMode": "topic",
+        "googleNewsTopic": "TECHNOLOGY"
+      },
+      "layout": {
+        "i": "w-rss-tech",
+        "x": 8,
+        "y": 5,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      }
+    },
+    {
+      "id": "w-notes",
+      "type": "notes",
+      "title": "クイックメモ",
+      "config": {
+        "fontSize": "base",
+        "fontFamily": "sans",
+        "activePageId": "n-today",
+        "pages": [
+          {
+            "id": "n-today",
+            "title": "今日",
+            "content": "・会議のあとに議事録をNotionへ転記\n・帰りに牛乳とコーヒー豆\n・週末の旅行、宿を2件くらい比較する\n\nメモは上の「＋」でページを増やせます。"
+          },
+          {
+            "id": "n-ideas",
+            "title": "アイデア",
+            "content": "新しいタブを開くたびに目に入る場所だから、\n「忘れたくないこと」を置いておくのに向いている。\n\n・ブログのネタ: 朝のルーティンを1画面にまとめる話\n・次に試したいこと: RSSに好きなブログを追加"
+          },
+          {
+            "id": "n-shopping",
+            "title": "買い物リスト",
+            "content": "□ 牛乳\n□ コーヒー豆\n□ 食器用洗剤\n□ 電池（単3）\n☑ トイレットペーパー"
+          }
+        ]
+      },
+      "layout": {
+        "i": "w-notes",
+        "x": 0,
+        "y": 6,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    },
+    {
+      "id": "w-pomodoro",
+      "type": "pomodoro",
+      "title": "集中タイマー",
+      "config": {
+        "focusDurationMinutes": 25,
+        "shortBreakDurationMinutes": 5,
+        "longBreakDurationMinutes": 15,
+        "autoStartBreaks": false
+      },
+      "layout": {
+        "i": "w-pomodoro",
+        "x": 4,
+        "y": 6,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    }
+  ],
+  "layouts": {
+    "lg": [
+      {
+        "i": "w-search",
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "w-clock",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-weather",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-todo",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-shortcuts",
+        "x": 0,
+        "y": 3,
+        "w": 8,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-rss-tech",
+        "x": 8,
+        "y": 5,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "w-notes",
+        "x": 0,
+        "y": 6,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-pomodoro",
+        "x": 4,
+        "y": 6,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "md": [
+      {
+        "i": "w-search",
+        "x": 0,
+        "y": 0,
+        "w": 10,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "w-clock",
+        "x": 0,
+        "y": 1,
+        "w": 3,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-weather",
+        "x": 3,
+        "y": 1,
+        "w": 3,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-todo",
+        "x": 7,
+        "y": 1,
+        "w": 3,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-shortcuts",
+        "x": 0,
+        "y": 3,
+        "w": 7,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-rss-tech",
+        "x": 7,
+        "y": 5,
+        "w": 3,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "w-notes",
+        "x": 0,
+        "y": 6,
+        "w": 3,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-pomodoro",
+        "x": 3,
+        "y": 6,
+        "w": 3,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "sm": [
+      {
+        "i": "w-search",
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "w-clock",
+        "x": 0,
+        "y": 1,
+        "w": 6,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-weather",
+        "x": 0,
+        "y": 3,
+        "w": 6,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-todo",
+        "x": 0,
+        "y": 5,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-shortcuts",
+        "x": 0,
+        "y": 9,
+        "w": 6,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-rss-tech",
+        "x": 0,
+        "y": 12,
+        "w": 6,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "w-notes",
+        "x": 0,
+        "y": 16,
+        "w": 6,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-pomodoro",
+        "x": 0,
+        "y": 19,
+        "w": 6,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "xs": [
+      {
+        "i": "w-search",
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 1,
+        "minW": 4,
+        "minH": 1
+      },
+      {
+        "i": "w-clock",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-weather",
+        "x": 0,
+        "y": 3,
+        "w": 4,
+        "h": 2,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-todo",
+        "x": 0,
+        "y": 5,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-shortcuts",
+        "x": 0,
+        "y": 9,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-rss-tech",
+        "x": 0,
+        "y": 12,
+        "w": 4,
+        "h": 4,
+        "minW": 3,
+        "minH": 3
+      },
+      {
+        "i": "w-notes",
+        "x": 0,
+        "y": 16,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      },
+      {
+        "i": "w-pomodoro",
+        "x": 0,
+        "y": 19,
+        "w": 4,
+        "h": 3,
+        "minW": 3,
+        "minH": 2
+      }
+    ],
+    "xxs": [
+      {
+        "i": "w-search",
+        "x": 0,
+        "y": 0,
+        "w": 2,
+        "h": 1,
+        "minW": 2,
+        "minH": 1
+      },
+      {
+        "i": "w-clock",
+        "x": 0,
+        "y": 1,
+        "w": 2,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-weather",
+        "x": 0,
+        "y": 3,
+        "w": 2,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-todo",
+        "x": 0,
+        "y": 5,
+        "w": 2,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-shortcuts",
+        "x": 0,
+        "y": 9,
+        "w": 2,
+        "h": 3,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-rss-tech",
+        "x": 0,
+        "y": 12,
+        "w": 2,
+        "h": 4,
+        "minW": 2,
+        "minH": 3
+      },
+      {
+        "i": "w-notes",
+        "x": 0,
+        "y": 16,
+        "w": 2,
+        "h": 3,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "w-pomodoro",
+        "x": 0,
+        "y": 19,
+        "w": 2,
+        "h": 3,
+        "minW": 2,
+        "minH": 2
+      }
+    ]
+  },
+  "wallpaper": {
+    "source": "unsplash",
+    "category": "nature",
+    "blur": 3,
+    "brightness": 0.9,
+    "overlayOpacity": 0.3,
+    "refreshInterval": "daily",
+    "currentWallpaperUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2560&q=80",
+    "dynamic": {
+      "enabled": true,
+      "mode": "smart",
+      "seed": 0
+    }
+  },
+  "appearance": {
+    "language": "ja",
+    "theme": "dark",
+    "glassBlur": 16,
+    "glassOpacity": 0.45,
+    "borderRadius": "2xl",
+    "compactMode": false,
+    "dockPosition": "bottom"
+  },
+  "dockItems": [
+    {
+      "id": "dock-google",
+      "label": "Google",
+      "url": "https://google.com",
+      "icon": "globe",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-youtube",
+      "label": "YouTube",
+      "url": "https://youtube.com",
+      "icon": "video",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-gmail",
+      "label": "Gmail",
+      "url": "https://mail.google.com",
+      "icon": "mail",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-calendar",
+      "label": "Googleカレンダー",
+      "url": "https://calendar.google.com",
+      "icon": "calendar",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-notion",
+      "label": "Notion",
+      "url": "https://www.notion.so",
+      "icon": "document",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-chatgpt",
+      "label": "ChatGPT",
+      "url": "https://chatgpt.com",
+      "icon": "sparkles",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-github",
+      "label": "GitHub",
+      "url": "https://github.com",
+      "icon": "code",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-amazon-jp",
+      "label": "Amazon",
+      "url": "https://www.amazon.co.jp",
+      "icon": "cart",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-spotify",
+      "label": "Spotify",
+      "url": "https://open.spotify.com",
+      "icon": "music",
+      "openInNewTab": true
+    }
+  ],
+  "keyboardShortcuts": [
+    {
+      "id": "key-gmail",
+      "combo": "Ctrl+Alt+G",
+      "label": "Gmail",
+      "url": "https://mail.google.com",
+      "openInNewTab": true
+    },
+    {
+      "id": "key-calendar",
+      "combo": "Ctrl+Alt+C",
+      "label": "Googleカレンダー",
+      "url": "https://calendar.google.com",
+      "openInNewTab": true
+    },
+    {
+      "id": "key-notion",
+      "combo": "Ctrl+Alt+N",
+      "label": "Notion",
+      "url": "https://www.notion.so",
+      "openInNewTab": true
+    },
+    {
+      "id": "key-chatgpt",
+      "combo": "Ctrl+Alt+A",
+      "label": "ChatGPT",
+      "url": "https://chatgpt.com",
+      "openInNewTab": true
+    },
+    {
+      "id": "key-youtube",
+      "combo": "Ctrl+Alt+Y",
+      "label": "YouTube",
+      "url": "https://youtube.com",
+      "openInNewTab": true
+    },
+    {
+      "id": "key-github",
+      "combo": "Ctrl+Alt+H",
+      "label": "GitHub",
+      "url": "https://github.com",
+      "openInNewTab": true
+    },
+    {
+      "id": "key-maps",
+      "combo": "Ctrl+Alt+M",
+      "label": "Google マップ",
+      "url": "https://maps.google.com",
+      "openInNewTab": true
+    }
+  ],
+  "pages": [
+    {
+      "id": "page-home",
+      "name": "ホーム"
+    },
+    {
+      "id": "page-focus",
+      "name": "集中モード"
+    },
+    {
+      "id": "page-news",
+      "name": "ニュース"
+    }
+  ],
+  "pageData": {
+    "page-home": {
+      "widgets": [
+        {
+          "id": "w-search",
+          "type": "search",
+          "title": "検索",
+          "config": {
+            "defaultEngine": "google",
+            "showEngineSelector": true,
+            "openInNewTab": false,
+            "customEngines": [
+              {
+                "id": "amazon-jp",
+                "name": "Amazon.co.jp",
+                "urlTemplate": "https://www.amazon.co.jp/s?k={query}",
+                "icon": "🛒"
+              },
+              {
+                "id": "wikipedia-ja",
+                "name": "Wikipedia 日本語",
+                "urlTemplate": "https://ja.wikipedia.org/w/index.php?search={query}",
+                "icon": "📚"
+              },
+              {
+                "id": "yahoo-jp",
+                "name": "Yahoo! JAPAN",
+                "urlTemplate": "https://search.yahoo.co.jp/search?p={query}",
+                "icon": "🟥"
+              }
+            ]
+          },
+          "layout": {
+            "i": "w-search",
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          }
+        },
+        {
+          "id": "w-clock",
+          "type": "clock",
+          "title": "時計",
+          "config": {
+            "style": "digital",
+            "showSeconds": true,
+            "showDate": true,
+            "is24Hour": true,
+            "timezone": "Asia/Tokyo"
+          },
+          "layout": {
+            "i": "w-clock",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-weather",
+          "type": "weather",
+          "title": "東京の天気",
+          "config": {
+            "city": "東京",
+            "latitude": 35.6762,
+            "longitude": 139.6503,
+            "unit": "celsius",
+            "showForecast": true,
+            "autoDetectLocation": false
+          },
+          "layout": {
+            "i": "w-weather",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-todo",
+          "type": "todo",
+          "title": "今日のタスク",
+          "config": {
+            "items": [
+              {
+                "id": "t1",
+                "text": "ZenithTabの紹介記事をnoteに投稿する",
+                "priority": "high",
+                "completed": false,
+                "createdAt": 1789858800000
+              },
+              {
+                "id": "t2",
+                "text": "10:30 週次ミーティング（資料を先に共有）",
+                "priority": "high",
+                "completed": false,
+                "createdAt": 1789855200000
+              },
+              {
+                "id": "t3",
+                "text": "経費精算を今週中に済ませる",
+                "priority": "medium",
+                "completed": false,
+                "createdAt": 1789851600000
+              },
+              {
+                "id": "t4",
+                "text": "本の返却期限（9/25）を確認",
+                "priority": "low",
+                "completed": false,
+                "createdAt": 1789848000000
+              },
+              {
+                "id": "t5",
+                "text": "ダッシュボードの壁紙を時間帯連動にする",
+                "priority": "medium",
+                "completed": true,
+                "createdAt": 1789790400000
+              },
+              {
+                "id": "t6",
+                "text": "ショートカットに毎日使うサイトを登録",
+                "priority": "low",
+                "completed": true,
+                "createdAt": 1789776000000
+              }
+            ]
+          },
+          "layout": {
+            "i": "w-todo",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-shortcuts",
+          "type": "shortcuts",
+          "title": "よく使うサイト",
+          "config": {
+            "columns": 6,
+            "openInNewTab": true,
+            "viewMode": "grid",
+            "items": [
+              {
+                "id": "app-gmail",
+                "title": "Gmail",
+                "url": "https://mail.google.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-calendar",
+                "title": "Googleカレンダー",
+                "url": "https://calendar.google.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-drive",
+                "title": "Googleドライブ",
+                "url": "https://drive.google.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-notion",
+                "title": "Notion",
+                "url": "https://www.notion.so",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-slack",
+                "title": "Slack",
+                "url": "https://slack.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-maps",
+                "title": "Google マップ",
+                "url": "https://maps.google.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-chatgpt",
+                "title": "ChatGPT",
+                "url": "https://chatgpt.com",
+                "category": "AI・ツール"
+              },
+              {
+                "id": "app-claude",
+                "title": "Claude",
+                "url": "https://claude.ai",
+                "category": "AI・ツール"
+              },
+              {
+                "id": "app-github",
+                "title": "GitHub",
+                "url": "https://github.com",
+                "category": "AI・ツール"
+              },
+              {
+                "id": "app-youtube",
+                "title": "YouTube",
+                "url": "https://youtube.com",
+                "category": "SNS・動画"
+              },
+              {
+                "id": "app-twitter",
+                "title": "X (Twitter)",
+                "url": "https://x.com",
+                "category": "SNS・動画"
+              },
+              {
+                "id": "app-amazon-jp",
+                "title": "Amazon",
+                "url": "https://www.amazon.co.jp",
+                "category": "ショッピング"
+              }
+            ]
+          },
+          "layout": {
+            "i": "w-shortcuts",
+            "x": 0,
+            "y": 3,
+            "w": 8,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-rss-tech",
+          "type": "rss",
+          "title": "テクノロジーニュース",
+          "config": {
+            "isGoogleNews": true,
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true,
+            "feedUrl": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=ja&gl=JP&ceid=JP:ja",
+            "googleNewsMode": "topic",
+            "googleNewsTopic": "TECHNOLOGY"
+          },
+          "layout": {
+            "i": "w-rss-tech",
+            "x": 8,
+            "y": 5,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-notes",
+          "type": "notes",
+          "title": "クイックメモ",
+          "config": {
+            "fontSize": "base",
+            "fontFamily": "sans",
+            "activePageId": "n-today",
+            "pages": [
+              {
+                "id": "n-today",
+                "title": "今日",
+                "content": "・会議のあとに議事録をNotionへ転記\n・帰りに牛乳とコーヒー豆\n・週末の旅行、宿を2件くらい比較する\n\nメモは上の「＋」でページを増やせます。"
+              },
+              {
+                "id": "n-ideas",
+                "title": "アイデア",
+                "content": "新しいタブを開くたびに目に入る場所だから、\n「忘れたくないこと」を置いておくのに向いている。\n\n・ブログのネタ: 朝のルーティンを1画面にまとめる話\n・次に試したいこと: RSSに好きなブログを追加"
+              },
+              {
+                "id": "n-shopping",
+                "title": "買い物リスト",
+                "content": "□ 牛乳\n□ コーヒー豆\n□ 食器用洗剤\n□ 電池（単3）\n☑ トイレットペーパー"
+              }
+            ]
+          },
+          "layout": {
+            "i": "w-notes",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-pomodoro",
+          "type": "pomodoro",
+          "title": "集中タイマー",
+          "config": {
+            "focusDurationMinutes": 25,
+            "shortBreakDurationMinutes": 5,
+            "longBreakDurationMinutes": 15,
+            "autoStartBreaks": false
+          },
+          "layout": {
+            "i": "w-pomodoro",
+            "x": 4,
+            "y": 6,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "w-search",
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "w-clock",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-weather",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-todo",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-shortcuts",
+            "x": 0,
+            "y": 3,
+            "w": 8,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-rss-tech",
+            "x": 8,
+            "y": 5,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-notes",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-pomodoro",
+            "x": 4,
+            "y": 6,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "md": [
+          {
+            "i": "w-search",
+            "x": 0,
+            "y": 0,
+            "w": 10,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "w-clock",
+            "x": 0,
+            "y": 1,
+            "w": 3,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-weather",
+            "x": 3,
+            "y": 1,
+            "w": 3,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-todo",
+            "x": 7,
+            "y": 1,
+            "w": 3,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-shortcuts",
+            "x": 0,
+            "y": 3,
+            "w": 7,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-rss-tech",
+            "x": 7,
+            "y": 5,
+            "w": 3,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-notes",
+            "x": 0,
+            "y": 6,
+            "w": 3,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-pomodoro",
+            "x": 3,
+            "y": 6,
+            "w": 3,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "sm": [
+          {
+            "i": "w-search",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "w-clock",
+            "x": 0,
+            "y": 1,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-weather",
+            "x": 0,
+            "y": 3,
+            "w": 6,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-todo",
+            "x": 0,
+            "y": 5,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-shortcuts",
+            "x": 0,
+            "y": 9,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-rss-tech",
+            "x": 0,
+            "y": 12,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-notes",
+            "x": 0,
+            "y": 16,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-pomodoro",
+            "x": 0,
+            "y": 19,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "xs": [
+          {
+            "i": "w-search",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 1,
+            "minW": 4,
+            "minH": 1
+          },
+          {
+            "i": "w-clock",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-weather",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 2,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-todo",
+            "x": 0,
+            "y": 5,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-shortcuts",
+            "x": 0,
+            "y": 9,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-rss-tech",
+            "x": 0,
+            "y": 12,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-notes",
+            "x": 0,
+            "y": 16,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-pomodoro",
+            "x": 0,
+            "y": 19,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        ],
+        "xxs": [
+          {
+            "i": "w-search",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 1,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "w-clock",
+            "x": 0,
+            "y": 1,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-weather",
+            "x": 0,
+            "y": 3,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-todo",
+            "x": 0,
+            "y": 5,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-shortcuts",
+            "x": 0,
+            "y": 9,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-rss-tech",
+            "x": 0,
+            "y": 12,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-notes",
+            "x": 0,
+            "y": 16,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-pomodoro",
+            "x": 0,
+            "y": 19,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          }
+        ]
+      }
+    },
+    "page-focus": {
+      "widgets": [
+        {
+          "id": "w-focus-pomodoro",
+          "type": "pomodoro",
+          "title": "ポモドーロ（25分 × 4）",
+          "config": {
+            "focusDurationMinutes": 25,
+            "shortBreakDurationMinutes": 5,
+            "longBreakDurationMinutes": 20,
+            "autoStartBreaks": true
+          },
+          "layout": {
+            "i": "w-focus-pomodoro",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-focus-calendar",
+          "type": "iframe",
+          "title": "日本の祝日カレンダー",
+          "config": {
+            "url": "https://calendar.google.com/calendar/embed?src=ja.japanese%23holiday%40group.v.calendar.google.com&ctz=Asia%2FTokyo&mode=MONTH&showTitle=0&showPrint=0&showTabs=0&showCalendars=0",
+            "title": "日本の祝日カレンダー",
+            "allowScroll": false,
+            "customFallbackTitle": "Googleカレンダー"
+          },
+          "layout": {
+            "i": "w-focus-calendar",
+            "x": 4,
+            "y": 0,
+            "w": 8,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-focus-todo",
+          "type": "todo",
+          "title": "今このセッションで片付けること",
+          "config": {
+            "items": [
+              {
+                "id": "f1",
+                "text": "記事のドラフトを最後まで書き切る",
+                "priority": "high",
+                "completed": false,
+                "createdAt": 1789858800000
+              },
+              {
+                "id": "f2",
+                "text": "スクリーンショットを3枚撮る",
+                "priority": "medium",
+                "completed": false,
+                "createdAt": 1789858800000
+              },
+              {
+                "id": "f3",
+                "text": "公開前に誤字チェック",
+                "priority": "low",
+                "completed": false,
+                "createdAt": 1789858800000
+              }
+            ]
+          },
+          "layout": {
+            "i": "w-focus-todo",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-focus-notes",
+          "type": "notes",
+          "title": "作業ログ",
+          "config": {
+            "fontSize": "sm",
+            "fontFamily": "mono",
+            "activePageId": "n-log",
+            "pages": [
+              {
+                "id": "n-log",
+                "title": "ログ",
+                "content": "09:00 ポモドーロ1本目スタート\n09:25 休憩。コーヒー\n09:30 2本目。記事の構成を固める\n\n（ここに区切りごとの進捗を書いていく）"
+              }
+            ]
+          },
+          "layout": {
+            "i": "w-focus-notes",
+            "x": 4,
+            "y": 4,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          }
+        },
+        {
+          "id": "w-focus-quickaccess",
+          "type": "quickaccess",
+          "title": "さっき閉じたタブ",
+          "config": {
+            "defaultView": "recentlyClosed",
+            "maxItems": 8,
+            "viewMode": "list",
+            "openInNewTab": true
+          },
+          "layout": {
+            "i": "w-focus-quickaccess",
+            "x": 8,
+            "y": 4,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "w-focus-pomodoro",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-calendar",
+            "x": 4,
+            "y": 0,
+            "w": 8,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-focus-todo",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-notes",
+            "x": 4,
+            "y": 4,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-quickaccess",
+            "x": 8,
+            "y": 4,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "md": [
+          {
+            "i": "w-focus-pomodoro",
+            "x": 0,
+            "y": 0,
+            "w": 3,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-calendar",
+            "x": 3,
+            "y": 0,
+            "w": 7,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-focus-todo",
+            "x": 0,
+            "y": 3,
+            "w": 3,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-notes",
+            "x": 3,
+            "y": 4,
+            "w": 3,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-quickaccess",
+            "x": 7,
+            "y": 4,
+            "w": 3,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "sm": [
+          {
+            "i": "w-focus-pomodoro",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-calendar",
+            "x": 0,
+            "y": 3,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-focus-todo",
+            "x": 0,
+            "y": 7,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-notes",
+            "x": 0,
+            "y": 11,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-quickaccess",
+            "x": 0,
+            "y": 15,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "xs": [
+          {
+            "i": "w-focus-pomodoro",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-calendar",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-focus-todo",
+            "x": 0,
+            "y": 7,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-notes",
+            "x": 0,
+            "y": 11,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-quickaccess",
+            "x": 0,
+            "y": 15,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        ],
+        "xxs": [
+          {
+            "i": "w-focus-pomodoro",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-calendar",
+            "x": 0,
+            "y": 3,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-focus-todo",
+            "x": 0,
+            "y": 7,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-notes",
+            "x": 0,
+            "y": 11,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "w-focus-quickaccess",
+            "x": 0,
+            "y": 15,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 3
+          }
+        ]
+      }
+    },
+    "page-news": {
+      "widgets": [
+        {
+          "id": "w-news-top",
+          "type": "rss",
+          "title": "主要ヘッドライン",
+          "config": {
+            "isGoogleNews": true,
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true,
+            "feedUrl": "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja",
+            "googleNewsMode": "headlines"
+          },
+          "layout": {
+            "i": "w-news-top",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-news-business",
+          "type": "rss",
+          "title": "ビジネス",
+          "config": {
+            "isGoogleNews": true,
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true,
+            "feedUrl": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ja&gl=JP&ceid=JP:ja",
+            "googleNewsMode": "topic",
+            "googleNewsTopic": "BUSINESS"
+          },
+          "layout": {
+            "i": "w-news-business",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-news-ai",
+          "type": "rss",
+          "title": "「生成AI」で検索",
+          "config": {
+            "isGoogleNews": true,
+            "searchQuery": "生成AI",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true,
+            "feedUrl": "https://news.google.com/rss/search?q=%E7%94%9F%E6%88%90AI&hl=ja&gl=JP&ceid=JP:ja",
+            "googleNewsMode": "search"
+          },
+          "layout": {
+            "i": "w-news-ai",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-news-sports",
+          "type": "rss",
+          "title": "スポーツ",
+          "config": {
+            "isGoogleNews": true,
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true,
+            "feedUrl": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=ja&gl=JP&ceid=JP:ja",
+            "googleNewsMode": "topic",
+            "googleNewsTopic": "SPORTS"
+          },
+          "layout": {
+            "i": "w-news-sports",
+            "x": 6,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-news-bookmarks",
+          "type": "bookmarks",
+          "title": "ブックマーク",
+          "config": {
+            "viewMode": "grid",
+            "showFavicons": true,
+            "columns": 6
+          },
+          "layout": {
+            "i": "w-news-bookmarks",
+            "x": 0,
+            "y": 8,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-news-qr",
+          "type": "qrcode",
+          "title": "スマホで続きを読む",
+          "config": {
+            "mode": "url",
+            "value": "https://chromewebstore.google.com/detail/zenithtab-new-tab-dashboa/cfoobblinlacddighhflihkffcepncld"
+          },
+          "layout": {
+            "i": "w-news-qr",
+            "x": 6,
+            "y": 8,
+            "w": 3,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          }
+        },
+        {
+          "id": "w-news-clock",
+          "type": "clock",
+          "title": "世界時計（ニューヨーク）",
+          "config": {
+            "style": "analog",
+            "showSeconds": false,
+            "showDate": true,
+            "is24Hour": false,
+            "timezone": "America/New_York"
+          },
+          "layout": {
+            "i": "w-news-clock",
+            "x": 9,
+            "y": 8,
+            "w": 3,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "w-news-top",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-business",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-ai",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-sports",
+            "x": 6,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-bookmarks",
+            "x": 0,
+            "y": 8,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-qr",
+            "x": 6,
+            "y": 8,
+            "w": 3,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-clock",
+            "x": 9,
+            "y": 8,
+            "w": 3,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "md": [
+          {
+            "i": "w-news-top",
+            "x": 0,
+            "y": 0,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-business",
+            "x": 5,
+            "y": 0,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-ai",
+            "x": 0,
+            "y": 4,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-sports",
+            "x": 5,
+            "y": 4,
+            "w": 5,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-bookmarks",
+            "x": 0,
+            "y": 8,
+            "w": 5,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-qr",
+            "x": 5,
+            "y": 8,
+            "w": 3,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-clock",
+            "x": 7,
+            "y": 8,
+            "w": 3,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "sm": [
+          {
+            "i": "w-news-top",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-business",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-ai",
+            "x": 0,
+            "y": 8,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-sports",
+            "x": 0,
+            "y": 12,
+            "w": 6,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-bookmarks",
+            "x": 0,
+            "y": 16,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-qr",
+            "x": 0,
+            "y": 19,
+            "w": 6,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-clock",
+            "x": 0,
+            "y": 22,
+            "w": 6,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "xs": [
+          {
+            "i": "w-news-top",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-business",
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-ai",
+            "x": 0,
+            "y": 8,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-sports",
+            "x": 0,
+            "y": 12,
+            "w": 4,
+            "h": 4,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-bookmarks",
+            "x": 0,
+            "y": 16,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-qr",
+            "x": 0,
+            "y": 19,
+            "w": 4,
+            "h": 3,
+            "minW": 3,
+            "minH": 3
+          },
+          {
+            "i": "w-news-clock",
+            "x": 0,
+            "y": 22,
+            "w": 4,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "xxs": [
+          {
+            "i": "w-news-top",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-news-business",
+            "x": 0,
+            "y": 4,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-news-ai",
+            "x": 0,
+            "y": 8,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-news-sports",
+            "x": 0,
+            "y": 12,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-news-bookmarks",
+            "x": 0,
+            "y": 16,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-news-qr",
+            "x": 0,
+            "y": 19,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 3
+          },
+          {
+            "i": "w-news-clock",
+            "x": 0,
+            "y": 22,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 2
+          }
+        ]
+      }
+    }
+  },
+  "activePageId": "page-home",
+  "trash": []
+}
