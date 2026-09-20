@@ -97,3 +97,40 @@ describe('storageService', () => {
     expect(result).toBe(false);
   });
 });
+
+describe('storageService 防御的な読み込み・インポート', () => {
+  beforeEach(async () => {
+    await storageService.resetDashboard();
+  });
+
+  it('ドックが 0 件のエクスポートをインポートすると、以前のドックが消えること', async () => {
+    await storageService.saveDockItems([{ id: 'd1', label: 'Old', url: 'https://old.example', icon: 'globe', openInNewTab: true }]);
+    const exportData = await storageService.exportDashboardData();
+    expect(exportData.dockItems).toHaveLength(1);
+
+    const ok = await storageService.importDashboardData(JSON.stringify({ ...exportData, dockItems: [] }));
+    expect(ok).toBe(true);
+    expect(await storageService.getDockItems()).toEqual([]);
+  });
+
+  it('pageData に null や非オブジェクトのレコードがあっても getPagesState が落ちず、他のページは残ること', async () => {
+    const { pages, pageData } = await storageService.getPagesState();
+    const goodId = pages[0].id;
+    await storageService.savePages([...pages, { id: 'page-broken', name: 'Broken' }, { id: 'page-str', name: 'Str' }]);
+    // Write straight to storage: savePageData would filter these out itself.
+    const { chromeStorageData } = await import('../helpers/chrome');
+    chromeStorageData.dashboard_page_data = { ...pageData, 'page-broken': null, 'page-str': 'nope' };
+
+    const state = await storageService.getPagesState();
+    expect(state.activePageId).toBe(goodId);
+    expect(Object.keys(state.pageData)).toEqual([goodId]);
+    expect(state.pageData[goodId].widgets.length).toBeGreaterThan(0);
+  });
+
+  it('savePageData も不正なレコードを書き込まないこと', async () => {
+    const { pageData } = await storageService.getPagesState();
+    await storageService.savePageData({ ...pageData, 'page-broken': null as any });
+    const { chromeStorageData } = await import('../helpers/chrome');
+    expect(Object.keys(chromeStorageData.dashboard_page_data)).not.toContain('page-broken');
+  });
+});

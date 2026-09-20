@@ -411,6 +411,9 @@ export const storageService = {
 
       const sanitizedPageData: Record<string, DashboardPageData> = {};
       for (const [id, data] of Object.entries(pageData)) {
+        // A null/garbage record (partial multi-tab write, corrupted
+        // storage) must not take the whole dashboard down at startup.
+        if (!data || typeof data !== 'object') continue;
         sanitizedPageData[id] = {
           widgets: (data.widgets || []).map((w) => ({
             ...w,
@@ -442,6 +445,7 @@ export const storageService = {
   async savePageData(pageData: Record<string, DashboardPageData>): Promise<void> {
     const sanitized: Record<string, DashboardPageData> = {};
     for (const [id, data] of Object.entries(pageData)) {
+      if (!data || typeof data !== 'object') continue;
       sanitized[id] = {
         widgets: (data.widgets || []).map((w) => ({
           ...w,
@@ -561,7 +565,8 @@ export const storageService = {
             typeof item.icon === 'string' &&
             isSafeUrl(item.url)
         );
-        if (dockItems.length > 0) await this.saveDockItems(dockItems);
+        // An empty list is a deliberate choice in the export — keep it.
+        await this.saveDockItems(dockItems);
       }
       if (Array.isArray(data.keyboardShortcuts)) {
         await this.saveKeyboardShortcuts(sanitizeKeyboardShortcuts(data.keyboardShortcuts));
