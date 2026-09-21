@@ -220,3 +220,59 @@ test.describe('recovery', () => {
     await expect(page.getByRole('status')).toContainText('Restored the backup from');
   });
 });
+
+test.describe('easy setup (1.11)', () => {
+  test('a fresh install gets the 3-step setup, and the answers shape the dashboard', async ({ page }) => {
+    // Wipe the seeded appearance so this really is a first launch.
+    await page.evaluate(() => {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith('zenith_'))
+        .forEach((k) => localStorage.removeItem(k));
+    });
+    await page.reload();
+
+    const wizard = page.getByRole('dialog', { name: 'Welcome to ZenithTab' });
+    await expect(wizard).toBeVisible();
+    await wizard.getByRole('radio', { name: 'English' }).click();
+    await wizard.getByRole('button', { name: 'Next' }).click();
+    await wizard.getByRole('button', { name: 'Technology' }).click();
+    await wizard.getByRole('button', { name: 'Next' }).click();
+    await wizard.getByRole('radio', { name: /^News/ }).click();
+    await wizard.getByRole('button', { name: 'Finish' }).click();
+
+    await expect(wizard).toBeHidden();
+    // News template: search, clock, weather + three feeds, all on Technology.
+    await expect(widgetCards(page)).toHaveCount(6);
+    await expect(page.locator('[data-widget-card="rss"]')).toHaveCount(3);
+    await expect(page.getByRole('status').filter({ hasText: 'Hover a widget' })).toBeVisible();
+
+    // It does not come back on the next tab.
+    await page.reload();
+    await expect(page.getByRole('dialog', { name: 'Welcome to ZenithTab' })).toBeHidden();
+    await expect(widgetCards(page)).toHaveCount(6);
+  });
+
+  test('a page can be added from a template and the shortcuts picker adds catalog sites', async ({ page }) => {
+    await page.getByRole('banner').getByRole('button', { name: 'Add page' }).click();
+    await page.getByText('From a template').click();
+    const templates = page.getByRole('dialog', { name: 'Choose a template' });
+    await templates.getByTestId('template-card-minimal').getByRole('button', { name: 'Use this template' }).click();
+    await expect(page.getByText('Minimal', { exact: true })).toBeVisible();
+    await expect(widgetCards(page)).toHaveCount(3);
+
+    // The Minimal template's Shortcuts widget starts with the regional preset.
+    const shortcuts = page.locator('[data-widget-card="shortcuts"]');
+    await expect(shortcuts.getByRole('link', { name: /Reddit/ })).toBeVisible();
+    await page.getByTitle('Edit Layout').click();
+    await shortcuts.getByTitle('Add Shortcut').click();
+    await page.getByRole('button', { name: 'Choose from catalog' }).click();
+
+    const picker = page.getByRole('dialog', { name: 'Add sites' });
+    await picker.getByRole('button', { name: 'News', exact: true }).click();
+    await picker.getByRole('button', { name: /BBC News/ }).click();
+    await picker.getByRole('button', { name: /CNN/ }).click();
+    await picker.getByRole('button', { name: 'Add 2' }).click();
+    await expect(shortcuts.getByRole('link', { name: /BBC News/ })).toBeVisible();
+    await expect(shortcuts.getByRole('link', { name: /CNN/ })).toBeVisible();
+  });
+});

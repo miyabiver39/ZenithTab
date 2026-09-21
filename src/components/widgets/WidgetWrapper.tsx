@@ -23,6 +23,7 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }
 
   return (
     <GlassCard
+      data-widget-card={widget.type}
       className={cn(
         'widget-card w-full h-full flex flex-col overflow-hidden relative group select-none transition-shadow',
         isEditMode && 'ring-2 ring-sky-400/50 shadow-sky-500/20',
