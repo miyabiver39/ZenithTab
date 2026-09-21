@@ -35,9 +35,35 @@ on your own computer inside your Chrome profile:
 | Habit check-offs and countdown dates | Keep your streaks and countdowns |
 | Trash and automatic backups (copies of your own dashboard data) | Undo deletes and restore after a reset or import |
 
-None of it is synced to a server. Uninstalling the extension removes it, and
-**Settings → Reset dashboard** clears it on demand. The JSON export feature
-produces a file that you control and that ZenithTab never uploads anywhere.
+None of it is synced to a server run by the developer. Uninstalling the
+extension removes it, and **Settings → Reset dashboard** clears it on demand.
+The JSON export feature produces a file that you control and that ZenithTab
+never uploads anywhere.
+
+### Optional: settings sync through your Chrome account
+
+**Settings → Backup & Sync → Sync settings** is off by default. If you turn it
+on, ZenithTab writes a small subset of its data to `chrome.storage.sync`, which
+is Chrome's built-in account sync (the same mechanism Chrome uses for your own
+bookmarks and extensions). Only these travel:
+
+| Synced | Not synced |
+| --- | --- |
+| Appearance settings (theme, language, glass effect, corner radius, dock position) | Widgets, pages and layouts |
+| Dock entries (label, URL, icon, open-in-new-tab) | Notes, to-dos, habit history, countdowns |
+| Keyboard-shortcut bindings (combo, label, URL) | Calendar feed URLs, cached articles, weather, wallpapers, bookmarks |
+
+The data goes to your Google account under Google's privacy policy — it can be
+end-to-end encrypted with a Chrome sync passphrase — and the developer has no
+server and no way to read it. Turning the switch off deletes ZenithTab's items
+from sync storage.
+
+### Share codes
+
+"Share this layout" turns the current page into a text string you copy
+yourself. Personal content is stripped before encoding (note text, tasks, habit
+history, calendar URLs, countdowns, QR payloads and your weather location).
+ZenithTab does not transmit, host or shorten share codes.
 
 ## 3. Network requests ZenithTab makes
 
@@ -144,9 +170,34 @@ ZenithTab が記憶する情報はすべて、お使いのパソコンの Chrome
 - 習慣トラッカーのチェック記録とカウントダウンの日付
 - ごみ箱と自動バックアップ（ダッシュボードのデータ自身の複製）
 
-これらがサーバーへ同期されることはありません。拡張機能をアンインストールすれば削除され、
-「設定 → ダッシュボードをリセット」でいつでも消去できます。JSONエクスポート機能で
-生成されるファイルはあなたの管理下にあり、ZenithTab がどこかへ送信することはありません。
+これらが開発者のサーバーへ同期されることはありません。拡張機能をアンインストールすれば
+削除され、「設定 → ダッシュボードをリセット」でいつでも消去できます。JSONエクスポート
+機能で生成されるファイルはあなたの管理下にあり、ZenithTab がどこかへ送信することは
+ありません。
+
+### 任意: Chrome アカウントによる設定の同期
+
+「設定 → バックアップ & 同期 → 設定を同期する」は既定でオフです。オンにすると、
+ZenithTab はデータのごく一部を `chrome.storage.sync`（Chrome 自身のアカウント同期。
+ブックマークや拡張機能の同期と同じ仕組み）に書き込みます。同期されるのは次だけです。
+
+| 同期される | 同期されない |
+| --- | --- |
+| 外観設定（テーマ、言語、ガラス効果、角丸、ドックの位置） | ウィジェット、ページ、レイアウト |
+| ドックの項目（ラベル、URL、アイコン、新しいタブで開く） | メモ、ToDo、習慣の記録、カウントダウン |
+| ショートカットキーの割り当て（キー、ラベル、URL） | カレンダーの URL、記事キャッシュ、天気、壁紙、ブックマーク |
+
+データは Google のプライバシーポリシーのもとであなたの Google アカウントに保存され
+（Chrome の同期パスフレーズでエンドツーエンド暗号化できます）、開発者はサーバーを
+持たず読むこともできません。スイッチをオフにすると ZenithTab の項目は同期ストレージ
+から削除されます。
+
+### 共有コード
+
+「この構成を共有」は、今のページを自分でコピーする文字列にします。エンコード前に
+個人的な内容（メモ本文、タスク、習慣の記録、カレンダーの URL、カウントダウン、
+QR の内容、天気の位置）を取り除きます。ZenithTab が共有コードを送信・保管・短縮
+することはありません。
 
 ## 3. 外部への通信
 

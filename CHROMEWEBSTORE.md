@@ -13,7 +13,7 @@ A customizable new tab dashboard with drag-and-drop widgets, bookmarks, RSS feed
 **Detailed Description** [REQUIRED]
 ZenithTab transforms your new tab into a personal, highly organized productivity dashboard.
 
-Arrange widgets freely with drag-and-drop, pick dynamic wallpapers, and launch your daily workflows instantly. All settings are stored completely inside your local browser profile—no external account, tracking, or cloud sync required.
+Arrange widgets freely with drag-and-drop, pick dynamic wallpapers, and launch your daily workflows instantly. All settings are stored completely inside your local browser profile—no external account, tracking, or cloud sync required. If you like, an opt-in switch lets your appearance, Dock and keyboard shortcuts follow you between Chrome installs through Chrome's own account sync (chrome.storage.sync); widgets, notes and tasks always stay on the device.
 
 Key Features:
 - Flexible Grid Layout: Drag, drop, and resize widgets with responsive breakpoints across laptops and external monitors.
@@ -35,7 +35,7 @@ How to Use:
 4. Access settings to customize themes, wallpapers, or create new workspace pages.
 
 Privacy & Permissions:
-ZenithTab operates locally on your machine. Data stays strictly inside chrome.storage.local, and network requests are only made when you explicitly configure features (e.g. weather forecasts or RSS feeds).
+ZenithTab operates locally on your machine. Data stays strictly inside chrome.storage.local, and network requests are only made when you explicitly configure features (e.g. weather forecasts or RSS feeds). The optional settings sync (off by default) uses chrome.storage.sync, i.e. Chrome's own account sync — the developer never sees it.
 
 Support & Feedback:
 https://github.com/miyabiver39/ZenithTab/issues
@@ -70,7 +70,7 @@ English
 
 | Permission | Type | Justification |
 |------------|------|---------------|
-| storage | permissions | Saves user layout preferences, widget placements, custom search engines, notes, and theme options locally in chrome.storage.local. |
+| storage | permissions | Saves user layout preferences, widget placements, custom search engines, notes, and theme options locally in chrome.storage.local. When the user turns on **Settings › Backup › Sync settings** (off by default), the same permission is used for chrome.storage.sync to keep only the appearance settings (theme, language, glass effect, dock position), the Dock items (labels, URLs, icons) and the keyboard-shortcut bindings in step across the user's own Chrome installs via Chrome's account sync. Widgets, pages, notes, tasks, habits, calendar links and bookmarks are never written to sync storage. Nothing is sent to the developer. |
 | bookmarks | permissions | Reads the user's Chrome bookmark folders to display and search bookmarks inside the Bookmarks widget without uploading URLs anywhere. |
 | alarms | permissions | Schedules background refresh cycles via chrome.alarms in the service worker for weather forecast and RSS feed updates. |
 | favicon | permissions | Fetches site favicons for bookmark entries and launcher shortcuts using the browser's built-in favicon utility. |
@@ -95,6 +95,8 @@ English
 - **Health / Financial / Authentication / Contacts**: None collected.
 - **Web History**: Not collected.
 - **User Content**: Notes, to-dos, and shortcuts remain exclusively in local browser storage.
+- **Optional settings sync (chrome.storage.sync, off by default)**: When enabled by the user, only the appearance settings (theme, language, glass blur/opacity, corner radius, dock position, adaptive text), the Dock entries (label, URL, icon, open-in-new-tab flag) and keyboard-shortcut bindings (key combo, label, URL) are stored in Chrome's account sync storage. This is Google's Chrome Sync, governed by Google's privacy policy and end-to-end encryptable with a sync passphrase; the developer operates no server and cannot read it. Widget contents (notes, to-dos, habit history, countdowns, calendar feed URLs), pages, layouts, wallpapers and bookmarks are never synced. Turning the switch off removes ZenithTab's items from sync storage.
+- **Share codes**: "Share this layout" produces a text string the user copies themselves; it contains the page's widget arrangement and settings with personal content removed (note text, tasks, habit history, calendar URLs, countdowns, QR payloads and the weather location are stripped). ZenithTab never transmits or hosts share codes.
 
 ### Data Security & Privacy Policy
 - **Privacy Policy URL**: https://github.com/miyabiver39/ZenithTab/blob/main/PRIVACY.md
