@@ -33,12 +33,12 @@ Drag-and-drop widgets, glassmorphism UI, dynamic wallpapers, 7 languages — loc
 
 | Widget | What it does |
 | :-- | :-- |
-| 🔍 **Quick Search** | Multi-engine search bar (Google, Bing, DuckDuckGo, GitHub, YouTube, ChatGPT + your own). **Smart answers** inline: `120*1.1`, `20% of 150`, `10 km to mi`, `0xff`, `2d6`, `coin`, `random 1-100`, `choose a, b, c`, `days until 2026-12-31`. |
-| 🌐 **Shortcuts** | Your favourite sites as a tile grid, with favicons from Chrome's own cache. |
+| 🔍 **Quick Search** | Multi-engine search bar (Google, Bing, DuckDuckGo, GitHub, YouTube, ChatGPT + your own). **Smart answers** inline: `120*1.1`, `20% of 150`, `10 km to mi`, `0xff`, `2d6`, `coin`, `random 1-100`, `choose a, b, c`, `days until 2026-12-31`, `in 30 days`, `what day is 2026-12-25`, `time in London`. |
+| 🌐 **Shortcuts** | Your favourite sites as a tile grid, with favicons from Chrome's own cache. Pick them from a **regional catalog** (30–55 everyday sites per region), your bookmarks or most-visited sites — or just drag a link onto the widget. |
 | ⏰ **Clock** | Digital / analog / minimal, seconds, date, time zone. |
-| 🌤️ **Weather** | Current conditions and a 3-day forecast (Open-Meteo), optional one-click location detection. |
+| 🌤️ **Weather** | Current conditions and a 3-day forecast (Open-Meteo); offers to use your location once, otherwise one click. |
 | 🔖 **Bookmarks** | Browse and search your Chrome bookmarks, folders included. |
-| 📰 **News & RSS** | Google News (headlines, topics, keyword search) or any RSS/Atom feed, refreshed in the background. |
+| 📰 **News & RSS** | Google News (headlines, topics, keyword search), a catalog of well-known feeds per region, or any RSS/Atom URL, refreshed in the background. |
 | ⏱️ **Focus Timer** | Pomodoro sessions with short/long breaks and a session counter. |
 | ✅ **Tasks** | A simple todo list with filters and undoable deletes. |
 | 📝 **Quick Notes** | Multi-page Markdown scratchpad. |
@@ -51,14 +51,17 @@ Drag-and-drop widgets, glassmorphism UI, dynamic wallpapers, 7 languages — loc
 
 ### Dashboard
 
+- ✨ **3-step setup** — language & region, interests, purpose; the answers pick your template, news topics and shortcuts. Skippable, re-runnable from Settings.
 - 🧩 **Free grid layout** — drag, resize and arrange widgets on a responsive grid; widgets shrink down to 2 columns.
-- 📑 **Multiple pages** — separate dashboards (work / home / …), switchable with `Ctrl+Alt+←/→`.
+- 📑 **Multiple pages** — separate dashboards (work / home / …), switchable with `Ctrl+Alt+←/→`; start a page from a **template** (Work, Study, News, Minimal).
+- 📣 **Today at a glance** — the header shows open tasks, today's calendar events and the nearest countdown across all pages.
 - 🖼️ **Wallpapers** — Unsplash collections, gradients or your own image; a **time-aware mode** shifts the look through morning, day, sunset and night; text switches to dark automatically on light wallpapers.
 - 🎨 **Glassmorphism** — tune blur, corner radius and the dock.
 - ↩️ **Fool-proof** — undo for every delete and layout change (`Ctrl+Z`), a 30-day trash for widgets and pages, automatic backups before risky actions.
 - ⌨️ **Keyboard shortcuts** — built-in (`/` to search, undo/redo, page switching) plus your own key combos that open any URL.
 - 🌍 **7 languages** — English, 日本語, 简体中文, Español, Français, Deutsch, 한국어; defaults follow your region (search engines, news edition, weather city, dock).
-- 🔄 **Import / Export** — the whole dashboard as one JSON file.
+- 🔄 **Import / Export** — the whole dashboard as one JSON file. **Share codes** turn a page into a short `zt1.` string / QR code with your personal content stripped.
+- ☁️ **Settings sync (opt-in)** — appearance, dock and keyboard shortcuts through your Chrome account; widgets and pages stay on the device.
 - 🔒 **Local-first** — everything lives in `chrome.storage.local`. No backend, no analytics, no tracking.
 
 ---

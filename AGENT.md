@@ -47,12 +47,17 @@ zenith-tab/
 │   │   └── widgets/           # One folder per widget (<Name>Widget.tsx + <Name>Config.tsx)
 │   │       ├── registry.tsx       # Widget registry: icon, component, config form, beforeSave
 │   │       └── widgetDefinitions.ts # React-free part: size, default config, URL keys (used by store/storage)
-│   ├── hooks/                 # useBookmarks, useRssFeed, useWeather, useLayoutUndo, useAutoSnapshot
+│   ├── config/
+│   │   ├── catalog/           # siteCatalog (per-region everyday sites; ranked entries = first-run Dock/Shortcuts), feedCatalog (RSS)
+│   │   ├── defaults/          # regionalPresets (derived from the catalog + weather city per region)
+│   │   ├── setup/             # applySetup: first-run wizard answers → dashboard
+│   │   └── templates/         # pageTemplates: Work / Study / News / Minimal / Standard
+│   ├── hooks/                 # useBookmarks, useRssFeed, useWeather, useLayoutUndo, useAutoSnapshot, useSettingsSync, useTodaySummary
 │   ├── i18n/                  # Localization engine and translation dictionaries
-│   ├── services/              # storageService, migrations, trashService, snapshotService, rssService, weatherService, …
+│   ├── services/              # storageService, migrations, trashService, snapshotService, onboardingService, shareService, syncService, rssService, weatherService, …
 │   ├── store/                 # useDashboardStore.ts composes slices/ (ui, widget, page, settings, trash, snapshot, persistence; types.ts = DashboardState), useUndoStore.ts (in-memory undo/redo stack)
 │   ├── types/                 # TypeScript type contracts
-│   ├── utils/                 # cn, date, rssParser, storage, favicon
+│   ├── utils/                 # cn, date, rssParser, storage, favicon, smartInput, worldClock, todaySummary, dropLink
 │   ├── newtab.html            # Entry HTML
 │   ├── newtab.tsx             # Root React component
 │   └── index.css              # Tailwind and Glassmorphism styling

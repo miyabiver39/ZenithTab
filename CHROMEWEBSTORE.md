@@ -107,6 +107,7 @@ English
 
 | Version | Date | Changes Summary |
 |---------|------|-----------------|
+| 1.11.0 | 2026-09-22 | Easy setup release: 3-step first-run wizard (language, interests, purpose) with "set up again"; regional site & feed catalogs for shortcuts, dock and news (plus bookmarks / most-visited import and drag-and-drop links); page templates (Work, Study, News, Minimal); one-time weather location offer; more smart answers (dates from now, weekdays, world clock); a "today" line in the header; share codes / QR for a page layout; opt-in settings sync via the Chrome account. |
 | 1.10.5 | 2026-09-22 | Bug fixes: weather forecast no longer shows a snowflake for rain showers (fog, thunderstorm and night icons added; freezing drizzle/rain labels); backup and trash lists in Settings scroll within their own box and the backup retention rule is shown. |
 | 1.10.4 | 2026-09-21 | Bug fixes: Pomodoro keeps real time in background tabs; calendar shows long-running recurring events, keeps every feed's cache when fetching in parallel and applies colour changes immediately; widget background saves no longer close an open settings dialog; custom search engines are limited to http(s) URLs; an empty dock imports as empty; corrupted page records no longer crash startup. |
 | 1.10.3 | 2026-09-21 | Internal quality release: per-field store subscriptions (fewer re-renders), vendor chunk splitting and lazy-loaded dialogs (largest chunk 824 kB → 388 kB), accessible modal dialogs with a focus trap, more test coverage; fixes an Atom feed going blank on an unparsable date. |
