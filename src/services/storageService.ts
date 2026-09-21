@@ -45,7 +45,7 @@ function isSafeUrl(value: unknown): boolean {
   }
 }
 
-function sanitizeWidget(raw: any): DashboardWidget | null {
+export function sanitizeWidget(raw: any): DashboardWidget | null {
   if (!raw || typeof raw !== 'object') return null;
   if (typeof raw.id !== 'string' || typeof raw.type !== 'string') return null;
   if (!raw.layout || typeof raw.layout !== 'object') return null;

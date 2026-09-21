@@ -20,6 +20,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
 import { useStorageSync } from './hooks/useStorageSync';
 import { useAutoSnapshot } from './hooks/useAutoSnapshot';
+import { useSettingsSync } from './hooks/useSettingsSync';
 import './index.css';
 
 export const App: React.FC = () => {
@@ -37,6 +38,7 @@ export const App: React.FC = () => {
   useGlobalKeyboardShortcuts();
   useStorageSync();
   useAutoSnapshot();
+  useSettingsSync();
 
   if (!isInitialized) {
     return (

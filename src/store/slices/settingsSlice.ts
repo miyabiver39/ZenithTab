@@ -54,6 +54,29 @@ export const createSettingsSlice: DashboardSliceCreator<SettingsSlice> = (set, g
       storageService.saveAppearance(updated);
     },
 
+    replaceDockItems: (items) => {
+      const previous = get().dockItems;
+      saveDock(items.map((item) => ({ ...item, id: uniqueId('dock') })));
+      pushUndo(tr().undo.replacedDock, () => saveDock(previous));
+    },
+
+    isApplyingSyncedSettings: false,
+    syncSkipped: [],
+
+    applySyncedSettings: (settings) => {
+      // The flag is visible to store subscribers during this very set(),
+      // which is how the sync hook tells a remote value from a local edit.
+      set({ isApplyingSyncedSettings: true, ...settings });
+      set({ isApplyingSyncedSettings: false });
+      if (settings.appearance) storageService.saveAppearance(settings.appearance);
+      if (settings.dockItems) storageService.saveDockItems(settings.dockItems);
+      if (settings.keyboardShortcuts) storageService.saveKeyboardShortcuts(settings.keyboardShortcuts);
+    },
+
+    setSyncSkipped: (keys) => {
+      if (JSON.stringify(keys) !== JSON.stringify(get().syncSkipped)) set({ syncSkipped: keys });
+    },
+
     addDockItem: (item) => {
       const { dockItems } = get();
       const newItem: DockItem = { ...item, id: uniqueId('dock') };

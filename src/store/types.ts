@@ -4,6 +4,7 @@ import { DashboardWidget, ResponsiveLayouts, WidgetType, DashboardPageMeta, Dash
 import { WallpaperSettings, AppearanceSettings, DockItem, KeyboardShortcutBinding } from '../types/settings';
 import type { BackupSettings, SnapshotMeta } from '../services/snapshotService';
 import type { SetupChoices } from '../config/setup/applySetup';
+import type { SyncedKey, SyncedSettings } from '../services/syncService';
 
 /**
  * The dashboard store, split by domain. Components see the union
@@ -75,9 +76,18 @@ export interface SettingsSlice {
   removeDockItem: (id: string) => void;
   moveDockItem: (id: string, direction: 'up' | 'down') => void;
   reorderDockItem: (id: string, toIndex: number) => void;
+  /** Swaps the whole Dock (a shared layout's dock); undoable. */
+  replaceDockItems: (items: DockItem[]) => void;
 
   addKeyboardShortcut: (item: Omit<KeyboardShortcutBinding, 'id'>) => void;
   removeKeyboardShortcut: (id: string) => void;
+
+  /** True while another device's synced settings are being written into the store (hooks/useSettingsSync). */
+  isApplyingSyncedSettings: boolean;
+  /** Settings keys the last sync push had to skip (over the per-item quota). */
+  syncSkipped: SyncedKey[];
+  applySyncedSettings: (settings: Partial<SyncedSettings>) => void;
+  setSyncSkipped: (keys: SyncedKey[]) => void;
 }
 
 /** Deleted widgets/pages, restorable from Settings > Trash for 30 days. */

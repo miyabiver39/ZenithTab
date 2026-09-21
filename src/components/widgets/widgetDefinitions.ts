@@ -47,6 +47,12 @@ export interface WidgetDefinitionMeta {
    * itself offers a "grant" button until they are given.
    */
   optionalPermissions?: string[];
+  /**
+   * Removes everything personal before the config goes into a share code
+   * (services/shareService.ts): note text, tasks, habit history, calendar
+   * URLs, the home coordinates… Absent = the config is safe to share as is.
+   */
+  stripForShare?: (config: Record<string, any>) => Record<string, any>;
 }
 
 const KNOWN_BUILTIN_ENGINES = ['google', 'bing', 'duckduckgo', 'github', 'youtube', 'chatgpt'];
@@ -123,6 +129,8 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       unit: 'celsius',
       showForecast: true,
     }),
+    // Home coordinates stay home; the recipient's hydration fills in their region's city.
+    stripForShare: ({ city: _city, latitude: _lat, longitude: _lon, locationPrompted: _p, ...rest }) => rest,
   },
 
   bookmarks: {
@@ -179,6 +187,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
         { id: '2', text: t.defaults.todoCustomize, completed: true, createdAt: Date.now() - 1000 },
       ],
     }),
+    stripForShare: (config) => ({ ...config, items: [] }),
   },
 
   iframe: {
@@ -200,6 +209,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       fontSize: 'base',
       fontFamily: 'sans',
     }),
+    stripForShare: ({ content: _c, pages: _p, activePageId: _a, ...rest }) => ({ ...rest, content: '' }),
   },
 
   quickaccess: {
@@ -221,6 +231,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       mode: 'url',
       value: '',
     }),
+    stripForShare: (config) => ({ ...config, value: '' }),
   },
 
   countdown: {
@@ -230,6 +241,7 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       // One yearly example so the widget isn't an empty box on first add.
       events: [{ id: 'countdown-newyear', name: t.defaults.countdownNewYear, date: `${new Date().getFullYear() + 1}-01-01`, emoji: '🎍', repeatYearly: true }],
     }),
+    stripForShare: (config) => ({ ...config, events: [] }),
     sanitizeConfig: (config) => {
       if (!Array.isArray(config.events)) return config;
       return {
@@ -251,6 +263,11 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
         { id: 'habit-read', name: t.defaults.habitRead, emoji: '📖', history: [], createdAt: Date.now() - 2 },
       ],
       showWeek: true,
+    }),
+    // Habit names are the template; the check-off history is the person.
+    stripForShare: (config) => ({
+      ...config,
+      habits: Array.isArray(config.habits) ? config.habits.map((h: any) => ({ ...h, history: [] })) : [],
     }),
     sanitizeConfig: (config) => {
       if (!Array.isArray(config.habits)) return config;
@@ -274,6 +291,8 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       daysAhead: 3,
       showLocation: true,
     }),
+    // Calendar URLs carry private tokens.
+    stripForShare: (config) => ({ ...config, feeds: [] }),
     sanitizeConfig: (config, isSafeUrl) => {
       if (!Array.isArray(config.feeds)) return config;
       return {

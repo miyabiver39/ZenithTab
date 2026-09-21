@@ -50,6 +50,8 @@ export interface DashboardSnapshot extends SnapshotMeta {
 
 export interface BackupSettings {
   autoSnapshot: boolean;
+  /** Sync appearance / Dock / keyboard shortcuts via chrome.storage.sync (services/syncService.ts). Absent = off. */
+  syncSettings?: boolean;
 }
 
 export const DEFAULT_BACKUP_SETTINGS: BackupSettings = { autoSnapshot: true };

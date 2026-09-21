@@ -10,6 +10,8 @@ import { vi } from 'vitest';
  */
 
 export const chromeStorageData: Record<string, any> = {};
+/** The fake `chrome.storage.sync` area (services/syncService.ts). Writes fire onChanged with area 'sync'. */
+export const chromeSyncData: Record<string, any> = {};
 
 /** Pending failure injected by `failNextStorageCall`; consumed by the next call. */
 let pendingStorageError: Error | null = null;
@@ -150,6 +152,33 @@ export const MOCK_RECENTLY_CLOSED = [
 
 const storageListeners = new Set<(changes: Record<string, chrome.storage.StorageChange>, area: string) => void>();
 
+// Sync area: same shape, its own data, and — like the real thing — every
+// write notifies onChanged listeners in this context too.
+const syncGetImpl = (keys: string | string[] | Record<string, any> | null) => {
+  const list = typeof keys === 'string' ? [keys] : Array.isArray(keys) ? keys : keys ? Object.keys(keys) : Object.keys(chromeSyncData);
+  const result: Record<string, any> = {};
+  for (const k of list) if (chromeSyncData[k] !== undefined) result[k] = JSON.parse(JSON.stringify(chromeSyncData[k]));
+  return Promise.resolve(result);
+};
+const syncSetImpl = (items: Record<string, any>) => {
+  const changes: Record<string, chrome.storage.StorageChange> = {};
+  for (const [k, v] of Object.entries(items)) {
+    changes[k] = { oldValue: chromeSyncData[k], newValue: JSON.parse(JSON.stringify(v)) };
+    chromeSyncData[k] = JSON.parse(JSON.stringify(v));
+  }
+  storageListeners.forEach((fn) => fn(changes, 'sync'));
+  return Promise.resolve();
+};
+const syncRemoveImpl = (keys: string | string[]) => {
+  const changes: Record<string, chrome.storage.StorageChange> = {};
+  for (const k of Array.isArray(keys) ? keys : [keys]) {
+    if (chromeSyncData[k] !== undefined) changes[k] = { oldValue: chromeSyncData[k] };
+    delete chromeSyncData[k];
+  }
+  if (Object.keys(changes).length) storageListeners.forEach((fn) => fn(changes, 'sync'));
+  return Promise.resolve();
+};
+
 export const chromeMock = {
   storage: {
     local: {
@@ -157,6 +186,12 @@ export const chromeMock = {
       set: vi.fn(storageSetImpl),
       remove: vi.fn(storageRemoveImpl),
       clear: vi.fn(storageClearImpl),
+    },
+    sync: {
+      get: vi.fn(syncGetImpl),
+      set: vi.fn(syncSetImpl),
+      remove: vi.fn(syncRemoveImpl),
+      QUOTA_BYTES_PER_ITEM: 8192,
     },
     onChanged: {
       addListener: vi.fn((fn: any) => storageListeners.add(fn)),
@@ -215,12 +250,16 @@ export function emitStorageChange(changes: Record<string, chrome.storage.Storage
 export function resetChromeMock() {
   pendingStorageError = null;
   for (const key in chromeStorageData) delete chromeStorageData[key];
+  for (const key in chromeSyncData) delete chromeSyncData[key];
   storageListeners.clear();
 
   chromeMock.storage.local.get.mockReset().mockImplementation(storageGetImpl);
   chromeMock.storage.local.set.mockReset().mockImplementation(storageSetImpl);
   chromeMock.storage.local.remove.mockReset().mockImplementation(storageRemoveImpl);
   chromeMock.storage.local.clear.mockReset().mockImplementation(storageClearImpl);
+  chromeMock.storage.sync.get.mockReset().mockImplementation(syncGetImpl);
+  chromeMock.storage.sync.set.mockReset().mockImplementation(syncSetImpl);
+  chromeMock.storage.sync.remove.mockReset().mockImplementation(syncRemoveImpl);
   chromeMock.storage.onChanged.addListener.mockReset().mockImplementation((fn: any) => storageListeners.add(fn));
   chromeMock.storage.onChanged.removeListener.mockReset().mockImplementation((fn: any) => storageListeners.delete(fn));
   chromeMock.bookmarks.getTree.mockReset().mockImplementation(() => Promise.resolve(MOCK_BOOKMARK_TREE));

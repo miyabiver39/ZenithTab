@@ -11,6 +11,7 @@ import {
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 import type { ConfirmApi } from './confirm';
+import { ShareSettings } from './ShareSettings';
 
 /** Export / import, automatic and manual backups, and the full reset. */
 export const BackupTab: React.FC<ConfirmApi> = ({ requestConfirm, closeConfirm }) => {
@@ -218,6 +219,8 @@ export const BackupTab: React.FC<ConfirmApi> = ({ requestConfirm, closeConfirm }
             .replace('{size}', formatBytes(MAX_SNAPSHOT_TOTAL_BYTES))}
         </p>
       </div>
+
+      <ShareSettings />
 
       <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-2">
         <h4 className="text-xs font-semibold text-white">{t.settings.exportTitle}</h4>
