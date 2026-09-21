@@ -9,4 +9,4 @@ See [AGENT.md](./AGENT.md) for full architecture and developer specifications, a
 4. **Verification**: Always run `npm run typecheck` and `npm run test:run` before completing tasks.
 5. **Modern Web & Chrome Extension Guidance**: Follow the `chrome-extensions` and `modern-web-guidance` skills for web standards and Manifest V3 API best practices.
 6. **Store Presence**: Whenever you are creating or making changes to the Chrome extension (e.g. permissions, features, or metadata), create and manage the `CHROMEWEBSTORE.md` file using the `chrome-extensions` skill format.
-7. **Code & Quality Audit**: Follow the `code-audit` skill (`.agents/skills/code-audit/SKILL.md`) for comprehensive quality, security, and test coverage audits and issue creation.
+7. **Code & Quality Audit**: Follow the `code-audit` skill (`.agents/skills/code-audit/SKILL.md`) for reviewing recent commits, comprehensive quality, security, and test coverage audits, and issue creation.
