@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { syncService, SYNC_ITEM_LIMIT } from '../../../src/services/syncService';
+import { syncService, SYNC_QUOTA_BYTES_PER_ITEM, syncItemBytes } from '../../../src/services/syncService';
 import { useSettingsSync } from '../../../src/hooks/useSettingsSync';
 import { useDashboardStore } from '../../../src/store/useDashboardStore';
 import { DEFAULT_APPEARANCE, STORAGE_KEYS } from '../../../src/services/storageService';
@@ -16,12 +16,24 @@ describe('syncService', () => {
     expect(result.pushed).toEqual(['appearance', 'keyboardShortcuts']);
     expect(result.skipped).toEqual(['dockItems']);
     expect(chromeSyncData.zenith_sync_appearance).toEqual({ updatedAt: 1000, value: DEFAULT_APPEARANCE });
-    expect(JSON.stringify(chromeSyncData.zenith_sync_appearance).length).toBeLessThan(SYNC_ITEM_LIMIT);
+    expect(syncItemBytes('zenith_sync_appearance', chromeSyncData.zenith_sync_appearance)).toBeLessThan(SYNC_QUOTA_BYTES_PER_ITEM);
     expect(await syncService.getLastStamp()).toBe(1000);
 
     const pulled = await syncService.pull();
     expect(pulled.updatedAt).toBe(1000);
     expect(pulled.settings).toEqual({ appearance: DEFAULT_APPEARANCE, keyboardShortcuts: [] });
+  });
+
+  it('サイズは UTF-8 バイト数(キー込み)で判定し、日本語のラベルで上限をすり抜けないこと', async () => {
+    // 2,700 chars of 3-byte kana: 2,700 UTF-16 units but ~8,100 UTF-8 bytes — over quota with the wrapper and key.
+    const label = 'あ'.repeat(2700);
+    const heavy = [{ id: 'd', label, url: 'https://x.example', icon: 'globe', openInNewTab: true }];
+    expect(JSON.stringify({ updatedAt: 1, value: heavy }).length).toBeLessThan(SYNC_QUOTA_BYTES_PER_ITEM);
+    expect(syncItemBytes('zenith_sync_dockItems', { updatedAt: 1, value: heavy })).toBeGreaterThan(SYNC_QUOTA_BYTES_PER_ITEM);
+
+    const result = await syncService.push({ dockItems: heavy, keyboardShortcuts: [] }, 5);
+    expect(result).toEqual({ pushed: ['keyboardShortcuts'], skipped: ['dockItems'] });
+    expect(chromeSyncData.zenith_sync_dockItems).toBeUndefined();
   });
 
   it('壊れた項目は無視し、clear で自分の項目だけ消すこと', async () => {

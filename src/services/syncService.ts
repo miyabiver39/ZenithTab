@@ -28,9 +28,21 @@ interface SyncItem<T> {
   value: T;
 }
 
-/** chrome.storage.sync.QUOTA_BYTES_PER_ITEM, minus room for the key and the wrapper. */
-export const SYNC_ITEM_LIMIT = 8192 - 256;
+/**
+ * chrome.storage.sync.QUOTA_BYTES_PER_ITEM. Chrome counts UTF-8 bytes of
+ * the key plus the JSON-serialised value, so that is what we measure —
+ * a `.length` check would let a Dock full of Japanese labels through and
+ * have the whole set() rejected.
+ */
+export const SYNC_QUOTA_BYTES_PER_ITEM = 8192;
 const SYNC_KEY_PREFIX = 'zenith_sync_';
+
+const utf8Length = (s: string) => new TextEncoder().encode(s).length;
+
+/** Bytes Chrome will charge for storing `value` under `key` in sync storage. */
+export function syncItemBytes(key: string, value: unknown): number {
+  return utf8Length(key) + utf8Length(JSON.stringify(value));
+}
 /** Local: the stamp of the newest remote state this device wrote or applied. */
 const LAST_SYNC_STAMP_KEY = 'sync_last_stamp';
 
@@ -77,7 +89,7 @@ export const syncService = {
       const value = settings[key];
       if (value === undefined) continue;
       const item: SyncItem<unknown> = { updatedAt: now, value };
-      if (JSON.stringify(item).length > SYNC_ITEM_LIMIT) {
+      if (syncItemBytes(remoteKey(key), item) > SYNC_QUOTA_BYTES_PER_ITEM) {
         skipped.push(key);
         continue;
       }
