@@ -7,6 +7,10 @@ import {
   stripWidgetsForShare,
   InvalidShareCode,
   SHARE_PREFIX,
+  MAX_SHARE_CODE_LENGTH,
+  MAX_DECODED_BYTES,
+  MAX_SHARED_WIDGETS,
+  MAX_SHARED_DOCK_ITEMS,
 } from '../../../src/services/shareService';
 import type { DashboardWidget, ResponsiveLayouts } from '../../../src/types/widget';
 
@@ -65,6 +69,26 @@ describe('shareService', () => {
     await expect(decodeShareCode('zt1.!!!notbase64')).rejects.toBeInstanceOf(InvalidShareCode);
     await expect(decodeShareCode('zt1r.' + btoa('{"v":2}'))).rejects.toBeInstanceOf(InvalidShareCode);
     await expect(decodeShareCode('zt1r.' + btoa('{"v":1,"page":{"widgets":"nope"}}'))).rejects.toBeInstanceOf(InvalidShareCode);
+  });
+
+  it('巨大な入力・解凍爆弾・過剰なウィジェット数を拒否または切り詰めること', async () => {
+    await expect(decodeShareCode('zt1.' + 'A'.repeat(MAX_SHARE_CODE_LENGTH))).rejects.toBeInstanceOf(InvalidShareCode);
+
+    // ~4 MB of the same byte compresses to a few KB: must be refused while decompressing.
+    const bomb = await encodeShareCode({ v: 1, app: 'x', page: { name: 'x'.repeat(4 * 1024 * 1024), widgets: [], layouts: { lg: [], md: [], sm: [], xs: [], xxs: [] } } });
+    expect(bomb.length).toBeLessThan(MAX_SHARE_CODE_LENGTH);
+    await expect(decodeShareCode(bomb)).rejects.toBeInstanceOf(InvalidShareCode);
+
+    const rawBig = 'zt1r.' + btoa('{"v":1,"page":{"widgets":[],"name":"' + 'y'.repeat(MAX_DECODED_BYTES) + '"}}').replace(/=+$/, '');
+    await expect(decodeShareCode(rawBig)).rejects.toBeInstanceOf(InvalidShareCode);
+
+    const many = Array.from({ length: 500 }, (_, i) => w('clock', {}, `c${i}`));
+    const dock = Array.from({ length: 100 }, (_, i) => ({ id: `d${i}`, label: 'x', url: 'https://ok.example', icon: 'globe', openInNewTab: true }));
+    const decoded = await decodeShareCode(await encodeShareCode({ v: 1, app: 'x', page: { name: 'n', widgets: many, layouts: layouts(many) }, dock }));
+    expect(decoded.page.widgets).toHaveLength(MAX_SHARED_WIDGETS);
+    expect(decoded.dock).toHaveLength(MAX_SHARED_DOCK_ITEMS);
+    // Layouts for the dropped widgets go with them.
+    expect(pageFromPayload(decoded).layouts.lg).toHaveLength(MAX_SHARED_WIDGETS);
   });
 
   it('受け取り側では危険な URL を落とし、id を振り直してページにすること', async () => {

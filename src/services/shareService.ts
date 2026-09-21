@@ -21,6 +21,18 @@ const RAW_PREFIX = 'zt1r.';
 /** Longest payload the QR renderer will accept comfortably (alphanumeric-ish, level L). */
 export const QR_MAX_LENGTH = 2900;
 
+// Untrusted input: a code is pasted from anywhere and decoded on every
+// keystroke. A real page is a few KB compressed; these caps keep a
+// crafted string (or a deflate bomb) from tying up the tab.
+/** Longest code we will even look at. */
+export const MAX_SHARE_CODE_LENGTH = 64 * 1024;
+/** Most bytes the decompressor may produce before we give up. */
+export const MAX_DECODED_BYTES = 512 * 1024;
+/** Widgets kept from a shared page (a grid with more than this is unusable anyway). */
+export const MAX_SHARED_WIDGETS = 50;
+/** Dock items kept from a shared payload. */
+export const MAX_SHARED_DOCK_ITEMS = 30;
+
 export interface SharePayload {
   v: 1;
   app: string;
@@ -78,15 +90,38 @@ const fromBase64Url = (s: string): Uint8Array => {
   return out;
 };
 
-async function pipeThrough(bytes: Uint8Array, stream: GenericTransformStream): Promise<Uint8Array> {
+/**
+ * Runs `bytes` through a transform stream. With `maxBytes`, reading stops
+ * (and the stream is cancelled) as soon as the output grows past it, so a
+ * highly compressed bomb never gets to allocate its full size.
+ */
+async function pipeThrough(bytes: Uint8Array, stream: GenericTransformStream, maxBytes = Infinity): Promise<Uint8Array> {
   const source = new ReadableStream<Uint8Array>({
     start(controller) {
       controller.enqueue(bytes);
       controller.close();
     },
   });
-  const buffer = await new Response(source.pipeThrough(stream)).arrayBuffer();
-  return new Uint8Array(buffer);
+  const reader = source.pipeThrough(stream).getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw new InvalidShareCode();
+    }
+    chunks.push(value);
+  }
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    out.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return out;
 }
 
 const hasCompression = () => typeof CompressionStream === 'function' && typeof DecompressionStream === 'function';
@@ -107,14 +142,16 @@ export class InvalidShareCode extends Error {
 
 /** Parses and sanitises a code. Throws InvalidShareCode for anything that isn't one. */
 export async function decodeShareCode(input: string): Promise<SharePayload> {
+  if (input.length > MAX_SHARE_CODE_LENGTH) throw new InvalidShareCode();
   const code = input.trim().replace(/\s+/g, '');
   let bytes: Uint8Array;
   try {
     if (code.startsWith(SHARE_PREFIX)) {
       if (!hasCompression()) throw new InvalidShareCode();
-      bytes = await pipeThrough(fromBase64Url(code.slice(SHARE_PREFIX.length)), new DecompressionStream('deflate-raw'));
+      bytes = await pipeThrough(fromBase64Url(code.slice(SHARE_PREFIX.length)), new DecompressionStream('deflate-raw'), MAX_DECODED_BYTES);
     } else if (code.startsWith(RAW_PREFIX)) {
       bytes = fromBase64Url(code.slice(RAW_PREFIX.length));
+      if (bytes.byteLength > MAX_DECODED_BYTES) throw new InvalidShareCode();
     } else {
       throw new InvalidShareCode();
     }
@@ -128,7 +165,10 @@ export async function decodeShareCode(input: string): Promise<SharePayload> {
 
 function sanitizePayload(raw: any): SharePayload {
   if (!raw || raw.v !== 1 || !raw.page || !Array.isArray(raw.page.widgets)) throw new InvalidShareCode();
-  const widgets = (raw.page.widgets as unknown[]).map(sanitizeWidget).filter((w): w is DashboardWidget => w !== null && !!getWidgetMeta(w.type));
+  const widgets = (raw.page.widgets as unknown[])
+    .slice(0, MAX_SHARED_WIDGETS)
+    .map(sanitizeWidget)
+    .filter((w): w is DashboardWidget => w !== null && !!getWidgetMeta(w.type));
   const layouts = sanitizeResponsiveLayouts(raw.page.layouts || {});
   const payload: SharePayload = {
     v: 1,
@@ -136,10 +176,12 @@ function sanitizePayload(raw: any): SharePayload {
     page: { name: typeof raw.page.name === 'string' ? raw.page.name.slice(0, 60) : '', widgets, layouts },
   };
   if (Array.isArray(raw.dock)) {
-    payload.dock = raw.dock.filter(
-      (item: any): item is DockItem =>
-        !!item && typeof item.id === 'string' && typeof item.label === 'string' && typeof item.icon === 'string' && isSafeHttpUrl(item.url)
-    );
+    payload.dock = raw.dock
+      .slice(0, MAX_SHARED_DOCK_ITEMS)
+      .filter(
+        (item: any): item is DockItem =>
+          !!item && typeof item.id === 'string' && typeof item.label === 'string' && typeof item.icon === 'string' && isSafeHttpUrl(item.url)
+      );
   }
   return payload;
 }
