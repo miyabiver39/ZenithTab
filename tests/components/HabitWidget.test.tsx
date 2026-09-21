@@ -64,7 +64,7 @@ describe('HabitWidget', () => {
 
     await user.click(screen.getByTitle('Delete'));
     expect(config().habits).toHaveLength(0);
-    useUndoStore.getState().undo();
+    act(() => useUndoStore.getState().undo());
     expect(config().habits).toHaveLength(1);
   });
 

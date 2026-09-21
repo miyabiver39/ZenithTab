@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, act } from '@testing-library/react';
 import { setupUser, literal } from '../helpers/user';
 import { CountdownWidget } from '../../src/components/widgets/CountdownWidget/CountdownWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
@@ -89,7 +89,7 @@ describe('CountdownWidget', () => {
     ]);
     await user.click(screen.getAllByTitle('Delete')[0]);
     expect(config().events.map((e: any) => e.id)).toEqual(['e2']);
-    useUndoStore.getState().undo();
+    act(() => useUndoStore.getState().undo());
     expect(config().events.map((e: any) => e.id)).toEqual(['e1', 'e2']);
   });
 });

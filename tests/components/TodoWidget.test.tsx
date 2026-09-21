@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { setupUser, literal } from '../helpers/user';
 import { TodoWidget } from '../../src/components/widgets/TodoWidget/TodoWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
@@ -79,13 +79,13 @@ describe('TodoWidget', () => {
     renderTodo();
     await user.click(screen.getByRole('button', { name: 'Delete: Explore ZenithTab settings' }));
     expect(useUndoStore.getState().toast?.label).toBe('Removed a task');
-    useUndoStore.getState().undo();
+    act(() => useUndoStore.getState().undo());
     expect(items().some((i: any) => i.id === '1')).toBe(true);
     expect(await screen.findByText('Explore ZenithTab settings')).toBeInTheDocument();
 
     await user.click(screen.getByText('Clear completed'));
     expect(useUndoStore.getState().toast?.label).toBe('Cleared completed tasks');
-    useUndoStore.getState().undo();
+    act(() => useUndoStore.getState().undo());
     expect(items().some((i: any) => i.completed)).toBe(true);
   });
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { setupUser } from '../helpers/user';
 import { OnboardingModal } from '../../src/components/layout/OnboardingModal';
 import { FirstRunHint } from '../../src/components/layout/FirstRunHint';
@@ -59,7 +59,8 @@ describe('FirstRunHint', () => {
     const { rerender } = render(<FirstRunHint />);
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
 
-    useDashboardStore.setState({ showFirstRunHint: true });
+    // Store writes from outside React re-render the mounted component: flush them through act.
+    act(() => useDashboardStore.setState({ showFirstRunHint: true }));
     rerender(<FirstRunHint />);
     expect(screen.getByRole('status')).toHaveTextContent('Hover a widget');
     await user.click(screen.getByRole('button', { name: 'Hide this tip' }));

@@ -137,6 +137,8 @@ describe('WeatherWidget', () => {
     expect(widgetConfig().locationPrompted).toBe(true);
     rerender(<WeatherWidget widgetId="widget-weather-1" config={widgetConfig() as any} />);
     expect(screen.queryByRole('note')).not.toBeInTheDocument();
+    // The re-render kicked off another (mocked) fetch; let it settle inside the test.
+    await waitFor(() => expect(screen.getByText('Slight rain')).toBeInTheDocument());
   });
 
   it('提案の「現在地を使う」は検出して保存し、ユーザーが選んだ座標では提案しないこと', async () => {

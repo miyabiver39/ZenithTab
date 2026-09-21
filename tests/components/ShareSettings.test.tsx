@@ -12,8 +12,10 @@ const state = () => useDashboardStore.getState();
 describe('ShareSettings', () => {
   beforeEach(() => {
     resetDashboardStore({ activeSettingsModal: 'settings' });
-    // jsdom has no canvas; the QR renderer is exercised elsewhere.
+    // jsdom has no canvas; the QR renderer is exercised elsewhere, and its
+    // "no 2d context" warning is expected here.
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   it('共有コードを作ってコピーでき、個人データを含まないこと', async () => {
@@ -36,6 +38,8 @@ describe('ShareSettings', () => {
     await user.click(screen.getByRole('button', { name: 'Copy code' }));
     expect(writeText).toHaveBeenCalledWith(box.value);
     await screen.findByText('Copied!');
+    // Let the "Copied!" label time out inside the test rather than after it.
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Copy code' })).toBeInTheDocument(), { timeout: 2500 });
   });
 
   it('貼り付けたコードをプレビューし、新しいページとして追加(ドック置換つき)できること', async () => {

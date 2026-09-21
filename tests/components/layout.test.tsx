@@ -68,7 +68,8 @@ describe('Header', () => {
     expect(screen.getByTestId('today-summary')).toHaveTextContent(/days to Trip/);
     expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
 
-    useDashboardStore.setState({ widgets: [] });
+    // A store write while mounted re-renders outside any event: flush it through act.
+    act(() => useDashboardStore.setState({ widgets: [] }));
     await waitFor(() => expect(screen.getByText('Dashboard')).toBeInTheDocument());
   });
 
