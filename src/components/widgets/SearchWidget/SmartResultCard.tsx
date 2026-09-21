@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Calculator, Ruler, Binary, Dices, Coins, Shuffle, ListChecks, CalendarDays, Percent, Copy, Check, RefreshCw, Sparkles } from 'lucide-react';
+import { Calculator, Ruler, Binary, Dices, Coins, Shuffle, ListChecks, CalendarDays, Percent, Copy, Check, RefreshCw, Sparkles, Clock, CalendarPlus, CalendarCheck } from 'lucide-react';
 import { useTranslation } from '../../../i18n/i18n';
 import { SmartResult, REROLLABLE_KINDS } from '../../../utils/smartInput';
+import { getIntlLocale } from '../../../utils/date';
+import { parseDayKey } from '../../../utils/countdown';
 import { cn } from '../../../utils/cn';
 import { SmartInputExamples } from './SmartInputExamples';
 
@@ -94,6 +96,9 @@ const ICONS: Record<SmartResult['kind'], React.ElementType> = {
   random: Shuffle,
   choose: ListChecks,
   days: CalendarDays,
+  time: Clock,
+  dateadd: CalendarPlus,
+  weekday: CalendarCheck,
 };
 
 /**
@@ -102,12 +107,12 @@ const ICONS: Record<SmartResult['kind'], React.ElementType> = {
  * one-row height. Click to copy; the random kinds get a "roll again".
  */
 export const SmartResultCard: React.FC<SmartResultCardProps> = ({ result, anchorRef, onReroll }) => {
-  const { t } = useTranslation();
+  const { t, activeLanguageCode } = useTranslation();
   const rect = useAnchorRect(anchorRef, result);
   const [copied, setCopied] = useState(false);
 
   const smart = t.widgets.search.smart;
-  const view = describe(result, smart);
+  const view = describe(result, smart, getIntlLocale(activeLanguageCode));
   const Icon = ICONS[result.kind];
   const rerollable = REROLLABLE_KINDS.includes(result.kind);
 
@@ -165,10 +170,19 @@ interface SmartLabels {
   rolled: string;
   randomRange: string;
   chosen: string;
+  timeIn: string;
+  dateIn: string;
+  dateAgo: string;
+}
+
+/** "Thursday, 25 December 2026" in the UI language; the raw key when the date is malformed. */
+function formatDayKey(key: string, locale?: string, options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }): string {
+  const date = parseDayKey(key);
+  return date ? date.toLocaleDateString(locale, options) : key;
 }
 
 /** Turns the language-neutral result into the two lines shown on the card. */
-export function describe(result: SmartResult, labels: SmartLabels): { primary: string; secondary?: string; copyText: string } {
+export function describe(result: SmartResult, labels: SmartLabels, locale?: string): { primary: string; secondary?: string; copyText: string } {
   switch (result.kind) {
     case 'calc':
       return { primary: result.value, secondary: `${result.expression} =`, copyText: result.value };
@@ -201,5 +215,17 @@ export function describe(result: SmartResult, labels: SmartLabels): { primary: s
             : labels.daysSince.replace('{n}', String(-result.days));
       return { primary, secondary: result.date, copyText: String(result.days) };
     }
+    case 'time':
+      return {
+        primary: result.time,
+        secondary: `${labels.timeIn.replace('{city}', result.city)} · ${result.offset} · ${result.date}`,
+        copyText: result.time,
+      };
+    case 'dateadd': {
+      const relative = result.days >= 0 ? labels.dateIn.replace('{n}', String(result.days)) : labels.dateAgo.replace('{n}', String(-result.days));
+      return { primary: formatDayKey(result.date, locale), secondary: `${result.date} · ${relative}`, copyText: result.date };
+    }
+    case 'weekday':
+      return { primary: formatDayKey(result.date, locale, { weekday: 'long' }), secondary: formatDayKey(result.date, locale), copyText: formatDayKey(result.date, locale, { weekday: 'long' }) };
   }
 }

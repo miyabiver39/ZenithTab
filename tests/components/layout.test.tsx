@@ -52,6 +52,26 @@ describe('Header', () => {
     vi.restoreAllMocks();
   });
 
+  it('未完了タスクとカウントダウンがあれば「今日のまとめ」を出し、無ければ Dashboard のままにすること', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.9);
+    const { unmount } = render(<Header />);
+    // Stock dashboard: one open sample task.
+    expect(screen.getByTestId('today-summary')).toHaveTextContent('1 open tasks');
+    unmount();
+
+    useDashboardStore.setState({
+      widgets: [
+        { id: 'c', type: 'countdown', title: 'c', config: { events: [{ id: 'e', name: 'Trip', date: '2999-01-01' }] }, layout: { i: 'c', x: 0, y: 0, w: 1, h: 1 } },
+      ],
+    });
+    render(<Header />);
+    expect(screen.getByTestId('today-summary')).toHaveTextContent(/days to Trip/);
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
+
+    useDashboardStore.setState({ widgets: [] });
+    await waitFor(() => expect(screen.getByText('Dashboard')).toBeInTheDocument());
+  });
+
   it('ページが1つの間だけ「ページを追加」ボタンを出すこと', async () => {
     const { rerender } = render(<Header />);
     expect(screen.getByTitle('Add page')).toBeInTheDocument();

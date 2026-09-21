@@ -37,6 +37,8 @@ export interface WeatherWidgetConfig extends BaseWidgetConfig {
   unit: 'celsius' | 'fahrenheit';
   showForecast: boolean;
   autoDetectLocation?: boolean;
+  /** The one-time "use your location?" offer has been answered (either way). */
+  locationPrompted?: boolean;
 }
 
 export interface BookmarkWidgetConfig extends BaseWidgetConfig {

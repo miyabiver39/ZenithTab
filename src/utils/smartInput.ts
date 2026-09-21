@@ -8,7 +8,8 @@
  * ordinary query is never hijacked.
  */
 
-import { parseDayKey, daysBetween } from './countdown';
+import { parseDayKey, daysBetween, toDayKey } from './countdown';
+import { findCityTimeZone, formatInTimeZone } from './worldClock';
 
 export type SmartResult =
   | { kind: 'calc'; value: string; expression: string }
@@ -19,7 +20,13 @@ export type SmartResult =
   | { kind: 'coin'; side: 'heads' | 'tails' }
   | { kind: 'random'; value: number; min: number; max: number }
   | { kind: 'choose'; pick: string; options: string[] }
-  | { kind: 'days'; days: number; date: string };
+  | { kind: 'days'; days: number; date: string }
+  /** Current time somewhere else: "time in London". */
+  | { kind: 'time'; city: string; timeZone: string; time: string; date: string; offset: string }
+  /** A date some way off: "in 30 days", "3週間後". `days` is signed. */
+  | { kind: 'dateadd'; date: string; days: number }
+  /** Day of the week for a date: "2026-12-25 は何曜日". */
+  | { kind: 'weekday'; date: string };
 
 export interface SmartInputOptions {
   now?: Date;
@@ -334,6 +341,73 @@ const BASE_CONVERT = /^(0x[0-9a-f]+|0b[01]+|0o[0-7]+|\d+)\s+(?:to|in|as|→|に)
 const DAYS_UNTIL = /^(?:(?:days?|how many days)\s+(?:until|till|to|before)\s+)?(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\s*(?:まで|까지|까지는|hasta|jusqu'au|bis)?\s*[?？]?$/i;
 const DAYS_UNTIL_JA = /^(\d{4})年(\d{1,2})月(\d{1,2})日\s*(?:まで)?\s*[?？]?$/;
 
+// "time in london" / "london time" / 「ロンドンの時間」 / "hora en madrid" …
+// The captured name must resolve to a known city, so "iphone time" is
+// never answered.
+const TIME_IN: RegExp[] = [
+  /^(?:(?:what(?:'s| is) the )?(?:current |local )?time (?:in|at) |what time is it in )(.+?)\s*[?？]?$/i,
+  /^(.+?) (?:local )?time(?: now)?\s*[?？]?$/i,
+  /^(.+?)(?:の)?(?:現在の)?(?:時間|時刻|は今何時|今何時|何時)\s*[?？]?$/,
+  /^(.+?)(?:的)?(?:时间|现在几点|几点)\s*[?？]?$/,
+  /^(.+?)\s*(?:시간|지금 몇 시|몇 시)\s*[?？]?$/,
+  /^(?:(?:qué |que )?hora (?:es )?en)\s+(.+?)\s*[?？]?$/i,
+  /^(?:quelle heure est-il (?:à|a|en)|heure (?:à|a|en))\s+(.+?)\s*[?？]?$/i,
+  /^(?:wie spät ist es in|uhrzeit(?: in)?|zeit in)\s+(.+?)\s*[?？]?$/i,
+];
+
+// "in 30 days" / "2 weeks ago" / 「30日後」 / "dans 3 semaines" … Each entry
+// says which capture holds the amount so the languages can differ in
+// word order.
+type DateUnit = 'day' | 'week' | 'month' | 'year';
+interface DateAddPattern {
+  re: RegExp;
+  amount: number;
+  unit: (m: RegExpExecArray) => DateUnit;
+  sign: (m: RegExpExecArray) => 1 | -1;
+  /** Extra acceptance check (English needs "in" or "ago", a bare "30 days" is a search). */
+  accept?: (m: RegExpExecArray) => boolean;
+}
+const enUnit = (w: string): DateUnit => (/^day/i.test(w) ? 'day' : /^week/i.test(w) ? 'week' : /^month/i.test(w) ? 'month' : 'year');
+const cjkUnit = (w: string): DateUnit => (/日|天/.test(w) ? 'day' : /週|周|星期/.test(w) ? 'week' : /月/.test(w) ? 'month' : 'year');
+const koUnit = (w: string): DateUnit => (w === '일' ? 'day' : w === '주' ? 'week' : w === '년' ? 'year' : 'month');
+const latinUnit = (w: string): DateUnit => (/^[djt]/i.test(w) ? 'day' : /^[sw]/i.test(w) ? 'week' : /^m/i.test(w) ? 'month' : 'year');
+const DATE_ADD: DateAddPattern[] = [
+  {
+    re: /^(?:(in)\s+)?(\d{1,4})\s*(days?|weeks?|months?|years?)(?:\s+(from now|from today|later|ago|before))?\s*[?？]?$/i,
+    amount: 2,
+    unit: (m) => enUnit(m[3]),
+    sign: (m) => (/ago|before/i.test(m[4] || '') ? -1 : 1),
+    accept: (m) => !!m[1] || !!m[4],
+  },
+  { re: /^(\d{1,4})\s*(日|週間|週|か月|ヶ月|ヵ月|カ月|ケ月|年)(?:間)?\s*(後|前)\s*[?？]?$/, amount: 1, unit: (m) => cjkUnit(m[2]), sign: (m) => (m[3] === '前' ? -1 : 1) },
+  { re: /^(\d{1,4})\s*(天|周|星期|个月|個月|月|年)\s*(后|後|前)\s*[?？]?$/, amount: 1, unit: (m) => cjkUnit(m[2]), sign: (m) => (m[3] === '前' ? -1 : 1) },
+  { re: /^(\d{1,4})\s*(일|주|개월|달|년)\s*(후|뒤|전)\s*[?？]?$/, amount: 1, unit: (m) => koUnit(m[2]), sign: (m) => (m[3] === '전' ? -1 : 1) },
+  { re: /^(en|dentro de|hace)\s+(\d{1,4})\s+(días?|dias?|semanas?|meses|mes|años?|anos?)\s*[?？]?$/i, amount: 2, unit: (m) => latinUnit(m[3]), sign: (m) => (/^hace$/i.test(m[1]) ? -1 : 1) },
+  { re: /^(dans|il y a)\s+(\d{1,4})\s+(jours?|semaines?|mois|ans?|années?)\s*[?？]?$/i, amount: 2, unit: (m) => latinUnit(m[3]), sign: (m) => (/^il y a$/i.test(m[1]) ? -1 : 1) },
+  { re: /^(in|vor)\s+(\d{1,4})\s+(tag(?:en?)?|wochen?|monat(?:en?)?|jahr(?:en?)?)\s*[?？]?$/i, amount: 2, unit: (m) => latinUnit(m[3]), sign: (m) => (/^vor$/i.test(m[1]) ? -1 : 1) },
+];
+
+// "2026-12-25 は何曜日" / "what day is 2026-12-25" — a weekday word is
+// required, otherwise a bare date keeps meaning "days until".
+const DATE_PART = '(\\d{4})[-/.年](\\d{1,2})[-/.月](\\d{1,2})日?';
+const WEEKDAY_OF: RegExp[] = [
+  new RegExp(`^(?:what (?:day|weekday) (?:of the week )?(?:is|was|will be) )${DATE_PART}\\s*[?？]?$`, 'i'),
+  new RegExp(
+    `^${DATE_PART}\\s*(?:は何曜日|の曜日|は何曜|day of (?:the )?week|weekday|요일|은 무슨 요일|는 무슨 요일|무슨 요일|是星期几|星期几|quel jour|qué día|que dia|welcher tag|wochentag)\\s*[?？]?$`,
+    'i'
+  ),
+  new RegExp(`^(?:día de la semana|dia de la semana|jour de la semaine|wochentag)\\s+(?:de |del |du |vom |von )?${DATE_PART}\\s*[?？]?$`, 'i'),
+];
+
+function addToDate(from: Date, amount: number, unit: DateUnit): Date {
+  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  if (unit === 'day') d.setDate(d.getDate() + amount);
+  else if (unit === 'week') d.setDate(d.getDate() + amount * 7);
+  else if (unit === 'month') d.setMonth(d.getMonth() + amount);
+  else d.setFullYear(d.getFullYear() + amount);
+  return d;
+}
+
 function parseNumber(raw: string): number {
   return parseFloat(raw.replace(',', '.'));
 }
@@ -393,6 +467,31 @@ export function evaluateSmartInput(input: string, options: SmartInputOptions = {
       .filter(Boolean);
     if (options.length < 2) return null;
     return { kind: 'choose', pick: options[randomInt(random, 0, options.length - 1)], options };
+  }
+
+  for (const re of WEEKDAY_OF) {
+    const m = re.exec(q);
+    if (!m) continue;
+    const key = `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`;
+    return parseDayKey(key) ? { kind: 'weekday', date: key } : null;
+  }
+
+  for (const p of DATE_ADD) {
+    const m = p.re.exec(q);
+    if (!m) continue;
+    if (p.accept && !p.accept(m)) return null;
+    const amount = parseInt(m[p.amount], 10);
+    if (!Number.isSafeInteger(amount) || amount === 0) return null;
+    const target = addToDate(now, amount * p.sign(m), p.unit(m));
+    return { kind: 'dateadd', date: toDayKey(target), days: daysBetween(now, target) };
+  }
+
+  for (const re of TIME_IN) {
+    const m = re.exec(q);
+    if (!m) continue;
+    const zone = findCityTimeZone(m[1]);
+    if (!zone) continue;
+    return { kind: 'time', city: zone.city, timeZone: zone.timeZone, ...formatInTimeZone(now, zone.timeZone) };
   }
 
   const untilJa = DAYS_UNTIL_JA.exec(q);
@@ -457,6 +556,9 @@ export const SMART_INPUT_EXAMPLES: { kind: SmartResult['kind']; inputs: string[]
   { kind: 'random', inputs: ['random', 'random 1-100'] },
   { kind: 'choose', inputs: ['choose tea, coffee, water'] },
   { kind: 'days', inputs: ['days until 2026-12-31'] },
+  { kind: 'dateadd', inputs: ['in 30 days', '2 weeks ago'] },
+  { kind: 'weekday', inputs: ['what day is 2026-12-25'] },
+  { kind: 'time', inputs: ['time in London', 'Tokyo time'] },
 ];
 
 /** True when the user asked for the cheat sheet itself. */

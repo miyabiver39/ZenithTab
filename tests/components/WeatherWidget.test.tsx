@@ -124,6 +124,41 @@ describe('WeatherWidget', () => {
     await waitFor(() => expect(screen.getByText(/Could not determine your location/)).toBeInTheDocument());
   });
 
+  it('既定の都市のままなら現在地の提案を一度だけ出し、「あとで」で以後出さないこと', async () => {
+    const user = setupUser();
+    vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);
+    const widgetConfig = () => useDashboardStore.getState().widgets.find((x) => x.id === 'widget-weather-1')!.config;
+
+    const { rerender } = render(<WeatherWidget widgetId="widget-weather-1" config={config} />);
+    await waitFor(() => screen.getByText('Slight rain'));
+    expect(screen.getByRole('note')).toHaveTextContent('Show the weather where you are?');
+
+    await user.click(screen.getByRole('button', { name: 'Not now' }));
+    expect(widgetConfig().locationPrompted).toBe(true);
+    rerender(<WeatherWidget widgetId="widget-weather-1" config={widgetConfig() as any} />);
+    expect(screen.queryByRole('note')).not.toBeInTheDocument();
+  });
+
+  it('提案の「現在地を使う」は検出して保存し、ユーザーが選んだ座標では提案しないこと', async () => {
+    const user = setupUser();
+    vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);
+    vi.spyOn(weatherService, 'detectUserLocation').mockResolvedValue({ latitude: 34.69, longitude: 135.5, city: 'Osaka' });
+
+    const { unmount } = render(<WeatherWidget widgetId="widget-weather-1" config={config} />);
+    await waitFor(() => screen.getByText('Slight rain'));
+    await user.click(screen.getByRole('button', { name: 'Use my location' }));
+    await waitFor(() => {
+      const w = useDashboardStore.getState().widgets.find((x) => x.id === 'widget-weather-1')!;
+      expect(w.config).toMatchObject({ city: 'Osaka', latitude: 34.69, locationPrompted: true });
+    });
+
+    unmount();
+    // Custom coordinates (not a regional default) → no offer even without the flag.
+    render(<WeatherWidget widgetId="widget-weather-1" config={{ ...config, latitude: 35.8712, longitude: 139.7461 }} />);
+    await waitFor(() => screen.getByText('Slight rain'));
+    expect(screen.queryByRole('note')).not.toBeInTheDocument();
+  });
+
   it('更新ボタンで再取得すること', async () => {
     const user = setupUser();
     const fetchSpy = vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);

@@ -86,6 +86,18 @@ export const calendarService = {
     return /\.ics(\?|#|$)|\/ical\/|ical|\/dav\//i.test(url);
   },
 
+  /** Whatever the cache holds for the feed, however old; never fetches. Empty when nothing is cached. */
+  async readCached(url: string): Promise<ICalEvent[]> {
+    const cacheStore = (await storageGet<Record<string, CalendarCacheEntry>>(CALENDAR_CACHE_KEY, {})) || {};
+    const cached = cacheStore[url];
+    if (!cached) return [];
+    try {
+      return parseIcal(cached.text);
+    } catch {
+      return [];
+    }
+  },
+
   async fetchCalendar(url: string, bypassCache = false): Promise<ICalEvent[]> {
     const cacheStore = (await storageGet<Record<string, CalendarCacheEntry>>(CALENDAR_CACHE_KEY, {})) || {};
     const cached = cacheStore[url];

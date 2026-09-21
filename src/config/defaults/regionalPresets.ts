@@ -73,3 +73,9 @@ export function getRegionalShortcuts(lang?: string): ShortcutItem[] {
 export function getRegionalWeatherDefault(lang?: string): RegionalPreset['weather'] {
   return clone(PRESETS[resolvePresetLanguage(lang)].weather);
 }
+
+/** True when the coordinates are one of the regional defaults, i.e. the user never picked a place. */
+export function isRegionalWeatherDefault(latitude?: number, longitude?: number): boolean {
+  if (latitude === undefined || longitude === undefined) return true;
+  return Object.values(PRESETS).some((p) => p.weather.latitude === latitude && p.weather.longitude === longitude);
+}

@@ -7,6 +7,7 @@ import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 import { getIntlLocale } from '../../../utils/date';
 import { getWeatherConditionLabel } from '../../../utils/weatherCondition';
+import { isRegionalWeatherDefault } from '../../../config/defaults/regionalPresets';
 
 interface WeatherWidgetProps {
   widgetId?: string;
@@ -21,6 +22,11 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
 
+  // Offered once to a widget still on its regional default city: most
+  // people never open the settings, so the widget asks instead. Either
+  // answer is remembered so it never nags.
+  const showLocationOffer = !!widgetId && !config.locationPrompted && isRegionalWeatherDefault(latitude, longitude);
+
   const handleDetectLocation = async () => {
     setIsLocating(true);
     setLocationError(null);
@@ -31,20 +37,26 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
           city: location.city,
           latitude: location.latitude,
           longitude: location.longitude,
+          locationPrompted: true,
         });
       }
       refresh();
     } catch (err) {
       const reason = err instanceof GeolocationFailure ? err.reason : 'unavailable';
       setLocationError(reason === 'denied' ? t.widgets.weather.locationDenied : t.widgets.weather.locationFailed);
+      if (widgetId) updateWidgetConfig(widgetId, { locationPrompted: true });
     } finally {
       setIsLocating(false);
     }
   };
 
+  const declineLocationOffer = () => {
+    if (widgetId) updateWidgetConfig(widgetId, { locationPrompted: true });
+  };
+
   // WMO 4677 weather codes as Open-Meteo emits them. Grouped by the code
   // table rather than by loose ranges: 80-82 are rain *showers*, which used
-  // to fall into the snow bucket and put a snowflake on a 24‹C day.
+  // to fall into the snow bucket and put a snowflake on a 24Â°C day.
   const getWeatherIcon = (code: number, isDay = true, size = 28) => {
     if (code === 0) {
       return isDay ? <Sun size={size} className="text-amber-400 animate-pulse-subtle" /> : <CloudMoon size={size} className="text-slate-300" />;
@@ -156,6 +168,34 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
           </div>
         )}
       </div>
+
+      {showLocationOffer && !isLocating && (
+        <div
+          role="note"
+          className="flex items-center justify-between gap-2 mt-2 px-2.5 py-1.5 rounded-lg bg-sky-500/10 border border-sky-400/20 text-[11px] text-slate-200"
+        >
+          <span className="flex items-center gap-1.5 min-w-0">
+            <MapPin size={11} className="text-sky-300 flex-shrink-0" />
+            <span className="truncate">{t.widgets.weather.offerLocation}</span>
+          </span>
+          <span className="flex items-center gap-1 flex-shrink-0">
+            <button
+              type="button"
+              onClick={handleDetectLocation}
+              className="px-2 py-0.5 rounded-md bg-sky-500/30 hover:bg-sky-500/50 text-white font-medium transition-colors"
+            >
+              {t.widgets.weather.offerUse}
+            </button>
+            <button
+              type="button"
+              onClick={declineLocationOffer}
+              className="px-2 py-0.5 rounded-md text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              {t.widgets.weather.offerLater}
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* Forecast Section */}
       {showForecast && weather?.forecast && weather.forecast.length > 0 && (

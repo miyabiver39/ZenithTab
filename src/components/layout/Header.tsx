@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { LayoutGrid, Plus, RefreshCw, Settings, Check, Layers } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { Button } from '../common/Button';
 import { AddPageMenu } from './AddPageMenu';
 import { useTranslation } from '../../i18n/i18n';
+import { useTodaySummary } from '../../hooks/useTodaySummary';
+import { isEmptySummary } from '../../utils/todaySummary';
 
 export const Header: React.FC = () => {
   const isEditMode = useDashboardStore((s) => s.isEditMode);
@@ -15,6 +17,21 @@ export const Header: React.FC = () => {
 
   const { t } = useTranslation();
   const [greeting, setGreeting] = useState('');
+  const summary = useTodaySummary();
+
+  // "2 events · 3 open tasks · 5 days to Trip" — replaces the static
+  // "Dashboard" caption whenever there is something to say.
+  const todayLine = useMemo(() => {
+    if (isEmptySummary(summary)) return null;
+    const parts: string[] = [];
+    if (summary.events) parts.push(t.today.events.replace('{n}', String(summary.events)));
+    if (summary.openTasks) parts.push(t.today.tasks.replace('{n}', String(summary.openTasks)));
+    if (summary.nextCountdown) {
+      const { name, days } = summary.nextCountdown;
+      parts.push(days === 0 ? t.today.countdownToday.replace('{name}', name) : t.today.countdown.replace('{name}', name).replace('{n}', String(days)));
+    }
+    return parts.join(' · ');
+  }, [summary, t]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -50,9 +67,15 @@ export const Header: React.FC = () => {
               • {greeting}
             </span>
           </div>
-          <p className="text-[10px] text-on-wallpaper-muted font-medium tracking-wider uppercase">
-            {t.common.dashboard}
-          </p>
+          {todayLine ? (
+            <p className="text-[11px] text-on-wallpaper-muted font-medium truncate max-w-[60vw]" data-testid="today-summary" title={todayLine}>
+              {todayLine}
+            </p>
+          ) : (
+            <p className="text-[10px] text-on-wallpaper-muted font-medium tracking-wider uppercase">
+              {t.common.dashboard}
+            </p>
+          )}
         </div>
       </div>
 
