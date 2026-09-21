@@ -45,6 +45,9 @@ const rows = (list: Row[]): CatalogSite[] =>
     ...(dockLabel ? { dockLabel } : {}),
   }));
 
+/** Stable category keys behind the localized labels (used by the first-run setup's interest mapping). */
+export type SiteCategoryKey = 'daily' | 'social' | 'video' | 'shop' | 'ai' | 'news' | 'travel' | 'money' | 'learn' | 'work';
+
 // Category labels per language, so every entry of a region uses the same
 // spelling (the picker groups by exact string).
 const EN = { daily: 'Everyday', social: 'Social', video: 'Entertainment', shop: 'Shopping', ai: 'AI & Tools', news: 'News', travel: 'Travel & Local', money: 'Finance', learn: 'Learning', work: 'Work' };
@@ -54,6 +57,16 @@ const ZH = { daily: '日常', social: '社交·视频', video: '娱乐', shop: '
 const ES = { daily: 'Día a día', social: 'Redes y vídeo', video: 'Entretenimiento', shop: 'Compras', ai: 'IA y herramientas', news: 'Noticias', travel: 'Viajes y transporte', money: 'Finanzas', learn: 'Aprender', work: 'Trabajo' };
 const FR = { daily: 'Quotidien', social: 'Réseaux et vidéo', video: 'Divertissement', shop: 'Shopping', ai: 'IA et outils', news: 'Actualités', travel: 'Voyages et transports', money: 'Finances', learn: 'Apprendre', work: 'Travail' };
 const DE = { daily: 'Alltag', social: 'Social & Video', video: 'Unterhaltung', shop: 'Shopping', ai: 'KI & Tools', news: 'Nachrichten', travel: 'Reisen & Verkehr', money: 'Finanzen', learn: 'Lernen', work: 'Arbeit' };
+
+export const SITE_CATEGORY_LABELS: Record<PresetLanguage, Record<SiteCategoryKey, string>> = {
+  en: EN,
+  ja: JA,
+  ko: KO,
+  'zh-CN': ZH,
+  es: ES,
+  fr: FR,
+  de: DE,
+};
 
 const SITES: Record<PresetLanguage, CatalogSite[]> = {
   en: rows([

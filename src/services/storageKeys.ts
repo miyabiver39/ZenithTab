@@ -23,6 +23,8 @@ export const STORAGE_KEYS = {
    */
   SNAPSHOTS: 'dashboard_snapshots',
   BACKUP_SETTINGS: 'dashboard_backup_settings',
+  /** First-run setup progress and the first-run hint counter (services/onboardingService.ts). */
+  ONBOARDING: 'dashboard_onboarding',
   /** Schema generation of everything above; see services/migrations.ts. */
   SCHEMA_VERSION: 'schema_version',
 } as const;

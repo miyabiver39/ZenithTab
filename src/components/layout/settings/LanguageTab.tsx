@@ -1,4 +1,6 @@
 import React from 'react';
+import { Sparkles } from 'lucide-react';
+import { Button } from '../../common/Button';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation, SupportedLanguage } from '../../../i18n/i18n';
 
@@ -6,6 +8,8 @@ import { useTranslation, SupportedLanguage } from '../../../i18n/i18n';
 export const LanguageTab: React.FC = () => {
   const appearance = useDashboardStore((s) => s.appearance);
   const updateAppearance = useDashboardStore((s) => s.updateAppearance);
+  const setOnboardingOpen = useDashboardStore((s) => s.setOnboardingOpen);
+  const closeSettingsModal = useDashboardStore((s) => s.closeSettingsModal);
   const { t } = useTranslation();
 
   const languageOptions: Array<{ code: SupportedLanguage; label: string; nativeName: string }> = [
@@ -47,6 +51,25 @@ export const LanguageTab: React.FC = () => {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* The first-run wizard, on demand. It replaces the dashboard, so it
+          snapshots first and says so. */}
+      <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-2">
+        <h4 className="text-xs font-semibold text-white">{t.setup.again}</h4>
+        <p className="text-xs text-slate-400">{t.setup.againDesc}</p>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            closeSettingsModal();
+            setOnboardingOpen(true);
+          }}
+          className="gap-2 mt-2"
+        >
+          <Sparkles size={14} />
+          <span>{t.setup.againBtn}</span>
+        </Button>
       </div>
     </div>
   );

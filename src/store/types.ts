@@ -3,6 +3,7 @@ import { StateCreator } from 'zustand';
 import { DashboardWidget, ResponsiveLayouts, WidgetType, DashboardPageMeta, DashboardPageData, TrashEntry } from '../types/widget';
 import { WallpaperSettings, AppearanceSettings, DockItem, KeyboardShortcutBinding } from '../types/settings';
 import type { BackupSettings, SnapshotMeta } from '../services/snapshotService';
+import type { SetupChoices } from '../config/setup/applySetup';
 
 /**
  * The dashboard store, split by domain. Components see the union
@@ -16,8 +17,14 @@ export interface UiSlice {
   isAppDrawerOpen: boolean;
   activeSettingsModal: 'settings' | 'addWidget' | 'editWidget' | null;
   editingWidgetId: string | null;
+  /** The first-run setup wizard (also reopened from Settings > Language). */
+  isOnboardingOpen: boolean;
+  /** One-line newcomer hint under the header, for the first few new tabs after setup. */
+  showFirstRunHint: boolean;
 
   setEditMode: (isEditMode: boolean) => void;
+  setOnboardingOpen: (open: boolean) => void;
+  dismissFirstRunHint: () => void;
   toggleAppDrawer: (open?: boolean) => void;
   openSettingsModal: (type: 'settings' | 'addWidget' | 'editWidget', widgetId?: string) => void;
   closeSettingsModal: () => void;
@@ -112,6 +119,14 @@ export interface PersistenceSlice {
   syncFromStorage: () => Promise<void>;
 
   resetToDefault: () => Promise<void>;
+  /**
+   * Replaces the dashboard with what the setup wizard chose (language,
+   * template, interests). Snapshots the current state first when there is
+   * one, so "set up again" is reversible from Settings > Backup.
+   */
+  applySetup: (choices: SetupChoices, language: AppearanceSettings['language']) => Promise<void>;
+  /** Wizard closed without applying: remembers that so it doesn't come back. */
+  skipSetup: () => Promise<void>;
   importConfig: (jsonData: string) => Promise<boolean>;
   exportConfig: () => Promise<string>;
 }

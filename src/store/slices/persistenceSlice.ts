@@ -14,6 +14,8 @@ import { getTranslation, resolveLanguageCode } from '../../i18n/resolve';
 import { sanitizeResponsiveLayouts } from '../../utils/layout';
 import { pruneTrash } from '../../services/trashService';
 import { snapshotService, snapshotDataFromState, DEFAULT_BACKUP_SETTINGS } from '../../services/snapshotService';
+import { onboardingService } from '../../services/onboardingService';
+import { buildSetupResult } from '../../config/setup/applySetup';
 import { useUndoStore } from '../useUndoStore';
 import { createStoreHelpers, EMPTY_LAYOUTS, withTimeout, localizedDefaults } from './helpers';
 import type { DashboardSliceCreator, DashboardState, PersistenceSlice } from '../types';
@@ -47,6 +49,10 @@ export const createPersistenceSlice: DashboardSliceCreator<PersistenceSlice> = (
         // news feed read naturally instead of defaulting to English.
         const appearance = await withTimeout(storageService.getAppearance(), 5000, DEFAULT_APPEARANCE);
         const defaults = localizedDefaults(appearance.language);
+        // Decided before anything is written: a fresh install (no user
+        // data at all) gets the setup wizard; everyone else at most the
+        // newcomer hint. Never blocks start-up.
+        const onboarding = await withTimeout(onboardingService.evaluateStartup(), 3000, { showSetup: false, showHint: false });
 
         const [{ pages, activePageId, pageData }, wallpaper, dockItems, keyboardShortcuts, storedTrash, backupSettings] =
           await Promise.all([
@@ -94,6 +100,8 @@ export const createPersistenceSlice: DashboardSliceCreator<PersistenceSlice> = (
           keyboardShortcuts,
           trash,
           backupSettings,
+          isOnboardingOpen: onboarding.showSetup,
+          showFirstRunHint: onboarding.showHint,
           isInitialized: true,
         });
       } catch (err) {
@@ -173,6 +181,53 @@ export const createPersistenceSlice: DashboardSliceCreator<PersistenceSlice> = (
         editingWidgetId: null,
       });
       useUndoStore.getState().clear();
+    },
+
+    applySetup: async (choices, language) => {
+      if (await onboardingService.hasUserData()) {
+        await snapshotService.take('before-reset', snapshotDataFromState(get()));
+      }
+      const appearance = { ...get().appearance, language };
+      const lang = resolveLanguageCode(language);
+      const { page, dockItems } = buildSetupResult(choices, getTranslation(language), lang);
+
+      // Wallpaper and keyboard shortcuts are left alone: the wizard is about
+      // content and language, not looks.
+      await Promise.all([
+        storageService.saveAppearance(appearance),
+        storageService.savePages(DEFAULT_PAGES),
+        storageService.savePageData({ [DEFAULT_PAGE_ID]: page }),
+        storageService.saveActivePageId(DEFAULT_PAGE_ID),
+        storageService.saveWidgets(page.widgets),
+        storageService.saveLayouts(page.layouts),
+        storageService.saveDockItems(dockItems),
+      ]);
+      await onboardingService.markCompleted();
+
+      set({
+        pages: DEFAULT_PAGES,
+        activePageId: DEFAULT_PAGE_ID,
+        pageData: { [DEFAULT_PAGE_ID]: page },
+        widgets: page.widgets,
+        layouts: page.layouts,
+        appearance,
+        dockItems,
+        isEditMode: false,
+        activeSettingsModal: null,
+        editingWidgetId: null,
+        isOnboardingOpen: false,
+        showFirstRunHint: true,
+      });
+      useUndoStore.getState().clear();
+    },
+
+    skipSetup: async () => {
+      set({ isOnboardingOpen: false });
+      const state = await onboardingService.get();
+      if (!state.completedAt) {
+        await onboardingService.markCompleted();
+        set({ showFirstRunHint: true });
+      }
     },
 
     importConfig: async (jsonData) => {

@@ -1,3 +1,4 @@
+import { onboardingService } from '../../services/onboardingService';
 import type { DashboardSliceCreator, UiSlice } from '../types';
 
 export const createUiSlice: DashboardSliceCreator<UiSlice> = (set) => ({
@@ -5,6 +6,15 @@ export const createUiSlice: DashboardSliceCreator<UiSlice> = (set) => ({
   isAppDrawerOpen: false,
   activeSettingsModal: null,
   editingWidgetId: null,
+  isOnboardingOpen: false,
+  showFirstRunHint: false,
+
+  setOnboardingOpen: (open) => set({ isOnboardingOpen: open }),
+
+  dismissFirstRunHint: () => {
+    set({ showFirstRunHint: false });
+    void onboardingService.dismissHint();
+  },
 
     toggleAppDrawer: (open) =>
       set((state) => ({ isAppDrawerOpen: open !== undefined ? open : !state.isAppDrawerOpen })),

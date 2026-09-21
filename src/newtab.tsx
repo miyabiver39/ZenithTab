@@ -13,6 +13,8 @@ const SettingsPanel = lazy(() => import('./components/layout/SettingsPanel').the
 const AddWidgetModal = lazy(() => import('./components/layout/AddWidgetModal').then((m) => ({ default: m.AddWidgetModal })));
 const WidgetConfigModal = lazy(() => import('./components/layout/WidgetConfigModal').then((m) => ({ default: m.WidgetConfigModal })));
 const AppDrawerModal = lazy(() => import('./components/layout/AppDrawerModal').then((m) => ({ default: m.AppDrawerModal })));
+const OnboardingModal = lazy(() => import('./components/layout/OnboardingModal').then((m) => ({ default: m.OnboardingModal })));
+import { FirstRunHint } from './components/layout/FirstRunHint';
 import { UndoToast } from './components/common/UndoToast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useGlobalKeyboardShortcuts } from './hooks/useGlobalKeyboardShortcuts';
@@ -26,6 +28,7 @@ export const App: React.FC = () => {
   const appearance = useDashboardStore((s) => s.appearance);
   const activeSettingsModal = useDashboardStore((s) => s.activeSettingsModal);
   const isAppDrawerOpen = useDashboardStore((s) => s.isAppDrawerOpen);
+  const isOnboardingOpen = useDashboardStore((s) => s.isOnboardingOpen);
 
   useEffect(() => {
     initialize();
@@ -50,6 +53,7 @@ export const App: React.FC = () => {
     <div className={`min-h-screen flex flex-col relative ${appearance.theme === 'light' ? 'theme-light' : 'dark'}`}>
       <WallpaperBackground />
       <Header />
+      <FirstRunHint />
       <PageSwitcher />
       <main className="flex-1 flex flex-col">
         <GridContainer />
@@ -62,6 +66,7 @@ export const App: React.FC = () => {
         {activeSettingsModal === 'addWidget' && <AddWidgetModal />}
         {activeSettingsModal === 'editWidget' && <WidgetConfigModal />}
         {isAppDrawerOpen && <AppDrawerModal />}
+        {isOnboardingOpen && <OnboardingModal />}
       </Suspense>
       <UndoToast />
     </div>
