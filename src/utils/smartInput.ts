@@ -358,7 +358,7 @@ const TIME_IN: RegExp[] = [
 // "in 30 days" / "2 weeks ago" / 「30日後」 / "dans 3 semaines" … Each entry
 // says which capture holds the amount so the languages can differ in
 // word order.
-type DateUnit = 'day' | 'week' | 'month' | 'year';
+export type DateUnit = 'day' | 'week' | 'month' | 'year';
 interface DateAddPattern {
   re: RegExp;
   amount: number;
@@ -399,13 +399,23 @@ const WEEKDAY_OF: RegExp[] = [
   new RegExp(`^(?:día de la semana|dia de la semana|jour de la semaine|wochentag)\\s+(?:de |del |du |vom |von )?${DATE_PART}\\s*[?？]?$`, 'i'),
 ];
 
-function addToDate(from: Date, amount: number, unit: DateUnit): Date {
-  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
-  if (unit === 'day') d.setDate(d.getDate() + amount);
-  else if (unit === 'week') d.setDate(d.getDate() + amount * 7);
-  else if (unit === 'month') d.setMonth(d.getMonth() + amount);
-  else d.setFullYear(d.getFullYear() + amount);
-  return d;
+/**
+ * Calendar arithmetic the way people mean it: "1 month after 31 March"
+ * is 30 April, not 1 May, and "1 year after 29 Feb" is 28 Feb. Month and
+ * year steps land on the same day-of-month, clamped to the target
+ * month's last day; day and week steps are plain.
+ */
+export function addToDate(from: Date, amount: number, unit: DateUnit): Date {
+  const y = from.getFullYear();
+  const m = from.getMonth();
+  const day = from.getDate();
+  if (unit === 'day') return new Date(y, m, day + amount);
+  if (unit === 'week') return new Date(y, m, day + amount * 7);
+  const targetMonth = unit === 'month' ? m + amount : m;
+  const targetYear = unit === 'year' ? y + amount : y;
+  // Day 0 of the following month = last day of the target month.
+  const lastDay = new Date(targetYear, targetMonth + 1, 0).getDate();
+  return new Date(targetYear, targetMonth, Math.min(day, lastDay));
 }
 
 function parseNumber(raw: string): number {

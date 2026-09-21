@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { evaluateSmartInput } from '../../../src/utils/smartInput';
+import { evaluateSmartInput, addToDate } from '../../../src/utils/smartInput';
 import { findCityTimeZone, formatInTimeZone } from '../../../src/utils/worldClock';
 import { describe as describeResult } from '../../../src/components/widgets/SearchWidget/SmartResultCard';
 import { en } from '../../../src/i18n/locales/en';
@@ -24,6 +24,23 @@ describe('smart input: dates and world time', () => {
     expect(evalAt('dans 3 semaines')).toMatchObject({ date: '2026-10-11' });
     expect(evalAt('vor 2 Wochen')).toMatchObject({ date: '2026-09-06' });
     expect(evalAt('in 1 Monat')).toMatchObject({ date: '2026-10-20' });
+  });
+
+  it('月・年の加算は月末に丸め、翌月へ繰り越さないこと', () => {
+    const key = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    expect(key(addToDate(new Date(2026, 2, 31), 1, 'month'))).toBe('2026-04-30');
+    expect(key(addToDate(new Date(2026, 0, 31), 1, 'month'))).toBe('2026-02-28');
+    expect(key(addToDate(new Date(2024, 0, 31), 1, 'month'))).toBe('2024-02-29');
+    expect(key(addToDate(new Date(2026, 2, 31), -1, 'month'))).toBe('2026-02-28');
+    expect(key(addToDate(new Date(2026, 9, 31), 13, 'month'))).toBe('2027-11-30');
+    expect(key(addToDate(new Date(2024, 1, 29), 1, 'year'))).toBe('2025-02-28');
+    expect(key(addToDate(new Date(2024, 1, 29), 4, 'year'))).toBe('2028-02-29');
+    // Day / week steps still roll over normally.
+    expect(key(addToDate(new Date(2026, 0, 31), 1, 'day'))).toBe('2026-02-01');
+    expect(key(addToDate(new Date(2026, 11, 25), 1, 'week'))).toBe('2027-01-01');
+
+    expect(evaluateSmartInput('1ヶ月後', { now: new Date(2026, 2, 31) })).toMatchObject({ kind: 'dateadd', date: '2026-04-30', days: 30 });
+    expect(evaluateSmartInput('1 year later', { now: new Date(2024, 1, 29) })).toMatchObject({ date: '2025-02-28' });
   });
 
   it('英語の「30 days」だけ(in / ago なし)は検索として扱うこと', () => {
