@@ -458,9 +458,23 @@ export const zh: typeof en = {
     addEmptySub: '从零开始搭建',
     duplicateCurrent: '复制当前页面',
     duplicateCurrentSub: '复制当前页面上的所有小部件',
+    addFromTemplate: '从模板创建',
+    addFromTemplateSub: '工作、学习、新闻或极简,即开即用',
     emptyTitle: '此页面为空',
     emptyDesc: '没有任何内容被删除——其他页面仍在上方的标签中。在这里添加小部件，或返回。',
     backTo: '返回 {name}',
+  },
+  templates: {
+    title: '选择模板',
+    use: '使用此模板',
+    includes: '包含的小组件',
+    items: {
+      standard: { name: '标准', desc: '搜索、时钟、天气、新闻、任务和笔记——默认仪表盘。' },
+      work: { name: '工作', desc: '日历、任务、笔记、专注计时器和快捷方式集中在一处。' },
+      study: { name: '学习', desc: '专注计时器、任务、习惯、笔记,以及考试倒计时。' },
+      news: { name: '新闻', desc: '头条新闻加上科技、商业板块,旁边是天气。' },
+      minimal: { name: '极简', desc: '只有时钟、搜索栏和快捷方式。' },
+    },
   },
   undo: {
     undoBtn: '撤销',

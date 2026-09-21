@@ -456,9 +456,23 @@ export const ja = {
     addEmptySub: 'ゼロから組み立てる',
     duplicateCurrent: 'このページを複製',
     duplicateCurrentSub: '今のページのウィジェットをすべてコピー',
+    addFromTemplate: 'テンプレートから',
+    addFromTemplateSub: '仕事・学習・ニュース・ミニマルをすぐ使える形で',
     emptyTitle: 'このページは空です',
     emptyDesc: '何も消えていません。元のウィジェットは上のタブの別ページにあります。ここにウィジェットを追加するか、戻れます。',
     backTo: '{name} に戻る',
+  },
+  templates: {
+    title: 'テンプレートを選ぶ',
+    use: 'このテンプレートを使う',
+    includes: '含まれるウィジェット',
+    items: {
+      standard: { name: '標準', desc: '検索・時計・天気・ニュース・タスク・メモ。初期状態のダッシュボードです。' },
+      work: { name: '仕事', desc: 'カレンダー・タスク・メモ・集中タイマー・ショートカットを 1 画面に。' },
+      study: { name: '学習', desc: '集中タイマー・タスク・習慣・メモと、試験日までのカウントダウン。' },
+      news: { name: 'ニュース', desc: 'トップニュースにテクノロジー・ビジネスのセクションと天気を添えて。' },
+      minimal: { name: 'ミニマル', desc: '時計と検索バー、ショートカットだけ。' },
+    },
   },
   undo: {
     undoBtn: '元に戻す',

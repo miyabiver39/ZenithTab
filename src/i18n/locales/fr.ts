@@ -458,9 +458,23 @@ export const fr: typeof en = {
     addEmptySub: 'Partir de zéro',
     duplicateCurrent: 'Dupliquer cette page',
     duplicateCurrentSub: 'Copier tous les widgets de la page actuelle',
+    addFromTemplate: 'À partir d\'un modèle',
+    addFromTemplateSub: 'Travail, études, actualités ou minimal, prêts à l\'emploi',
     emptyTitle: 'Cette page est vide',
     emptyDesc: 'Rien n\'a été supprimé : vos autres pages sont toujours dans les onglets ci-dessus. Ajoutez des widgets ici, ou revenez en arrière.',
     backTo: 'Revenir à {name}',
+  },
+  templates: {
+    title: 'Choisir un modèle',
+    use: 'Utiliser ce modèle',
+    includes: 'Widgets inclus',
+    items: {
+      standard: { name: 'Standard', desc: 'Recherche, horloge, météo, actualités, tâches et notes : le tableau de bord par défaut.' },
+      work: { name: 'Travail', desc: 'Calendrier, tâches, notes, minuteur de concentration et vos raccourcis au même endroit.' },
+      study: { name: 'Études', desc: 'Minuteur, tâches, habitudes, notes et un compte à rebours jusqu\'à l\'examen.' },
+      news: { name: 'Actualités', desc: 'À la une, plus les rubriques technologie et économie à côté de la météo.' },
+      minimal: { name: 'Minimal', desc: 'Juste une horloge, la barre de recherche et vos raccourcis.' },
+    },
   },
   undo: {
     undoBtn: 'Annuler',

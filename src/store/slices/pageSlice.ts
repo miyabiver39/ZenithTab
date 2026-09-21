@@ -43,9 +43,13 @@ export const createPageSlice: DashboardSliceCreator<PageSlice> = (set, get) => {
       const newPageMeta: DashboardPageMeta = { id: newId, name: options?.name?.trim() || '' };
       const newPages = [...pages, newPageMeta];
 
-      const newPage: DashboardPageData = options?.duplicateCurrent
-        ? cloneWidgetsWithNewIds(widgets, layouts)
-        : { widgets: [], layouts: EMPTY_LAYOUTS };
+      // A template (config/templates/pageTemplates.ts) arrives with fresh
+      // ids already, so it is stored as-is.
+      const newPage: DashboardPageData = options?.template
+        ? options.template
+        : options?.duplicateCurrent
+          ? cloneWidgetsWithNewIds(widgets, layouts)
+          : { widgets: [], layouts: EMPTY_LAYOUTS };
 
       const updatedPageData = {
         ...pageData,

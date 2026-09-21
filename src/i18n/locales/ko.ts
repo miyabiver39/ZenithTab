@@ -458,9 +458,23 @@ export const ko: typeof en = {
     addEmptySub: '처음부터 구성하기',
     duplicateCurrent: '이 페이지 복제',
     duplicateCurrentSub: '현재 페이지의 모든 위젯을 복사',
+    addFromTemplate: '템플릿에서 만들기',
+    addFromTemplateSub: '업무·학습·뉴스·미니멀을 바로 쓸 수 있는 형태로',
     emptyTitle: '이 페이지는 비어 있어요',
     emptyDesc: '아무것도 삭제되지 않았어요. 다른 페이지는 위 탭에 그대로 있습니다. 여기에 위젯을 추가하거나 돌아갈 수 있어요.',
     backTo: '{name}(으)로 돌아가기',
+  },
+  templates: {
+    title: '템플릿 선택',
+    use: '이 템플릿 사용',
+    includes: '포함된 위젯',
+    items: {
+      standard: { name: '표준', desc: '검색, 시계, 날씨, 뉴스, 작업, 메모 — 기본 대시보드입니다.' },
+      work: { name: '업무', desc: '캘린더, 작업, 메모, 집중 타이머, 바로가기를 한 화면에.' },
+      study: { name: '학습', desc: '집중 타이머, 작업, 습관, 메모와 시험일까지의 카운트다운.' },
+      news: { name: '뉴스', desc: '주요 뉴스에 기술·비즈니스 섹션과 날씨를 함께.' },
+      minimal: { name: '미니멀', desc: '시계와 검색창, 바로가기만.' },
+    },
   },
   undo: {
     undoBtn: '실행 취소',

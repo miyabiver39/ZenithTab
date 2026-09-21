@@ -458,9 +458,23 @@ export const es: typeof en = {
     addEmptySub: 'Empezar desde cero',
     duplicateCurrent: 'Duplicar esta página',
     duplicateCurrentSub: 'Copiar todos los widgets de la página actual',
+    addFromTemplate: 'Desde una plantilla',
+    addFromTemplateSub: 'Trabajo, estudio, noticias o minimalista, listas para usar',
     emptyTitle: 'Esta página está vacía',
     emptyDesc: 'No se ha borrado nada: tus otras páginas siguen en las pestañas de arriba. Añade widgets aquí o vuelve atrás.',
     backTo: 'Volver a {name}',
+  },
+  templates: {
+    title: 'Elige una plantilla',
+    use: 'Usar esta plantilla',
+    includes: 'Widgets incluidos',
+    items: {
+      standard: { name: 'Estándar', desc: 'Búsqueda, reloj, tiempo, noticias, tareas y notas: el panel por defecto.' },
+      work: { name: 'Trabajo', desc: 'Calendario, tareas, notas, temporizador de concentración y tus accesos directos.' },
+      study: { name: 'Estudio', desc: 'Temporizador, tareas, hábitos, notas y una cuenta atrás hasta el examen.' },
+      news: { name: 'Noticias', desc: 'Titulares más las secciones de tecnología y negocios junto al tiempo.' },
+      minimal: { name: 'Minimalista', desc: 'Solo un reloj, la barra de búsqueda y tus accesos directos.' },
+    },
   },
   undo: {
     undoBtn: 'Deshacer',

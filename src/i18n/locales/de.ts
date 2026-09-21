@@ -458,9 +458,23 @@ export const de: typeof en = {
     addEmptySub: 'Von vorn beginnen',
     duplicateCurrent: 'Diese Seite duplizieren',
     duplicateCurrentSub: 'Alle Widgets der aktuellen Seite kopieren',
+    addFromTemplate: 'Aus einer Vorlage',
+    addFromTemplateSub: 'Arbeit, Lernen, Nachrichten oder Minimal – sofort einsatzbereit',
     emptyTitle: 'Diese Seite ist leer',
     emptyDesc: 'Es wurde nichts gelöscht – deine anderen Seiten sind weiterhin in den Tabs oben. Füge hier Widgets hinzu oder geh zurück.',
     backTo: 'Zurück zu {name}',
+  },
+  templates: {
+    title: 'Vorlage wählen',
+    use: 'Diese Vorlage verwenden',
+    includes: 'Enthaltene Widgets',
+    items: {
+      standard: { name: 'Standard', desc: 'Suche, Uhr, Wetter, Nachrichten, Aufgaben und Notizen – das Standard-Dashboard.' },
+      work: { name: 'Arbeit', desc: 'Kalender, Aufgaben, Notizen, Fokus-Timer und deine Verknüpfungen an einem Ort.' },
+      study: { name: 'Lernen', desc: 'Fokus-Timer, Aufgaben, Gewohnheiten, Notizen und ein Countdown bis zur Prüfung.' },
+      news: { name: 'Nachrichten', desc: 'Schlagzeilen plus Technik- und Wirtschaftsrubriken neben dem Wetter.' },
+      minimal: { name: 'Minimal', desc: 'Nur eine Uhr, die Suchleiste und deine Verknüpfungen.' },
+    },
   },
   undo: {
     undoBtn: 'Rückgängig',

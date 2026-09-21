@@ -456,9 +456,23 @@ export const en = {
     addEmptySub: 'Start from scratch',
     duplicateCurrent: 'Duplicate this page',
     duplicateCurrentSub: 'Copy every widget on the current page',
+    addFromTemplate: 'From a template',
+    addFromTemplateSub: 'Work, study, news or minimal — ready to use',
     emptyTitle: 'This page is empty',
     emptyDesc: 'Nothing was deleted — your other pages are still in the tabs above. Add widgets here, or go back.',
     backTo: 'Back to {name}',
+  },
+  templates: {
+    title: 'Choose a template',
+    use: 'Use this template',
+    includes: 'Included widgets',
+    items: {
+      standard: { name: 'Standard', desc: 'Search, clock, weather, news, tasks and notes — the default dashboard.' },
+      work: { name: 'Work', desc: 'Calendar, tasks, notes, focus timer and your shortcuts in one place.' },
+      study: { name: 'Study', desc: 'Focus timer, tasks, habits, notes and a countdown to exam day.' },
+      news: { name: 'News', desc: 'Top stories plus technology and business sections next to the weather.' },
+      minimal: { name: 'Minimal', desc: 'Just a clock, the search bar and your shortcuts.' },
+    },
   },
   undo: {
     undoBtn: 'Undo',

@@ -103,6 +103,27 @@ describe('AddPageMenu', () => {
     expect(state().widgets).toHaveLength(0);
   });
 
+  it('テンプレートから選ぶと、その構成の新しいページが追加されること', async () => {
+    const user = setupUser();
+    render(
+      <AddPageMenu>
+        <button>open</button>
+      </AddPageMenu>
+    );
+    await user.click(screen.getByText('open'));
+    await user.click(screen.getByText('From a template'));
+    expect(screen.getByRole('dialog', { name: 'Choose a template' })).toBeInTheDocument();
+
+    await user.click(within(screen.getByTestId('template-card-work')).getByRole('button', { name: /Use this template/ }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(state().pages).toHaveLength(2);
+    expect(state().pages[1].name).toBe('Work');
+    expect(state().widgets.map((w) => w.type)).toEqual(['search', 'clock', 'weather', 'pomodoro', 'calendar', 'todo', 'notes', 'shortcuts']);
+    // Fresh ids: nothing shared with page 1.
+    const firstPageIds = new Set(state().pageData[state().pages[0].id].widgets.map((w) => w.id));
+    expect(state().widgets.every((w) => !firstPageIds.has(w.id))).toBe(true);
+  });
+
   it('右寄せでも画面内に収まる位置に出ること', async () => {
     const user = setupUser();
     render(

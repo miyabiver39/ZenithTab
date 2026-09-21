@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { FilePlus2, Copy } from 'lucide-react';
+import { FilePlus2, Copy, LayoutTemplate } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { useTranslation } from '../../i18n/i18n';
+import { PageTemplateModal } from './PageTemplateModal';
+import { buildTemplatePage, type PageTemplateId } from '../../config/templates/pageTemplates';
 
 interface AddPageMenuProps {
   /** The trigger; it receives the onClick that opens the menu. */
@@ -24,8 +26,9 @@ const MENU_WIDTH = 240;
  */
 export const AddPageMenu: React.FC<AddPageMenuProps> = ({ children, align = 'left' }) => {
   const addPage = useDashboardStore((s) => s.addPage);
-  const { t } = useTranslation();
+  const { t, activeLanguageCode } = useTranslation();
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const isOpen = position !== null;
@@ -66,9 +69,18 @@ export const AddPageMenu: React.FC<AddPageMenuProps> = ({ children, align = 'lef
     });
   };
 
-  const choose = (duplicateCurrent: boolean) => {
+  const choose = (mode: 'empty' | 'duplicate' | 'template') => {
     setPosition(null);
-    addPage({ duplicateCurrent });
+    if (mode === 'template') {
+      setTemplatesOpen(true);
+      return;
+    }
+    addPage({ duplicateCurrent: mode === 'duplicate' });
+  };
+
+  const pickTemplate = (id: PageTemplateId) => {
+    setTemplatesOpen(false);
+    addPage({ name: t.templates.items[id].name, template: buildTemplatePage(id, t, activeLanguageCode) });
   };
 
   const trigger = React.cloneElement(children, {
@@ -79,8 +91,9 @@ export const AddPageMenu: React.FC<AddPageMenuProps> = ({ children, align = 'lef
   });
 
   const options = [
-    { icon: FilePlus2, label: t.pages.addEmpty, sub: t.pages.addEmptySub, duplicate: false },
-    { icon: Copy, label: t.pages.duplicateCurrent, sub: t.pages.duplicateCurrentSub, duplicate: true },
+    { icon: FilePlus2, label: t.pages.addEmpty, sub: t.pages.addEmptySub, mode: 'empty' as const },
+    { icon: LayoutTemplate, label: t.pages.addFromTemplate, sub: t.pages.addFromTemplateSub, mode: 'template' as const },
+    { icon: Copy, label: t.pages.duplicateCurrent, sub: t.pages.duplicateCurrentSub, mode: 'duplicate' as const },
   ];
 
   return (
@@ -96,12 +109,12 @@ export const AddPageMenu: React.FC<AddPageMenuProps> = ({ children, align = 'lef
             style={{ position: 'fixed', top: position.top, left: position.left, width: MENU_WIDTH }}
             className="z-[9999] p-1.5 rounded-xl bg-slate-900/95 backdrop-blur-2xl border border-white/15 shadow-2xl animate-fade-in"
           >
-            {options.map(({ icon: Icon, label, sub, duplicate }) => (
+            {options.map(({ icon: Icon, label, sub, mode }) => (
               <button
                 key={label}
                 type="button"
                 role="menuitem"
-                onClick={() => choose(duplicate)}
+                onClick={() => choose(mode)}
                 className="w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg text-left hover:bg-white/10 transition-colors"
               >
                 <Icon size={15} className="mt-0.5 text-sky-400 flex-shrink-0" />
@@ -114,6 +127,7 @@ export const AddPageMenu: React.FC<AddPageMenuProps> = ({ children, align = 'lef
           </div>,
           document.body
         )}
+      {templatesOpen && <PageTemplateModal isOpen onClose={() => setTemplatesOpen(false)} onPick={pickTemplate} />}
     </>
   );
 };

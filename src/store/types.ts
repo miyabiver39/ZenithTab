@@ -47,7 +47,7 @@ export interface PageSlice {
   pageData: Record<string, DashboardPageData>;
 
   switchPage: (id: string) => void;
-  addPage: (options?: { name?: string; duplicateCurrent?: boolean }) => void;
+  addPage: (options?: { name?: string; duplicateCurrent?: boolean; template?: DashboardPageData }) => void;
   removePage: (id: string) => void;
   renamePage: (id: string, name: string) => void;
 }
