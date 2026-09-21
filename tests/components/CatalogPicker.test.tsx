@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, screen, within, waitFor, fireEvent } from '@testing-library/react';
 import { setupUser } from '../helpers/user';
 import { CatalogPicker, urlKey } from '../../src/components/common/CatalogPicker';
 import { resetDashboardStore } from '../helpers/store';
@@ -84,5 +84,22 @@ describe('CatalogPicker', () => {
 
   it('urlKey は末尾スラッシュと大文字小文字を無視すること', () => {
     expect(urlKey('https://Example.com/')).toBe(urlKey('https://example.com'));
+  });
+});
+
+describe('CatalogPicker › Favicon', () => {
+  it('読み込みに失敗したアイコンのフォールバックが、別の URL に切り替わったときに引き継がれないこと', async () => {
+    const { Favicon } = await import('../../src/components/common/CatalogPicker');
+    const { rerender, container } = render(<Favicon url="https://a.example" isFeed={false} />);
+    // `load`/`error` on <img> can't be produced by user-event.
+    fireEvent.error(container.querySelector('img')!);
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.querySelector('.lucide-globe')).not.toBeNull();
+
+    rerender(<Favicon url="https://b.example" isFeed={false} />);
+    expect(container.querySelector('img')).not.toBeNull();
+
+    rerender(<Favicon url="https://a.example" isFeed={false} />);
+    expect(container.querySelector('img')).toBeNull();
   });
 });

@@ -316,11 +316,15 @@ export const CatalogPicker: React.FC<CatalogPickerProps> = ({
   );
 };
 
-const Favicon: React.FC<{ url: string; isFeed: boolean; folder?: boolean }> = ({ url, isFeed, folder }) => {
-  const [error, setError] = useState(false);
+export const Favicon: React.FC<{ url: string; isFeed: boolean; folder?: boolean }> = ({ url, isFeed, folder }) => {
   const src = getFaviconUrl(url, 32);
+  // Remember which src failed, not a bare flag: when the same tile position
+  // is reused for another site (category / region switch) the new icon
+  // gets its own chance instead of inheriting the old fallback.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const error = failedSrc === src;
   if (folder) return <Folder size={14} className="text-amber-300" />;
   if (isFeed && (!src || error)) return <Rss size={14} className="text-orange-400" />;
   if (!src || error) return <Globe size={14} className="text-sky-400" />;
-  return <img src={src} alt="" onError={() => setError(true)} className="w-4 h-4 rounded-sm object-contain" />;
+  return <img src={src} alt="" onError={() => setFailedSrc(src)} className="w-4 h-4 rounded-sm object-contain" />;
 };
