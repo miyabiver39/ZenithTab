@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, fireEvent, within } from '@testing-library/react';
 import { setupUser, literal } from '../helpers/user';
 import { ShortcutsWidget } from '../../src/components/widgets/ShortcutsWidget/ShortcutsWidget';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
@@ -53,6 +53,33 @@ describe('ShortcutsWidget', () => {
     expect(screen.getByText('YouTube')).toBeInTheDocument();
     await user.click(screen.getByText('All Apps'));
     expect(screen.getByText('GitHub')).toBeInTheDocument();
+  });
+
+  it('リンクをドロップするとタイルが増え、URL 以外のドロップは無視すること', () => {
+    renderShortcuts();
+    const widget = screen.getByTestId('shortcuts-widget');
+    // HTML5 drag-and-drop has no user-event equivalent; fire the events with a hand-built DataTransfer.
+    const dataTransfer = (data: Record<string, string>) => ({ types: Object.keys(data), getData: (k: string) => data[k] || '', dropEffect: 'none' });
+    fireEvent.dragOver(widget, { dataTransfer: dataTransfer({ 'text/uri-list': '' }) });
+    fireEvent.drop(widget, {
+      dataTransfer: dataTransfer({ 'text/uri-list': 'https://developer.mozilla.org/', 'text/html': '<a href="https://developer.mozilla.org/">MDN</a>' }),
+    });
+    expect(items()).toHaveLength(4);
+    expect(items()[3]).toMatchObject({ title: 'MDN', url: 'https://developer.mozilla.org/' });
+
+    fireEvent.drop(widget, { dataTransfer: dataTransfer({ 'text/plain': 'just some text' }) });
+    expect(items()).toHaveLength(4);
+  });
+
+  it('空のときは「カタログから選ぶ」でピッカーが開き、選んだサイトが追加されること', async () => {
+    const user = setupUser();
+    renderShortcuts([]);
+    await user.click(screen.getByRole('button', { name: 'Choose from catalog' }));
+    const list = screen.getByRole('list', { name: 'Add sites' });
+    await user.click(within(list).getByRole('button', { name: /Reddit/ }));
+    await user.click(screen.getByRole('button', { name: 'Add 1' }));
+    expect(items()).toEqual([expect.objectContaining({ title: 'Reddit', url: 'https://reddit.com', category: 'Social' })]);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('追加フォームから新しいショートカットを保存し、スキームを補うこと', async () => {

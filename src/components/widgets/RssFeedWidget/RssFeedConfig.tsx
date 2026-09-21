@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Rss } from 'lucide-react';
 import { Input } from '../../common/Input';
+import { CatalogPicker } from '../../common/CatalogPicker';
 import { useTranslation } from '../../../i18n/i18n';
 import { rssService, GOOGLE_NEWS_TOPICS } from '../../../services/rssService';
 import { requestHostPermission } from '../../../utils/permissions';
@@ -31,6 +33,7 @@ export const RssFeedConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
   // normalisation (an empty keyword only becomes 'headlines' on save,
   // so choosing 'Keyword search' doesn't snap straight back).
   const uiNewsMode: GoogleNewsMode = config.googleNewsMode || rssService.resolveGoogleNewsMode(config);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between py-1">
@@ -114,6 +117,14 @@ export const RssFeedConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
         </div>
       ) : (
         <div className="space-y-1.5">
+          <button
+            type="button"
+            onClick={() => setIsPickerOpen(true)}
+            className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-200 border border-sky-400/20 text-xs font-medium transition-all"
+          >
+            <Rss size={13} />
+            <span>{t.widgets.rss.fromCatalog}</span>
+          </button>
           <Input
             label={t.widgets.rss.customUrl}
             value={config.feedUrl || ''}
@@ -121,6 +132,14 @@ export const RssFeedConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
             placeholder="https://example.com/feed.xml"
           />
           <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.rss.permissionHint}</p>
+          <CatalogPicker
+            isOpen={isPickerOpen}
+            onClose={() => setIsPickerOpen(false)}
+            kind="feeds"
+            mode="single"
+            existingUrls={config.feedUrl ? [config.feedUrl] : []}
+            onAdd={([feed]) => setConfig({ ...config, feedUrl: feed.url, isGoogleNews: false })}
+          />
         </div>
       )}
 

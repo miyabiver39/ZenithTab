@@ -241,6 +241,7 @@ export const es: typeof en = {
       permissionNeeded: 'ZenithTab necesita tu permiso para leer este feed.',
       grantAccess: 'Permitir este feed',
       permissionHint: 'Al guardar, Chrome pedirá permiso para el sitio de este feed. ZenithTab solo solicita los feeds que tú añades.',
+      fromCatalog: 'Elegir un feed popular',
     },
     iframe: {
       title: 'Incrustar web',
@@ -349,6 +350,8 @@ export const es: typeof en = {
       openInNewTab: 'Abrir en nueva pestaña',
       editShortcut: 'Editar acceso directo',
       columns: 'Columnas',
+      fromCatalog: 'Elegir del catálogo',
+      dropHint: 'Consejo: arrastra un enlace o la URL de una pestaña a este widget para añadirlo.',
     },
     quickaccess: {
       permissionNeeded: 'Acceso rápido necesita permiso para leer tus sitios más visitados y pestañas cerradas recientemente. Nada sale de tu navegador.',
@@ -464,6 +467,33 @@ export const es: typeof en = {
     emptyDesc: 'No se ha borrado nada: tus otras páginas siguen en las pestañas de arriba. Añade widgets aquí o vuelve atrás.',
     backTo: 'Volver a {name}',
   },
+  catalog: {
+    siteTitle: 'Añadir sitios',
+    feedTitle: 'Elegir un feed',
+    region: 'Región',
+    source: 'Origen',
+    allCategories: 'Todos',
+    sources: {
+      catalog: 'Catálogo',
+      bookmarks: 'Marcadores',
+      topSites: 'Más visitados',
+    },
+    loading: 'Cargando…',
+    permissionDenied: 'No se concedió el permiso, así que no se pueden listar los sitios más visitados.',
+    empty: 'No hay nada que mostrar.',
+    hint: 'Haz clic para seleccionar y añádelos todos de una vez.',
+    add: 'Añadir',
+    addCount: 'Añadir {n}',
+    feedCategories: {
+      general: 'Portada',
+      tech: 'Tecnología',
+      business: 'Negocios',
+      entertainment: 'Entretenimiento',
+      sports: 'Deportes',
+      science: 'Ciencia',
+      lifestyle: 'Estilo de vida',
+    },
+  },
   templates: {
     title: 'Elige una plantilla',
     use: 'Usar esta plantilla',
@@ -573,6 +603,7 @@ export const es: typeof en = {
       moveUp: 'Subir',
       moveDown: 'Bajar',
       dragToReorder: 'Arrastra para reordenar',
+      fromCatalog: 'Del catálogo',
     },
     keys: {
       desc: 'Asigna un atajo de teclado a cualquier enlace (un marcador, un acceso directo, lo que sea) para acceder al instante.',

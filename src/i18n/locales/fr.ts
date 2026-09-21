@@ -241,6 +241,7 @@ export const fr: typeof en = {
       permissionNeeded: 'ZenithTab a besoin de votre autorisation pour lire ce flux.',
       grantAccess: 'Autoriser ce flux',
       permissionHint: 'À l’enregistrement, Chrome demandera l’autorisation pour le site de ce flux. ZenithTab ne demande que les flux que vous ajoutez.',
+      fromCatalog: 'Choisir un flux populaire',
     },
     iframe: {
       title: 'Intégration Web',
@@ -349,6 +350,8 @@ export const fr: typeof en = {
       openInNewTab: 'Ouvrir dans un nouvel onglet',
       editShortcut: 'Modifier le raccourci',
       columns: 'Colonnes',
+      fromCatalog: 'Choisir dans le catalogue',
+      dropHint: 'Astuce : glissez un lien ou l’URL d’un onglet sur ce widget pour l’ajouter.',
     },
     quickaccess: {
       permissionNeeded: 'L\'accès rapide a besoin de l\'autorisation de lire vos sites fréquents et onglets récemment fermés. Rien ne quitte votre navigateur.',
@@ -464,6 +467,33 @@ export const fr: typeof en = {
     emptyDesc: 'Rien n\'a été supprimé : vos autres pages sont toujours dans les onglets ci-dessus. Ajoutez des widgets ici, ou revenez en arrière.',
     backTo: 'Revenir à {name}',
   },
+  catalog: {
+    siteTitle: 'Ajouter des sites',
+    feedTitle: 'Choisir un flux',
+    region: 'Région',
+    source: 'Source',
+    allCategories: 'Tous',
+    sources: {
+      catalog: 'Catalogue',
+      bookmarks: 'Favoris',
+      topSites: 'Les plus visités',
+    },
+    loading: 'Chargement…',
+    permissionDenied: 'L’autorisation n’a pas été accordée : impossible de lister les sites les plus visités.',
+    empty: 'Rien à afficher.',
+    hint: 'Cliquez pour sélectionner, puis ajoutez-les d’un coup.',
+    add: 'Ajouter',
+    addCount: 'Ajouter {n}',
+    feedCategories: {
+      general: 'À la une',
+      tech: 'Technologie',
+      business: 'Économie',
+      entertainment: 'Divertissement',
+      sports: 'Sport',
+      science: 'Sciences',
+      lifestyle: 'Lifestyle',
+    },
+  },
   templates: {
     title: 'Choisir un modèle',
     use: 'Utiliser ce modèle',
@@ -573,6 +603,7 @@ export const fr: typeof en = {
       moveUp: 'Monter',
       moveDown: 'Descendre',
       dragToReorder: 'Glisser pour réorganiser',
+      fromCatalog: 'Depuis le catalogue',
     },
     keys: {
       desc: "Associez un raccourci clavier à n'importe quel lien (favori, raccourci, etc.) pour y accéder instantanément.",

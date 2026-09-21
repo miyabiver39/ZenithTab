@@ -241,6 +241,7 @@ export const ko: typeof en = {
       permissionNeeded: '이 피드를 읽으려면 권한이 필요합니다.',
       grantAccess: '이 피드 허용',
       permissionHint: '저장하면 Chrome이 이 피드 사이트의 접근 권한을 확인합니다. ZenithTab은 직접 추가한 피드에만 접근합니다.',
+      fromCatalog: '인기 피드에서 선택',
     },
     iframe: {
       title: '웹 임베드',
@@ -349,6 +350,8 @@ export const ko: typeof en = {
       openInNewTab: '새 탭에서 열기',
       editShortcut: '바로가기 수정',
       columns: '표시 열 수',
+      fromCatalog: '카탈로그에서 선택',
+      dropHint: '팁: 링크나 탭의 URL을 이 위젯으로 끌어다 놓아도 추가됩니다.',
     },
     quickaccess: {
       permissionNeeded: '빠른 접근을 사용하려면 자주 방문한 사이트와 최근 닫은 탭을 읽을 권한이 필요합니다. 데이터는 브라우저 밖으로 나가지 않습니다.',
@@ -464,6 +467,33 @@ export const ko: typeof en = {
     emptyDesc: '아무것도 삭제되지 않았어요. 다른 페이지는 위 탭에 그대로 있습니다. 여기에 위젯을 추가하거나 돌아갈 수 있어요.',
     backTo: '{name}(으)로 돌아가기',
   },
+  catalog: {
+    siteTitle: '사이트 추가',
+    feedTitle: '피드 선택',
+    region: '지역',
+    source: '출처',
+    allCategories: '전체',
+    sources: {
+      catalog: '카탈로그',
+      bookmarks: '북마크',
+      topSites: '자주 방문한 사이트',
+    },
+    loading: '불러오는 중…',
+    permissionDenied: '권한이 허용되지 않아 자주 방문한 사이트를 표시할 수 없습니다.',
+    empty: '표시할 항목이 없습니다.',
+    hint: '클릭해서 선택한 뒤 한 번에 추가할 수 있습니다.',
+    add: '추가',
+    addCount: '{n}개 추가',
+    feedCategories: {
+      general: '종합',
+      tech: '기술',
+      business: '비즈니스',
+      entertainment: '엔터테인먼트',
+      sports: '스포츠',
+      science: '과학',
+      lifestyle: '라이프스타일',
+    },
+  },
   templates: {
     title: '템플릿 선택',
     use: '이 템플릿 사용',
@@ -573,6 +603,7 @@ export const ko: typeof en = {
       moveUp: '위로 이동',
       moveDown: '아래로 이동',
       dragToReorder: '드래그하여 순서 변경',
+      fromCatalog: '카탈로그에서',
     },
     keys: {
       desc: '북마크나 바로가기 등 원하는 링크에 키보드 단축키를 지정해서 바로 접근하세요.',

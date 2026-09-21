@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useTranslation } from '../../i18n/i18n';
@@ -12,6 +13,11 @@ export interface ModalProps {
 }
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+// Open dialogs, oldest first. A dialog opened from inside another (the
+// catalog picker inside a widget's settings) must be the only one that
+// reacts to Escape / Tab, otherwise one keypress closes both.
+const openStack: symbol[] = [];
 
 // No layout-based visibility check (offsetParent) on purpose: it is always
 // null under jsdom, and everything inside an open modal is rendered anyway.
@@ -41,6 +47,9 @@ export const Modal: React.FC<ModalProps> = ({
     if (!isOpen) return;
     const card = cardRef.current;
     const previouslyFocused = document.activeElement as HTMLElement | null;
+    const token = Symbol('modal');
+    openStack.push(token);
+    const isTopmost = () => openStack[openStack.length - 1] === token;
 
     // Focus lands inside the dialog: the first control in the body, or the
     // close button when there is none, so keyboard users start where the
@@ -50,6 +59,7 @@ export const Modal: React.FC<ModalProps> = ({
     first?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isTopmost()) return;
       if (e.key === 'Escape') {
         onCloseRef.current();
         return;
@@ -80,7 +90,9 @@ export const Modal: React.FC<ModalProps> = ({
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      openStack.splice(openStack.indexOf(token), 1);
+      // The page scrolls again only once the last dialog is gone.
+      if (openStack.length === 0) document.body.style.overflow = '';
       // Give focus back to whatever opened the dialog.
       if (previouslyFocused && document.contains(previouslyFocused)) previouslyFocused.focus();
     };
@@ -97,7 +109,10 @@ export const Modal: React.FC<ModalProps> = ({
     '4xl': 'max-w-4xl',
   }[maxWidth];
 
-  return (
+  // Portaled to <body>: a dialog rendered inside another dialog's card
+  // would otherwise be clipped by it (backdrop-filter makes the card the
+  // containing block for position: fixed).
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in">
       {/* Backdrop */}
       <div
@@ -135,6 +150,7 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Body */}
         <div data-modal-body className="px-6 py-5 overflow-y-auto flex-1 custom-scrollbar">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

@@ -239,6 +239,7 @@ export const en = {
       permissionNeeded: 'ZenithTab needs your permission to read this feed.',
       grantAccess: 'Allow this feed',
       permissionHint: 'When you save, Chrome will ask permission for this feed’s site. ZenithTab only ever requests the feeds you add yourself.',
+      fromCatalog: 'Pick a popular feed',
     },
     iframe: {
       title: 'Web Embed',
@@ -347,6 +348,8 @@ export const en = {
       openInNewTab: 'Open in New Tab',
       editShortcut: 'Edit Shortcut',
       columns: 'Columns',
+      fromCatalog: 'Choose from catalog',
+      dropHint: 'Tip: drag a link or a tab’s URL onto this widget to add it.',
     },
     quickaccess: {
       permissionNeeded: 'Quick Access needs permission to read your most-visited sites and recently closed tabs. Nothing leaves your browser.',
@@ -462,6 +465,33 @@ export const en = {
     emptyDesc: 'Nothing was deleted — your other pages are still in the tabs above. Add widgets here, or go back.',
     backTo: 'Back to {name}',
   },
+  catalog: {
+    siteTitle: 'Add sites',
+    feedTitle: 'Choose a feed',
+    region: 'Region',
+    source: 'Source',
+    allCategories: 'All',
+    sources: {
+      catalog: 'Catalog',
+      bookmarks: 'Bookmarks',
+      topSites: 'Most visited',
+    },
+    loading: 'Loading…',
+    permissionDenied: 'Permission was not granted, so your most-visited sites can’t be listed.',
+    empty: 'Nothing to show here.',
+    hint: 'Click to select, then add them all at once.',
+    add: 'Add',
+    addCount: 'Add {n}',
+    feedCategories: {
+      general: 'Top stories',
+      tech: 'Technology',
+      business: 'Business',
+      entertainment: 'Entertainment',
+      sports: 'Sports',
+      science: 'Science',
+      lifestyle: 'Lifestyle',
+    },
+  },
   templates: {
     title: 'Choose a template',
     use: 'Use this template',
@@ -571,6 +601,7 @@ export const en = {
       moveUp: 'Move up',
       moveDown: 'Move down',
       dragToReorder: 'Drag to reorder',
+      fromCatalog: 'From catalog',
     },
     keys: {
       desc: 'Bind a keyboard shortcut to any link — a bookmark, a shortcut, anything — for instant access.',

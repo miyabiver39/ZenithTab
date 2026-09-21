@@ -241,6 +241,7 @@ export const zh: typeof en = {
       permissionNeeded: '读取该订阅源需要你的授权。',
       grantAccess: '允许该订阅源',
       permissionHint: '保存时 Chrome 会询问该订阅源站点的访问权限。ZenithTab 只会请求你自己添加的订阅源。',
+      fromCatalog: '选择热门订阅源',
     },
     iframe: {
       title: '网页嵌入',
@@ -349,6 +350,8 @@ export const zh: typeof en = {
       openInNewTab: '在新标签页打开',
       editShortcut: '编辑快捷方式',
       columns: '显示列数',
+      fromCatalog: '从目录中选择',
+      dropHint: '提示:将链接或标签页的网址拖到此小组件也可添加。',
     },
     quickaccess: {
       permissionNeeded: '快速访问需要读取常用网站和最近关闭标签页的权限。数据不会离开浏览器。',
@@ -464,6 +467,33 @@ export const zh: typeof en = {
     emptyDesc: '没有任何内容被删除——其他页面仍在上方的标签中。在这里添加小部件，或返回。',
     backTo: '返回 {name}',
   },
+  catalog: {
+    siteTitle: '添加网站',
+    feedTitle: '选择订阅源',
+    region: '地区',
+    source: '来源',
+    allCategories: '全部',
+    sources: {
+      catalog: '目录',
+      bookmarks: '书签',
+      topSites: '常访问网站',
+    },
+    loading: '加载中…',
+    permissionDenied: '未授予权限,无法列出常访问的网站。',
+    empty: '没有可显示的内容。',
+    hint: '点击选择,然后一次性添加。',
+    add: '添加',
+    addCount: '添加 {n} 项',
+    feedCategories: {
+      general: '综合',
+      tech: '科技',
+      business: '商业',
+      entertainment: '娱乐',
+      sports: '体育',
+      science: '科学',
+      lifestyle: '生活',
+    },
+  },
   templates: {
     title: '选择模板',
     use: '使用此模板',
@@ -573,6 +603,7 @@ export const zh: typeof en = {
       moveUp: '上移',
       moveDown: '下移',
       dragToReorder: '拖动以排序',
+      fromCatalog: '从目录添加',
     },
     keys: {
       desc: '为任意链接(书签、快捷方式等)绑定键盘快捷键,实现即时访问。',

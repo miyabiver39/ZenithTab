@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Plus, ArrowUp, ArrowDown, Trash2, GripVertical } from 'lucide-react';
+import { Plus, ArrowUp, ArrowDown, Trash2, GripVertical, LayoutGrid } from 'lucide-react';
 import { Button } from '../../common/Button';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 import { DOCK_ICON_LIBRARY, DOCK_ICON_KEYS } from '../../../utils/dockIcons';
 import { cn } from '../../../utils/cn';
+import { CatalogPicker, type PickedItem } from '../../common/CatalogPicker';
 
 /** Quick Dock items: add, reorder (buttons or drag), remove. */
 export const DockTab: React.FC = () => {
@@ -23,6 +24,13 @@ export const DockTab: React.FC = () => {
   const [newDockIcon, setNewDockIcon] = useState(DOCK_ICON_KEYS[0]);
   const [newDockCustomIcon, setNewDockCustomIcon] = useState('');
   const [newDockNewTab, setNewDockNewTab] = useState(true);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+  const addPicked = (picked: PickedItem[]) => {
+    for (const p of picked) {
+      addDockItem({ label: p.title, url: p.url, icon: p.icon || 'globe', openInNewTab: true });
+    }
+  };
 
   const handleAddDockItem = () => {
     const url = newDockUrl.trim();
@@ -134,7 +142,13 @@ export const DockTab: React.FC = () => {
 
       {/* Add new item */}
       <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-3">
-        <h4 className="text-xs font-semibold text-white">{t.settings.dock.addTitle}</h4>
+        <div className="flex items-center justify-between gap-3">
+          <h4 className="text-xs font-semibold text-white">{t.settings.dock.addTitle}</h4>
+          <Button variant="secondary" size="sm" onClick={() => setIsPickerOpen(true)} className="gap-1.5">
+            <LayoutGrid size={13} />
+            <span>{t.settings.dock.fromCatalog}</span>
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div>
@@ -215,6 +229,15 @@ export const DockTab: React.FC = () => {
           <span>{t.settings.dock.addBtn}</span>
         </Button>
       </div>
+
+      <CatalogPicker
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        kind="sites"
+        sources={['catalog', 'bookmarks', 'topSites']}
+        existingUrls={dockItems.map((d) => d.url)}
+        onAdd={addPicked}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Globe, Trash2, Edit2, ExternalLink } from 'lucide-react';
+import { Plus, Globe, Trash2, Edit2, ExternalLink, LayoutGrid } from 'lucide-react';
 import { ShortcutsWidgetConfig, ShortcutItem } from '../../../types/widget';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { getFaviconUrl } from '../../../utils/favicon';
@@ -8,6 +8,9 @@ import { Modal } from '../../common/Modal';
 import { Input } from '../../common/Input';
 import { Button } from '../../common/Button';
 import { uniqueId } from '../../../utils/id';
+import { CatalogPicker, type PickedItem } from '../../common/CatalogPicker';
+import { readDroppedLink } from '../../../utils/dropLink';
+import { cn } from '../../../utils/cn';
 
 interface ShortcutsWidgetProps {
   widgetId: string;
@@ -31,6 +34,28 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
   const [url, setUrl] = useState('');
   const [category, setCategory] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [isDropTarget, setIsDropTarget] = useState(false);
+
+  /** Catalog / bookmark / top-site picks and dropped links all land here. */
+  const addItems = (picked: PickedItem[]) => {
+    const fresh: ShortcutItem[] = picked.map((p) => ({
+      id: uniqueId('shortcut'),
+      title: p.title,
+      url: p.url,
+      category: p.category || undefined,
+    }));
+    if (fresh.length > 0) updateWidgetConfig(widgetId, { items: [...items, ...fresh] });
+  };
+
+  // A link (or the address bar's URL) dragged onto the widget becomes a tile.
+  const handleDrop = (e: React.DragEvent) => {
+    const link = readDroppedLink(e.dataTransfer);
+    setIsDropTarget(false);
+    if (!link) return;
+    e.preventDefault();
+    addItems([link]);
+  };
 
   const categories = ['all', ...Array.from(new Set(items.map((it) => it.category).filter(Boolean))) as string[]];
 
@@ -103,7 +128,20 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
     : items.filter((it) => it.category === activeCategory);
 
   return (
-    <div className="w-full h-full flex flex-col min-h-0 select-none">
+    <div
+      className={cn('w-full h-full flex flex-col min-h-0 select-none rounded-xl transition-colors', isDropTarget && 'ring-2 ring-sky-400/60 bg-sky-500/5')}
+      onDragOver={(e) => {
+        if (!readDroppedLink(e.dataTransfer, { peek: true })) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        if (!isDropTarget) setIsDropTarget(true);
+      }}
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setIsDropTarget(false);
+      }}
+      onDrop={handleDrop}
+      data-testid="shortcuts-widget"
+    >
       {/* Category Pills (if multiple categories exist) */}
       {categories.length > 2 && (
         <div className="flex items-center gap-1.5 pb-2 overflow-x-auto custom-scrollbar border-b border-white/5">
@@ -128,13 +166,23 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
         {filteredItems.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-xs text-slate-400 p-4 text-center">
             <p className="mb-2">{t.widgets.shortcuts.noShortcuts}</p>
-            <button
-              onClick={handleOpenAdd}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500 text-sky-200 hover:text-white border border-sky-400/30 text-xs font-medium transition-all"
-            >
-              <Plus size={13} />
-              <span>{t.widgets.shortcuts.addShortcut}</span>
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <button
+                onClick={() => setIsPickerOpen(true)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500 text-sky-200 hover:text-white border border-sky-400/30 text-xs font-medium transition-all"
+              >
+                <LayoutGrid size={13} />
+                <span>{t.widgets.shortcuts.fromCatalog}</span>
+              </button>
+              <button
+                onClick={handleOpenAdd}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 text-xs font-medium transition-all"
+              >
+                <Plus size={13} />
+                <span>{t.widgets.shortcuts.addShortcut}</span>
+              </button>
+            </div>
+            <p className="mt-3 text-[11px] text-slate-500">{t.widgets.shortcuts.dropHint}</p>
           </div>
         ) : (
           <div
@@ -176,6 +224,19 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
         maxWidth="sm"
       >
         <form onSubmit={handleSave} className="space-y-4">
+          {!editingItem && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsAddModalOpen(false);
+                setIsPickerOpen(true);
+              }}
+              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-200 border border-sky-400/20 text-xs font-medium transition-all"
+            >
+              <LayoutGrid size={13} />
+              <span>{t.widgets.shortcuts.fromCatalog}</span>
+            </button>
+          )}
           <Input
             label={t.widgets.shortcuts.name}
             value={title}
@@ -215,6 +276,15 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
           </div>
         </form>
       </Modal>
+
+      <CatalogPicker
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        kind="sites"
+        sources={['catalog', 'bookmarks', 'topSites']}
+        existingUrls={items.map((it) => it.url)}
+        onAdd={addItems}
+      />
     </div>
   );
 };

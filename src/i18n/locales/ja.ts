@@ -239,6 +239,7 @@ export const ja = {
       permissionNeeded: 'このフィードを読み込むには許可が必要です。',
       grantAccess: 'このフィードを許可',
       permissionHint: '保存時に、このフィードのサイトへのアクセス許可をChromeが確認します。ZenithTabはあなたが追加したフィード以外にはアクセスしません。',
+      fromCatalog: '人気のフィードから選ぶ',
     },
     iframe: {
       title: 'Web埋め込み',
@@ -347,6 +348,8 @@ export const ja = {
       openInNewTab: '新しいタブで開く',
       editShortcut: 'ショートカットを編集',
       columns: '表示列数',
+      fromCatalog: 'カタログから選ぶ',
+      dropHint: 'ヒント: リンクやタブの URL をこのウィジェットにドラッグしても追加できます。',
     },
     quickaccess: {
       permissionNeeded: 'クイックアクセスを使うには「よく見るサイト」と「最近閉じたタブ」を読み取る権限が必要です。データはブラウザの外に出ません。',
@@ -462,6 +465,33 @@ export const ja = {
     emptyDesc: '何も消えていません。元のウィジェットは上のタブの別ページにあります。ここにウィジェットを追加するか、戻れます。',
     backTo: '{name} に戻る',
   },
+  catalog: {
+    siteTitle: 'サイトを追加',
+    feedTitle: 'フィードを選ぶ',
+    region: '地域',
+    source: '取得元',
+    allCategories: 'すべて',
+    sources: {
+      catalog: 'カタログ',
+      bookmarks: 'ブックマーク',
+      topSites: 'よく見るサイト',
+    },
+    loading: '読み込み中…',
+    permissionDenied: '権限が許可されなかったため、よく見るサイトを表示できません。',
+    empty: '表示できる項目がありません。',
+    hint: 'クリックで選択し、まとめて追加できます。',
+    add: '追加',
+    addCount: '{n} 件を追加',
+    feedCategories: {
+      general: '総合',
+      tech: 'テクノロジー',
+      business: 'ビジネス',
+      entertainment: 'エンタメ',
+      sports: 'スポーツ',
+      science: '科学',
+      lifestyle: 'ライフスタイル',
+    },
+  },
   templates: {
     title: 'テンプレートを選ぶ',
     use: 'このテンプレートを使う',
@@ -571,6 +601,7 @@ export const ja = {
       moveUp: '上に移動',
       moveDown: '下に移動',
       dragToReorder: 'ドラッグで並べ替え',
+      fromCatalog: 'カタログから',
     },
     keys: {
       desc: 'ブックマークやショートカットなど、好きなリンクにキーボードショートカットを割り当てて、すぐにアクセスできます。',

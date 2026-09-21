@@ -241,6 +241,7 @@ export const de: typeof en = {
       permissionNeeded: 'ZenithTab benötigt deine Erlaubnis, diesen Feed zu lesen.',
       grantAccess: 'Diesen Feed erlauben',
       permissionHint: 'Beim Speichern fragt Chrome nach der Berechtigung für die Website dieses Feeds. ZenithTab fragt nur nach Feeds, die du selbst hinzufügst.',
+      fromCatalog: 'Beliebten Feed wählen',
     },
     iframe: {
       title: 'Web-Einbettung',
@@ -349,6 +350,8 @@ export const de: typeof en = {
       openInNewTab: 'In neuem Tab öffnen',
       editShortcut: 'Verknüpfung bearbeiten',
       columns: 'Spalten',
+      fromCatalog: 'Aus dem Katalog wählen',
+      dropHint: 'Tipp: Ziehe einen Link oder die URL eines Tabs auf dieses Widget, um ihn hinzuzufügen.',
     },
     quickaccess: {
       permissionNeeded: 'Der Schnellzugriff braucht die Berechtigung, meistbesuchte Seiten und kürzlich geschlossene Tabs zu lesen. Nichts verlässt den Browser.',
@@ -464,6 +467,33 @@ export const de: typeof en = {
     emptyDesc: 'Es wurde nichts gelöscht – deine anderen Seiten sind weiterhin in den Tabs oben. Füge hier Widgets hinzu oder geh zurück.',
     backTo: 'Zurück zu {name}',
   },
+  catalog: {
+    siteTitle: 'Seiten hinzufügen',
+    feedTitle: 'Feed wählen',
+    region: 'Region',
+    source: 'Quelle',
+    allCategories: 'Alle',
+    sources: {
+      catalog: 'Katalog',
+      bookmarks: 'Lesezeichen',
+      topSites: 'Meistbesucht',
+    },
+    loading: 'Wird geladen…',
+    permissionDenied: 'Die Berechtigung wurde nicht erteilt, daher können die meistbesuchten Seiten nicht aufgelistet werden.',
+    empty: 'Hier gibt es nichts anzuzeigen.',
+    hint: 'Zum Auswählen klicken, dann alle auf einmal hinzufügen.',
+    add: 'Hinzufügen',
+    addCount: '{n} hinzufügen',
+    feedCategories: {
+      general: 'Schlagzeilen',
+      tech: 'Technik',
+      business: 'Wirtschaft',
+      entertainment: 'Unterhaltung',
+      sports: 'Sport',
+      science: 'Wissenschaft',
+      lifestyle: 'Lifestyle',
+    },
+  },
   templates: {
     title: 'Vorlage wählen',
     use: 'Diese Vorlage verwenden',
@@ -573,6 +603,7 @@ export const de: typeof en = {
       moveUp: 'Nach oben',
       moveDown: 'Nach unten',
       dragToReorder: 'Zum Sortieren ziehen',
+      fromCatalog: 'Aus dem Katalog',
     },
     keys: {
       desc: 'Verknüpfe eine Tastenkombination mit einem beliebigen Link — Lesezeichen, Verknüpfung, was auch immer — für sofortigen Zugriff.',
