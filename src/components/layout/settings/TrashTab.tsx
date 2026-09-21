@@ -26,7 +26,8 @@ export const TrashTab: React.FC<ConfirmApi> = ({ requestConfirm, closeConfirm })
       {trash.length === 0 ? (
         <p className="text-xs text-slate-500 italic">{t.trash.empty}</p>
       ) : (
-        <ul className="space-y-2" aria-label={t.settings.tabs.trash}>
+        // Scrolls on its own so "empty trash" below never drifts out of view.
+        <ul className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar pr-1" aria-label={t.settings.tabs.trash}>
           {[...trash]
             .sort((a, b) => b.deletedAt - a.deletedAt)
             .map((entry) => {

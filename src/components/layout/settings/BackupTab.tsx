@@ -3,7 +3,11 @@ import { Download, Upload, RotateCcw, Trash2, Undo2, History, Save } from 'lucid
 import { Button } from '../../common/Button';
 import { formatDateTime } from '../../../utils/date';
 import { useUndoStore } from '../../../store/useUndoStore';
-import type { SnapshotReason } from '../../../services/snapshotService';
+import {
+  SNAPSHOT_RETENTION,
+  MAX_SNAPSHOT_TOTAL_BYTES,
+  type SnapshotReason,
+} from '../../../services/snapshotService';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 import type { ConfirmApi } from './confirm';
@@ -130,7 +134,9 @@ export const BackupTab: React.FC<ConfirmApi> = ({ requestConfirm, closeConfirm }
         ) : snapshots.length === 0 ? (
           <p className="text-xs text-slate-500 italic">{t.backup.empty}</p>
         ) : (
-          <ul className="space-y-2" aria-label={t.backup.title}>
+          // The list scrolls on its own so the export / import / reset
+          // sections below stay within reach however many backups there are.
+          <ul className="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1" aria-label={t.backup.title}>
             {snapshots.map((snap) => {
               const date = formatDateTime(new Date(snap.takenAt), activeLanguageCode);
               return (
@@ -204,6 +210,13 @@ export const BackupTab: React.FC<ConfirmApi> = ({ requestConfirm, closeConfirm }
             })}
           </ul>
         )}
+        <p className="text-[11px] text-slate-500">
+          {t.backup.retention
+            .replace('{auto}', String(SNAPSHOT_RETENTION.auto))
+            .replace('{manual}', String(SNAPSHOT_RETENTION.manual))
+            .replace('{other}', String(SNAPSHOT_RETENTION['before-reset']))
+            .replace('{size}', formatBytes(MAX_SNAPSHOT_TOTAL_BYTES))}
+        </p>
       </div>
 
       <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-2">
