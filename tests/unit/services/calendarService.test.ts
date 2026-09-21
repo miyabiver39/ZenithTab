@@ -113,4 +113,22 @@ describe('calendarService', () => {
     mockFetch(ICS, false, 500);
     expect(await calendarService.fetchCalendar(CAL_URL, true)).toHaveLength(1);
   });
+
+  it('readCached はキャッシュだけを読み、無ければ空、壊れていれば空で、決して fetch しないこと', async () => {
+    const fetchSpy = mockFetch();
+    expect(await calendarService.readCached(CAL_URL)).toEqual([]);
+
+    chromeStorageData.zenith_calendar_cache = { [CAL_URL]: { text: ICS, lastUpdated: 1 } };
+    const events = await calendarService.readCached(CAL_URL);
+    expect(events).toHaveLength(1);
+    expect(events[0].summary).toBe('Dentist');
+    // Even a stale entry is served as-is; freshness is the widget's business.
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    chromeStorageData.zenith_calendar_cache = { [CAL_URL]: { text: 42 as unknown as string, lastUpdated: 1 } };
+    expect(await calendarService.readCached(CAL_URL)).toEqual([]);
+    chromeStorageData.zenith_calendar_cache = 'not an object' as unknown as Record<string, never>;
+    expect(await calendarService.readCached(CAL_URL)).toEqual([]);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
 });

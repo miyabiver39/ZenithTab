@@ -107,6 +107,7 @@ export function formatInTimeZone(now: Date, timeZone: string): { time: string; d
   return {
     time: `${hour}:${get('minute')}`,
     date: `${get('year')}-${get('month')}-${get('day')}`,
-    offset: get('timeZoneName').replace('GMT', 'UTC') || 'UTC',
+    // ICU renders zero offset as "GMT" or "GMT+0" depending on version; say "UTC" for both.
+    offset: get('timeZoneName').replace('GMT', 'UTC').replace(/^UTC[+-]0$/, '') || 'UTC',
   };
 }

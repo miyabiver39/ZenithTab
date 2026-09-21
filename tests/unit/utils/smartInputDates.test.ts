@@ -96,8 +96,8 @@ describe('smart input: dates and world time', () => {
     expect(weekday.primary).toBe('金曜日');
     expect(weekday.copyText).toBe('金曜日');
 
-    const time = describeResult({ kind: 'time', city: 'London', timeZone: 'Europe/London', time: '13:05', date: '2026-01-15', offset: 'UTC+0' }, labels);
+    const time = describeResult({ kind: 'time', city: 'London', timeZone: 'Europe/London', time: '13:05', date: '2026-01-15', offset: 'UTC' }, labels);
     expect(time.primary).toBe('13:05');
-    expect(time.secondary).toBe('Time in London · UTC+0 · 2026-01-15');
+    expect(time.secondary).toBe('Time in London · UTC · 2026-01-15');
   });
 });
