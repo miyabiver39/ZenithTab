@@ -51,6 +51,25 @@ describe('WeatherWidget', () => {
     expect(screen.queryByText('24°')).not.toBeInTheDocument();
   });
 
+  it('WMO コードごとに正しいアイコンを描くこと(にわか雨は雪にならない)', async () => {
+    const forecast = [
+      { date: '2026-09-16', maxTemp: 30, minTemp: 22, weatherCode: 3, condition: 'x' },
+      { date: '2026-09-17', maxTemp: 25, minTemp: 20, weatherCode: 82, condition: 'x' }, // rain showers
+      { date: '2026-09-18', maxTemp: 28, minTemp: 21, weatherCode: 95, condition: 'x' }, // thunderstorm
+      { date: '2026-09-19', maxTemp: 24, minTemp: 18, weatherCode: 45, condition: 'x' }, // fog
+    ];
+    vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue({ ...WEATHER, forecast });
+    const { container } = render(<WeatherWidget config={config} />);
+    await waitFor(() => expect(screen.getByText('25°')).toBeInTheDocument());
+
+    // lucide icons carry no text or role, so their generated class is the
+    // only handle we have on which icon was chosen.
+    expect(container.querySelector('.lucide-snowflake')).toBeNull();
+    expect(container.querySelector('.lucide-cloud-rain')).not.toBeNull();
+    expect(container.querySelector('.lucide-cloud-lightning')).not.toBeNull();
+    expect(container.querySelector('.lucide-cloud-fog')).not.toBeNull();
+  });
+
   it('華氏に変換し、予報を非表示にできること', async () => {
     vi.spyOn(weatherService, 'fetchWeather').mockResolvedValue(WEATHER);
     render(<WeatherWidget config={{ ...config, unit: 'fahrenheit', showForecast: false }} />);

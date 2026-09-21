@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cloud, CloudRain, CloudSun, Sun, Snowflake, Wind, Droplets, MapPin, RefreshCw } from 'lucide-react';
+import { Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudMoon, CloudRain, CloudSun, Sun, Snowflake, Wind, Droplets, MapPin, RefreshCw } from 'lucide-react';
 import { WeatherWidgetConfig } from '../../../types/widget';
 import { useWeather } from '../../../hooks/useWeather';
 import { weatherService, GeolocationFailure } from '../../../services/weatherService';
@@ -42,18 +42,33 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
     }
   };
 
+  // WMO 4677 weather codes as Open-Meteo emits them. Grouped by the code
+  // table rather than by loose ranges: 80-82 are rain *showers*, which used
+  // to fall into the snow bucket and put a snowflake on a 24‹C day.
   const getWeatherIcon = (code: number, isDay = true, size = 28) => {
     if (code === 0) {
-      return isDay ? <Sun size={size} className="text-amber-400 animate-pulse-subtle" /> : <CloudSun size={size} className="text-slate-300" />;
+      return isDay ? <Sun size={size} className="text-amber-400 animate-pulse-subtle" /> : <CloudMoon size={size} className="text-slate-300" />;
     }
-    if (code <= 3) {
-      return <CloudSun size={size} className="text-amber-300" />;
+    if (code <= 2) {
+      return isDay ? <CloudSun size={size} className="text-amber-300" /> : <CloudMoon size={size} className="text-slate-300" />;
     }
-    if (code >= 51 && code <= 67) {
+    if (code === 3) {
+      return <Cloud size={size} className="text-slate-300" />;
+    }
+    if (code === 45 || code === 48) {
+      return <CloudFog size={size} className="text-slate-400" />;
+    }
+    if (code >= 51 && code <= 57) {
+      return <CloudDrizzle size={size} className="text-sky-400" />;
+    }
+    if ((code >= 61 && code <= 67) || (code >= 80 && code <= 82)) {
       return <CloudRain size={size} className="text-sky-400" />;
     }
-    if (code >= 71 && code <= 86) {
+    if ((code >= 71 && code <= 77) || code === 85 || code === 86) {
       return <Snowflake size={size} className="text-sky-200" />;
+    }
+    if (code >= 95 && code <= 99) {
+      return <CloudLightning size={size} className="text-amber-300" />;
     }
     return <Cloud size={size} className="text-slate-300" />;
   };
