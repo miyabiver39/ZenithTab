@@ -1,0 +1,1560 @@
+{
+  "version": "1.11.0",
+  "schemaVersion": 1,
+  "exportedAt": "2026-09-22T00:00:00.000Z",
+  "widgets": [
+    {
+      "id": "widget-search-mubqbgyy09hed6",
+      "type": "search",
+      "title": "クイック検索",
+      "config": {
+        "defaultEngine": "google",
+        "showEngineSelector": true,
+        "openInNewTab": true,
+        "smartTools": true
+      },
+      "layout": {
+        "i": "widget-search-mubqbgyy09hed6",
+        "x": 2,
+        "y": 0,
+        "w": 8,
+        "h": 1,
+        "minW": 3,
+        "minH": 1
+      }
+    },
+    {
+      "id": "widget-clock-mubqbgyy0abe24",
+      "type": "clock",
+      "title": "時計",
+      "config": {
+        "style": "digital",
+        "showSeconds": true,
+        "showDate": true,
+        "is24Hour": true
+      },
+      "layout": {
+        "i": "widget-clock-mubqbgyy0abe24",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 1
+      }
+    },
+    {
+      "id": "widget-weather-mubqbgyy0bf64g",
+      "type": "weather",
+      "title": "天気情報",
+      "config": {
+        "city": "Tokyo",
+        "latitude": 35.6762,
+        "longitude": 139.6503,
+        "unit": "celsius",
+        "showForecast": true
+      },
+      "layout": {
+        "i": "widget-weather-mubqbgyy0bf64g",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-rss-mubqbgyy0cutbs",
+      "type": "rss",
+      "title": "テクノロジー",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=ja&gl=JP&ceid=JP:ja",
+        "isGoogleNews": true,
+        "googleNewsMode": "topic",
+        "searchQuery": "",
+        "maxItems": 8,
+        "refreshIntervalMinutes": 30,
+        "showThumbnail": true,
+        "showDate": true,
+        "showDescription": true,
+        "googleNewsTopic": "TECHNOLOGY"
+      },
+      "layout": {
+        "i": "widget-rss-mubqbgyy0cutbs",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 6,
+        "minW": 2,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-rss-mubqbgyy0dn28g",
+      "type": "rss",
+      "title": "ニュース",
+      "config": {
+        "feedUrl": "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja",
+        "isGoogleNews": true,
+        "googleNewsMode": "headlines",
+        "searchQuery": "",
+        "maxItems": 8,
+        "refreshIntervalMinutes": 30,
+        "showThumbnail": true,
+        "showDate": true,
+        "showDescription": true
+      },
+      "layout": {
+        "i": "widget-rss-mubqbgyy0dn28g",
+        "x": 0,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      }
+    },
+    {
+      "id": "widget-rss-mubqbgyy0e0nb4",
+      "type": "rss",
+      "title": "ビジネス",
+      "config": {
+        "feedUrl": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ja&gl=JP&ceid=JP:ja",
+        "isGoogleNews": true,
+        "googleNewsMode": "topic",
+        "searchQuery": "",
+        "maxItems": 8,
+        "refreshIntervalMinutes": 30,
+        "showThumbnail": true,
+        "showDate": true,
+        "showDescription": true,
+        "googleNewsTopic": "BUSINESS"
+      },
+      "layout": {
+        "i": "widget-rss-mubqbgyy0e0nb4",
+        "x": 4,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      }
+    }
+  ],
+  "layouts": {
+    "lg": [
+      {
+        "i": "widget-search-mubqbgyy09hed6",
+        "x": 2,
+        "y": 0,
+        "w": 8,
+        "h": 1,
+        "minW": 3,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-mubqbgyy0abe24",
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 1
+      },
+      {
+        "i": "widget-weather-mubqbgyy0bf64g",
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0cutbs",
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 6,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0dn28g",
+        "x": 0,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0e0nb4",
+        "x": 4,
+        "y": 3,
+        "w": 4,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      }
+    ],
+    "md": [
+      {
+        "i": "widget-search-mubqbgyy09hed6",
+        "x": 0,
+        "y": 0,
+        "w": 5,
+        "h": 1,
+        "minW": 3,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-mubqbgyy0abe24",
+        "x": 5,
+        "y": 0,
+        "w": 5,
+        "h": 2,
+        "minW": 2,
+        "minH": 1
+      },
+      {
+        "i": "widget-weather-mubqbgyy0bf64g",
+        "x": 0,
+        "y": 2,
+        "w": 5,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0cutbs",
+        "x": 5,
+        "y": 2,
+        "w": 5,
+        "h": 6,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0dn28g",
+        "x": 0,
+        "y": 8,
+        "w": 5,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0e0nb4",
+        "x": 5,
+        "y": 8,
+        "w": 5,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      }
+    ],
+    "sm": [
+      {
+        "i": "widget-search-mubqbgyy09hed6",
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 1,
+        "minW": 3,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-mubqbgyy0abe24",
+        "x": 0,
+        "y": 2,
+        "w": 6,
+        "h": 2,
+        "minW": 2,
+        "minH": 1
+      },
+      {
+        "i": "widget-weather-mubqbgyy0bf64g",
+        "x": 0,
+        "y": 4,
+        "w": 6,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0cutbs",
+        "x": 0,
+        "y": 6,
+        "w": 6,
+        "h": 6,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0dn28g",
+        "x": 0,
+        "y": 8,
+        "w": 6,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0e0nb4",
+        "x": 0,
+        "y": 10,
+        "w": 6,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      }
+    ],
+    "xs": [
+      {
+        "i": "widget-search-mubqbgyy09hed6",
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 1,
+        "minW": 3,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-mubqbgyy0abe24",
+        "x": 0,
+        "y": 2,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 1
+      },
+      {
+        "i": "widget-weather-mubqbgyy0bf64g",
+        "x": 0,
+        "y": 4,
+        "w": 4,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0cutbs",
+        "x": 0,
+        "y": 6,
+        "w": 4,
+        "h": 6,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0dn28g",
+        "x": 0,
+        "y": 8,
+        "w": 4,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0e0nb4",
+        "x": 0,
+        "y": 10,
+        "w": 4,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      }
+    ],
+    "xxs": [
+      {
+        "i": "widget-search-mubqbgyy09hed6",
+        "x": 0,
+        "y": 0,
+        "w": 2,
+        "h": 1,
+        "minW": 3,
+        "minH": 1
+      },
+      {
+        "i": "widget-clock-mubqbgyy0abe24",
+        "x": 0,
+        "y": 2,
+        "w": 2,
+        "h": 2,
+        "minW": 2,
+        "minH": 1
+      },
+      {
+        "i": "widget-weather-mubqbgyy0bf64g",
+        "x": 0,
+        "y": 4,
+        "w": 2,
+        "h": 2,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0cutbs",
+        "x": 0,
+        "y": 6,
+        "w": 2,
+        "h": 6,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0dn28g",
+        "x": 0,
+        "y": 8,
+        "w": 2,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      },
+      {
+        "i": "widget-rss-mubqbgyy0e0nb4",
+        "x": 0,
+        "y": 10,
+        "w": 2,
+        "h": 4,
+        "minW": 2,
+        "minH": 2
+      }
+    ]
+  },
+  "wallpaper": {
+    "source": "unsplash",
+    "category": "space",
+    "blur": 4,
+    "brightness": 0.85,
+    "overlayOpacity": 0.35,
+    "refreshInterval": "hourly",
+    "currentWallpaperUrl": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=2560&q=80"
+  },
+  "appearance": {
+    "language": "ja",
+    "theme": "dark",
+    "glassBlur": 16,
+    "glassOpacity": 0.45,
+    "borderRadius": "2xl",
+    "compactMode": false,
+    "dockPosition": "bottom",
+    "adaptiveTextColor": true
+  },
+  "dockItems": [
+    {
+      "id": "dock-google",
+      "label": "Google",
+      "url": "https://google.com",
+      "icon": "globe",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-youtube",
+      "label": "YouTube",
+      "url": "https://youtube.com",
+      "icon": "video",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-twitter",
+      "label": "X (Twitter)",
+      "url": "https://x.com",
+      "icon": "chat",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-yahoo-jp",
+      "label": "Yahoo! JAPAN",
+      "url": "https://www.yahoo.co.jp",
+      "icon": "news",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-amazon-jp",
+      "label": "Amazon",
+      "url": "https://www.amazon.co.jp",
+      "icon": "cart",
+      "openInNewTab": true
+    },
+    {
+      "id": "dock-chatgpt",
+      "label": "ChatGPT",
+      "url": "https://chatgpt.com",
+      "icon": "sparkles",
+      "openInNewTab": true
+    }
+  ],
+  "keyboardShortcuts": [
+    {
+      "combo": "Ctrl+Alt+G",
+      "label": "GitHub",
+      "url": "https://github.com",
+      "openInNewTab": true,
+      "id": "kbd-mubqbgyz0g9y76"
+    }
+  ],
+  "pages": [
+    {
+      "id": "page-1",
+      "name": ""
+    },
+    {
+      "id": "page-mubqbgyy0fjfff",
+      "name": "News"
+    }
+  ],
+  "pageData": {
+    "page-1": {
+      "widgets": [
+        {
+          "id": "widget-search-mubqbgyw019kiy",
+          "type": "search",
+          "title": "クイック検索",
+          "config": {
+            "defaultEngine": "google",
+            "showEngineSelector": true,
+            "openInNewTab": true,
+            "smartTools": true
+          },
+          "layout": {
+            "i": "widget-search-mubqbgyw019kiy",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          }
+        },
+        {
+          "id": "widget-clock-mubqbgyw02qqcm",
+          "type": "clock",
+          "title": "時計",
+          "config": {
+            "style": "digital",
+            "showSeconds": true,
+            "showDate": true,
+            "is24Hour": true
+          },
+          "layout": {
+            "i": "widget-clock-mubqbgyw02qqcm",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          }
+        },
+        {
+          "id": "widget-weather-mubqbgyx03aw2p",
+          "type": "weather",
+          "title": "天気情報",
+          "config": {
+            "city": "Tokyo",
+            "latitude": 35.6762,
+            "longitude": 139.6503,
+            "unit": "celsius",
+            "showForecast": true
+          },
+          "layout": {
+            "i": "widget-weather-mubqbgyx03aw2p",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-pomodoro-mubqbgyx04651j",
+          "type": "pomodoro",
+          "title": "集中タイマー",
+          "config": {
+            "focusDurationMinutes": 25,
+            "shortBreakDurationMinutes": 5,
+            "longBreakDurationMinutes": 15,
+            "autoStartBreaks": false
+          },
+          "layout": {
+            "i": "widget-pomodoro-mubqbgyx04651j",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-calendar-mubqbgyx05cj4w",
+          "type": "calendar",
+          "title": "カレンダー",
+          "config": {
+            "feeds": [],
+            "daysAhead": 3,
+            "showLocation": true
+          },
+          "layout": {
+            "i": "widget-calendar-mubqbgyx05cj4w",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-todo-mubqbgyx06ihfa",
+          "type": "todo",
+          "title": "タスク管理",
+          "config": {
+            "items": []
+          },
+          "layout": {
+            "i": "widget-todo-mubqbgyx06ihfa",
+            "x": 4,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-notes-mubqbgyx07azxm",
+          "type": "notes",
+          "title": "クイックメモ",
+          "config": {
+            "content": "",
+            "fontSize": "base",
+            "fontFamily": "sans"
+          },
+          "layout": {
+            "i": "widget-notes-mubqbgyx07azxm",
+            "x": 8,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-shortcuts-mubqbgyx08hadt",
+          "type": "shortcuts",
+          "title": "ショートカット",
+          "config": {
+            "items": [
+              {
+                "id": "app-google",
+                "title": "Google",
+                "url": "https://google.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-youtube",
+                "title": "YouTube",
+                "url": "https://youtube.com",
+                "category": "SNS・動画"
+              },
+              {
+                "id": "app-twitter",
+                "title": "X (Twitter)",
+                "url": "https://x.com",
+                "category": "SNS・動画"
+              },
+              {
+                "id": "app-yahoo-jp",
+                "title": "Yahoo! JAPAN",
+                "url": "https://www.yahoo.co.jp",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-amazon-jp",
+                "title": "Amazon",
+                "url": "https://www.amazon.co.jp",
+                "category": "ショッピング"
+              },
+              {
+                "id": "app-rakuten",
+                "title": "楽天市場",
+                "url": "https://www.rakuten.co.jp",
+                "category": "ショッピング"
+              },
+              {
+                "id": "app-instagram",
+                "title": "Instagram",
+                "url": "https://instagram.com",
+                "category": "SNS・動画"
+              },
+              {
+                "id": "app-chatgpt",
+                "title": "ChatGPT",
+                "url": "https://chatgpt.com",
+                "category": "AI・ツール"
+              },
+              {
+                "id": "app-gmail",
+                "title": "Gmail",
+                "url": "https://mail.google.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-maps",
+                "title": "Google マップ",
+                "url": "https://maps.google.com",
+                "category": "仕事・日常"
+              },
+              {
+                "id": "app-spotify",
+                "title": "Spotify",
+                "url": "https://open.spotify.com",
+                "category": "エンタメ"
+              },
+              {
+                "id": "app-netflix",
+                "title": "Netflix",
+                "url": "https://netflix.com",
+                "category": "エンタメ"
+              },
+              {
+                "id": "app-gemini",
+                "title": "Gemini",
+                "url": "https://gemini.google.com",
+                "category": "AI・ツール"
+              },
+              {
+                "id": "app-claude",
+                "title": "Claude",
+                "url": "https://claude.ai",
+                "category": "AI・ツール"
+              },
+              {
+                "id": "app-copilot",
+                "title": "Copilot",
+                "url": "https://copilot.microsoft.com",
+                "category": "AI・ツール"
+              }
+            ],
+            "columns": 4,
+            "openInNewTab": true,
+            "viewMode": "grid"
+          },
+          "layout": {
+            "i": "widget-shortcuts-mubqbgyx08hadt",
+            "x": 0,
+            "y": 7,
+            "w": 12,
+            "h": 3,
+            "minW": 2,
+            "minH": 1
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "widget-search-mubqbgyw019kiy",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyw02qqcm",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyx03aw2p",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-mubqbgyx04651j",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-calendar-mubqbgyx05cj4w",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-todo-mubqbgyx06ihfa",
+            "x": 4,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-mubqbgyx07azxm",
+            "x": 8,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-shortcuts-mubqbgyx08hadt",
+            "x": 0,
+            "y": 7,
+            "w": 12,
+            "h": 3,
+            "minW": 2,
+            "minH": 1
+          }
+        ],
+        "md": [
+          {
+            "i": "widget-search-mubqbgyw019kiy",
+            "x": 0,
+            "y": 0,
+            "w": 5,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyw02qqcm",
+            "x": 5,
+            "y": 0,
+            "w": 5,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyx03aw2p",
+            "x": 0,
+            "y": 2,
+            "w": 5,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-mubqbgyx04651j",
+            "x": 5,
+            "y": 2,
+            "w": 5,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-calendar-mubqbgyx05cj4w",
+            "x": 0,
+            "y": 4,
+            "w": 5,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-todo-mubqbgyx06ihfa",
+            "x": 5,
+            "y": 4,
+            "w": 5,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-mubqbgyx07azxm",
+            "x": 0,
+            "y": 8,
+            "w": 5,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-shortcuts-mubqbgyx08hadt",
+            "x": 5,
+            "y": 8,
+            "w": 5,
+            "h": 3,
+            "minW": 2,
+            "minH": 1
+          }
+        ],
+        "sm": [
+          {
+            "i": "widget-search-mubqbgyw019kiy",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyw02qqcm",
+            "x": 0,
+            "y": 2,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyx03aw2p",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-mubqbgyx04651j",
+            "x": 0,
+            "y": 6,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-calendar-mubqbgyx05cj4w",
+            "x": 0,
+            "y": 8,
+            "w": 6,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-todo-mubqbgyx06ihfa",
+            "x": 0,
+            "y": 10,
+            "w": 6,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-mubqbgyx07azxm",
+            "x": 0,
+            "y": 12,
+            "w": 6,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-shortcuts-mubqbgyx08hadt",
+            "x": 0,
+            "y": 14,
+            "w": 6,
+            "h": 3,
+            "minW": 2,
+            "minH": 1
+          }
+        ],
+        "xs": [
+          {
+            "i": "widget-search-mubqbgyw019kiy",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyw02qqcm",
+            "x": 0,
+            "y": 2,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyx03aw2p",
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-mubqbgyx04651j",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-calendar-mubqbgyx05cj4w",
+            "x": 0,
+            "y": 8,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-todo-mubqbgyx06ihfa",
+            "x": 0,
+            "y": 10,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-mubqbgyx07azxm",
+            "x": 0,
+            "y": 12,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-shortcuts-mubqbgyx08hadt",
+            "x": 0,
+            "y": 14,
+            "w": 4,
+            "h": 3,
+            "minW": 2,
+            "minH": 1
+          }
+        ],
+        "xxs": [
+          {
+            "i": "widget-search-mubqbgyw019kiy",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyw02qqcm",
+            "x": 0,
+            "y": 2,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyx03aw2p",
+            "x": 0,
+            "y": 4,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-pomodoro-mubqbgyx04651j",
+            "x": 0,
+            "y": 6,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-calendar-mubqbgyx05cj4w",
+            "x": 0,
+            "y": 8,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-todo-mubqbgyx06ihfa",
+            "x": 0,
+            "y": 10,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-notes-mubqbgyx07azxm",
+            "x": 0,
+            "y": 12,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-shortcuts-mubqbgyx08hadt",
+            "x": 0,
+            "y": 14,
+            "w": 2,
+            "h": 3,
+            "minW": 2,
+            "minH": 1
+          }
+        ]
+      }
+    },
+    "page-mubqbgyy0fjfff": {
+      "widgets": [
+        {
+          "id": "widget-search-mubqbgyy09hed6",
+          "type": "search",
+          "title": "クイック検索",
+          "config": {
+            "defaultEngine": "google",
+            "showEngineSelector": true,
+            "openInNewTab": true,
+            "smartTools": true
+          },
+          "layout": {
+            "i": "widget-search-mubqbgyy09hed6",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          }
+        },
+        {
+          "id": "widget-clock-mubqbgyy0abe24",
+          "type": "clock",
+          "title": "時計",
+          "config": {
+            "style": "digital",
+            "showSeconds": true,
+            "showDate": true,
+            "is24Hour": true
+          },
+          "layout": {
+            "i": "widget-clock-mubqbgyy0abe24",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          }
+        },
+        {
+          "id": "widget-weather-mubqbgyy0bf64g",
+          "type": "weather",
+          "title": "天気情報",
+          "config": {
+            "city": "Tokyo",
+            "latitude": 35.6762,
+            "longitude": 139.6503,
+            "unit": "celsius",
+            "showForecast": true
+          },
+          "layout": {
+            "i": "widget-weather-mubqbgyy0bf64g",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-rss-mubqbgyy0cutbs",
+          "type": "rss",
+          "title": "テクノロジー",
+          "config": {
+            "feedUrl": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=ja&gl=JP&ceid=JP:ja",
+            "isGoogleNews": true,
+            "googleNewsMode": "topic",
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true,
+            "googleNewsTopic": "TECHNOLOGY"
+          },
+          "layout": {
+            "i": "widget-rss-mubqbgyy0cutbs",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 6,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-rss-mubqbgyy0dn28g",
+          "type": "rss",
+          "title": "ニュース",
+          "config": {
+            "feedUrl": "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja",
+            "isGoogleNews": true,
+            "googleNewsMode": "headlines",
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true
+          },
+          "layout": {
+            "i": "widget-rss-mubqbgyy0dn28g",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        },
+        {
+          "id": "widget-rss-mubqbgyy0e0nb4",
+          "type": "rss",
+          "title": "ビジネス",
+          "config": {
+            "feedUrl": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ja&gl=JP&ceid=JP:ja",
+            "isGoogleNews": true,
+            "googleNewsMode": "topic",
+            "searchQuery": "",
+            "maxItems": 8,
+            "refreshIntervalMinutes": 30,
+            "showThumbnail": true,
+            "showDate": true,
+            "showDescription": true,
+            "googleNewsTopic": "BUSINESS"
+          },
+          "layout": {
+            "i": "widget-rss-mubqbgyy0e0nb4",
+            "x": 4,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        }
+      ],
+      "layouts": {
+        "lg": [
+          {
+            "i": "widget-search-mubqbgyy09hed6",
+            "x": 2,
+            "y": 0,
+            "w": 8,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyy0abe24",
+            "x": 0,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyy0bf64g",
+            "x": 4,
+            "y": 1,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0cutbs",
+            "x": 8,
+            "y": 1,
+            "w": 4,
+            "h": 6,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0dn28g",
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0e0nb4",
+            "x": 4,
+            "y": 3,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "md": [
+          {
+            "i": "widget-search-mubqbgyy09hed6",
+            "x": 0,
+            "y": 0,
+            "w": 5,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyy0abe24",
+            "x": 5,
+            "y": 0,
+            "w": 5,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyy0bf64g",
+            "x": 0,
+            "y": 2,
+            "w": 5,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0cutbs",
+            "x": 5,
+            "y": 2,
+            "w": 5,
+            "h": 6,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0dn28g",
+            "x": 0,
+            "y": 8,
+            "w": 5,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0e0nb4",
+            "x": 5,
+            "y": 8,
+            "w": 5,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "sm": [
+          {
+            "i": "widget-search-mubqbgyy09hed6",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyy0abe24",
+            "x": 0,
+            "y": 2,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyy0bf64g",
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0cutbs",
+            "x": 0,
+            "y": 6,
+            "w": 6,
+            "h": 6,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0dn28g",
+            "x": 0,
+            "y": 8,
+            "w": 6,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0e0nb4",
+            "x": 0,
+            "y": 10,
+            "w": 6,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "xs": [
+          {
+            "i": "widget-search-mubqbgyy09hed6",
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyy0abe24",
+            "x": 0,
+            "y": 2,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyy0bf64g",
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0cutbs",
+            "x": 0,
+            "y": 6,
+            "w": 4,
+            "h": 6,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0dn28g",
+            "x": 0,
+            "y": 8,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0e0nb4",
+            "x": 0,
+            "y": 10,
+            "w": 4,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        ],
+        "xxs": [
+          {
+            "i": "widget-search-mubqbgyy09hed6",
+            "x": 0,
+            "y": 0,
+            "w": 2,
+            "h": 1,
+            "minW": 3,
+            "minH": 1
+          },
+          {
+            "i": "widget-clock-mubqbgyy0abe24",
+            "x": 0,
+            "y": 2,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 1
+          },
+          {
+            "i": "widget-weather-mubqbgyy0bf64g",
+            "x": 0,
+            "y": 4,
+            "w": 2,
+            "h": 2,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0cutbs",
+            "x": 0,
+            "y": 6,
+            "w": 2,
+            "h": 6,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0dn28g",
+            "x": 0,
+            "y": 8,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          },
+          {
+            "i": "widget-rss-mubqbgyy0e0nb4",
+            "x": 0,
+            "y": 10,
+            "w": 2,
+            "h": 4,
+            "minW": 2,
+            "minH": 2
+          }
+        ]
+      }
+    }
+  },
+  "activePageId": "page-mubqbgyy0fjfff",
+  "trash": []
+}

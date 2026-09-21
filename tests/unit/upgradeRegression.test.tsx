@@ -4,6 +4,7 @@ import React from 'react';
 import v123 from '../fixtures/export-v1.2.3.json';
 import v133 from '../fixtures/export-v1.3.3.json';
 import v150 from '../fixtures/export-v1.5.0.json';
+import v1110 from '../fixtures/export-v1.11.0.json';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
 import { storageService, STORAGE_KEYS, hydrateWidget, DEFAULT_WALLPAPER } from '../../src/services/storageService';
 import { WIDGET_DEFINITIONS, WIDGET_TYPES } from '../../src/components/widgets/widgetDefinitions';
@@ -21,11 +22,13 @@ import { WidgetConfigModal } from '../../src/components/layout/WidgetConfigModal
 import { chromeStorageData } from '../helpers/chrome';
 import { resetDashboardStore } from '../helpers/store';
 
-type Fixture = typeof v123 | typeof v133 | typeof v150;
+type Fixture = typeof v123 | typeof v133 | typeof v150 | typeof v1110;
 const FIXTURES: Array<[string, Fixture]> = [
   ['v1.2.3', v123],
   ['v1.3.3', v133],
   ['v1.5.0', v150],
+  // Two pages (Work setup + News template), a keyboard shortcut, sync on.
+  ['v1.11.0', v1110],
 ];
 
 /**
