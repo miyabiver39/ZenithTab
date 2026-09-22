@@ -20,6 +20,10 @@ export const es: typeof en = {
     retry: 'Reintentar',
     reset: 'Restablecer',
     close: 'Cerrar',
+    widgetError: {
+      title: 'No se pudo cargar "{name}"',
+      desc: 'Algo en la configuración de este widget causó un problema. El resto del panel no se ve afectado.',
+    },
   },
   greeting: {
     morning: 'Buenos días',

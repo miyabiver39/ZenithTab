@@ -20,6 +20,10 @@ export const fr: typeof en = {
     retry: 'Réessayer',
     reset: 'Réinitialiser',
     close: 'Fermer',
+    widgetError: {
+      title: 'Impossible de charger « {name} »',
+      desc: 'Un problème dans les réglages de ce widget l\'a fait planter. Le reste du tableau de bord n\'est pas affecté.',
+    },
   },
   greeting: {
     morning: 'Bonjour',

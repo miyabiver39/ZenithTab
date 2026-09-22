@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { WidgetWrapper } from '../widgets/WidgetWrapper';
+import { WidgetErrorBoundary } from '../widgets/WidgetErrorBoundary';
 import { getWidgetDefinition } from '../widgets/registry';
 import { applyRegistryMinimums } from '../../utils/layout';
 import { EmptyPage } from './EmptyPage';
@@ -97,7 +98,11 @@ export const GridContainer: React.FC = () => {
           // the store) is the single source of truth instead.
           <div key={widget.id}>
             <WidgetWrapper widget={widget}>
-              {renderWidgetContent(widget)}
+              {/* A crash in one widget's body must not take the rest of the
+                  dashboard down — see WidgetErrorBoundary. */}
+              <WidgetErrorBoundary widget={widget}>
+                {renderWidgetContent(widget)}
+              </WidgetErrorBoundary>
             </WidgetWrapper>
           </div>
         ))}

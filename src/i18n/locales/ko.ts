@@ -20,6 +20,10 @@ export const ko: typeof en = {
     retry: '다시 시도',
     reset: '초기화',
     close: '닫기',
+    widgetError: {
+      title: '"{name}"을(를) 불러올 수 없습니다',
+      desc: '이 위젯의 설정에 문제가 있는 것 같습니다. 다른 위젯에는 영향이 없습니다.',
+    },
   },
   greeting: {
     morning: '좋은 아침입니다',

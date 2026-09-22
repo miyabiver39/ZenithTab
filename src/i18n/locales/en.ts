@@ -18,6 +18,10 @@ export const en = {
     retry: 'Retry',
     reset: 'Reset',
     close: 'Close',
+    widgetError: {
+      title: '"{name}" couldn\'t be loaded',
+      desc: 'Something in this widget\'s settings tripped it up. The rest of the dashboard is unaffected.',
+    },
   },
   greeting: {
     morning: 'Good morning',

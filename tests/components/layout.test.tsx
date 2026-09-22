@@ -12,6 +12,7 @@ import * as wallpaperLuminance from '../../src/services/wallpaperLuminance';
 import { GridContainer } from '../../src/components/layout/GridContainer';
 import { AddWidgetModal } from '../../src/components/layout/AddWidgetModal';
 import { ErrorBoundary } from '../../src/components/ErrorBoundary';
+import { snapshotService } from '../../src/services/snapshotService';
 import { Modal } from '../../src/components/common/Modal';
 import { GlassCard } from '../../src/components/common/GlassCard';
 import { Input } from '../../src/components/common/Input';
@@ -452,5 +453,83 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
     expect(screen.getByText('fine')).toBeInTheDocument();
+  });
+
+  it('バックアップがあれば復元ボタンを出し、クリックで復元してリロードすること', async () => {
+    const user = setupUser();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const reload = vi.fn();
+    Object.defineProperty(window, 'location', { configurable: true, value: { reload } });
+    const meta = { id: 'snap-1', takenAt: Date.now(), reason: 'auto' as const, appVersion: '1.11.1', schemaVersion: 1, summary: { pages: 1, widgets: 8, dockItems: 6, bytes: 100 } };
+    const snapshot = { ...meta, data: { dashboard_widgets: [] } };
+    vi.spyOn(snapshotService, 'list').mockResolvedValue([meta]);
+    vi.spyOn(snapshotService, 'get').mockResolvedValue(snapshot as any);
+    const restoreSpy = vi.spyOn(snapshotService, 'restore').mockResolvedValue(true);
+    const Boom: React.FC = () => {
+      throw new Error('boom');
+    };
+
+    render(
+      <ErrorBoundary>
+        <Boom />
+      </ErrorBoundary>
+    );
+    const restoreBtn = await screen.findByText(/Restore latest backup/);
+    await user.click(restoreBtn);
+
+    await waitFor(() => expect(restoreSpy).toHaveBeenCalledWith(snapshot, {}));
+    expect(reload).toHaveBeenCalled();
+    vi.restoreAllMocks();
+  });
+
+  it('復元に失敗したらエラーを表示し、リセットはまだ使えること', async () => {
+    const user = setupUser();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const reload = vi.fn();
+    Object.defineProperty(window, 'location', { configurable: true, value: { reload } });
+    const meta = { id: 'snap-1', takenAt: Date.now(), reason: 'manual' as const, appVersion: '1.11.1', schemaVersion: 1, summary: { pages: 1, widgets: 8, dockItems: 6, bytes: 100 } };
+    vi.spyOn(snapshotService, 'list').mockResolvedValue([meta]);
+    vi.spyOn(snapshotService, 'get').mockResolvedValue(null);
+    const Boom: React.FC = () => {
+      throw new Error('boom');
+    };
+
+    render(
+      <ErrorBoundary>
+        <Boom />
+      </ErrorBoundary>
+    );
+    const restoreBtn = await screen.findByText(/Restore latest backup/);
+    await user.click(restoreBtn);
+    expect(await screen.findByText(/Restoring the backup failed/)).toBeInTheDocument();
+
+    await user.click(screen.getByText(/Reset to defaults/));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(chromeMock.storage.local.clear).toHaveBeenCalled();
+    expect(reload).toHaveBeenCalled();
+    vi.restoreAllMocks();
+  });
+
+  it('バックアップの一覧取得に失敗した場合も、リセットのみの画面に留まること', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(snapshotService, 'list').mockRejectedValue(new Error('storage unavailable'));
+    const Boom: React.FC = () => {
+      throw new Error('boom');
+    };
+
+    render(
+      <ErrorBoundary>
+        <Boom />
+      </ErrorBoundary>
+    );
+    expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(screen.queryByText(/Restore latest backup/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Reset to defaults/)).toBeInTheDocument();
+    vi.restoreAllMocks();
   });
 });

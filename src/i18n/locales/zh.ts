@@ -20,6 +20,10 @@ export const zh: typeof en = {
     retry: '重试',
     reset: '重置',
     close: '关闭',
+    widgetError: {
+      title: '"{name}" 无法加载',
+      desc: '此小组件的设置似乎出了问题。仪表盘的其他部分不受影响。',
+    },
   },
   greeting: {
     morning: '早上好',

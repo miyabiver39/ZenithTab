@@ -18,6 +18,10 @@ export const ja = {
     retry: '再試行',
     reset: 'リセット',
     close: '閉じる',
+    widgetError: {
+      title: '「{name}」を読み込めませんでした',
+      desc: 'このウィジェットの設定に問題があるようです。他のウィジェットには影響していません。',
+    },
   },
   greeting: {
     morning: 'おはようございます',

@@ -20,6 +20,10 @@ export const de: typeof en = {
     retry: 'Wiederholen',
     reset: 'Zurücksetzen',
     close: 'Schließen',
+    widgetError: {
+      title: '„{name}" konnte nicht geladen werden',
+      desc: 'Etwas in den Einstellungen dieses Widgets hat einen Fehler verursacht. Der Rest des Dashboards ist nicht betroffen.',
+    },
   },
   greeting: {
     morning: 'Guten Morgen',
