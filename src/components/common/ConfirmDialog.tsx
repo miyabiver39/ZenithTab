@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from './Button';
 import { useTranslation } from '../../i18n/i18n';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { cn } from '../../utils/cn';
 
 export interface ConfirmDialogProps {
@@ -22,7 +23,10 @@ export interface ConfirmDialogProps {
  * emptying the trash). Everything reversible goes through the undo toast
  * instead — a dialog people click through by habit protects nobody.
  *
- * Focus starts on Cancel so a stray Enter never confirms; Escape cancels.
+ * Focus starts on Cancel so a stray Enter never confirms; Escape cancels,
+ * and Tab is trapped inside the dialog (shared with Modal/AppDrawerModal
+ * via useFocusTrap, which also means an underlying Modal never reacts to
+ * the same keypress while this is open).
  */
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   isOpen,
@@ -34,22 +38,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
+  const dialogRef = useRef<HTMLDivElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    cancelRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onCancel();
-      }
-    };
-    // Capture phase so an underlying Modal's own Escape handler doesn't
-    // also close the panel behind this dialog.
-    document.addEventListener('keydown', onKey, true);
-    return () => document.removeEventListener('keydown', onKey, true);
-  }, [isOpen, onCancel]);
+  useFocusTrap(dialogRef, { isOpen, onEscape: onCancel, initialFocusRef: cancelRef });
 
   if (!isOpen) return null;
 
@@ -57,6 +49,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} />
       <div
+        ref={dialogRef}
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"

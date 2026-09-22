@@ -335,6 +335,42 @@ describe('AppDrawerModal', () => {
     expect(container.firstChild).toBeNull();
   });
 
+  it('dialog として認識され、Escape で閉じ、Tab がドロワーの外へ抜けず、閉じると元の要素へフォーカスが戻ること (#76)', async () => {
+    const user = setupUser();
+    const opener = document.createElement('button');
+    document.body.appendChild(opener);
+    opener.focus();
+
+    act(() => state().toggleAppDrawer(true));
+    render(<AppDrawerModal />);
+
+    const dialog = screen.getByRole('dialog', { name: 'App Drawer' });
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    // Focus starts in the search field, not the header's first button.
+    expect(screen.getByPlaceholderText('Search apps & tools...')).toHaveFocus();
+
+    await user.keyboard('{Escape}');
+    expect(state().isAppDrawerOpen).toBe(false);
+    expect(opener).toHaveFocus();
+    opener.remove();
+  });
+
+  it('入れ子の「カスタムアプリを追加」が開いている間は、Escape がそちらだけを閉じること (#76)', async () => {
+    const user = setupUser();
+    act(() => state().toggleAppDrawer(true));
+    render(<AppDrawerModal />);
+
+    await user.click(screen.getByText('Add Custom App'));
+    const addDialog = screen.getByRole('dialog', { name: 'Add Custom App' });
+    expect(addDialog).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog', { name: 'Add Custom App' })).not.toBeInTheDocument();
+    // The drawer itself is still open — only the nested dialog closed.
+    expect(state().isAppDrawerOpen).toBe(true);
+    expect(screen.getByRole('dialog', { name: 'App Drawer' })).toBeInTheDocument();
+  });
+
   it('既定のショートカットを検索・カテゴリで絞り込め、カスタムアプリを追加できること', async () => {
     const user = setupUser();
     act(() => state().toggleAppDrawer(true));

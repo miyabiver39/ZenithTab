@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useId, useRef, useState } from 'react';
 import { Search, Plus, Globe, X, ExternalLink } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDashboardStore';
 import { getRegionalShortcuts } from '../../config/defaults/regionalPresets';
 import { getFaviconUrl } from '../../utils/favicon';
 import { useTranslation } from '../../i18n/i18n';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { ShortcutItem } from '../../types/widget';
 import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
@@ -23,6 +24,18 @@ export const AppDrawerModal: React.FC = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newCategory, setNewCategory] = useState('');
+
+  const titleId = useId();
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  useFocusTrap(drawerRef, {
+    isOpen: isAppDrawerOpen,
+    onEscape: () => toggleAppDrawer(false),
+    // The search field, not the drawer's own first button (the "Add
+    // Custom App" button in the header) — it's what people actually want
+    // to start typing into, same as the autoFocus it already carried.
+    initialFocusRef: searchInputRef,
+  });
 
   if (!isAppDrawerOpen) return null;
 
@@ -77,7 +90,13 @@ export const AppDrawerModal: React.FC = () => {
       />
 
       {/* Drawer Container */}
-      <div className="relative w-full max-w-4xl bg-slate-900/85 border border-white/15 text-slate-100 rounded-3xl shadow-2xl shadow-black/80 backdrop-blur-2xl z-10 overflow-hidden flex flex-col max-h-[85vh]">
+      <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="relative w-full max-w-4xl bg-slate-900/85 border border-white/15 text-slate-100 rounded-3xl shadow-2xl shadow-black/80 backdrop-blur-2xl z-10 overflow-hidden flex flex-col max-h-[85vh]"
+      >
         {/* Header */}
         <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -85,7 +104,7 @@ export const AppDrawerModal: React.FC = () => {
               <Globe size={18} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white tracking-wide">
+              <h2 id={titleId} className="text-base font-bold text-white tracking-wide">
                 {t.appDrawer.title}
               </h2>
               <p className="text-xs text-slate-400">
@@ -107,6 +126,8 @@ export const AppDrawerModal: React.FC = () => {
 
             <button
               onClick={() => toggleAppDrawer(false)}
+              aria-label={t.common.close}
+              title={t.common.close}
               className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors"
             >
               <X size={20} />
@@ -120,11 +141,11 @@ export const AppDrawerModal: React.FC = () => {
           <div className="relative">
             <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.appDrawer.searchPlaceholder}
-              autoFocus
               className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-white/10 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50 transition-all"
             />
           </div>
