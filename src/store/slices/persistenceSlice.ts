@@ -10,7 +10,7 @@ import {
   DEFAULT_PAGE_ID,
 } from '../../services/storageService';
 import { runMigrations } from '../../services/migrations';
-import { getTranslation, resolveLanguageCode } from '../../i18n/resolve';
+import { getTranslation, resolveLanguageCode, preloadLocale } from '../../i18n/resolve';
 import { sanitizeResponsiveLayouts } from '../../utils/layout';
 import { pruneTrash } from '../../services/trashService';
 import { snapshotService, snapshotDataFromState, DEFAULT_BACKUP_SETTINGS } from '../../services/snapshotService';
@@ -48,6 +48,11 @@ export const createPersistenceSlice: DashboardSliceCreator<PersistenceSlice> = (
         // in the browser's language, so the welcome note, sample todos and
         // news feed read naturally instead of defaulting to English.
         const appearance = await withTimeout(storageService.getAppearance(), 5000, DEFAULT_APPEARANCE);
+        // The active language's locale (only) is loaded before anything
+        // below reads a translation, so the very first paint — default
+        // widget titles included — is already in the right language
+        // instead of flashing English while the chunk streams in (#77).
+        await withTimeout(preloadLocale(appearance.language), 5000, null);
         const defaults = localizedDefaults(appearance.language);
         // Decided before anything is written: a fresh install (no user
         // data at all) gets the setup wizard; everyone else at most the
@@ -189,6 +194,7 @@ export const createPersistenceSlice: DashboardSliceCreator<PersistenceSlice> = (
       }
       const appearance = { ...get().appearance, language };
       const lang = resolveLanguageCode(language);
+      await preloadLocale(language);
       const { page, dockItems } = buildSetupResult(choices, getTranslation(language), lang);
 
       // Wallpaper and keyboard shortcuts are left alone: the wizard is about

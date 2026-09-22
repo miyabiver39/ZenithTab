@@ -53,7 +53,7 @@ zenith-tab/
 │   │   ├── setup/             # applySetup: first-run wizard answers → dashboard
 │   │   └── templates/         # pageTemplates: Work / Study / News / Minimal / Standard
 │   ├── hooks/                 # useBookmarks, useRssFeed, useWeather, useLayoutUndo, useAutoSnapshot, useSettingsSync, useTodaySummary
-│   ├── i18n/                  # Localization engine and translation dictionaries
+│   ├── i18n/                  # Localization engine and translation dictionaries. resolve.ts lazy-loads every locale but the active one via import() (#77); defaultTitles.ts is the small always-bundled exception (widgetTitle.ts needs every locale's stock titles at once) — regenerate it with `npm run i18n:default-titles` after changing a widget's title wording
 │   ├── services/              # storageService, migrations, trashService, snapshotService, onboardingService, shareService, syncService, rssService, weatherService, …
 │   ├── store/                 # useDashboardStore.ts composes slices/ (ui, widget, page, settings, trash, snapshot, persistence; types.ts = DashboardState), useUndoStore.ts (in-memory undo/redo stack)
 │   ├── types/                 # TypeScript type contracts

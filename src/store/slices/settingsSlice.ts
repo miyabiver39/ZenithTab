@@ -2,6 +2,7 @@ import { DockItem, KeyboardShortcutBinding } from '../../types/settings';
 import { storageService, DEFAULT_WALLPAPER, DEFAULT_APPEARANCE, DEFAULT_DOCK_ITEMS, DEFAULT_KEYBOARD_SHORTCUTS } from '../../services/storageService';
 import { wallpaperService } from '../../services/wallpaperService';
 import { sanitizeAppearance, sanitizeDockItems, sanitizeKeyboardShortcuts } from '../../utils/settingsSanitizers';
+import { preloadLocale } from '../../i18n/resolve';
 import { uniqueId } from '../../utils/id';
 import { createStoreHelpers } from './helpers';
 import type { DashboardSliceCreator, SettingsSlice } from '../types';
@@ -53,6 +54,12 @@ export const createSettingsSlice: DashboardSliceCreator<SettingsSlice> = (set, g
       const updated = { ...appearance, ...partial };
       set({ appearance: updated });
       storageService.saveAppearance(updated);
+      // Kick off loading the new language's chunk right away rather than
+      // waiting for the next render to notice it's missing — narrows the
+      // window where a switched-to language briefly shows `en` text.
+      if (partial.language !== undefined && partial.language !== appearance.language) {
+        void preloadLocale(updated.language);
+      }
     },
 
     replaceDockItems: (items) => {

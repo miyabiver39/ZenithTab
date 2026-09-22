@@ -19,6 +19,7 @@
     "package": "node scripts/package.js",
     "sbom": "node scripts/generate-sbom.js",
     "version:bump": "node scripts/bump-version.js",
+    "i18n:default-titles": "node --experimental-strip-types scripts/generate-default-titles.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test:e2e": "playwright test",

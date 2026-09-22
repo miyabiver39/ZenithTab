@@ -40,6 +40,7 @@ ZenithTab(ゼニスタブ)は Manifest V3 の新しいタブ拡張です。ア�
 - ユーザーに見える文字列は必ず `src/i18n/locales/{en,ja,zh,es,fr,de,ko}.ts` の **7 言語すべて**に追加する(`tests/unit/i18n.test.ts` がキー構造の一致を検証)。
 - 文字列はロケールファイルにのみ置き、JSX にハードコードしない。
 - 初回起動時に生成されるデフォルト文言(メモ、タスク、ニュース名)は `defaults.*`、地域別のドック / ショートカット / 天気都市は `src/config/defaults/regionalPresets.ts`。
+- `src/i18n/resolve.ts` は `en` 以外のロケールを `import()` で遅延読み込みする(メインチャンクを軽くするため)。ウィジェットの既定タイトル(`widgets.<type>.title` / `defaults.newsTitle`)だけは全言語が常時必要なので `src/i18n/defaultTitles.ts` に静的データとして複製されている。ウィジェットのタイトル文言を変えたら `npm run i18n:default-titles` で再生成すること(`tests/unit/utils/defaultTitles.test.ts` が齟齬を検知する)。
 
 ## 4. ストレージとテスト環境
 

@@ -1,5 +1,6 @@
 import { DashboardWidget, WidgetType } from '../types/widget';
-import { LOCALES, Translation } from '../i18n/resolve';
+import type { Translation } from '../i18n/resolve';
+import { CATALOG_TITLES, NEWS_TITLES } from '../i18n/defaultTitles';
 
 /** Which stock title a stored title corresponds to. */
 type StockKind = 'catalog' | 'news';
@@ -27,7 +28,11 @@ const LEGACY_TITLES: Array<[WidgetType, string, StockKind]> = [
 
 // Every locale's stock title for each widget type. A widget whose stored
 // title is one of these was never renamed by the user, so it can safely
-// follow the language setting. Built once, lazily.
+// follow the language setting. Built once, lazily, from the small
+// always-bundled defaultTitles.ts — NOT from i18n's LOCALES, which loads
+// languages other than the active one lazily (#77); this index needs
+// every language's titles at once, so it carries its own tiny copy of
+// just the titles instead of forcing every locale to load.
 let stockIndex: Map<WidgetType, Map<string, StockKind>> | null = null;
 
 function buildIndex(): Map<WidgetType, Map<string, StockKind>> {
@@ -39,14 +44,12 @@ function buildIndex(): Map<WidgetType, Map<string, StockKind>> {
     if (!byTitle.has(title)) byTitle.set(title, kind);
   };
 
-  for (const locale of Object.values(LOCALES)) {
-    for (const type of Object.keys(locale.widgets) as WidgetType[]) {
-      add(type, (locale.widgets as Record<string, { title?: string }>)[type]?.title, 'catalog');
-    }
-    // The default news widget is titled "News" (per locale) rather than
-    // the catalogue entry "RSS & News".
-    add('rss', locale.defaults.newsTitle, 'news');
+  for (const [type, byLocale] of Object.entries(CATALOG_TITLES)) {
+    for (const title of Object.values(byLocale)) add(type as WidgetType, title, 'catalog');
   }
+  // The default news widget is titled "News" (per locale) rather than
+  // the catalogue entry "RSS & News".
+  for (const title of Object.values(NEWS_TITLES)) add('rss', title, 'news');
   for (const [type, title, kind] of LEGACY_TITLES) add(type, title, kind);
   return index;
 }
