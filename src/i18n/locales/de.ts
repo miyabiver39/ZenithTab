@@ -18,6 +18,8 @@ export const de: typeof en = {
     refresh: 'Aktualisieren',
     loading: 'Wird geladen...',
     retry: 'Wiederholen',
+    widgetSettings: 'Widget-Einstellungen',
+    removeWidget: 'Widget entfernen',
     reset: 'Zurücksetzen',
     close: 'Schließen',
     widgetError: {
@@ -155,6 +157,7 @@ export const de: typeof en = {
       title: 'Wetter',
       desc: 'Live-Wetter, Temperatur, Wind, Luftfeuchtigkeit und 3-Tage-Vorhersage.',
       city: 'Stadt / Bezirk',
+      cityPlaceholder: 'z. B. Tokio, Shinjuku, San Francisco, London',
       detectLocation: 'Standort automatisch ermitteln',
       detecting: 'Standort wird gesucht...',
       latitude: 'Breitengrad',
@@ -235,6 +238,9 @@ export const de: typeof en = {
       modeSearch: 'Stichwortsuche',
       topicLabel: 'Thema',
       searchHint: 'Leer lassen für Schlagzeilen oder ein Stichwort eingeben',
+      searchGoogleNews: 'Google News durchsuchen',
+      refreshFeed: 'Feed aktualisieren',
+      searchExamplePlaceholder: 'z. B. künstliche Intelligenz, Technik, Webentwicklung',
       topics: {
         WORLD: 'Welt',
         NATION: 'Inland',
@@ -281,6 +287,8 @@ export const de: typeof en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: 'Suchmaschinen verwalten...',
+      switchEngine: 'Suchmaschine wechseln',
+      openInNewTab: 'Ergebnisse in neuem Tab öffnen',
       smart: {
         setting: 'Schnellantworten in der Suchleiste',
         settingDesc: 'Rechnen, Einheiten umrechnen, Würfel, Münzwurf, Zufallszahlen und „Tage bis“ direkt beantwortet.',
@@ -349,6 +357,7 @@ export const de: typeof en = {
       completed: 'Erledigt',
       noTasks: 'Keine Aufgaben. Genieße deinen Tag!',
       clearCompleted: 'Erledigte löschen',
+      addTask: 'Aufgabe hinzufügen',
     },
     shortcuts: {
       title: 'Verknüpfungen',
@@ -365,6 +374,8 @@ export const de: typeof en = {
       columns: 'Spalten',
       fromCatalog: 'Aus dem Katalog wählen',
       dropHint: 'Tipp: Ziehe einen Link oder die URL eines Tabs auf dieses Widget, um ihn hinzuzufügen.',
+      namePlaceholder: 'z. B. GitHub, Notion, YouTube',
+      categoryPlaceholder: 'z. B. Produktivität, Medien, Tools',
     },
     quickaccess: {
       permissionNeeded: 'Der Schnellzugriff braucht die Berechtigung, meistbesuchte Seiten und kürzlich geschlossene Tabs zu lesen. Nichts verlässt den Browser.',
@@ -648,6 +659,11 @@ export const de: typeof en = {
   },
   settings: {
     modalTitle: 'ZenithTab Einstellungen',
+    configureWidget: '{name} konfigurieren',
+    widgetTitleLabel: 'Widget-Titel',
+    widgetTitlePlaceholder: 'Benutzerdefinierter Widget-Name',
+    autoLanguageOption: 'Verwendet die Sprache deines Browsers',
+    autoLanguage: 'Automatisch',
     tabs: {
       wallpaper: 'Dynamischer Hintergrund',
       appearance: 'Erscheinungsbild & Glas',

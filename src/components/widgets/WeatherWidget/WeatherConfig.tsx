@@ -39,7 +39,7 @@ export const WeatherConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
             label={t.widgets.weather.city}
             value={config.city || ''}
             onChange={(e) => setConfig({ ...config, city: e.target.value })}
-            placeholder="e.g. Tokyo, Shinjuku, San Francisco, London"
+            placeholder={t.widgets.weather.cityPlaceholder}
           />
         </div>
         <Button

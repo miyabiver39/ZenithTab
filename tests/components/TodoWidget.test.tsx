@@ -31,7 +31,7 @@ describe('TodoWidget', () => {
     const user = setupUser();
     renderTodo();
     const input = screen.getByPlaceholderText('Add a new task...') as HTMLInputElement;
-    const submit = screen.getByTitle('Add');
+    const submit = screen.getByTitle('Add task');
 
     expect(submit).toBeDisabled();
     await user.clear(input);

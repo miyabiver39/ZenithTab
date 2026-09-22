@@ -18,6 +18,8 @@ export const zh: typeof en = {
     refresh: '刷新',
     loading: '加载中...',
     retry: '重试',
+    widgetSettings: '小组件设置',
+    removeWidget: '删除小组件',
     reset: '重置',
     close: '关闭',
     widgetError: {
@@ -155,6 +157,7 @@ export const zh: typeof en = {
       title: '天气',
       desc: '实时天气、温度、风速、湿度与未来3天天气预报。',
       city: '城市 / 地区名称',
+      cityPlaceholder: '例如:东京、新宿、旧金山、伦敦',
       detectLocation: '自动定位当前位置',
       detecting: '正在定位...',
       latitude: '纬度',
@@ -235,6 +238,9 @@ export const zh: typeof en = {
       modeSearch: '关键词搜索',
       topicLabel: '主题',
       searchHint: '留空显示头条新闻，或输入关键词',
+      searchGoogleNews: '搜索 Google 新闻',
+      refreshFeed: '刷新订阅源',
+      searchExamplePlaceholder: '例如:人工智能、科技、网页开发',
       topics: {
         WORLD: '国际',
         NATION: '国内',
@@ -281,6 +287,8 @@ export const zh: typeof en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: '管理搜索引擎...',
+      switchEngine: '切换搜索引擎',
+      openInNewTab: '在新标签页中打开结果',
       smart: {
         setting: '搜索栏智能回答',
         settingDesc: '在搜索栏中直接回答计算、单位换算、骰子、抛硬币、随机数、"还有几天"、几天后的日期、星期几和世界时间。',
@@ -349,6 +357,7 @@ export const zh: typeof en = {
       completed: '已完成',
       noTasks: '暂无任务，享受轻松时光！',
       clearCompleted: '清除已完成',
+      addTask: '添加任务',
     },
     shortcuts: {
       title: '快捷应用',
@@ -365,6 +374,8 @@ export const zh: typeof en = {
       columns: '显示列数',
       fromCatalog: '从目录中选择',
       dropHint: '提示:将链接或标签页的网址拖到此小组件也可添加。',
+      namePlaceholder: '例如:GitHub、Notion、YouTube',
+      categoryPlaceholder: '例如:效率、媒体、工具',
     },
     quickaccess: {
       permissionNeeded: '快速访问需要读取常用网站和最近关闭标签页的权限。数据不会离开浏览器。',
@@ -648,6 +659,11 @@ export const zh: typeof en = {
   },
   settings: {
     modalTitle: 'ZenithTab 设置',
+    configureWidget: '配置{name}',
+    widgetTitleLabel: '小组件标题',
+    widgetTitlePlaceholder: '自定义小组件名称',
+    autoLanguageOption: '使用浏览器语言',
+    autoLanguage: '自动',
     tabs: {
       wallpaper: '动态壁纸',
       appearance: '外观与毛玻璃',

@@ -163,10 +163,10 @@ export const SearchConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) =
       </div>
 
       <div className="flex items-center justify-between py-1">
-        <span className="text-xs text-slate-300">Open Search Results in New Tab</span>
+        <span className="text-xs text-slate-300">{t.widgets.search.openInNewTab}</span>
         <input
           type="checkbox"
-          aria-label="Open Search Results in New Tab"
+          aria-label={t.widgets.search.openInNewTab}
           checked={config.openInNewTab !== false}
           onChange={(e) => setConfig({ ...config, openInNewTab: e.target.checked })}
           className="w-4 h-4 rounded text-sky-500 bg-slate-800 border-white/20"

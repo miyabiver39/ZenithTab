@@ -16,6 +16,8 @@ export const ja = {
     refresh: '更新',
     loading: '読み込み中...',
     retry: '再試行',
+    widgetSettings: 'ウィジェットの設定',
+    removeWidget: 'ウィジェットを削除',
     reset: 'リセット',
     close: '閉じる',
     widgetError: {
@@ -153,6 +155,7 @@ export const ja = {
       title: '天気情報',
       desc: '現在地の気象状況、気温、風速、湿度、3日間の天気予報を表示。',
       city: '市区町村 / 地区名',
+      cityPlaceholder: '例: 東京、新宿、サンフランシスコ、ロンドン',
       detectLocation: '現在地を自動取得',
       detecting: '位置情報を取得中...',
       latitude: '緯度',
@@ -233,6 +236,9 @@ export const ja = {
       modeSearch: 'キーワード検索',
       topicLabel: 'トピック',
       searchHint: '空欄で主要ヘッドラインを表示、またはキーワードを入力',
+      searchGoogleNews: 'Google ニュースを検索',
+      refreshFeed: 'フィードを更新',
+      searchExamplePlaceholder: '例: 人工知能、テクノロジー、Web開発',
       topics: {
         WORLD: '国際',
         NATION: '国内',
@@ -279,6 +285,8 @@ export const ja = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: '検索エンジンを管理...',
+      switchEngine: '検索エンジンを切り替え',
+      openInNewTab: '結果を新しいタブで開く',
       smart: {
         setting: '検索バーのスマート回答',
         settingDesc: '計算・単位換算・サイコロ・コイントス・乱数・「あと何日」・○日後の日付・曜日・世界の時刻を検索バーで即答します。',
@@ -347,6 +355,7 @@ export const ja = {
       completed: '完了済み',
       noTasks: 'タスクはありません。素晴らしい一日を！',
       clearCompleted: '完了済みを削除',
+      addTask: 'タスクを追加',
     },
     shortcuts: {
       title: 'ショートカット',
@@ -363,6 +372,8 @@ export const ja = {
       columns: '表示列数',
       fromCatalog: 'カタログから選ぶ',
       dropHint: 'ヒント: リンクやタブの URL をこのウィジェットにドラッグしても追加できます。',
+      namePlaceholder: '例: GitHub、Notion、YouTube',
+      categoryPlaceholder: '例: 仕事、エンタメ、ツール',
     },
     quickaccess: {
       permissionNeeded: 'クイックアクセスを使うには「よく見るサイト」と「最近閉じたタブ」を読み取る権限が必要です。データはブラウザの外に出ません。',
@@ -646,6 +657,11 @@ export const ja = {
   },
   settings: {
     modalTitle: 'ZenithTab 設定',
+    configureWidget: '{name}の設定',
+    widgetTitleLabel: 'ウィジェットのタイトル',
+    widgetTitlePlaceholder: 'ウィジェットの表示名',
+    autoLanguageOption: 'ブラウザの言語を使用',
+    autoLanguage: '自動',
     tabs: {
       wallpaper: 'ダイナミック壁紙',
       appearance: '外観 & グラス効果',

@@ -389,15 +389,15 @@ describe('AppDrawerModal', () => {
     expect(screen.queryByText('Gmail')).not.toBeInTheDocument();
 
     await user.click(screen.getByText('Add Custom App'));
-    await user.clear(screen.getByPlaceholderText('e.g. Discord, Netflix, Figma'));
-    await user.type(screen.getByPlaceholderText('e.g. Discord, Netflix, Figma'), literal('Discord'));
+    await user.clear(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'));
+    await user.type(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), literal('Discord'));
     await user.clear(screen.getByPlaceholderText('https://example.com'));
     await user.type(screen.getByPlaceholderText('https://example.com'), literal('discord.com'));
     await user.click(screen.getByText('Save'));
 
     // Without a shortcuts widget on the page there is nowhere to persist,
     // but the modal still closes cleanly.
-    expect(screen.queryByPlaceholderText('e.g. Discord, Netflix, Figma')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('e.g. GitHub, Notion, YouTube')).not.toBeInTheDocument();
   });
 
   it('ショートカットウィジェットがあればそこに保存されること', async () => {
@@ -410,12 +410,12 @@ describe('AppDrawerModal', () => {
     render(<AppDrawerModal />);
 
     await user.click(screen.getByText('Add Custom App'));
-    await user.clear(screen.getByPlaceholderText('e.g. Discord, Netflix, Figma'));
-    await user.type(screen.getByPlaceholderText('e.g. Discord, Netflix, Figma'), literal('Discord'));
+    await user.clear(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'));
+    await user.type(screen.getByPlaceholderText('e.g. GitHub, Notion, YouTube'), literal('Discord'));
     await user.clear(screen.getByPlaceholderText('https://example.com'));
     await user.type(screen.getByPlaceholderText('https://example.com'), literal('https://discord.com'));
-    await user.clear(screen.getByPlaceholderText('e.g. Work, Entertainment, AI'));
-    await user.type(screen.getByPlaceholderText('e.g. Work, Entertainment, AI'), literal('Chat'));
+    await user.clear(screen.getByPlaceholderText('e.g. Productivity, Media, Tools'));
+    await user.type(screen.getByPlaceholderText('e.g. Productivity, Media, Tools'), literal('Chat'));
     await user.click(screen.getByText('Save'));
 
     const items = state().widgets.find((w) => w.id === id)!.config.items;

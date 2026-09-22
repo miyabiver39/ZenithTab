@@ -18,6 +18,8 @@ export const ko: typeof en = {
     refresh: '새로고침',
     loading: '로딩 중...',
     retry: '다시 시도',
+    widgetSettings: '위젯 설정',
+    removeWidget: '위젯 삭제',
     reset: '초기화',
     close: '닫기',
     widgetError: {
@@ -155,6 +157,7 @@ export const ko: typeof en = {
       title: '날씨 정보',
       desc: '실시간 날씨, 기온, 바람, 습도 및 3일간의 일기 예보.',
       city: '도시 / 지역명',
+      cityPlaceholder: '예: 도쿄, 신주쿠, 샌프란시스코, 런던',
       detectLocation: '현재 위치 자동 감지',
       detecting: '위치 확인 중...',
       latitude: '위도',
@@ -235,6 +238,9 @@ export const ko: typeof en = {
       modeSearch: '키워드 검색',
       topicLabel: '주제',
       searchHint: '비워 두면 주요 뉴스를 표시하고, 키워드를 입력하면 검색합니다',
+      searchGoogleNews: 'Google 뉴스 검색',
+      refreshFeed: '피드 새로고침',
+      searchExamplePlaceholder: '예: 인공지능, 기술, 웹 개발',
       topics: {
         WORLD: '세계',
         NATION: '국내',
@@ -281,6 +287,8 @@ export const ko: typeof en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: '검색 엔진 관리...',
+      switchEngine: '검색 엔진 전환',
+      openInNewTab: '결과를 새 탭에서 열기',
       smart: {
         setting: '검색창 스마트 답변',
         settingDesc: '계산, 단위 변환, 주사위, 동전 던지기, 난수, "며칠 남았는지"를 바로 답해요.',
@@ -349,6 +357,7 @@ export const ko: typeof en = {
       completed: '완료됨',
       noTasks: '할 일이 없습니다. 즐거운 하루 되세요!',
       clearCompleted: '완료된 항목 삭제',
+      addTask: '작업 추가',
     },
     shortcuts: {
       title: '바로가기',
@@ -365,6 +374,8 @@ export const ko: typeof en = {
       columns: '표시 열 수',
       fromCatalog: '카탈로그에서 선택',
       dropHint: '팁: 링크나 탭의 URL을 이 위젯으로 끌어다 놓아도 추가됩니다.',
+      namePlaceholder: '예: GitHub, Notion, YouTube',
+      categoryPlaceholder: '예: 생산성, 미디어, 도구',
     },
     quickaccess: {
       permissionNeeded: '빠른 접근을 사용하려면 자주 방문한 사이트와 최근 닫은 탭을 읽을 권한이 필요합니다. 데이터는 브라우저 밖으로 나가지 않습니다.',
@@ -648,6 +659,11 @@ export const ko: typeof en = {
   },
   settings: {
     modalTitle: 'ZenithTab 설정',
+    configureWidget: '{name} 설정',
+    widgetTitleLabel: '위젯 제목',
+    widgetTitlePlaceholder: '위젯 사용자 지정 이름',
+    autoLanguageOption: '브라우저 언어 사용',
+    autoLanguage: '자동',
     tabs: {
       wallpaper: '동적 배경화면',
       appearance: '외관 & 글래스모피즘',

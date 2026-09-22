@@ -229,7 +229,8 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
               type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white transition-all mr-2 flex-shrink-0 active:scale-95"
-              title="Switch Search Engine"
+              title={t.widgets.search.switchEngine}
+              aria-label={t.widgets.search.switchEngine}
             >
               {CurrentIcon ? (
                 <CurrentIcon size={15} className={currentEngineObj.color} />
@@ -325,7 +326,8 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
           <button
             type="submit"
             className="p-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white transition-colors flex-shrink-0 shadow-md shadow-sky-500/20 ml-1.5 active:scale-95"
-            title="Search"
+            title={t.common.search}
+            aria-label={t.common.search}
           >
             <Search size={15} />
           </button>

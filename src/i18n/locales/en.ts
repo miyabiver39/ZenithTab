@@ -16,6 +16,8 @@ export const en = {
     refresh: 'Refresh',
     loading: 'Loading...',
     retry: 'Retry',
+    widgetSettings: 'Widget Settings',
+    removeWidget: 'Remove Widget',
     reset: 'Reset',
     close: 'Close',
     widgetError: {
@@ -153,6 +155,7 @@ export const en = {
       title: 'Weather',
       desc: 'Current weather condition, temperature, wind, humidity, and forecast.',
       city: 'City / District Name',
+      cityPlaceholder: 'e.g. Tokyo, Shinjuku, San Francisco, London',
       detectLocation: 'Detect Current Location',
       detecting: 'Locating...',
       latitude: 'Latitude',
@@ -233,6 +236,9 @@ export const en = {
       modeSearch: 'Keyword search',
       topicLabel: 'Topic',
       searchHint: 'Leave empty for top stories, or type a keyword',
+      searchGoogleNews: 'Search Google News',
+      refreshFeed: 'Refresh Feed',
+      searchExamplePlaceholder: 'e.g. artificial intelligence, technology, web dev',
       topics: {
         WORLD: 'World',
         NATION: 'National',
@@ -279,6 +285,8 @@ export const en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: 'Manage search engines...',
+      switchEngine: 'Switch Search Engine',
+      openInNewTab: 'Open Results in a New Tab',
       smart: {
         setting: 'Smart answers in the search bar',
         settingDesc: 'Maths, unit conversions, dice, coin flips, random numbers, "days until", dates from now, weekdays and world time answered inline.',
@@ -296,7 +304,7 @@ export const en = {
         timeIn: 'Time in {city}',
         dateIn: 'in {n} days',
         dateAgo: '{n} days ago',
-        helpTitle: 'What the search bar can answer',
+        helpTitle: 'What the search bar can answer',
         helpButton: 'What can I type here?',
         helpHint: 'Type ? anytime to see this list',
         examplesDesc: 'Type any of these into the search bar and the answer appears before you search. Click an example to copy it. Typing "?" in the bar shows this list too.',
@@ -347,6 +355,7 @@ export const en = {
       completed: 'Completed',
       noTasks: 'No tasks yet. Enjoy your day!',
       clearCompleted: 'Clear completed',
+      addTask: 'Add task',
     },
     shortcuts: {
       title: 'Shortcuts',
@@ -363,6 +372,8 @@ export const en = {
       columns: 'Columns',
       fromCatalog: 'Choose from catalog',
       dropHint: 'Tip: drag a link or a tab’s URL onto this widget to add it.',
+      namePlaceholder: 'e.g. GitHub, Notion, YouTube',
+      categoryPlaceholder: 'e.g. Productivity, Media, Tools',
     },
     quickaccess: {
       permissionNeeded: 'Quick Access needs permission to read your most-visited sites and recently closed tabs. Nothing leaves your browser.',
@@ -393,7 +404,7 @@ export const en = {
       download: 'Download',
       copy: 'Copy',
       copied: 'Copied!',
-    },
+    },
     countdown: {
       title: 'Countdown',
       desc: 'Days left until a birthday, trip, exam or deadline — add a name and a date.',
@@ -646,6 +657,11 @@ export const en = {
   },
   settings: {
     modalTitle: 'ZenithTab Settings',
+    configureWidget: 'Configure {name}',
+    widgetTitleLabel: 'Widget Title',
+    widgetTitlePlaceholder: 'Custom Widget Name',
+    autoLanguageOption: 'Uses your browser language',
+    autoLanguage: 'Auto',
     tabs: {
       wallpaper: 'Dynamic Wallpaper',
       appearance: 'Glass & Appearance',

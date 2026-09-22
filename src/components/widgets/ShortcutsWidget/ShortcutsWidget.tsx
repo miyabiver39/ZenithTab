@@ -241,7 +241,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
             label={t.widgets.shortcuts.name}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. GitHub, Notion, YouTube"
+            placeholder={t.widgets.shortcuts.namePlaceholder}
             required
             autoFocus
           />
@@ -258,7 +258,7 @@ export const ShortcutsWidget: React.FC<ShortcutsWidgetProps> = ({ widgetId, conf
             label={t.widgets.shortcuts.category}
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="e.g. Productivity, Media, Tools"
+            placeholder={t.widgets.shortcuts.categoryPlaceholder}
           />
 
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
@@ -296,6 +296,7 @@ const ShortcutCard: React.FC<{
   onEdit: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
 }> = ({ item, openInNewTab, isEditMode, onEdit, onDelete }) => {
+  const { t } = useTranslation();
   const [imgError, setImgError] = useState(false);
   const faviconUrl = item.iconUrl || getFaviconUrl(item.url, 48);
 
@@ -331,14 +332,16 @@ const ShortcutCard: React.FC<{
           <button
             onClick={onEdit}
             className="p-1 text-slate-400 hover:text-sky-300 transition-colors"
-            title="Edit"
+            title={t.common.edit}
+            aria-label={t.common.edit}
           >
             <Edit2 size={11} />
           </button>
           <button
             onClick={onDelete}
             className="p-1 text-slate-400 hover:text-rose-400 transition-colors"
-            title="Delete"
+            title={t.common.delete}
+            aria-label={t.common.delete}
           >
             <Trash2 size={11} />
           </button>

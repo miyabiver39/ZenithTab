@@ -75,7 +75,8 @@ export const TodoWidget: React.FC<TodoWidgetProps> = ({ widgetId, config }) => {
           type="submit"
           disabled={!inputVal.trim()}
           className="p-1.5 bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-white rounded-xl transition-colors"
-          title="Add"
+          title={t.widgets.todo.addTask}
+          aria-label={t.widgets.todo.addTask}
         >
           <Plus size={14} />
         </button>

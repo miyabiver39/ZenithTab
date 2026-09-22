@@ -111,7 +111,8 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
               <button
                 onClick={() => setIsSearching(true)}
                 className="p-1 text-slate-400 hover:text-white rounded hover:bg-white/10 transition-colors"
-                title="Search Google News"
+                title={t.widgets.rss.searchGoogleNews}
+                aria-label={t.widgets.rss.searchGoogleNews}
               >
                 <Search size={13} />
               </button>
@@ -119,7 +120,8 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
                 onClick={refresh}
                 disabled={isLoading}
                 className="p-1 text-slate-400 hover:text-white rounded hover:bg-white/10 transition-colors disabled:opacity-50"
-                title="Refresh Feed"
+                title={t.widgets.rss.refreshFeed}
+                aria-label={t.widgets.rss.refreshFeed}
               >
                 <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} />
               </button>

@@ -138,7 +138,9 @@ describe('upgrade regression: data written by older versions', () => {
 
       for (const widget of useDashboardStore.getState().widgets) {
         act(() => useDashboardStore.getState().openSettingsModal('editWidget', widget.id));
-        await waitFor(() => expect(screen.getByText(/^Configure /)).toBeInTheDocument());
+        // Title wording/format is language-specific (a suffix in some
+        // locales, a prefix in others) — just confirm the dialog opened.
+        await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
         act(() => useDashboardStore.getState().closeSettingsModal());
       }
 

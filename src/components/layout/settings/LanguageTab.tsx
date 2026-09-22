@@ -13,7 +13,11 @@ export const LanguageTab: React.FC = () => {
   const { t } = useTranslation();
 
   const languageOptions: Array<{ code: SupportedLanguage; label: string; nativeName: string }> = [
-    { code: 'auto', label: 'Auto (Browser Language)', nativeName: '自動 (ブラウザ言語)' },
+    // Both follow the current UI language, unlike the other rows below —
+    // "自動" only makes sense translated, whereas "Japanese"/"日本語" name
+    // a specific language and are conventionally shown in their own script
+    // regardless of the interface language (as in Chrome's own picker).
+    { code: 'auto', label: t.settings.autoLanguageOption, nativeName: t.settings.autoLanguage },
     { code: 'ja', label: 'Japanese', nativeName: '日本語' },
     { code: 'en', label: 'English', nativeName: 'English (US)' },
     { code: 'zh-CN', label: 'Chinese (Simplified)', nativeName: '简体中文' },

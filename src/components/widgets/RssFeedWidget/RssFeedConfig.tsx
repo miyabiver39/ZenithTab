@@ -109,7 +109,7 @@ export const RssFeedConfig: React.FC<ConfigFormProps> = ({ config, setConfig }) 
                 label={t.widgets.rss.searchPlaceholder}
                 value={config.searchQuery || ''}
                 onChange={(e) => setConfig({ ...config, searchQuery: e.target.value })}
-                placeholder="e.g. artificial intelligence, technology, web dev"
+                placeholder={t.widgets.rss.searchExamplePlaceholder}
               />
               <p className="text-[11px] text-slate-400 leading-relaxed">{t.widgets.rss.searchHint}</p>
             </div>

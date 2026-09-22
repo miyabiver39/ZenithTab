@@ -50,14 +50,16 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({ widget, children }
               <button
                 onClick={() => openSettingsModal('editWidget', widget.id)}
                 className="p-1 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-md transition-colors"
-                title="Widget Settings"
+                title={t.common.widgetSettings}
+                aria-label={t.common.widgetSettings}
               >
                 <Settings size={14} />
               </button>
               <button
                 onClick={() => removeWidget(widget.id)}
                 className="p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-md transition-colors"
-                title="Remove Widget"
+                title={t.common.removeWidget}
+                aria-label={t.common.removeWidget}
               >
                 <Trash2 size={14} />
               </button>

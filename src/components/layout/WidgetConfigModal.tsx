@@ -50,13 +50,13 @@ export const WidgetConfigModal: React.FC = () => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeSettingsModal} title={`Configure ${getLocalizedWidgetTitle(targetWidget, t)}`} maxWidth="md">
+    <Modal isOpen={isOpen} onClose={closeSettingsModal} title={t.settings.configureWidget.replace('{name}', getLocalizedWidgetTitle(targetWidget, t))} maxWidth="md">
       <form onSubmit={handleSave} className="space-y-5">
         <Input
-          label="Widget Title"
+          label={t.settings.widgetTitleLabel}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Custom Widget Name"
+          placeholder={t.settings.widgetTitlePlaceholder}
         />
 
         {ConfigForm && <ConfigForm widgetId={targetWidget.id} config={config} setConfig={setConfig} />}

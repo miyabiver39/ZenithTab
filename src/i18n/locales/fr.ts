@@ -18,6 +18,8 @@ export const fr: typeof en = {
     refresh: 'Actualiser',
     loading: 'Chargement...',
     retry: 'Réessayer',
+    widgetSettings: 'Réglages du widget',
+    removeWidget: 'Supprimer le widget',
     reset: 'Réinitialiser',
     close: 'Fermer',
     widgetError: {
@@ -155,6 +157,7 @@ export const fr: typeof en = {
       title: 'Météo',
       desc: 'Météo en direct, température, vent, humidité et prévisions.',
       city: 'Ville / Arrondissement',
+      cityPlaceholder: 'ex. Tokyo, Shinjuku, San Francisco, Londres',
       detectLocation: 'Détecter la position actuelle',
       detecting: 'Localisation en cours...',
       latitude: 'Latitude',
@@ -235,6 +238,9 @@ export const fr: typeof en = {
       modeSearch: 'Recherche par mot-clé',
       topicLabel: 'Thème',
       searchHint: 'Laissez vide pour la une, ou saisissez un mot-clé',
+      searchGoogleNews: 'Rechercher sur Google News',
+      refreshFeed: 'Actualiser le flux',
+      searchExamplePlaceholder: 'ex. intelligence artificielle, technologie, développement web',
       topics: {
         WORLD: 'International',
         NATION: 'National',
@@ -281,6 +287,8 @@ export const fr: typeof en = {
       youtube: 'YouTube',
       chatgpt: 'ChatGPT',
       manageEngines: 'Gérer les moteurs de recherche...',
+      switchEngine: 'Changer de moteur de recherche',
+      openInNewTab: 'Ouvrir les résultats dans un nouvel onglet',
       smart: {
         setting: 'Réponses rapides dans la barre de recherche',
         settingDesc: "Calculs, conversions, dés, pile ou face, nombres aléatoires, « jours avant », dates à partir d'aujourd'hui, jour de la semaine et heure mondiale, répondus directement.",
@@ -349,6 +357,7 @@ export const fr: typeof en = {
       completed: 'Terminées',
       noTasks: 'Aucune tâche. Passez une excellente journée !',
       clearCompleted: 'Effacer terminées',
+      addTask: 'Ajouter une tâche',
     },
     shortcuts: {
       title: 'Raccourcis',
@@ -365,6 +374,8 @@ export const fr: typeof en = {
       columns: 'Colonnes',
       fromCatalog: 'Choisir dans le catalogue',
       dropHint: 'Astuce : glissez un lien ou l’URL d’un onglet sur ce widget pour l’ajouter.',
+      namePlaceholder: 'ex. GitHub, Notion, YouTube',
+      categoryPlaceholder: 'ex. Productivité, Médias, Outils',
     },
     quickaccess: {
       permissionNeeded: 'L\'accès rapide a besoin de l\'autorisation de lire vos sites fréquents et onglets récemment fermés. Rien ne quitte votre navigateur.',
@@ -648,6 +659,11 @@ export const fr: typeof en = {
   },
   settings: {
     modalTitle: 'Paramètres ZenithTab',
+    configureWidget: 'Configurer {name}',
+    widgetTitleLabel: 'Titre du widget',
+    widgetTitlePlaceholder: 'Nom personnalisé du widget',
+    autoLanguageOption: 'Utilise la langue de votre navigateur',
+    autoLanguage: 'Automatique',
     tabs: {
       wallpaper: 'Fond dynamique',
       appearance: 'Apparence & Verre',

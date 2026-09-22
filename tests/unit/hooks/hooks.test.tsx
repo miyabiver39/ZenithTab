@@ -219,7 +219,7 @@ describe('useRssFeed', () => {
     vi.spyOn(rssService, 'fetchFeed').mockRejectedValue('nope');
     const { result } = renderHook(() => useRssFeed('https://example.com/feed', 0));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.error).toBe('Failed to fetch RSS feed');
+    expect(result.current.error).toBe('Failed to load feed');
   });
 });
 

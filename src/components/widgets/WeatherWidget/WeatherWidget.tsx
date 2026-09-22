@@ -150,7 +150,8 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ widgetId, config }
               <button
                 onClick={refresh}
                 className="text-slate-400 hover:text-white p-0.5 rounded transition-colors"
-                title="Refresh"
+                title={t.widgets.weather.refresh}
+                aria-label={t.widgets.weather.refresh}
               >
                 <RefreshCw size={11} className={isLoading ? 'animate-spin' : ''} />
               </button>

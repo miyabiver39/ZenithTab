@@ -196,7 +196,7 @@ export const AppDrawerModal: React.FC = () => {
             label={t.widgets.shortcuts.name}
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="e.g. Discord, Netflix, Figma"
+            placeholder={t.widgets.shortcuts.namePlaceholder}
             required
             autoFocus
           />
@@ -213,7 +213,7 @@ export const AppDrawerModal: React.FC = () => {
             label={t.widgets.shortcuts.category}
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="e.g. Work, Entertainment, AI"
+            placeholder={t.widgets.shortcuts.categoryPlaceholder}
           />
 
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
