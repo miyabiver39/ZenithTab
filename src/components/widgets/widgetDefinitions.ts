@@ -105,7 +105,12 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       if (!Array.isArray(config.items)) return config;
       return {
         ...config,
-        items: config.items.filter((item: any) => !item || typeof item.url !== 'string' || isSafeUrl(item.url)),
+        // Every tile needs an id, a title and an http(s) URL — a null or a
+        // URL-less entry used to slip through and crash the widget's render.
+        // iconUrl is nested, so the generic top-level URL scrub never saw it.
+        items: config.items
+          .filter((item: any) => !!item && typeof item === 'object' && typeof item.id === 'string' && typeof item.title === 'string' && isSafeUrl(item.url))
+          .map((item: any) => (item.iconUrl !== undefined && !isSafeUrl(item.iconUrl) ? { ...item, iconUrl: undefined } : item)),
       };
     },
   },
@@ -188,6 +193,15 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       ],
     }),
     stripForShare: (config) => ({ ...config, items: [] }),
+    sanitizeConfig: (config) => {
+      if (!Array.isArray(config.items)) return config;
+      return {
+        ...config,
+        items: config.items
+          .filter((item: any) => !!item && typeof item === 'object' && typeof item.id === 'string' && typeof item.text === 'string')
+          .map((item: any) => ({ ...item, completed: !!item.completed })),
+      };
+    },
   },
 
   iframe: {
@@ -210,6 +224,13 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
       fontFamily: 'sans',
     }),
     stripForShare: ({ content: _c, pages: _p, activePageId: _a, ...rest }) => ({ ...rest, content: '' }),
+    sanitizeConfig: (config) => {
+      if (!Array.isArray(config.pages)) return config;
+      return {
+        ...config,
+        pages: config.pages.filter((page: any) => !!page && typeof page === 'object' && typeof page.id === 'string' && typeof page.content === 'string'),
+      };
+    },
   },
 
   quickaccess: {

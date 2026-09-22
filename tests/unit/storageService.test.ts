@@ -91,6 +91,46 @@ describe('storageService', () => {
     expect((shortcutsWidget?.config as any).items[0].url).toBe('https://example.com');
   });
 
+  it('ショートカット / タスク / メモの壊れた要素(null、URL なし、不正な iconUrl)を落とすこと', async () => {
+    const layout = { i: 'x', x: 0, y: 0, w: 4, h: 4 };
+    const dirty = {
+      version: '1.11.1',
+      exportedAt: new Date().toISOString(),
+      widgets: [
+        {
+          id: 'w-shortcuts',
+          type: 'shortcuts',
+          title: 'S',
+          layout,
+          config: {
+            items: [
+              null,
+              'string',
+              { id: 'a', title: 'no url' },
+              { id: 'b', title: 'ok', url: 'https://ok.example' },
+              { id: 'c', title: 'bad url', url: 'file:///etc/passwd' },
+              { id: 'd', title: 'bad icon', url: 'https://x.example', iconUrl: 'javascript:1' },
+              { id: 'e', title: 'good icon', url: 'https://y.example', iconUrl: 'https://y.example/icon.png' },
+            ],
+          },
+        },
+        { id: 'w-todo', type: 'todo', title: 'T', layout, config: { items: [null, { id: '1' }, { id: '2', text: 'ok', completed: 'yes' }] } },
+        { id: 'w-notes', type: 'notes', title: 'N', layout, config: { pages: [null, { id: 'p', title: 'x' }, { id: 'q', title: 'y', content: 'z' }], fontSize: 'base' } },
+      ],
+      layouts: { lg: [], md: [], sm: [], xs: [], xxs: [] },
+      wallpaper: {},
+      appearance: {},
+    };
+    expect(await storageService.importDashboardData(JSON.stringify(dirty))).toBe(true);
+    const widgets = await storageService.getWidgets();
+    const items = widgets.find((w) => w.id === 'w-shortcuts')!.config.items;
+    expect(items.map((i: any) => i.id)).toEqual(['b', 'd', 'e']);
+    expect(items[1].iconUrl).toBeUndefined();
+    expect(items[2].iconUrl).toBe('https://y.example/icon.png');
+    expect(widgets.find((w) => w.id === 'w-todo')!.config.items).toEqual([{ id: '2', text: 'ok', completed: true }]);
+    expect(widgets.find((w) => w.id === 'w-notes')!.config.pages.map((p: any) => p.id)).toEqual(['q']);
+  });
+
   it('ウィジェットを1件も含まないインポートを拒否すること', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const result = await storageService.importDashboardData('{ "widgets": [] }');
