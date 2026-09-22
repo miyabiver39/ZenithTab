@@ -16,6 +16,16 @@ import type { Translation } from '../i18n/resolve';
 import { getRegionalDockItems, getRegionalWeatherDefault } from '../config/defaults/regionalPresets';
 import { sanitizeLayout, sanitizeResponsiveLayouts } from '../utils/layout';
 import { sanitizeTrash } from './trashService';
+import {
+  DEFAULT_WALLPAPER,
+  DEFAULT_APPEARANCE,
+  sanitizeWallpaper,
+  sanitizeAppearance,
+  sanitizeDockItems,
+  sanitizeKeyboardShortcuts,
+} from '../utils/settingsSanitizers';
+
+export { DEFAULT_WALLPAPER, DEFAULT_APPEARANCE, sanitizeWallpaper, sanitizeAppearance, sanitizeDockItems, sanitizeKeyboardShortcuts };
 
 /** The running extension version, so exports carry the version that produced them. */
 export function currentVersion(): string {
@@ -75,18 +85,6 @@ export function sanitizeWidget(raw: any): DashboardWidget | null {
   } as DashboardWidget;
 }
 
-function sanitizeKeyboardShortcuts(raw: unknown): KeyboardShortcutBinding[] {
-  if (!Array.isArray(raw)) return [];
-  return raw.filter(
-    (item): item is KeyboardShortcutBinding =>
-      !!item &&
-      typeof item.id === 'string' &&
-      typeof item.combo === 'string' &&
-      typeof item.label === 'string' &&
-      isSafeUrl(item.url)
-  );
-}
-
 export { STORAGE_KEYS } from './storageKeys';
 
 export const DEFAULT_KEYBOARD_SHORTCUTS: KeyboardShortcutBinding[] = [];
@@ -108,27 +106,6 @@ export interface DashboardDefaults {
 // Language-neutral fallback (the global preset). First launch and reset
 // go through the regional presets with the real language instead.
 export const DEFAULT_DOCK_ITEMS: DockItem[] = getRegionalDockItems('en');
-
-export const DEFAULT_WALLPAPER: WallpaperSettings = {
-  source: 'unsplash',
-  category: 'space',
-  blur: 4,
-  brightness: 0.85,
-  overlayOpacity: 0.35,
-  refreshInterval: 'hourly',
-  currentWallpaperUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=2560&q=80',
-};
-
-export const DEFAULT_APPEARANCE: AppearanceSettings = {
-  language: 'auto',
-  theme: 'dark',
-  glassBlur: 16,
-  glassOpacity: 0.45,
-  borderRadius: '2xl',
-  compactMode: false,
-  dockPosition: 'bottom',
-  adaptiveTextColor: true,
-};
 
 /**
  * Packs widgets two-per-row at a fixed width. Unlike clamping only `w`,
@@ -347,9 +324,12 @@ export const storageService = {
   // today's defaults (one level deep — nested structures such as
   // wallpaper.dynamic.slots already fill their own gaps) so every field
   // the code expects is present.
+  // Settings objects are stored whole, so a user who installed before a
+  // field existed simply doesn't have it; the sanitizer fills the gaps
+  // from the defaults and also repairs anything a stray write left odd.
   async getWallpaper(): Promise<WallpaperSettings> {
     const wallpaper = await storageGet<WallpaperSettings>(STORAGE_KEYS.WALLPAPER, DEFAULT_WALLPAPER);
-    return wallpaper ? { ...DEFAULT_WALLPAPER, ...wallpaper } : DEFAULT_WALLPAPER;
+    return sanitizeWallpaper(wallpaper ? { ...DEFAULT_WALLPAPER, ...wallpaper } : DEFAULT_WALLPAPER);
   },
 
   async saveWallpaper(wallpaper: WallpaperSettings): Promise<void> {
@@ -358,7 +338,7 @@ export const storageService = {
 
   async getAppearance(): Promise<AppearanceSettings> {
     const appearance = await storageGet<AppearanceSettings>(STORAGE_KEYS.APPEARANCE, DEFAULT_APPEARANCE);
-    return appearance ? { ...DEFAULT_APPEARANCE, ...appearance } : DEFAULT_APPEARANCE;
+    return sanitizeAppearance(appearance ? { ...DEFAULT_APPEARANCE, ...appearance } : DEFAULT_APPEARANCE);
   },
 
   async saveAppearance(appearance: AppearanceSettings): Promise<void> {
@@ -554,19 +534,14 @@ export const storageService = {
       }
 
       await storageSet(STORAGE_KEYS.SCHEMA_VERSION, CURRENT_SCHEMA_VERSION);
-      if (data.wallpaper) await this.saveWallpaper(data.wallpaper);
-      if (data.appearance) await this.saveAppearance(data.appearance);
+      // Wallpaper and appearance are CSS-adjacent (the wallpaper URL is
+      // written into a background declaration): every field is checked,
+      // not just copied.
+      if (data.wallpaper) await this.saveWallpaper(sanitizeWallpaper({ ...DEFAULT_WALLPAPER, ...data.wallpaper }));
+      if (data.appearance) await this.saveAppearance(sanitizeAppearance({ ...DEFAULT_APPEARANCE, ...data.appearance }));
       if (Array.isArray(data.dockItems)) {
-        const dockItems = data.dockItems.filter(
-          (item): item is DockItem =>
-            !!item &&
-            typeof item.id === 'string' &&
-            typeof item.label === 'string' &&
-            typeof item.icon === 'string' &&
-            isSafeUrl(item.url)
-        );
         // An empty list is a deliberate choice in the export — keep it.
-        await this.saveDockItems(dockItems);
+        await this.saveDockItems(sanitizeDockItems(data.dockItems));
       }
       if (Array.isArray(data.keyboardShortcuts)) {
         await this.saveKeyboardShortcuts(sanitizeKeyboardShortcuts(data.keyboardShortcuts));

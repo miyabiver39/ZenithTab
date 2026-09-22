@@ -123,4 +123,50 @@ describe('useSettingsSync', () => {
     await vi.advanceTimersByTimeAsync(10);
     expect(state().syncSkipped).toEqual(['dockItems']);
   });
+
+  it('旧バージョンが送った appearance に無いフィールドは、この端末の現在値を保つこと', async () => {
+    // A device that predates adaptiveTextColor pushes appearance without it.
+    useDashboardStore.setState((s) => ({ appearance: { ...s.appearance, adaptiveTextColor: false, glassBlur: 22 } }));
+    renderHook(() => useSettingsSync());
+    await vi.advanceTimersByTimeAsync(10);
+
+    const { adaptiveTextColor: _adaptiveTextColor, glassBlur: _glassBlur, ...withoutNewFields } = { ...DEFAULT_APPEARANCE, language: 'de' as const };
+    await chromeMock.storage.sync.set({ zenith_sync_appearance: { updatedAt: Date.now() + 5000, value: withoutNewFields } });
+    await vi.advanceTimersByTimeAsync(10);
+
+    expect(state().appearance.language).toBe('de');
+    // Not wiped by the remote value's absence — this device's own setting survives.
+    expect(state().appearance.adaptiveTextColor).toBe(false);
+    expect(state().appearance.glassBlur).toBe(22);
+  });
+
+  it('不正な形状の dockItems / keyboardShortcuts を受け取っても、壊れた要素だけを落として反映すること', async () => {
+    renderHook(() => useSettingsSync());
+    await vi.advanceTimersByTimeAsync(10);
+
+    await chromeMock.storage.sync.set({
+      zenith_sync_dockItems: {
+        updatedAt: Date.now() + 5000,
+        value: [null, { id: 'a', label: 'OK', url: 'https://ok.example', icon: 'globe' }, { id: 'b', label: 'Bad', url: 'javascript:1', icon: 'globe' }],
+      },
+      zenith_sync_keyboardShortcuts: {
+        updatedAt: Date.now() + 5000,
+        value: [{ id: 'k1', combo: 'Ctrl+Alt+G', label: 'GH', url: 'https://github.com' }, { id: 'k2', combo: 'Ctrl+Alt+X', label: 'Bad', url: 'data:text/html,x' }],
+      },
+    });
+    await vi.advanceTimersByTimeAsync(10);
+
+    expect(state().dockItems.map((d) => d.id)).toEqual(['a']);
+    expect(state().keyboardShortcuts.map((k) => k.id)).toEqual(['k1']);
+    // Written back to local storage sanitized too, not the raw remote value.
+    expect(chromeStorageData[STORAGE_KEYS.DOCK_ITEMS].map((d: any) => d.id)).toEqual(['a']);
+  });
+
+  it('appearance が文字列などまったく別の形で届いても、既定値にフォールバックしてクラッシュしないこと', async () => {
+    renderHook(() => useSettingsSync());
+    await vi.advanceTimersByTimeAsync(10);
+    await chromeMock.storage.sync.set({ zenith_sync_appearance: { updatedAt: Date.now() + 5000, value: 'not-an-object' } });
+    await vi.advanceTimersByTimeAsync(10);
+    expect(state().appearance.theme).toBe(DEFAULT_APPEARANCE.theme);
+  });
 });

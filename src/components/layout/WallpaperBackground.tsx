@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDashboardStore } from '../../store/useDashboardStore';
-import { wallpaperService } from '../../services/wallpaperService';
+import { wallpaperService, GRADIENT_PRESETS } from '../../services/wallpaperService';
+import { isSafeGradient, isDataImageUrl, cssUrl } from '../../utils/settingsSanitizers';
+import { isSafeHttpUrl } from '../../utils/url';
 import { resolveBackdropTone } from '../../services/wallpaperLuminance';
 
 const CROSSFADE_MS = 700;
@@ -129,7 +131,7 @@ export const WallpaperBackground: React.FC = () => {
             key={layer.key}
             data-wallpaper-layer={isTop ? 'top' : 'below'}
             className="absolute inset-0 w-full h-full"
-            style={{ background: layer.url, ...fade }}
+            style={{ background: isSafeGradient(layer.url) ? layer.url : GRADIENT_PRESETS[0], ...fade }}
           />
         ) : (
           <div
@@ -137,7 +139,7 @@ export const WallpaperBackground: React.FC = () => {
             data-wallpaper-layer={isTop ? 'top' : 'below'}
             className="absolute inset-0 w-full h-full bg-cover bg-center transform scale-105"
             style={{
-              backgroundImage: `url(${layer.url})`,
+              backgroundImage: isSafeHttpUrl(layer.url) || isDataImageUrl(layer.url) ? cssUrl(layer.url) : 'none',
               filter: `blur(${layer.blur}px) brightness(${layer.brightness})`,
               ...fade,
             }}

@@ -1,6 +1,7 @@
 import { DockItem, KeyboardShortcutBinding } from '../../types/settings';
 import { storageService, DEFAULT_WALLPAPER, DEFAULT_APPEARANCE, DEFAULT_DOCK_ITEMS, DEFAULT_KEYBOARD_SHORTCUTS } from '../../services/storageService';
 import { wallpaperService } from '../../services/wallpaperService';
+import { sanitizeAppearance, sanitizeDockItems, sanitizeKeyboardShortcuts } from '../../utils/settingsSanitizers';
 import { uniqueId } from '../../utils/id';
 import { createStoreHelpers } from './helpers';
 import type { DashboardSliceCreator, SettingsSlice } from '../types';
@@ -64,13 +65,25 @@ export const createSettingsSlice: DashboardSliceCreator<SettingsSlice> = (set, g
     syncSkipped: [],
 
     applySyncedSettings: (settings) => {
+      // chrome.storage.sync is untrusted the same way an imported file is:
+      // another device's version may predate a field this one has, or the
+      // stored value may simply be malformed. Appearance is layered over
+      // what this device already has (so a field only the newer version
+      // knows about survives an older device's push) and re-validated;
+      // Dock and shortcut entries go through the same filters as an
+      // import so a bad URL or a missing field can't reach the UI.
+      const next: Partial<SettingsSlice> = {};
+      if (settings.appearance) next.appearance = sanitizeAppearance({ ...get().appearance, ...settings.appearance });
+      if (settings.dockItems) next.dockItems = sanitizeDockItems(settings.dockItems);
+      if (settings.keyboardShortcuts) next.keyboardShortcuts = sanitizeKeyboardShortcuts(settings.keyboardShortcuts);
+
       // The flag is visible to store subscribers during this very set(),
       // which is how the sync hook tells a remote value from a local edit.
-      set({ isApplyingSyncedSettings: true, ...settings });
+      set({ isApplyingSyncedSettings: true, ...next });
       set({ isApplyingSyncedSettings: false });
-      if (settings.appearance) storageService.saveAppearance(settings.appearance);
-      if (settings.dockItems) storageService.saveDockItems(settings.dockItems);
-      if (settings.keyboardShortcuts) storageService.saveKeyboardShortcuts(settings.keyboardShortcuts);
+      if (next.appearance) storageService.saveAppearance(next.appearance);
+      if (next.dockItems) storageService.saveDockItems(next.dockItems);
+      if (next.keyboardShortcuts) storageService.saveKeyboardShortcuts(next.keyboardShortcuts);
     },
 
     setSyncSkipped: (keys) => {

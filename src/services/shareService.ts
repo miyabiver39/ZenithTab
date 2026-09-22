@@ -3,7 +3,7 @@ import type { DockItem } from '../types/settings';
 import { getWidgetMeta } from '../components/widgets/widgetDefinitions';
 import { sanitizeWidget, currentVersion } from './storageService';
 import { sanitizeResponsiveLayouts } from '../utils/layout';
-import { isSafeHttpUrl } from '../utils/url';
+import { sanitizeDockItems } from '../utils/settingsSanitizers';
 import { uniqueId } from '../utils/id';
 
 /**
@@ -176,12 +176,7 @@ function sanitizePayload(raw: any): SharePayload {
     page: { name: typeof raw.page.name === 'string' ? raw.page.name.slice(0, 60) : '', widgets, layouts },
   };
   if (Array.isArray(raw.dock)) {
-    payload.dock = raw.dock
-      .slice(0, MAX_SHARED_DOCK_ITEMS)
-      .filter(
-        (item: any): item is DockItem =>
-          !!item && typeof item.id === 'string' && typeof item.label === 'string' && typeof item.icon === 'string' && isSafeHttpUrl(item.url)
-      );
+    payload.dock = sanitizeDockItems(raw.dock.slice(0, MAX_SHARED_DOCK_ITEMS));
   }
   return payload;
 }
