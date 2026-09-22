@@ -1,5 +1,11 @@
 import { XMLParser } from 'fast-xml-parser';
 import { RssFeedItem } from '../types/rss';
+import { isSafeHttpUrl } from './url';
+
+// Feed contents are third-party input. Anything that ends up in an href
+// or src must be http(s); a javascript:/data:/file: link becomes no link.
+const safeLink = (value: unknown): string => (isSafeHttpUrl(String(value ?? '').trim()) ? String(value).trim() : '');
+const safeOptionalUrl = (value: unknown): string | undefined => (isSafeHttpUrl(value) ? (value as string) : undefined);
 
 function stripHtml(html?: string): string {
   if (!html) return '';
@@ -106,13 +112,13 @@ export function parseRssXml(xmlText: string): RssFeedItem[] {
         items.push({
           id: item.guid?.['#text'] || item.guid || link || `rss-item-${i}-${Date.now()}`,
           title,
-          link: String(link).trim(),
+          link: safeLink(link),
           pubDate: String(pubDate),
           isoDate,
           contentSnippet,
-          imageUrl,
+          imageUrl: safeOptionalUrl(imageUrl),
           sourceTitle,
-          sourceUrl,
+          sourceUrl: safeOptionalUrl(sourceUrl),
         });
       }
       return items;
@@ -167,11 +173,11 @@ export function parseRssXml(xmlText: string): RssFeedItem[] {
         items.push({
           id: entry.id?.['#text'] || entry.id || link || `atom-item-${i}-${Date.now()}`,
           title,
-          link: String(link).trim(),
+          link: safeLink(link),
           pubDate: String(pubDate),
           isoDate,
           contentSnippet,
-          imageUrl,
+          imageUrl: safeOptionalUrl(imageUrl),
           creator: entry.author?.name || entry.author?.['#text'],
         });
       }

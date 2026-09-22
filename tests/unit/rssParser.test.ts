@@ -160,4 +160,24 @@ describe('rssParser edge cases', () => {
     expect(parseRssXml('<rss version="2.0"><channel><title>Empty</title></channel></rss>')).toEqual([]);
     expect(parseRssXml('<feed xmlns="http://www.w3.org/2005/Atom"><title>Empty</title></feed>')).toEqual([]);
   });
+
+  it('javascript: / data: のリンクや画像は空にし、http(s) だけを通すこと', () => {
+    const rss = `<?xml version="1.0"?><rss version="2.0"><channel><title>x</title>
+      <item><title>Evil</title><link>javascript:alert(1)</link><media:content url="data:image/svg+xml,foo" xmlns:media="http://search.yahoo.com/mrss/"/><source url="file:///etc/hosts">S</source></item>
+      <item><title>Fine</title><link>https://ok.example/a</link><media:thumbnail url="https://ok.example/t.png" xmlns:media="http://search.yahoo.com/mrss/"/></item>
+    </channel></rss>`;
+    const items = parseRssXml(rss);
+    expect(items[0].link).toBe('');
+    expect(items[0].imageUrl).toBeUndefined();
+    expect(items[0].sourceUrl).toBeUndefined();
+    expect(items[1].link).toBe('https://ok.example/a');
+    expect(items[1].imageUrl).toBe('https://ok.example/t.png');
+
+    const atom = `<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><title>x</title>
+      <entry><title>Evil</title><link rel="alternate" href="data:text/html,hi"/><summary><![CDATA[<img src="javascript:1">]]></summary></entry>
+    </feed>`;
+    const atomItems = parseRssXml(atom);
+    expect(atomItems[0].link).toBe('');
+    expect(atomItems[0].imageUrl).toBeUndefined();
+  });
 });

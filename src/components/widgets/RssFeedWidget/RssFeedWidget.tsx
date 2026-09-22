@@ -7,6 +7,7 @@ import { rssService } from '../../../services/rssService';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { useTranslation } from '../../../i18n/i18n';
 import { getFaviconUrl } from '../../../utils/favicon';
+import { isSafeHttpUrl } from '../../../utils/url';
 
 interface RssFeedWidgetProps {
   widgetId: string;
@@ -162,13 +163,17 @@ export const RssFeedWidget: React.FC<RssFeedWidgetProps> = ({ widgetId, config }
               // publisher (item.sourceUrl, when present) rather than
               // showing nothing. Chrome's own favicon cache only, per
               // utils/favicon.ts's privacy note.
-              const thumbnailUrl = item.imageUrl || getFaviconUrl(item.sourceUrl || item.link, 48);
-              const isFallbackFavicon = !item.imageUrl && !!thumbnailUrl;
+              // Second line of defence behind the parser: items cached by an
+              // older version were never checked.
+              const link = isSafeHttpUrl(item.link) ? item.link : undefined;
+              const imageUrl = isSafeHttpUrl(item.imageUrl) ? item.imageUrl : undefined;
+              const thumbnailUrl = imageUrl || getFaviconUrl(isSafeHttpUrl(item.sourceUrl) ? item.sourceUrl : link, 48);
+              const isFallbackFavicon = !imageUrl && !!thumbnailUrl;
 
               return (
               <a
                 key={item.id}
-                href={item.link}
+                href={link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="pt-2 block group hover:bg-white/[0.03] p-1.5 rounded-xl transition-all"
