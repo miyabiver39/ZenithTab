@@ -58,6 +58,36 @@ describe('background service worker', () => {
     expect(Object.keys(chromeStorageData[STORAGE_KEYS.RSS_CACHE])).toEqual(['https://legacy.example/feed']);
   });
 
+  it('応答が大きすぎるフィードはスキップし、他のフィードは更新すること', async () => {
+    chromeStorageData[STORAGE_KEYS.PAGE_DATA] = {
+      p1: {
+        widgets: [rssWidget('huge', 'https://huge.example/feed'), rssWidget('normal', 'https://normal.example/feed')],
+        layouts: {},
+      },
+    };
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+      const url = String(input);
+      if (url.includes('huge')) {
+        return {
+          ok: true,
+          status: 200,
+          url,
+          headers: { get: (name: string) => (name === 'content-length' ? String(20 * 1024 * 1024) : null) },
+          text: async () => {
+            throw new Error('should not read the body when Content-Length already exceeds the limit');
+          },
+        } as unknown as Response;
+      }
+      return { ok: true, status: 200, url, headers: { get: () => null }, text: async () => RSS('N') } as unknown as Response;
+    });
+
+    const handler = await loadWorkerAndGetMessageHandler();
+    const response = await new Promise((resolve) => handler({ type: 'REFRESH_FEEDS_NOW' }, {}, resolve));
+
+    expect(response).toEqual({ success: true });
+    expect(Object.keys(chromeStorageData[STORAGE_KEYS.RSS_CACHE])).toEqual(['https://normal.example/feed']);
+  });
+
   it('権限の無いフィードはスキップし、無関係なメッセージは無視すること', async () => {
     chromeStorageData[STORAGE_KEYS.PAGE_DATA] = { p1: { widgets: [rssWidget('x', 'https://denied.example/feed')], layouts: {} } };
     chromeMock.permissions.contains.mockResolvedValue(false);

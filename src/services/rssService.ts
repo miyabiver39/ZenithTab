@@ -4,6 +4,7 @@ import { parseRssXml } from '../utils/rssParser';
 import { storageGet } from '../utils/storage';
 import { updateStoredMapEntry } from '../utils/storageMap';
 import { hasHostPermission } from '../utils/permissions';
+import { readTextWithLimit, MAX_RSS_BYTES } from '../utils/fetchLimits';
 
 const RSS_CACHE_KEY = 'zenith_rss_cache';
 const CACHE_TTL_MS = 1000 * 60 * 15; // 15 minutes default cache
@@ -150,7 +151,7 @@ export const rssService = {
         throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
       }
 
-      const xmlText = await response.text();
+      const xmlText = await readTextWithLimit(response, MAX_RSS_BYTES, url);
       const items = parseRssXml(xmlText);
 
       const feedData: RssFeedData = {

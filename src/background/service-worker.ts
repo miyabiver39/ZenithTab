@@ -3,6 +3,7 @@ import { STORAGE_KEYS } from '../services/storageKeys';
 import { DashboardWidget, DashboardPageData } from '../types/widget';
 import { RssFeedData } from '../types/rss';
 import { hasHostPermission } from '../utils/permissions';
+import { readTextWithLimit, MAX_RSS_BYTES } from '../utils/fetchLimits';
 
 const RSS_ALARM_NAME = 'zenith-refresh-rss';
 const ALARM_INTERVAL_MINUTES = 30;
@@ -81,7 +82,7 @@ async function refreshAllConfiguredFeeds() {
             },
           });
           if (response.ok) {
-            const xml = await response.text();
+            const xml = await readTextWithLimit(response, MAX_RSS_BYTES, url);
             const items = parseRssXml(xml);
             cacheStore[url] = {
               title: items[0]?.sourceTitle || 'RSS Feed',

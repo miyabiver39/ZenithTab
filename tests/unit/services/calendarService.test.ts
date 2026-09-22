@@ -114,6 +114,26 @@ describe('calendarService', () => {
     expect(await calendarService.fetchCalendar(CAL_URL, true)).toHaveLength(1);
   });
 
+  it('応答が大きすぎる場合はキャッシュが無ければ例外、あれば古いデータを返すこと', async () => {
+    const tooBig = {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      url: CAL_URL,
+      headers: { get: (name: string) => (name === 'content-length' ? String(20 * 1024 * 1024) : null) },
+      text: async () => {
+        throw new Error('should not read the body when Content-Length already exceeds the limit');
+      },
+    } as unknown as Response;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(tooBig);
+    await expect(calendarService.fetchCalendar(CAL_URL)).rejects.toThrow(/exceeds the .*-byte limit/);
+
+    mockFetch();
+    await calendarService.fetchCalendar(CAL_URL);
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(tooBig);
+    expect(await calendarService.fetchCalendar(CAL_URL, true)).toHaveLength(1);
+  });
+
   it('readCached はキャッシュだけを読み、無ければ空、壊れていれば空で、決して fetch しないこと', async () => {
     const fetchSpy = mockFetch();
     expect(await calendarService.readCached(CAL_URL)).toEqual([]);

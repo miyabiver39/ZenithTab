@@ -123,6 +123,33 @@ describe('rssService.fetchFeed', () => {
     await expect(rssService.fetchFeed(FEED_URL)).rejects.toThrow('Failed to fetch RSS feed.');
   });
 
+  it('応答が大きすぎる場合はキャッシュがあれば古いデータを返し、無ければ例外を投げること', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      url: FEED_URL,
+      headers: { get: (name: string) => (name === 'content-length' ? String(10 * 1024 * 1024) : null) },
+      text: async () => {
+        throw new Error('should not read the body when Content-Length already exceeds the limit');
+      },
+    } as unknown as Response);
+    await expect(rssService.fetchFeed(FEED_URL)).rejects.toThrow(/exceeds the .*-byte limit/);
+
+    mockFetch();
+    await rssService.fetchFeed(FEED_URL);
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      url: FEED_URL,
+      headers: { get: (name: string) => (name === 'content-length' ? String(10 * 1024 * 1024) : null) },
+      text: async () => '',
+    } as unknown as Response);
+    const stale = await rssService.fetchFeed(FEED_URL, true);
+    expect(stale.items).toHaveLength(2);
+  });
+
   it('refreshAllFeeds は失敗したフィードを除いて結果を返すこと', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input);

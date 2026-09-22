@@ -3,6 +3,7 @@ import { storageGet } from '../utils/storage';
 import { updateStoredMapEntry } from '../utils/storageMap';
 import { hasHostPermission } from '../utils/permissions';
 import { isSafeHttpUrl } from '../utils/url';
+import { readTextWithLimit, MAX_ICAL_BYTES } from '../utils/fetchLimits';
 
 const CALENDAR_CACHE_KEY = 'zenith_calendar_cache';
 const CACHE_TTL_MS = 1000 * 60 * 15;
@@ -114,7 +115,7 @@ export const calendarService = {
     try {
       const response = await fetchWithTimeout(url, { headers: { Accept: 'text/calendar, text/plain, */*' } });
       if (!response.ok) throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
-      const text = await response.text();
+      const text = await readTextWithLimit(response, MAX_ICAL_BYTES, url);
       if (!/BEGIN:VCALENDAR/i.test(text)) throw new NotAnICalDocument(url);
 
       // Serialised per key so parallel feeds can't clobber each other's entry.
