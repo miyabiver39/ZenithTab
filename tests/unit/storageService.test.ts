@@ -223,4 +223,47 @@ describe('storageService 防御的な読み込み・インポート', () => {
     expect(await storageService.importDashboardData(huge)).toBe(false);
     expect((await storageService.getPagesState()).pages).toEqual(before.pages);
   });
+
+  it('オブジェクトでない JSON のインポートは失敗として扱うこと (#82)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(await storageService.importDashboardData('null')).toBe(false);
+    expect(await storageService.importDashboardData('42')).toBe(false);
+  });
+
+  it('pageData に対応するレコードが無い・継承プロパティしか無い・widgets が配列でないページは取り込まないこと (#82)', async () => {
+    const layout = { i: 'w1', x: 0, y: 0, w: 2, h: 2 };
+    const ok = await storageService.importDashboardData(JSON.stringify({
+      pages: [{ id: 'missing', name: 'M' }, { id: 'toString', name: 'T' }, { id: 'broken', name: 'B' }, { id: 'good', name: 'G' }],
+      pageData: { broken: { widgets: 'nope' }, good: { widgets: [{ id: 'w1', type: 'clock', title: 'c', config: {}, layout }] } },
+    }));
+    expect(ok).toBe(true);
+    const { pages } = await storageService.getPagesState();
+    expect(pages.map((p) => p.id)).toEqual(['good']);
+  });
+
+  it('sanitizeWidget: 形の合わないウィジェットを落とし、非文字列のタイトルを補うこと (#82)', async () => {
+    const { sanitizeWidget } = await import('../../src/services/storageService');
+    const layout = { i: 'w', x: 0, y: 0, w: 2, h: 2 };
+    expect(sanitizeWidget(null)).toBeNull();
+    expect(sanitizeWidget('widget')).toBeNull();
+    expect(sanitizeWidget({ id: 1, type: 'clock', layout })).toBeNull();
+    expect(sanitizeWidget({ id: 'w', type: 'clock' })).toBeNull();
+    expect(sanitizeWidget({ id: 'w', type: 'clock', title: { x: 1 }, layout })?.title).toBe('Widget');
+  });
+
+  it('インポートしたごみ箱のページ内ウィジェットも検証されること (#82)', async () => {
+    const { createTrashedPage } = await import('../../src/services/trashService');
+    const layout = { i: 'ok', x: 0, y: 0, w: 2, h: 2 };
+    const good = { id: 'ok', type: 'iframe', title: 'I', config: { url: 'https://ok.example' }, layout };
+    const evil = { id: 'evil', type: 'iframe', title: 'E', config: { url: 'javascript:alert(1)' }, layout: { ...layout, i: 'evil' } };
+    const trashed = createTrashedPage({ id: 'tp', name: 'Trashed' }, { widgets: [good, evil, { id: 'no-layout', type: 'clock' }] as any, layouts: { lg: [], md: [], sm: [], xs: [], xxs: [] } }, 1);
+    const exportData = await storageService.exportDashboardData();
+
+    expect(await storageService.importDashboardData(JSON.stringify({ ...exportData, trash: [trashed] }))).toBe(true);
+    const [entry] = await storageService.getTrash();
+    expect(entry.kind).toBe('page');
+    if (entry.kind !== 'page') return;
+    expect(entry.pageData.widgets.map((w) => w.id)).toEqual(['ok', 'evil']);
+    expect(entry.pageData.widgets[1].config).not.toHaveProperty('url');
+  });
 });

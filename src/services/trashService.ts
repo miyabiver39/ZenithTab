@@ -11,6 +11,7 @@ import {
 } from '../types/widget';
 import { GRID_COLS, GRID_BREAKPOINT_KEYS } from '../config/grid';
 import { uniqueId } from '../utils/id';
+import { sanitizePages } from '../utils/settingsSanitizers';
 
 /**
  * The trash: deleted widgets and pages, kept so they can be restored from
@@ -50,7 +51,7 @@ export function pruneTrash(entries: TrashEntry[], now = Date.now()): TrashEntry[
 /** Only entries with the shape the code expects survive a read from storage or an import. */
 export function sanitizeTrash(raw: unknown): TrashEntry[] {
   if (!Array.isArray(raw)) return [];
-  return raw.filter((e): e is TrashEntry => {
+  const entries = raw.filter((e): e is TrashEntry => {
     if (!e || typeof e !== 'object' || typeof e.id !== 'string' || typeof e.deletedAt !== 'number') return false;
     if (e.kind === 'widget') {
       return !!e.widget && typeof e.widget.id === 'string' && typeof e.widget.type === 'string' && typeof e.sourcePageId === 'string';
@@ -59,6 +60,14 @@ export function sanitizeTrash(raw: unknown): TrashEntry[] {
       return !!e.pageMeta && typeof e.pageMeta.id === 'string' && !!e.pageData && Array.isArray(e.pageData.widgets);
     }
     return false;
+  });
+  // A restored page's meta goes straight into the tab strip, so it gets
+  // the same check as the page list itself (#79): a non-string name would
+  // crash the dashboard the moment the page is restored.
+  return entries.flatMap((e): TrashEntry[] => {
+    if (e.kind !== 'page') return [e];
+    const [pageMeta] = sanitizePages([e.pageMeta]);
+    return pageMeta ? [{ ...e, pageMeta }] : [];
   });
 }
 

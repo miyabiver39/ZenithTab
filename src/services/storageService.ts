@@ -499,7 +499,9 @@ export const storageService = {
 
       if (Array.isArray(data.pages) && data.pageData && typeof data.pageData === 'object') {
         // Multi-page (1.3+) export shape.
-        const sanitizedPageData: Record<string, DashboardPageData> = {};
+        // No prototype: `validPages` and the active-page check below look ids
+        // up here, and an id like "toString" must not find an inherited value.
+        const sanitizedPageData: Record<string, DashboardPageData> = Object.create(null);
         const pages = sanitizePages(data.pages).slice(0, MAX_IMPORT_PAGES);
         for (const page of pages) {
           if (!Object.prototype.hasOwnProperty.call(data.pageData, page.id)) continue;

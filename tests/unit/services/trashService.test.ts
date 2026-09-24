@@ -64,6 +64,17 @@ describe('trashService', () => {
     });
   });
 
+  describe('sanitizeTrash: ページのメタデータ (#79)', () => {
+    it('非文字列の name を空文字にし、予約語の id のページは除外すること', () => {
+      const layouts = { lg: [], md: [], sm: [], xs: [], xxs: [] };
+      const bad = { ...createTrashedPage({ id: 'p1', name: 'X' }, { widgets: [], layouts }, NOW), pageMeta: { id: 'p1', name: { evil: 1 } } };
+      const proto = { ...createTrashedPage({ id: 'p2', name: 'Y' }, { widgets: [], layouts }, NOW), pageMeta: { id: '__proto__', name: 'Y' } };
+      const result = sanitizeTrash([bad, proto]);
+      expect(result).toHaveLength(1);
+      expect(result[0].kind === 'page' && result[0].pageMeta).toEqual({ id: 'p1', name: '' });
+    });
+  });
+
   describe('placeRestoredLayout', () => {
     it('元の場所が空いていればそこに戻すこと', () => {
       const existing = [{ i: 'other', x: 6, y: 0, w: 4, h: 2 }];
