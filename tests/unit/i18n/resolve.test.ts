@@ -76,6 +76,30 @@ describe('i18n/resolve: lazy locale loading', () => {
     expect(mod.getTranslation('ja').common.dashboard).toBe('Dashboard');
   });
 
+  it('読み込みに失敗した言語は getTranslation から再試行せず、明示的な preloadLocale でだけ再試行すること (#83)', async () => {
+    let attempts = 0;
+    vi.doMock('../../../src/i18n/locales/ja', () => {
+      attempts += 1;
+      throw new Error('chunk failed to load');
+    });
+    const mod = await freshResolve();
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    mod.getTranslation('ja'); // 初回は裏で読み込みを試みる
+    await vi.waitFor(() => expect(error).toHaveBeenCalledTimes(1));
+
+    // レンダーのたびに呼ばれる想定: 何度呼んでも再試行もログも増えない。
+    for (let i = 0; i < 5; i += 1) expect(mod.getTranslation('ja').common.dashboard).toBe('Dashboard');
+    await new Promise((r) => setTimeout(r, 0));
+    expect(attempts).toBe(1);
+    expect(error).toHaveBeenCalledTimes(1);
+
+    // 言語切り替えなど明示的な読み込みは再試行する。
+    await mod.preloadLocale('ja');
+    expect(attempts).toBe(2);
+    expect(error).toHaveBeenCalledTimes(2);
+  });
+
   it('onLocaleLoaded は読み込み完了のたびに通知し、購読解除後は呼ばれないこと', async () => {
     const mod = await freshResolve();
     const versionBefore = mod.getLocaleLoadVersion();

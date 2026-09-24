@@ -42,6 +42,12 @@ export const LOCALES: Record<string, Translation> = { en };
 // components mounting the same render) share a single import() instead
 // of racing separate dynamic imports.
 const pending = new Map<string, Promise<Translation>>();
+// Languages whose last load failed. `getTranslation` runs on nearly every
+// render, so it must not retry these by itself — that would re-import
+// and log an error on every re-render while the chunk is unreachable
+// (#83). Only an explicit `ensureLocaleLoaded`/`preloadLocale` (a
+// language switch, the next initialisation) tries again.
+const failed = new Set<string>();
 // Bumped whenever a locale finishes loading, so `useTranslation` knows to
 // re-render components that rendered the `en` fallback while it loaded.
 let loadVersion = 0;
@@ -77,6 +83,7 @@ export function ensureLocaleLoaded(code: string): Promise<Translation> {
   if (LOCALES[code]) return Promise.resolve(LOCALES[code]);
   const existing = pending.get(code);
   if (existing) return existing;
+  failed.delete(code);
 
   const loader = LOADERS[code];
   const load = !loader
@@ -95,6 +102,7 @@ export function ensureLocaleLoaded(code: string): Promise<Translation> {
           // Offline install, a corrupted chunk after an update mid-session…
           // `en` is always available, so the dashboard stays usable.
           console.error(`[ZenithTab] Failed to load locale "${code}":`, err);
+          failed.add(code);
           return en;
         })
         .finally(() => pending.delete(code));
@@ -127,6 +135,6 @@ export function getTranslation(languageSetting: SupportedLanguage = 'auto'): Tra
   const code = resolveLanguageCode(languageSetting);
   const loaded = LOCALES[code];
   if (loaded) return loaded;
-  void ensureLocaleLoaded(code);
+  if (!failed.has(code)) void ensureLocaleLoaded(code);
   return LOCALES.en;
 }
