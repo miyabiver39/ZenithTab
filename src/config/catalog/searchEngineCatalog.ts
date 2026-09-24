@@ -14,7 +14,8 @@ import type { SearchEngine } from '../../types/widget';
  *
  * Only services that prefill (or run) the query from the URL are listed.
  * Gemini isn't: gemini.google.com ignores URL prompts, so Google's AI Mode
- * (`udm=50`) stands in for it.
+ * (`udm=50`) stands in for it. Copilot likewise goes through Bing's
+ * Copilot Search (see COPILOT_SEARCH_TEMPLATE).
  */
 export type SearchEngineCategory = 'web' | 'ai' | 'video' | 'shopping' | 'reference' | 'dev' | 'social';
 
@@ -50,6 +51,14 @@ export const BUILTIN_SEARCH_LABELS: Record<SearchEngine, string> = {
 
 export const BUILTIN_SEARCH_KEYS = Object.keys(BUILTIN_SEARCH_TEMPLATES) as SearchEngine[];
 
+/**
+ * Copilot's own site dropped `?q=` (to blunt prompt injection via links),
+ * so copilot.microsoft.com opens with an empty box. Bing's Copilot Search
+ * is the query-in-URL entry point Microsoft documents instead.
+ */
+export const LEGACY_COPILOT_TEMPLATE = 'https://copilot.microsoft.com/?q={query}';
+export const COPILOT_SEARCH_TEMPLATE = 'https://www.bing.com/copilotsearch?q={query}';
+
 type Row = [id: string, name: string, urlTemplate: string, category: SearchEngineCategory, regions?: PresetLanguage[]];
 
 const builtin = (key: SearchEngine, category: SearchEngineCategory): CatalogSearchEngine => ({
@@ -79,7 +88,7 @@ const ROWS: Array<Row | CatalogSearchEngine> = [
   ['claude', 'Claude', 'https://claude.ai/new?q={query}', 'ai'],
   ['perplexity', 'Perplexity', 'https://www.perplexity.ai/search?q={query}', 'ai'],
   ['google-ai-mode', 'Google AI Mode', 'https://www.google.com/search?udm=50&q={query}', 'ai'],
-  ['copilot', 'Microsoft Copilot', 'https://copilot.microsoft.com/?q={query}', 'ai'],
+  ['copilot', 'Copilot Search (Bing)', COPILOT_SEARCH_TEMPLATE, 'ai'],
   ['grok', 'Grok', 'https://grok.com/?q={query}', 'ai'],
   ['mistral', 'Le Chat (Mistral)', 'https://chat.mistral.ai/chat?q={query}', 'ai'],
   ['felo', 'Felo', 'https://felo.ai/search?q={query}', 'ai'],

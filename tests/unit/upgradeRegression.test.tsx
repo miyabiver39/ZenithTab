@@ -194,6 +194,37 @@ describe('upgrade regression: data written by older versions', () => {
     expect(slots.night.category).toBe('cyberpunk');
   });
 
+  it('v1.11.4 のカタログで追加した Copilot は、動く Copilot Search の URL に読み替えられること', () => {
+    const t = LOCALES.en;
+    const legacy = 'https://copilot.microsoft.com/?q={query}';
+    const widget = hydrateWidget(
+      {
+        id: 's',
+        type: 'search',
+        title: 'Search',
+        config: {
+          defaultEngine: 'c1',
+          customEngines: [
+            { id: 'c1', name: 'Microsoft Copilot', urlTemplate: legacy },
+            { id: 'c2', name: 'My Copilot', urlTemplate: legacy },
+            { id: 'c3', name: 'Claude', urlTemplate: 'https://claude.ai/new?q={query}' },
+          ],
+        },
+        layout: { i: 's', x: 0, y: 0, w: 1, h: 1 },
+      },
+      t,
+      'en'
+    );
+    expect(widget.config.defaultEngine).toBe('c1');
+    expect(widget.config.customEngines).toEqual([
+      { id: 'c1', name: 'Copilot Search (Bing)', urlTemplate: 'https://www.bing.com/copilotsearch?q={query}' },
+      { id: 'c2', name: 'My Copilot', urlTemplate: 'https://www.bing.com/copilotsearch?q={query}' },
+      { id: 'c3', name: 'Claude', urlTemplate: 'https://claude.ai/new?q={query}' },
+    ]);
+    // Already-fixed configs are left alone (the hook is idempotent).
+    expect(WIDGET_DEFINITIONS.search.migrateConfig!(widget.config)).toEqual({});
+  });
+
   it('hydrateWidget は既存キー（空配列を含む）を上書きせず、未知の型は素通しすること', () => {
     const t = LOCALES.en;
     const emptied = hydrateWidget({ id: 'a', type: 'shortcuts', title: 'S', config: { items: [] }, layout: { i: 'a', x: 0, y: 0, w: 1, h: 1 } }, t, 'en');

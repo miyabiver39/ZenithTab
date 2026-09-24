@@ -2,6 +2,7 @@ import { WidgetType } from '../../types/widget';
 import type { Translation } from '../../i18n/resolve';
 import { rssService } from '../../services/rssService';
 import { getRegionalShortcuts, getRegionalWeatherDefault } from '../../config/defaults/regionalPresets';
+import { COPILOT_SEARCH_TEMPLATE, LEGACY_COPILOT_TEMPLATE } from '../../config/catalog/searchEngineCatalog';
 
 /**
  * The React-free half of the widget registry: everything the store and the
@@ -61,6 +62,20 @@ export const WIDGET_DEFINITIONS: Record<WidgetType, WidgetDefinitionMeta> = {
   search: {
     type: 'search',
     size: { w: 8, h: 1, minW: 3, minH: 1 },
+    // 1.11.4's catalog offered copilot.microsoft.com/?q=, which Copilot no
+    // longer honours (the chat opens empty). Point those engines at Bing's
+    // Copilot Search; an engine the user renamed keeps its name.
+    migrateConfig: (config) => {
+      if (!Array.isArray(config.customEngines)) return {};
+      if (!config.customEngines.some((e: any) => e?.urlTemplate === LEGACY_COPILOT_TEMPLATE)) return {};
+      return {
+        customEngines: config.customEngines.map((e: any) =>
+          e?.urlTemplate === LEGACY_COPILOT_TEMPLATE
+            ? { ...e, urlTemplate: COPILOT_SEARCH_TEMPLATE, name: e.name === 'Microsoft Copilot' ? 'Copilot Search (Bing)' : e.name }
+            : e
+        ),
+      };
+    },
     createDefaultConfig: () => ({
       defaultEngine: 'google',
       showEngineSelector: true,
