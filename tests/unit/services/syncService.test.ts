@@ -45,6 +45,51 @@ describe('syncService', () => {
     expect(Object.keys(chromeSyncData)).toEqual(['other_extension_key']);
   });
 
+  it('chrome.storage.sync の set / get / remove が失敗しても例外を投げず、失敗を結果で表すこと (#82)', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    await syncService.setLastStamp(42);
+
+    // push: 書けなかった項目はすべて skipped に回り、最終同期時刻は進まない。
+    chromeMock.storage.sync.set.mockRejectedValueOnce(new Error('QUOTA_BYTES quota exceeded'));
+    const result = await syncService.push({ appearance: DEFAULT_APPEARANCE, dockItems: dock(200), keyboardShortcuts: [] }, 1000);
+    expect(result).toEqual({ pushed: [], skipped: ['dockItems', 'appearance', 'keyboardShortcuts'] });
+    expect(chromeSyncData.zenith_sync_appearance).toBeUndefined();
+    expect(await syncService.getLastStamp()).toBe(42);
+
+    // pull: 空の設定と updatedAt 0 を返す。
+    chromeSyncData.zenith_sync_appearance = { updatedAt: 5, value: DEFAULT_APPEARANCE };
+    chromeMock.storage.sync.get.mockRejectedValueOnce(new Error('sync unavailable'));
+    expect(await syncService.pull()).toEqual({ settings: {}, updatedAt: 0 });
+
+    // clear: 削除に失敗してもローカルの最終同期時刻はリセットする。
+    chromeMock.storage.sync.remove.mockRejectedValueOnce(new Error('sync unavailable'));
+    await syncService.clear();
+    expect(await syncService.getLastStamp()).toBe(0);
+
+    expect(warn).toHaveBeenCalledTimes(3);
+  });
+
+  it('すべての項目が上限を超えるときは sync 領域に書かず、最終同期時刻も進めないこと (#82)', async () => {
+    const set = chromeMock.storage.sync.set;
+    set.mockClear();
+    await syncService.setLastStamp(7);
+    expect(await syncService.push({ dockItems: dock(200) }, 1000)).toEqual({ pushed: [], skipped: ['dockItems'] });
+    expect(set).not.toHaveBeenCalled();
+    expect(await syncService.getLastStamp()).toBe(7);
+  });
+
+  it('subscribe は sync 以外の領域や他拡張のキーだけの変更を無視すること (#82)', async () => {
+    const onRemote = vi.fn();
+    const unsubscribe = syncService.subscribe(onRemote);
+    await chromeMock.storage.local.set({ zenith_sync_appearance: { updatedAt: 1, value: DEFAULT_APPEARANCE } });
+    await chromeMock.storage.sync.set({ other_extension_key: 1 });
+    expect(onRemote).not.toHaveBeenCalled();
+
+    await chromeMock.storage.sync.set({ zenith_sync_appearance: { updatedAt: 9, value: DEFAULT_APPEARANCE } });
+    expect(onRemote).toHaveBeenCalledWith({ settings: { appearance: DEFAULT_APPEARANCE }, updatedAt: 9 });
+    unsubscribe();
+  });
+
   it('sync 領域が無い環境では何もせず、利用不可を返すこと', async () => {
     const original = chromeMock.storage.sync;
     (chromeMock.storage as any).sync = undefined;
