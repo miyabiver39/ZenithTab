@@ -83,7 +83,7 @@ ZenithTab は、新しいタブを「自分専用の作業台」に変えるダ�
 画面下部（または上部）に常時表示される最小限のショートカットバーです。表示するリンクは自由に追加・削除・並べ替えでき、アイコンは用意されたセットまたは絵文字から選べます。
 
 ■ 統合検索バー
-主要なWeb検索、コードリポジトリ検索、動画検索、AIチャットの入力先をワンクリックで切り替えられます。検索先は自分で追加することもでき、名前・検索用URL・アイコンを指定するだけで一覧に加わります。標準搭載の検索先も含め、使わないものは一覧から取り除いたり、いつでも呼び戻したりできます。キーボードの「/」キーを押すと、どこにいても検索欄にカーソルが移動します。計算式（120*1.1）、パーセント、単位換算（10 km to mi）、進数変換、サイコロ、コイントス、乱数、候補からの選択、指定日までの日数などは、検索する前にその場で答えが表示されます。
+主要なWeb検索、コードリポジトリ検索、動画検索、AIアシスタントなどの検索先をワンクリックで切り替えられます。検索先は「カタログから追加」で一覧から選ぶだけで増やせます。カタログはWeb検索・AIアシスタント・動画・ショッピング・地図と辞書・開発者向け・SNSに分かれ、地域ごとによく使われる検索先も収録しています。カタログにない検索先も、名前と検索用URLを入力すれば追加できます。既定の検索先は★で選び、使わない検索先は一覧から取り除けます（標準搭載の検索先もカタログからいつでも戻せます）。キーボードの「/」キーを押すと、どこにいても検索欄にカーソルが移動します。計算式（120*1.1）、パーセント、単位換算（10 km to mi）、進数変換、サイコロ、コイントス、乱数、候補からの選択、指定日までの日数などは、検索する前にその場で答えが表示されます。
 
 ■ キーボードショートカット
 好きなリンクにキーの組み合わせを割り当てておけば、キーボードだけで瞬時に開けます。組み込みのショートカット（検索欄へ移動、ページ切り替え、元に戻す／やり直す）は設定画面で一覧できます。
@@ -156,10 +156,10 @@ Pin the sites you use most as tiles and open them in one click. The app drawer f
 A minimal shortcut bar that stays visible at the bottom (or top) of the screen. Add, remove, and reorder its links freely, and pick an icon from a curated set or type your own emoji.
 
 ■ Unified search bar
-Switch in one click between general web search, code repository search, video search, and an AI chat prompt. Add your own search destinations too — a name, a search URL, and an icon is all it takes. Remove any engine you don't use, built-in or custom, and bring it back anytime. Press "/" anywhere on the page to jump straight into the search field.Type a calculation (120*1.1), a percentage, a unit conversion (10 km to mi), a number base, a dice roll, a coin flip, a random number, a list to pick from, or a date, and the answer appears inline before you search.
+Switch in one click between web search, code repository search, video search, AI assistants and more. Adding a destination is as simple as picking it from the built-in catalog, organised into web search, AI assistants, video, shopping, maps and reference, developer tools and social, with regional options for every language. Anything not in the catalog can still be added with a name and a search URL. Star the one you want as the default and remove any you don't use — built-in engines come back from the catalog anytime. Press "/" anywhere on the page to jump straight into the search field. Type a calculation (120*1.1), a percentage, a unit conversion (10 km to mi), a number base, a dice roll, a coin flip, a random number, a list to pick from, or a date, and the answer appears inline before you search.
 
 ■ Keyboard shortcuts
-Bind any link to a key combo and open it instantly without touching the mouse.The built-in shortcuts (jump to search, switch pages, undo/redo) are listed in the settings.
+Bind any link to a key combo and open it instantly without touching the mouse. The built-in shortcuts (jump to search, switch pages, undo/redo) are listed in the settings.
 
 ■ Bookmark explorer
 Browse the bookmarks already in Chrome. Walk into folders, step back through breadcrumbs, and filter by name. Site icons come from Chrome's own local cache, so the addresses of your bookmarks never reach an outside icon service.
@@ -195,7 +195,7 @@ Paste the iCal (.ics) link your calendar service provides and the widget lists t
 Every delete and layout change can be undone right away (Ctrl+Z). Deleted widgets and pages stay in a trash for 30 days, and a backup of the whole dashboard is taken automatically before a reset or an import.
 
 ■ Dynamic wallpapers and glassmorphism
-Choose from curated collections (cosmos, nature, minimal, architecture, abstract, cyberpunk), gradient presets, or upload your own image. Sliders control backdrop blur, brightness, and the darkening overlay.Turn on the time-of-day mode and the wallpaper and mood shift automatically through morning, day, sunset and night. On a light wallpaper, text placed directly on it switches to a dark colour so it stays readable.
+Choose from curated collections (cosmos, nature, minimal, architecture, abstract, cyberpunk), gradient presets, or upload your own image. Sliders control backdrop blur, brightness, and the darkening overlay. Turn on the time-of-day mode and the wallpaper and mood shift automatically through morning, day, sunset and night. On a light wallpaper, text placed directly on it switches to a dark colour so it stays readable.
 
 ■ Available in seven languages
 English, Japanese, Simplified Chinese, Spanish, French, German, and Korean.
@@ -229,10 +229,10 @@ Fija como mosaicos los sitios que más usas y ábrelos con un clic. El cajón de
 Una barra de accesos mínima que permanece visible en la parte inferior (o superior) de la pantalla. Añade, elimina y reordena sus enlaces libremente, y elige un icono de un conjunto seleccionado o escribe tu propio emoji.
 
 ■ Barra de búsqueda unificada
-Cambia con un clic entre búsqueda web general, búsqueda en repositorios de código, búsqueda de vídeos y una consulta de chat con IA. También puedes añadir tus propios motores de búsqueda: solo hace falta un nombre, una URL de búsqueda y un icono. Quita cualquier motor que no uses, sea predeterminado o propio, y recupéralo cuando quieras. Pulsa «/» en cualquier momento para saltar directamente al campo de búsqueda.Escribe un cálculo (120*1.1), un porcentaje, una conversión de unidades (10 km to mi), un cambio de base numérica, una tirada de dados, cara o cruz, un número aleatorio, una lista entre la que elegir o una fecha, y la respuesta aparece al instante antes de buscar.
+Cambia con un clic entre búsqueda web, búsqueda en repositorios de código, búsqueda de vídeos, asistentes de IA y más. Para añadir un destino basta con elegirlo del catálogo integrado, organizado en búsqueda web, asistentes de IA, vídeo, compras, mapas y consulta, desarrolladores y redes sociales, con opciones regionales para cada idioma. Lo que no esté en el catálogo se puede añadir igualmente con un nombre y una URL de búsqueda. Marca con la estrella el que quieras usar por defecto y quita los que no uses: los integrados se recuperan desde el catálogo cuando quieras. Pulsa «/» en cualquier momento para saltar directamente al campo de búsqueda. Escribe un cálculo (120*1.1), un porcentaje, una conversión de unidades (10 km to mi), un cambio de base numérica, una tirada de dados, cara o cruz, un número aleatorio, una lista entre la que elegir o una fecha, y la respuesta aparece al instante antes de buscar.
 
 ■ Atajos de teclado
-Asigna cualquier enlace a una combinación de teclas y ábrelo al instante sin tocar el ratón.Los atajos integrados (ir a la búsqueda, cambiar de página, deshacer/rehacer) se listan en los ajustes.
+Asigna cualquier enlace a una combinación de teclas y ábrelo al instante sin tocar el ratón. Los atajos integrados (ir a la búsqueda, cambiar de página, deshacer/rehacer) se listan en los ajustes.
 
 ■ Explorador de marcadores
 Navega por los marcadores que ya tienes en Chrome. Entra en las carpetas, retrocede con las migas de pan y filtra por nombre. Los iconos de los sitios provienen de la caché local del propio Chrome, así que las direcciones de tus marcadores nunca llegan a un servicio de iconos externo.
@@ -268,7 +268,7 @@ Pega el enlace iCal (.ics) que ofrece tu servicio de calendario y el widget list
 Cada borrado y cada cambio de disposición se puede deshacer al momento (Ctrl+Z). Los widgets y páginas borrados permanecen 30 días en una papelera, y antes de un reinicio o una importación se guarda automáticamente una copia de todo el panel.
 
 ■ Fondos dinámicos y glassmorphism
-Elige entre colecciones seleccionadas (cosmos, naturaleza, minimalismo, arquitectura, abstracto, cyberpunk), degradados predefinidos o sube tu propia imagen. Los controles deslizantes ajustan el desenfoque del fondo, el brillo y la capa de oscurecimiento.Activa el modo según la hora del día y el fondo y el ambiente cambian solos por la mañana, el día, el atardecer y la noche. Sobre un fondo claro, el texto colocado directamente encima pasa a un color oscuro para seguir siendo legible.
+Elige entre colecciones seleccionadas (cosmos, naturaleza, minimalismo, arquitectura, abstracto, cyberpunk), degradados predefinidos o sube tu propia imagen. Los controles deslizantes ajustan el desenfoque del fondo, el brillo y la capa de oscurecimiento. Activa el modo según la hora del día y el fondo y el ambiente cambian solos por la mañana, el día, el atardecer y la noche. Sobre un fondo claro, el texto colocado directamente encima pasa a un color oscuro para seguir siendo legible.
 
 ■ Disponible en siete idiomas
 Español, inglés, japonés, chino simplificado, francés, alemán y coreano.
@@ -302,10 +302,10 @@ Hefte die Seiten, die du am häufigsten brauchst, als Kacheln an und öffne sie 
 Eine minimalistische Verknüpfungsleiste, die dauerhaft am unteren (oder oberen) Bildschirmrand sichtbar bleibt. Füge Links frei hinzu, entferne sie oder ordne sie neu an, und wähle ein Symbol aus einer kuratierten Auswahl oder gib ein eigenes Emoji ein.
 
 ■ Vereinheitlichte Suchleiste
-Wechsle mit einem Klick zwischen allgemeiner Websuche, Suche in Code-Repositorys, Videosuche und einer KI-Chat-Eingabe. Du kannst auch eigene Suchziele hinzufügen – ein Name, eine Such-URL und ein Symbol genügen. Entferne jede Suchmaschine, die du nicht brauchst, ob voreingestellt oder eigene, und hol sie jederzeit zurück. Drück „/“ an beliebiger Stelle, um direkt ins Suchfeld zu springen.Tipp eine Rechnung (120*1.1), einen Prozentsatz, eine Einheitenumrechnung (10 km to mi), eine Zahlenbasis, einen Würfelwurf, einen Münzwurf, eine Zufallszahl, eine Auswahlliste oder ein Datum ein – die Antwort erscheint direkt, noch vor der Suche.
+Wechsle mit einem Klick zwischen Websuche, Suche in Code-Repositorys, Videosuche, KI-Assistenten und mehr. Neue Suchziele wählst du einfach aus dem eingebauten Katalog – gegliedert in Websuche, KI-Assistenten, Video, Shopping, Karten & Nachschlagen, Entwickler und Social Media, mit regionalen Angeboten für jede Sprache. Was nicht im Katalog steht, fügst du weiterhin mit einem Namen und einer Such-URL hinzu. Markiere deine Standardsuche mit dem Stern und entferne, was du nicht brauchst – voreingestellte Suchmaschinen holst du jederzeit aus dem Katalog zurück. Drück „/“ an beliebiger Stelle, um direkt ins Suchfeld zu springen. Tipp eine Rechnung (120*1.1), einen Prozentsatz, eine Einheitenumrechnung (10 km to mi), eine Zahlenbasis, einen Würfelwurf, einen Münzwurf, eine Zufallszahl, eine Auswahlliste oder ein Datum ein – die Antwort erscheint direkt, noch vor der Suche.
 
 ■ Tastenkombinationen
-Verknüpfe einen beliebigen Link mit einer Tastenkombination und öffne ihn sofort, ganz ohne Maus.Die eingebauten Kombinationen (zur Suche springen, Seite wechseln, Rückgängig/Wiederholen) sind in den Einstellungen aufgelistet.
+Verknüpfe einen beliebigen Link mit einer Tastenkombination und öffne ihn sofort, ganz ohne Maus. Die eingebauten Kombinationen (zur Suche springen, Seite wechseln, Rückgängig/Wiederholen) sind in den Einstellungen aufgelistet.
 
 ■ Lesezeichen-Explorer
 Durchstöbere die Lesezeichen, die bereits in Chrome liegen. Geh in Ordner hinein, über den Brotkrumenpfad wieder zurück, und filtere nach Namen. Die Website-Symbole stammen aus Chromes eigenem lokalem Cache – die Adressen deiner Lesezeichen erreichen also nie einen externen Icon-Dienst.
@@ -341,7 +341,7 @@ Füge den iCal-Link (.ics) deines Kalenderdienstes ein, und das Widget listet di
 Jedes Löschen und jede Layout-Änderung lässt sich sofort rückgängig machen (Strg+Z). Gelöschte Widgets und Seiten bleiben 30 Tage im Papierkorb, und vor einem Zurücksetzen oder Import wird automatisch das ganze Dashboard gesichert.
 
 ■ Dynamische Hintergründe und Glasoptik
-Wähle aus kuratierten Sammlungen (Weltall, Natur, Minimal, Architektur, Abstrakt, Cyberpunk), aus Verlaufsvorlagen oder lade dein eigenes Bild hoch. Schieberegler steuern Unschärfe, Helligkeit und die Abdunklung des Hintergrunds.Mit dem Tageszeit-Modus wechseln Hintergrund und Stimmung automatisch zwischen Morgen, Tag, Abend und Nacht. Auf hellen Hintergründen wird direkt darauf liegender Text automatisch dunkel und bleibt lesbar.
+Wähle aus kuratierten Sammlungen (Weltall, Natur, Minimal, Architektur, Abstrakt, Cyberpunk), aus Verlaufsvorlagen oder lade dein eigenes Bild hoch. Schieberegler steuern Unschärfe, Helligkeit und die Abdunklung des Hintergrunds. Mit dem Tageszeit-Modus wechseln Hintergrund und Stimmung automatisch zwischen Morgen, Tag, Abend und Nacht. Auf hellen Hintergründen wird direkt darauf liegender Text automatisch dunkel und bleibt lesbar.
 
 ■ In sieben Sprachen verfügbar
 Deutsch, Englisch, Japanisch, vereinfachtes Chinesisch, Spanisch, Französisch und Koreanisch.
@@ -375,10 +375,10 @@ Répartissez vos widgets et votre disposition sur des pages distinctes. Ajoutez 
 Une barre de raccourcis minimale qui reste visible en bas (ou en haut) de l'écran. Ajoutez, supprimez et réorganisez ses liens librement, et choisissez une icône dans une sélection ou saisissez votre propre emoji.
 
 ■ Barre de recherche unifiée
-Basculez d'un clic entre recherche web générale, recherche dans les dépôts de code, recherche vidéo et invite de chat IA. Vous pouvez aussi ajouter vos propres moteurs de recherche : un nom, une URL de recherche et une icône suffisent. Retirez tout moteur que vous n'utilisez pas, qu'il soit prédéfini ou personnalisé, et récupérez-le à tout moment. Appuyez sur « / » n'importe où pour placer directement le curseur dans le champ de recherche.Saisissez un calcul (120*1.1), un pourcentage, une conversion d'unités (10 km to mi), une base numérique, un lancer de dés, un pile ou face, un nombre aléatoire, une liste où choisir ou une date : la réponse s'affiche sur place, avant même de lancer la recherche.
+Basculez d'un clic entre recherche web, recherche dans les dépôts de code, recherche vidéo, assistants IA et plus encore. Pour ajouter une destination, il suffit de la choisir dans le catalogue intégré, organisé en recherche web, assistants IA, vidéo, shopping, cartes et références, développeurs et réseaux sociaux, avec des choix régionaux pour chaque langue. Ce qui n'y figure pas peut toujours être ajouté avec un nom et une URL de recherche. Marquez d'une étoile le moteur par défaut et retirez ceux que vous n'utilisez pas : les moteurs prédéfinis se récupèrent à tout moment depuis le catalogue. Appuyez sur « / » n'importe où pour placer directement le curseur dans le champ de recherche. Saisissez un calcul (120*1.1), un pourcentage, une conversion d'unités (10 km to mi), une base numérique, un lancer de dés, un pile ou face, un nombre aléatoire, une liste où choisir ou une date : la réponse s'affiche sur place, avant même de lancer la recherche.
 
 ■ Raccourcis clavier
-Associez n'importe quel lien à une combinaison de touches et ouvrez-le instantanément sans toucher la souris.Les raccourcis intégrés (aller à la recherche, changer de page, annuler/rétablir) sont listés dans les réglages.
+Associez n'importe quel lien à une combinaison de touches et ouvrez-le instantanément sans toucher la souris. Les raccourcis intégrés (aller à la recherche, changer de page, annuler/rétablir) sont listés dans les réglages.
 
 ■ Explorateur de favoris
 Parcourez les favoris déjà présents dans Chrome. Entrez dans les dossiers, revenez en arrière par le fil d'Ariane, filtrez par nom. Les icônes des sites proviennent du cache local de Chrome : les adresses de vos favoris n'atteignent donc jamais un service d'icônes externe.
@@ -414,7 +414,7 @@ Collez le lien iCal (.ics) fourni par votre service d'agenda et le widget liste 
 Chaque suppression et chaque changement de disposition peut être annulé aussitôt (Ctrl+Z). Les widgets et pages supprimés restent 30 jours dans une corbeille, et une sauvegarde de tout le tableau de bord est faite automatiquement avant une réinitialisation ou un import.
 
 ■ Fonds dynamiques et effet verre dépoli
-Choisissez parmi des collections sélectionnées (cosmos, nature, minimal, architecture, abstrait, cyberpunk), des dégradés prédéfinis, ou importez votre propre image. Des curseurs règlent le flou de l'arrière-plan, la luminosité et le voile sombre.Activez le mode selon l'heure et le fond ainsi que l'ambiance évoluent d'eux-mêmes entre le matin, la journée, le coucher du soleil et la nuit. Sur un fond clair, le texte posé directement dessus passe en couleur sombre pour rester lisible.
+Choisissez parmi des collections sélectionnées (cosmos, nature, minimal, architecture, abstrait, cyberpunk), des dégradés prédéfinis, ou importez votre propre image. Des curseurs règlent le flou de l'arrière-plan, la luminosité et le voile sombre. Activez le mode selon l'heure et le fond ainsi que l'ambiance évoluent d'eux-mêmes entre le matin, la journée, le coucher du soleil et la nuit. Sur un fond clair, le texte posé directement dessus passe en couleur sombre pour rester lisible.
 
 ■ Disponible en sept langues
 Français, anglais, japonais, chinois simplifié, espagnol, allemand et coréen.
@@ -448,10 +448,10 @@ ZenithTab은 새 탭 페이지를 직접 꾸미는 작업 공간으로 바꿔줍
 화면 하단(또는 상단)에 항상 표시되는 간단한 바로가기 바입니다. 표시할 링크를 자유롭게 추가·삭제·정렬할 수 있고, 아이콘은 준비된 세트에서 고르거나 이모지로 직접 지정할 수 있습니다.
 
 ■ 통합 검색창
-일반 웹 검색, 코드 저장소 검색, 동영상 검색, AI 채팅 입력창을 한 번의 클릭으로 전환합니다. 이름·검색 URL·아이콘만 지정하면 원하는 검색 엔진을 직접 추가할 수도 있습니다. 기본 제공이든 직접 추가한 것이든 사용하지 않는 검색 엔진은 목록에서 제거하고 언제든 다시 불러올 수 있습니다. 페이지 어디서든 「/」 키를 누르면 곧바로 검색창으로 커서가 이동합니다.계산식(120*1.1), 백분율, 단위 변환(10 km to mi), 진수 변환, 주사위, 동전 던지기, 난수, 후보 중 고르기, 특정 날짜까지의 일수를 입력하면 검색하기 전에 답이 바로 표시됩니다.
+일반 웹 검색, 코드 저장소 검색, 동영상 검색, AI 어시스턴트 등의 검색 대상을 한 번의 클릭으로 전환합니다. 검색 대상은 「카탈로그에서 추가」에서 고르기만 하면 늘릴 수 있습니다. 카탈로그는 웹 검색·AI 어시스턴트·동영상·쇼핑·지도와 사전·개발자·SNS로 나뉘어 있으며, 지역별로 자주 쓰이는 검색 대상도 담고 있습니다. 카탈로그에 없는 검색 대상도 이름과 검색 URL만 입력하면 추가할 수 있습니다. 별표로 기본 검색 대상을 고르고, 사용하지 않는 것은 목록에서 제거할 수 있습니다(기본 제공 검색 대상도 카탈로그에서 언제든 되돌릴 수 있습니다). 페이지 어디서든 「/」 키를 누르면 곧바로 검색창으로 커서가 이동합니다. 계산식(120*1.1), 백분율, 단위 변환(10 km to mi), 진수 변환, 주사위, 동전 던지기, 난수, 후보 중 고르기, 특정 날짜까지의 일수를 입력하면 검색하기 전에 답이 바로 표시됩니다.
 
 ■ 키보드 단축키
-원하는 링크에 키 조합을 지정해두면 마우스 없이 즉시 열 수 있습니다.기본 제공 단축키(검색창으로 이동, 페이지 전환, 실행 취소/다시 실행)는 설정 화면에서 한눈에 볼 수 있습니다.
+원하는 링크에 키 조합을 지정해두면 마우스 없이 즉시 열 수 있습니다. 기본 제공 단축키(검색창으로 이동, 페이지 전환, 실행 취소/다시 실행)는 설정 화면에서 한눈에 볼 수 있습니다.
 
 ■ 북마크 탐색기
 Chrome에 이미 저장된 북마크를 그대로 표시합니다. 폴더 계층을 따라 들어가고, 이동 경로로 되돌아오고, 이름으로 걸러낼 수 있습니다. 사이트 아이콘은 Chrome 자체의 로컬 캐시에서 가져오므로 북마크 주소가 외부 아이콘 서비스로 전달되지 않습니다.
@@ -487,7 +487,7 @@ Chrome이 이미 파악하고 있는 「자주 방문한 사이트」와 「최�
 모든 삭제와 배치 변경은 직후에 실행 취소(Ctrl+Z)할 수 있습니다. 삭제한 위젯과 페이지는 30일 동안 휴지통에 남고, 초기화나 가져오기 전에는 대시보드 전체 백업이 자동으로 저장됩니다.
 
 ■ 다이내믹 배경화면과 글래스모피즘
-엄선된 컬렉션(우주, 자연, 미니멀, 건축, 추상, 사이버펑크), 그러데이션 프리셋, 직접 올린 이미지 중에서 고를 수 있습니다. 슬라이더로 배경 흐림 정도, 밝기, 어두운 오버레이 농도를 조절합니다.시간대 모드를 켜면 아침·낮·저녁·밤에 맞춰 배경화면과 분위기가 자동으로 바뀝니다. 밝은 배경화면에서는 배경 위에 직접 놓인 글자가 자동으로 어두운 색으로 바뀌어 읽기 쉬운 상태를 유지합니다.
+엄선된 컬렉션(우주, 자연, 미니멀, 건축, 추상, 사이버펑크), 그러데이션 프리셋, 직접 올린 이미지 중에서 고를 수 있습니다. 슬라이더로 배경 흐림 정도, 밝기, 어두운 오버레이 농도를 조절합니다. 시간대 모드를 켜면 아침·낮·저녁·밤에 맞춰 배경화면과 분위기가 자동으로 바뀝니다. 밝은 배경화면에서는 배경 위에 직접 놓인 글자가 자동으로 어두운 색으로 바뀌어 읽기 쉬운 상태를 유지합니다.
 
 ■ 7개 언어 지원
 한국어, 영어, 일본어, 중국어 간체, 스페인어, 프랑스어, 독일어를 지원합니다.
@@ -521,7 +521,7 @@ ZenithTab 把新标签页变成一块由你自己布置的工作台。
 始终显示在屏幕底部（或顶部）的极简快捷栏。可以自由添加、删除、重新排序其中的链接，图标可从预设集合中选择，也可以直接输入表情符号。
 
 ■ 聚合搜索栏
-一次点击即可在通用网页搜索、代码仓库搜索、视频搜索和 AI 对话输入之间切换。你也可以添加自己的搜索引擎，只需提供名称、搜索 URL 和图标即可。无论是内置还是自行添加的搜索引擎，只要用不到都可以从列表中移除，也可以随时恢复。在页面任意位置按下「/」键，光标会立刻跳到搜索框。输入算式（120*1.1）、百分比、单位换算（10 km to mi）、进制转换、掷骰子、抛硬币、随机数、从候选中选一个，或某个日期，答案会在搜索前直接显示出来。
+一次点击即可在通用网页搜索、代码仓库搜索、视频搜索、AI 助手等搜索目标之间切换。只需在「从目录添加」中挑选，就能添加新的搜索目标。目录分为网页搜索、AI 助手、视频、购物、地图与词典、开发者、社交等类别，并收录了各地区常用的搜索目标。目录中没有的，也可以填写名称和搜索 URL 自行添加。用星标选择默认搜索引擎，不用的可以从列表中移除（内置的搜索引擎也随时可以从目录中恢复）。在页面任意位置按下「/」键，光标会立刻跳到搜索框。输入算式（120*1.1）、百分比、单位换算（10 km to mi）、进制转换、掷骰子、抛硬币、随机数、从候选中选一个，或某个日期，答案会在搜索前直接显示出来。
 
 ■ 键盘快捷键
 为任意链接绑定按键组合，无需使用鼠标即可瞬间打开。内置快捷键（跳到搜索框、切换页面、撤销/重做）可在设置中查看。
