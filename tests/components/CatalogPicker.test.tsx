@@ -82,6 +82,32 @@ describe('CatalogPicker', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it('検索エンジンは AI などのカテゴリで選べ、テンプレート URL を返し、地域ごとのエンジンを出し分けること', async () => {
+    const user = setupUser();
+    const onAdd = vi.fn();
+    render(
+      <CatalogPicker
+        isOpen
+        onClose={() => {}}
+        kind="searchEngines"
+        existingUrls={['https://chatgpt.com/?q={query}']}
+        onAdd={onAdd}
+      />
+    );
+    const list = screen.getByRole('list', { name: 'Add search engines' });
+    expect(within(list).queryByText('Yahoo! JAPAN')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'AI assistants' }));
+    expect(within(list).queryByText('Google')).not.toBeInTheDocument();
+    expect(within(list).getByRole('button', { name: /ChatGPT/ })).toBeDisabled();
+    await user.click(within(list).getByRole('button', { name: /^Claude/ }));
+    await user.click(screen.getByRole('button', { name: 'Add 1' }));
+    expect(onAdd).toHaveBeenCalledWith([expect.objectContaining({ title: 'Claude', url: 'https://claude.ai/new?q={query}' })]);
+
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Region' }), 'ja');
+    expect(within(list).getByText('Yahoo! JAPAN')).toBeInTheDocument();
+  });
+
   it('urlKey は末尾スラッシュと大文字小文字を無視すること', () => {
     expect(urlKey('https://Example.com/')).toBe(urlKey('https://example.com'));
   });

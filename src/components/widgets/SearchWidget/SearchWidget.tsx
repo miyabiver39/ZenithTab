@@ -7,6 +7,8 @@ import { useTranslation } from '../../../i18n/i18n';
 import { useDashboardStore } from '../../../store/useDashboardStore';
 import { evaluateSmartInput, isHelpQuery } from '../../../utils/smartInput';
 import { SmartResultCard, SmartHelpCard } from './SmartResultCard';
+import { BUILTIN_SEARCH_LABELS, BUILTIN_SEARCH_TEMPLATES } from '../../../config/catalog/searchEngineCatalog';
+import { Favicon, originOf } from '../../common/CatalogPicker';
 
 interface SearchWidgetProps {
   widgetId: string;
@@ -18,50 +20,36 @@ interface ResolvedEngine {
   name: string;
   icon: React.ElementType | null;
   emoji?: string;
+  /** Site root, for the favicon of a custom engine without an emoji. */
+  homeUrl?: string;
   url: (q: string) => string;
   color: string;
 }
 
-const SEARCH_ENGINES: Record<
-  SearchEngine,
-  { name: string; icon: React.ElementType; url: (q: string) => string; color: string }
-> = {
-  google: {
-    name: 'Google',
-    icon: Globe,
-    url: (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
-    color: 'text-sky-400',
-  },
-  duckduckgo: {
-    name: 'DuckDuckGo',
-    icon: Compass,
-    url: (q) => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
-    color: 'text-amber-400',
-  },
-  bing: {
-    name: 'Bing',
-    icon: Globe,
-    url: (q) => `https://www.bing.com/search?q=${encodeURIComponent(q)}`,
-    color: 'text-blue-400',
-  },
-  github: {
-    name: 'GitHub',
-    icon: Code2,
-    url: (q) => `https://github.com/search?q=${encodeURIComponent(q)}`,
-    color: 'text-purple-300',
-  },
-  youtube: {
-    name: 'YouTube',
-    icon: Video,
-    url: (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
-    color: 'text-rose-400',
-  },
-  chatgpt: {
-    name: 'ChatGPT',
-    icon: Sparkles,
-    url: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}`,
-    color: 'text-emerald-400',
-  },
+const fillTemplate = (template: string, q: string) => template.replace('{query}', encodeURIComponent(q));
+
+const SEARCH_ENGINES: Record<SearchEngine, { icon: React.ElementType; color: string }> = {
+  google: { icon: Globe, color: 'text-sky-400' },
+  duckduckgo: { icon: Compass, color: 'text-amber-400' },
+  bing: { icon: Globe, color: 'text-blue-400' },
+  github: { icon: Code2, color: 'text-purple-300' },
+  youtube: { icon: Video, color: 'text-rose-400' },
+  chatgpt: { icon: Sparkles, color: 'text-emerald-400' },
+};
+
+/**
+ * A custom engine's mark: the emoji the user chose, or else the site's
+ * favicon (engines added from the catalog carry none) with a globe fallback.
+ */
+const EngineMark: React.FC<{ engine: ResolvedEngine; size: number }> = ({ engine, size }) => {
+  const Icon = engine.icon;
+  if (Icon) return <Icon size={size} className={engine.color} />;
+  if (engine.emoji) return <span className="leading-none text-center" style={{ fontSize: size - 2, width: size }}>{engine.emoji}</span>;
+  return (
+    <span className="flex items-center justify-center flex-shrink-0 overflow-hidden [&>img]:w-full [&>img]:h-full [&>svg]:w-full [&>svg]:h-full" style={{ width: size, height: size }}>
+      <Favicon url={engine.homeUrl || ''} isFeed={false} />
+    </span>
+  );
 };
 
 export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) => {
@@ -83,15 +71,22 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
     for (const key of Object.keys(SEARCH_ENGINES) as SearchEngine[]) {
       if (hiddenBuiltinEngines.includes(key)) continue;
       const eng = SEARCH_ENGINES[key];
-      merged[key] = { key, name: eng.name, icon: eng.icon, url: eng.url, color: eng.color };
+      merged[key] = {
+        key,
+        name: BUILTIN_SEARCH_LABELS[key],
+        icon: eng.icon,
+        url: (q) => fillTemplate(BUILTIN_SEARCH_TEMPLATES[key], q),
+        color: eng.color,
+      };
     }
     for (const custom of customEngines) {
       merged[custom.id] = {
         key: custom.id,
         name: custom.name,
-        icon: custom.icon ? null : Search,
+        icon: null,
         emoji: custom.icon,
-        url: (q) => custom.urlTemplate.replace('{query}', encodeURIComponent(q)),
+        homeUrl: originOf(custom.urlTemplate),
+        url: (q) => fillTemplate(custom.urlTemplate, q),
         color: 'text-slate-300',
       };
     }
@@ -216,7 +211,6 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
       url: () => '',
       color: 'text-slate-400',
     };
-  const CurrentIcon = currentEngineObj.icon;
 
   return (
     <div className="w-full h-full flex flex-col justify-center select-none py-1">
@@ -232,11 +226,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
               title={t.widgets.search.switchEngine}
               aria-label={t.widgets.search.switchEngine}
             >
-              {CurrentIcon ? (
-                <CurrentIcon size={15} className={currentEngineObj.color} />
-              ) : (
-                <span className="text-sm leading-none">{currentEngineObj.emoji}</span>
-              )}
+              <EngineMark engine={currentEngineObj} size={15} />
               <span className="text-xs font-semibold tracking-wide hidden sm:inline">
                 {currentEngineObj.name}
               </span>
@@ -255,7 +245,6 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
               >
                 {engineKeys.map((key) => {
                   const eng = engines[key];
-                  const Icon = eng.icon;
                   const isSelected = selectedEngine === key;
                   return (
                     <button
@@ -272,11 +261,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
                           : 'text-slate-300 hover:text-white hover:bg-white/10'
                       }`}
                     >
-                      {Icon ? (
-                        <Icon size={14} className={eng.color} />
-                      ) : (
-                        <span className="text-xs leading-none w-3.5 text-center">{eng.emoji}</span>
-                      )}
+                      <EngineMark engine={eng} size={14} />
                       <span className="flex-1">{eng.name}</span>
                     </button>
                   );
@@ -351,7 +336,6 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
           <div className="hidden lg:flex items-center gap-1.5 mt-2 overflow-x-auto py-0.5 custom-scrollbar">
             {engineKeys.map((key) => {
               const eng = engines[key];
-              const Icon = eng.icon;
               const isSelected = selectedEngine === key;
               return (
                 <button
@@ -364,11 +348,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ widgetId, config }) 
                       : 'text-on-wallpaper-faint hover:text-on-wallpaper-muted hover:bg-white/5 border border-transparent'
                   }`}
                 >
-                  {Icon ? (
-                    <Icon size={11} className={eng.color} />
-                  ) : (
-                    <span className="text-[10px] leading-none">{eng.emoji}</span>
-                  )}
+                  <EngineMark engine={eng} size={11} />
                   <span>{eng.name}</span>
                 </button>
               );

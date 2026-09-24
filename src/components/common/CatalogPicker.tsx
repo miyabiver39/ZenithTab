@@ -8,13 +8,14 @@ import { hostnameOf } from '../../utils/url';
 import { resolvePresetLanguage, type PresetLanguage } from '../../config/defaults/regionalPresets';
 import { getSiteCatalog, SITE_CATALOG_LANGUAGES, REGION_LABELS } from '../../config/catalog/siteCatalog';
 import { getFeedCatalog, FEED_CATEGORIES } from '../../config/catalog/feedCatalog';
+import { getSearchEngineCatalog, SEARCH_ENGINE_CATEGORIES } from '../../config/catalog/searchEngineCatalog';
 import { bookmarkService } from '../../services/bookmarkService';
 import { quickAccessService } from '../../services/quickAccessService';
 import { hasApiPermissions, requestApiPermissions } from '../../utils/permissions';
 import type { BookmarkItem } from '../../types/bookmark';
 import { cn } from '../../utils/cn';
 
-/** What a picker hands back: enough to build a shortcut, a dock item or a feed config. */
+/** What a picker hands back: enough to build a shortcut, a dock item, a feed config or a search engine. */
 export interface PickedItem {
   title: string;
   url: string;
@@ -29,8 +30,11 @@ export type PickerSource = 'catalog' | 'bookmarks' | 'topSites';
 interface CatalogPickerProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Sites (shortcuts / dock) or news feeds. Feeds have no bookmark / top-sites sources. */
-  kind: 'sites' | 'feeds';
+  /**
+   * Sites (shortcuts / dock), news feeds or search engines (whose `url` is a
+   * `{query}` template). Only sites have bookmark / top-sites sources.
+   */
+  kind: 'sites' | 'feeds' | 'searchEngines';
   /** Extra sources offered as tabs next to the catalog (sites only). */
   sources?: PickerSource[];
   /** URLs already present; shown as added and not selectable again. */
@@ -44,6 +48,19 @@ interface CatalogPickerProps {
 interface PickerItem extends PickedItem {
   id: string;
 }
+
+/**
+ * A search template's site root, for its icon: Chrome's favicon store is
+ * keyed by visited pages, and the home page is far likelier to be one than
+ * a results URL with "{query}" in it.
+ */
+export const originOf = (url: string) => {
+  try {
+    return `${new URL(url).origin}/`;
+  } catch {
+    return url;
+  }
+};
 
 /** Trailing slash and case don't make a different site. */
 export const urlKey = (url: string) => url.trim().toLowerCase().replace(/\/+$/, '');
@@ -107,11 +124,15 @@ export const CatalogPicker: React.FC<CatalogPickerProps> = ({
     if (kind === 'feeds') {
       return getFeedCatalog(region).map((f) => ({ id: f.id, title: f.title, url: f.url, category: t.catalog.feedCategories[f.category] }));
     }
+    if (kind === 'searchEngines') {
+      return getSearchEngineCatalog(region).map((e) => ({ id: e.id, title: e.name, url: e.urlTemplate, category: t.catalog.searchCategories[e.category] }));
+    }
     return getSiteCatalog(region).map((s) => ({ id: s.id, title: s.title, url: s.url, category: s.category, icon: s.icon }));
   }, [kind, region, t]);
 
   const categoryOrder = useMemo(() => {
     if (kind === 'feeds' && source === 'catalog') return FEED_CATEGORIES.map((c) => t.catalog.feedCategories[c]);
+    if (kind === 'searchEngines' && source === 'catalog') return SEARCH_ENGINE_CATEGORIES.map((c) => t.catalog.searchCategories[c]);
     return undefined;
   }, [kind, source, t]);
 
@@ -174,7 +195,7 @@ export const CatalogPicker: React.FC<CatalogPickerProps> = ({
   };
 
   const count = Object.keys(selected).length;
-  const heading = title || (kind === 'feeds' ? t.catalog.feedTitle : t.catalog.siteTitle);
+  const heading = title || (kind === 'feeds' ? t.catalog.feedTitle : kind === 'searchEngines' ? t.catalog.searchEngineTitle : t.catalog.siteTitle);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={heading} maxWidth="2xl">
@@ -281,7 +302,7 @@ export const CatalogPicker: React.FC<CatalogPickerProps> = ({
                     )}
                   >
                     <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      <Favicon url={item.url} isFeed={kind === 'feeds'} folder={source === 'bookmarks' && !item.url} />
+                      <Favicon url={kind === 'searchEngines' ? originOf(item.url) : item.url} isFeed={kind === 'feeds'} folder={source === 'bookmarks' && !item.url} />
                     </span>
                     <span className="flex-1 min-w-0">
                       <span className="block text-xs font-medium truncate">{item.title}</span>

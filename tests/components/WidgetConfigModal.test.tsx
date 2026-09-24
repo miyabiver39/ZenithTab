@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act, waitFor, within } from '@testing-library/react';
 import { setupUser, literal } from '../helpers/user';
 import { WidgetConfigModal } from '../../src/components/layout/WidgetConfigModal';
 import { useDashboardStore } from '../../src/store/useDashboardStore';
@@ -69,8 +69,10 @@ describe('WidgetConfigModal', () => {
   // when the whole suite ran under coverage (#81). What is checked here
   // is the validation of the final value, not per-keystroke behaviour.
   describe('検索: カスタムエンジンの URL 検証 (#51)', () => {
-    const openSearch = () => {
+    // The URL form sits behind "Add by URL" since the catalog became the main way in.
+    const openSearch = async (user: ReturnType<typeof setupUser>) => {
       openFor('widget-search-1');
+      await user.click(screen.getByRole('button', { name: /Add by URL/ }));
       return {
         name: screen.getByPlaceholderText('Name'),
         urlInput: screen.getByPlaceholderText('https://example.com/search?q={query}'),
@@ -85,7 +87,7 @@ describe('WidgetConfigModal', () => {
 
     it('危険なスキームのカスタムエンジンは追加できないこと', async () => {
       const user = setupUser();
-      const { name, urlInput, addButton } = openSearch();
+      const { name, urlInput, addButton } = await openSearch(user);
       await fill(user, name, 'Evil');
 
       await fill(user, urlInput, 'javascript:alert({query})');
@@ -98,7 +100,7 @@ describe('WidgetConfigModal', () => {
 
     it('スキーム省略は https が補われて保存されること', async () => {
       const user = setupUser();
-      const { name, urlInput, addButton } = openSearch();
+      const { name, urlInput, addButton } = await openSearch(user);
       await fill(user, name, 'Example');
       await fill(user, urlInput, 'search.example/?q={query}');
       expect(addButton()).toBeEnabled();
@@ -151,16 +153,24 @@ describe('WidgetConfigModal', () => {
     await waitFor(() => expect(screen.getByText(/Could not determine/)).toBeInTheDocument());
   });
 
-  it('検索: 組み込みエンジンの削除・復元、カスタム追加・削除、最後の1件は削除不可', async () => {
+  it('検索: 組み込みエンジンの削除とカタログからの復元、カスタム追加・削除、最後の1件は削除不可', async () => {
     const user = setupUser();
     openFor('widget-search-1');
     const removeButtons = () => screen.getAllByRole('button', { name: /^Delete: / });
+    const defaultButton = (name: string) => screen.getByRole('button', { name: `Make default: ${name}` });
 
     // Remove Google (the default) → default falls back to the next built-in.
     await user.click(removeButtons()[0]);
-    expect(screen.getByText('Removed (click to bring back):')).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: /^Google/ }));
-    expect(screen.queryByText('Removed (click to bring back):')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Make default: Google' })).not.toBeInTheDocument();
+    expect(defaultButton('DuckDuckGo')).toHaveAttribute('aria-pressed', 'true');
+
+    // A removed built-in is back in the catalog; picking it un-hides it
+    // rather than adding a copy.
+    await user.click(screen.getByRole('button', { name: /Add from catalog/ }));
+    const catalog = screen.getByRole('list', { name: 'Add search engines' });
+    await user.click(within(catalog).getByRole('button', { name: /^Google\s*www/ }));
+    await user.click(screen.getByRole('button', { name: /^Add 1$/ }));
+    expect(defaultButton('Google')).toHaveAttribute('aria-pressed', 'false');
 
     // Remove everything but one → the last remove button is disabled.
     for (let i = 0; i < 5; i++) await user.click(removeButtons()[0]);
@@ -168,6 +178,7 @@ describe('WidgetConfigModal', () => {
     expect(removeButtons()[0]).toHaveAttribute('title', 'At least one search engine is required');
 
     // Add a custom engine by pasting a results URL (auto-templated on blur).
+    await user.click(screen.getByRole('button', { name: /Add by URL/ }));
     await user.clear(screen.getByPlaceholderText('Name'));
     await user.type(screen.getByPlaceholderText('Name'), literal('Wiki'));
     const urlInput = screen.getByPlaceholderText('https://example.com/search?q={query}');
@@ -177,19 +188,40 @@ describe('WidgetConfigModal', () => {
     await user.tab();
     expect((urlInput as HTMLInputElement).value).toContain('{query}');
     await user.click(screen.getByText('Add Engine'));
-    // Listed once in the engine list and once as a default-engine option.
-    expect(screen.getAllByText('Wiki').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Wiki')).toBeInTheDocument();
 
-    // A preset chip adds too.
-    await user.click(screen.getByText('Ecosia'));
+    // AI services come from the catalog too.
+    await user.click(screen.getByRole('button', { name: /Add from catalog/ }));
+    await user.click(screen.getByRole('button', { name: 'AI assistants' }));
+    await user.click(screen.getByRole('button', { name: /Perplexity/ }));
+    await user.click(screen.getByRole('button', { name: /^Add 1$/ }));
 
-    // Now the built-in can go; then remove the custom ones back down to one.
+    // The star makes an engine the default; then the last built-in can go.
+    await user.click(defaultButton('Perplexity'));
     await user.click(removeButtons()[0]);
     await save(user);
     const cfg = widget('widget-search-1').config;
     expect(cfg.hiddenBuiltinEngines).toHaveLength(6);
-    expect(cfg.customEngines.map((e: any) => e.name)).toEqual(['Wiki', 'Ecosia']);
-    expect(cfg.defaultEngine).toBe(cfg.customEngines[0].id);
+    expect(cfg.customEngines.map((e: any) => [e.name, e.urlTemplate])).toEqual([
+      ['Wiki', 'https://wiki.example/w/index.php?search={query}'],
+      ['Perplexity', 'https://www.perplexity.ai/search?q={query}'],
+    ]);
+    expect(cfg.defaultEngine).toBe(cfg.customEngines[1].id);
+  });
+
+  it('検索: スマート回答の入力例は既定で閉じていて、開閉できること', async () => {
+    const user = setupUser();
+    openFor('widget-search-1');
+    const toggle = screen.getByRole('button', { name: 'Show examples' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('button', { name: '10 km to mi' })).not.toBeInTheDocument();
+
+    await user.click(toggle);
+    expect(screen.getByRole('button', { name: 'Hide examples' })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: '10 km to mi' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Hide examples' }));
+    expect(screen.queryByRole('button', { name: '10 km to mi' })).not.toBeInTheDocument();
   });
 
   it('検索: デフォルトのカスタムエンジンを削除すると既定が付け替わること', async () => {

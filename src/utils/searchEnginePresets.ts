@@ -1,23 +1,5 @@
-export interface SearchEnginePreset {
-  id: string;
-  name: string;
-  urlTemplate: string;
-  icon: string;
-}
-
-/**
- * One-click additions for popular engines that aren't built in. Covers the
- * languages ZenithTab ships in, so a Yahoo! JAPAN / Baidu / Naver user isn't
- * forced to hand-build a URL template just to add their default engine.
- */
-export const SEARCH_ENGINE_PRESETS: SearchEnginePreset[] = [
-  { id: 'yahoo-japan', name: 'Yahoo! JAPAN', urlTemplate: 'https://search.yahoo.co.jp/search?p={query}', icon: '🟣' },
-  { id: 'yahoo', name: 'Yahoo!', urlTemplate: 'https://search.yahoo.com/search?p={query}', icon: '🟣' },
-  { id: 'baidu', name: 'Baidu', urlTemplate: 'https://www.baidu.com/s?wd={query}', icon: '🔴' },
-  { id: 'naver', name: 'Naver', urlTemplate: 'https://search.naver.com/search.naver?query={query}', icon: '🟢' },
-  { id: 'ecosia', name: 'Ecosia', urlTemplate: 'https://www.ecosia.org/search?q={query}', icon: '🌳' },
-  { id: 'brave', name: 'Brave Search', urlTemplate: 'https://search.brave.com/search?q={query}', icon: '🦁' },
-];
+// Ready-made engines (the former one-click presets) live in
+// config/catalog/searchEngineCatalog.ts; this file keeps the URL helper.
 
 const COMMON_QUERY_PARAM_NAMES = ['q', 'p', 'query', 'wd', 'text', 'search', 'keyword', 'k', 's'];
 

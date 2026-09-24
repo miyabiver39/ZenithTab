@@ -109,6 +109,25 @@ describe('SearchWidget', () => {
     expect(open).toHaveBeenCalledWith('https://wiki.example/w?q=cat%20%26%20dog', '_blank');
   });
 
+  it('カタログから追加したアイコン無しのエンジンはサイトのファビコンで表示されること', async () => {
+    const user = setupUser();
+    render(
+      <SearchWidget
+        widgetId="s"
+        config={{
+          ...base,
+          defaultEngine: 'c-claude' as any,
+          customEngines: [{ id: 'c-claude', name: 'Claude', urlTemplate: 'https://claude.ai/new?q={query}' }],
+        }}
+      />
+    );
+    const pill = screen.getByRole('button', { name: /^Claude$/ });
+    const icon = pill.querySelector('img');
+    expect(icon?.getAttribute('src')).toContain(encodeURIComponent('https://claude.ai/'));
+    await typeAndSearch(user, 'hello world');
+    expect(open).toHaveBeenCalledWith('https://claude.ai/new?q=hello%20world', '_blank');
+  });
+
   it('選択中のエンジンが消えた場合は既定にフォールバックすること', async () => {
    const user = setupUser();
         const { rerender } = render(
