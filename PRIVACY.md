@@ -1,6 +1,6 @@
 # ZenithTab Privacy Policy
 
-**Last updated: 2026-09-20 — applies to ZenithTab v1.10.0 and later.**
+**Last updated: 2026-09-24 — applies to ZenithTab v1.10.0 and later.**
 
 ZenithTab is a local-first new tab dashboard. It has no accounts, no analytics,
 no advertising, and no backend of its own. This document describes exactly what
@@ -79,6 +79,7 @@ feature you enabled:
 | `images.unsplash.com` | A built-in wallpaper is displayed | A standard image request |
 | The site hosting an RSS/Atom feed **you added yourself** | That feed refreshes | A standard feed request. Chrome asks for your permission for that specific site before the first fetch, and you can revoke it at any time |
 | The site hosting an iCal (.ics) calendar **you added yourself** | The calendar widget refreshes (at most every 15 minutes) | A standard request for the calendar file. As with feeds, Chrome asks for your permission for that specific site when you add it, and you can revoke it at any time |
+| A web page **you chose to embed** | The Web embed widget is on screen | The browser loads that page directly, just as if you had opened it in a tab, so the site sees the request and its own cookies apply. ZenithTab adds nothing to it |
 
 No request carries an identifier, a cookie set by ZenithTab, your browsing
 history, your bookmarks, or the contents of your notes.
@@ -142,7 +143,7 @@ Questions or concerns: <miyabi.ver39@gmail.com>, or open an issue at
 
 # ZenithTab プライバシーポリシー
 
-**最終更新: 2026年8月24日 — ZenithTab v1.2.2 以降に適用されます。**
+**最終更新: 2026年9月24日 — ZenithTab v1.10.0 以降に適用されます。**
 
 ZenithTab はローカルファーストの「新しいタブ」ダッシュボードです。アカウント登録、
 アクセス解析、広告、独自のサーバーはいずれも存在しません。本ポリシーでは、端末内に
@@ -212,6 +213,7 @@ QR の内容、天気の位置）を取り除きます。ZenithTab が共有コ�
 | `images.unsplash.com` | 内蔵壁紙の表示時 | 通常の画像リクエスト |
 | **あなたが自分で追加した**RSS/Atomフィードの配信元 | そのフィードの更新時 | 通常のフィード取得リクエスト。初回取得前に、そのサイトに対する許可をChromeが確認します。許可はいつでも取り消せます |
 | **あなたが自分で追加した**iCal（.ics）カレンダーの配信元 | カレンダーウィジェットの更新時（最短15分間隔） | 通常のカレンダーファイル取得リクエスト。フィードと同様、追加した時点でそのサイトに対する許可をChromeが確認します。許可はいつでも取り消せます |
+| **あなたが埋め込みを設定した**Webページ | Web 埋め込みウィジェットの表示時 | ブラウザがそのページを直接読み込みます（タブで開いたときと同じく、そのサイトにリクエストが届き、そのサイトの Cookie が適用されます）。ZenithTab が情報を付け加えることはありません |
 
 いずれの通信にも、識別子、ZenithTab が発行するCookie、閲覧履歴、ブックマーク、
 メモの内容は含まれません。
