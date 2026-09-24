@@ -55,6 +55,7 @@ ZenithTab(ゼニスタブ)は Manifest V3 の新しいタブ拡張です。ア�
 既存ユーザーは自動更新でそのまま新コードに乗る。保存済みデータを壊さないために:
 
 - **追加的な変更**(新しい任意フィールド)はスキーマ版を上げない。読み込み時のハイドレーション(`storageService.hydrateWidget` = レジストリの `createDefaultConfig` で欠けたキーだけ補完、`getWallpaper` / `getAppearance` の浅いマージ)が面倒を見る。
+- ただし壁紙・外観・ドック・キーボードショートカット(`src/types/settings.ts`)は、読み込み・インポート・同期のたびに `src/utils/settingsSanitizers.ts` の許可リストを通る。**フィールドを足したら sanitizer にも追加する**(しないと黙って捨てられる)。外観は `APPEARANCE_FIELDS` に足さないと typecheck が落ち、残りは `tests/unit/utils/settingsSanitizers.test.ts` の `Required<…>` サンプルの往復テストが検知する。
 - 既定値の補完で**ユーザーの見え方が変わる**場合(例: 旧 RSS の `searchQuery` に `googleNewsMode` の既定を足すと検索がトップニュースに化ける)は、`widgetDefinitions.ts` の `migrateConfig` で旧データから正しい値を導く。
 - **破壊的変更**(キー名の変更、値の構造変更、キーの統合/分割)は `src/services/migrations.ts` で `CURRENT_SCHEMA_VERSION` を +1 し、`MIGRATIONS[<新版>]` に前進・冪等なステップを1つ追加する。直前のスナップショット(`backup_before_v<N>`)と1版ずつのコミットは基盤側が行う。
 - 旧キーの削除は**2リリースに分ける**(N: 新キーに書き旧キーも読む → N+1: 旧キー削除)。

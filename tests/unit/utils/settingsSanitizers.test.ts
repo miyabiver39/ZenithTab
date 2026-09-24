@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { AppearanceSettings, WallpaperSettings, DockItem, KeyboardShortcutBinding, TimeSlotConfig, DynamicWallpaperSettings } from '../../../src/types/settings';
 import {
   sanitizeWallpaper,
   sanitizeAppearance,
@@ -209,5 +210,54 @@ describe('sanitizePages (#79)', () => {
   it('name は 60 文字で切り詰め、余分なフィールドは持ち込まないこと', () => {
     const [page] = sanitizePages([{ id: 'a', name: 'n'.repeat(100), extra: '<script>' }]);
     expect(page).toEqual({ id: 'a', name: 'n'.repeat(60) });
+  });
+});
+
+// Each sample sets every field (Required<…>): adding a field to one of
+// these types stops this file compiling until the sample covers it, and
+// the round-trip then fails if the sanitizer drops the new field (#80).
+describe('設定サニタイザが型の全フィールドを保持すること (#80)', () => {
+  it('Appearance', () => {
+    const sample: Required<AppearanceSettings> = {
+      language: 'ja',
+      theme: 'light',
+      glassBlur: 20,
+      glassOpacity: 0.5,
+      borderRadius: 'lg',
+      compactMode: true,
+      dockPosition: 'top',
+      adaptiveTextColor: false,
+    };
+    expect(sanitizeAppearance(sample)).toEqual(sample);
+  });
+
+  it('Wallpaper(動的壁紙のスロットを含む)', () => {
+    const slot: Required<TimeSlotConfig> = { startHour: 6, source: 'gradient', category: 'nature', gradientIndex: 2, blur: 3, brightness: 0.9, overlayOpacity: 0.2 };
+    const dynamic: Required<DynamicWallpaperSettings> = {
+      enabled: true,
+      mode: 'custom',
+      seed: 7,
+      slots: { morning: slot, day: { ...slot, startHour: 10 }, sunset: { ...slot, startHour: 17 }, night: { ...slot, startHour: 21 } },
+    };
+    const sample: Required<WallpaperSettings> = {
+      source: 'custom',
+      customUrl: 'https://img.example/a.jpg',
+      category: 'space',
+      blur: 5,
+      brightness: 1,
+      overlayOpacity: 0.3,
+      refreshInterval: 'daily',
+      lastRefreshed: 1_700_000_000_000,
+      currentWallpaperUrl: 'https://img.example/a.jpg',
+      dynamic,
+    };
+    expect(sanitizeWallpaper(sample)).toEqual(sample);
+  });
+
+  it('Dock / キーボードショートカット', () => {
+    const dock: Required<DockItem> = { id: 'd', label: 'D', url: 'https://d.example', icon: 'globe', openInNewTab: false };
+    const shortcut: Required<KeyboardShortcutBinding> = { id: 's', combo: 'Ctrl+Alt+G', label: 'S', url: 'https://s.example', openInNewTab: false };
+    expect(sanitizeDockItems([dock])).toEqual([dock]);
+    expect(sanitizeKeyboardShortcuts([shortcut])).toEqual([shortcut]);
   });
 });

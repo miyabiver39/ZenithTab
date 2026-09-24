@@ -70,6 +70,11 @@ export function isSafeWallpaperUrl(value: unknown): value is string {
   return isSafeHttpUrl(value) || isDataImageUrl(value) || isSafeGradient(value);
 }
 
+// Wallpaper, Dock and shortcut entries have cross-field rules (a
+// gradient source needs a gradient value…), so they are written out by
+// hand; tests/unit/utils/settingsSanitizers.test.ts round-trips a
+// `Required<…>` sample of each, which stops compiling when the type
+// gains a field and fails if the sanitizer then drops it.
 export function sanitizeWallpaper(raw: unknown): WallpaperSettings {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const source = oneOf(r.source, WALLPAPER_SOURCES, DEFAULT_WALLPAPER.source);
@@ -123,18 +128,38 @@ function sanitizeDynamic(d: Record<string, unknown>): WallpaperSettings['dynamic
   return out;
 }
 
-export function sanitizeAppearance(raw: unknown): AppearanceSettings {
+/**
+ * One validator per field, for settings objects that are just a flat bag
+ * of independent values. The mapped type makes every key of `T` required
+ * here, so adding a field to the settings type without teaching the
+ * sanitizer about it fails typecheck — rather than the field being
+ * silently dropped on every load, import and sync (the sanitizer builds
+ * a fresh object and keeps only what it knows).
+ */
+type FieldSanitizers<T> = { [K in keyof T]-?: (value: unknown) => T[K] };
+
+function sanitizeFields<T>(raw: unknown, fields: FieldSanitizers<T>): T {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
-  return {
-    language: oneOf(r.language, LANGUAGES, DEFAULT_APPEARANCE.language),
-    theme: oneOf(r.theme, THEMES, DEFAULT_APPEARANCE.theme),
-    glassBlur: clampNumber(r.glassBlur, 0, 40, DEFAULT_APPEARANCE.glassBlur),
-    glassOpacity: clampNumber(r.glassOpacity, 0.1, 0.95, DEFAULT_APPEARANCE.glassOpacity),
-    borderRadius: oneOf(r.borderRadius, RADII, DEFAULT_APPEARANCE.borderRadius),
-    compactMode: bool(r.compactMode, DEFAULT_APPEARANCE.compactMode),
-    dockPosition: oneOf(r.dockPosition, DOCK_POSITIONS, DEFAULT_APPEARANCE.dockPosition),
-    adaptiveTextColor: bool(r.adaptiveTextColor, DEFAULT_APPEARANCE.adaptiveTextColor ?? true),
-  };
+  const out = {} as T;
+  for (const key of Object.keys(fields) as Array<keyof T & string>) {
+    out[key] = fields[key](r[key]);
+  }
+  return out;
+}
+
+const APPEARANCE_FIELDS: FieldSanitizers<AppearanceSettings> = {
+  language: (v) => oneOf(v, LANGUAGES, DEFAULT_APPEARANCE.language),
+  theme: (v) => oneOf(v, THEMES, DEFAULT_APPEARANCE.theme),
+  glassBlur: (v) => clampNumber(v, 0, 40, DEFAULT_APPEARANCE.glassBlur),
+  glassOpacity: (v) => clampNumber(v, 0.1, 0.95, DEFAULT_APPEARANCE.glassOpacity),
+  borderRadius: (v) => oneOf(v, RADII, DEFAULT_APPEARANCE.borderRadius),
+  compactMode: (v) => bool(v, DEFAULT_APPEARANCE.compactMode),
+  dockPosition: (v) => oneOf(v, DOCK_POSITIONS, DEFAULT_APPEARANCE.dockPosition),
+  adaptiveTextColor: (v) => bool(v, DEFAULT_APPEARANCE.adaptiveTextColor ?? true),
+};
+
+export function sanitizeAppearance(raw: unknown): AppearanceSettings {
+  return sanitizeFields(raw, APPEARANCE_FIELDS);
 }
 
 export function sanitizeDockItems(raw: unknown): DockItem[] {
