@@ -64,42 +64,62 @@ describe('WidgetConfigModal', () => {
     expect(widget('widget-clock-1').config.is24Hour).toBe(false);
   });
 
-  it('検索: 危険なスキームのカスタムエンジンは追加も保存もできず、スキーム省略は https が補われること (#51)', async () => {
-    const user = setupUser();
-    openFor('widget-search-1');
-    const name = screen.getByPlaceholderText('Name');
-    const urlInput = screen.getByPlaceholderText('https://example.com/search?q={query}');
-    const addButton = () => screen.getByRole('button', { name: /Add Engine/ });
+  // Split in three and filled with paste() rather than type(): one test
+  // typing four long URLs key by key used to run past the 5 s timeout
+  // when the whole suite ran under coverage (#81). What is checked here
+  // is the validation of the final value, not per-keystroke behaviour.
+  describe('検索: カスタムエンジンの URL 検証 (#51)', () => {
+    const openSearch = () => {
+      openFor('widget-search-1');
+      return {
+        name: screen.getByPlaceholderText('Name'),
+        urlInput: screen.getByPlaceholderText('https://example.com/search?q={query}'),
+        addButton: () => screen.getByRole('button', { name: /Add Engine/ }),
+      };
+    };
+    const fill = async (user: ReturnType<typeof setupUser>, input: HTMLElement, text: string) => {
+      await user.clear(input);
+      await user.click(input);
+      await user.paste(text);
+    };
 
-    await user.type(name, literal('Evil'));
-    await user.type(urlInput, literal('javascript:alert({query})'));
-    expect(screen.getByText(/Only http:\/\/ or https:\/\//)).toBeInTheDocument();
-    expect(addButton()).toBeDisabled();
+    it('危険なスキームのカスタムエンジンは追加できないこと', async () => {
+      const user = setupUser();
+      const { name, urlInput, addButton } = openSearch();
+      await fill(user, name, 'Evil');
 
-    await user.clear(urlInput);
-    await user.type(urlInput, literal('data:text/html,{query}'));
-    expect(addButton()).toBeDisabled();
+      await fill(user, urlInput, 'javascript:alert({query})');
+      expect(screen.getByText(/Only http:\/\/ or https:\/\//)).toBeInTheDocument();
+      expect(addButton()).toBeDisabled();
 
-    // No scheme → https:// is assumed.
-    await user.clear(urlInput);
-    await user.type(urlInput, literal('search.example/?q={query}'));
-    expect(addButton()).toBeEnabled();
-    await user.click(addButton());
+      await fill(user, urlInput, 'data:text/html,{query}');
+      expect(addButton()).toBeDisabled();
+    });
 
-    await save(user);
-    const cfg = widget('widget-search-1').config;
-    expect(cfg.customEngines.map((e: any) => e.urlTemplate)).toEqual(['https://search.example/?q={query}']);
+    it('スキーム省略は https が補われて保存されること', async () => {
+      const user = setupUser();
+      const { name, urlInput, addButton } = openSearch();
+      await fill(user, name, 'Example');
+      await fill(user, urlInput, 'search.example/?q={query}');
+      expect(addButton()).toBeEnabled();
+      await user.click(addButton());
 
-    // Even a template smuggled into a draft is dropped by the save hook.
-    expect(
-      prepareSearchConfigForSave({
-        customEngines: [
-          { id: 'a', name: 'Ok', urlTemplate: 'https://ok.example/?q={query}' },
-          { id: 'b', name: 'Smuggled', urlTemplate: 'javascript:{query}' },
-          { id: 'c', name: 'NoQuery', urlTemplate: 'https://ok.example/' },
-        ],
-      }).customEngines.map((e: any) => e.id)
-    ).toEqual(['a']);
+      await save(user);
+      const cfg = widget('widget-search-1').config;
+      expect(cfg.customEngines.map((e: any) => e.urlTemplate)).toEqual(['https://search.example/?q={query}']);
+    });
+
+    it('下書きに紛れ込んだ危険なテンプレートも保存フックが落とすこと', () => {
+      expect(
+        prepareSearchConfigForSave({
+          customEngines: [
+            { id: 'a', name: 'Ok', urlTemplate: 'https://ok.example/?q={query}' },
+            { id: 'b', name: 'Smuggled', urlTemplate: 'javascript:{query}' },
+            { id: 'c', name: 'NoQuery', urlTemplate: 'https://ok.example/' },
+          ],
+        }).customEngines.map((e: any) => e.id)
+      ).toEqual(['a']);
+    });
   });
 
   it('天気: 都市・座標・現在地検出を扱えること', async () => {
