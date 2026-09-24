@@ -173,4 +173,54 @@ describe('storageService 防御的な読み込み・インポート', () => {
     const { chromeStorageData } = await import('../helpers/chrome');
     expect(Object.keys(chromeStorageData.dashboard_page_data)).not.toContain('page-broken');
   });
+
+  it('インポートでページの id / name を検証し、非文字列の名前・重複 id・予約語 id を保存しないこと (#79)', async () => {
+    const clock = { id: 'w1', type: 'clock', title: 'c', config: {}, layout: { i: 'w1', x: 0, y: 0, w: 2, h: 2 } };
+    const ok = await storageService.importDashboardData(JSON.stringify({
+      pages: [
+        { id: 'p1', name: { evil: 1 } },
+        { id: 'p1', name: 'dup' },
+        { id: '__proto__', name: 'proto' },
+        { id: 42, name: 'numeric id' },
+        null,
+        { id: 'p2', name: 'x'.repeat(200) },
+      ],
+      pageData: { p1: { widgets: [clock], layouts: {} }, __proto__: { widgets: [clock], layouts: {} }, p2: { widgets: [clock], layouts: {} } },
+    }));
+    expect(ok).toBe(true);
+
+    const { pages, activePageId } = await storageService.getPagesState();
+    expect(pages).toEqual([
+      { id: 'p1', name: '' },
+      { id: 'p2', name: 'x'.repeat(60) },
+    ]);
+    expect(activePageId).toBe('p1');
+  });
+
+  it('保存済みの不正なページ一覧も読み込み時に正規化されること (#79)', async () => {
+    const { pages } = await storageService.getPagesState();
+    const { chromeStorageData } = await import('../helpers/chrome');
+    chromeStorageData.dashboard_pages = [{ ...pages[0], name: { evil: 1 } }, { ...pages[0], name: 'dup' }, 'garbage'];
+
+    const state = await storageService.getPagesState();
+    expect(state.pages).toEqual([{ id: pages[0].id, name: '' }]);
+  });
+
+  it('インポートのページ数・ページあたりのウィジェット数・入力サイズに上限があること (#79)', async () => {
+    const { MAX_IMPORT_PAGES, MAX_IMPORT_WIDGETS_PER_PAGE, MAX_IMPORT_BYTES } = await import('../../src/services/storageService');
+    const widgets = Array.from({ length: MAX_IMPORT_WIDGETS_PER_PAGE + 5 }, (_, i) => ({ id: `w${i}`, type: 'clock', title: 'c', config: {}, layout: { i: `w${i}`, x: 0, y: 0, w: 2, h: 2 } }));
+    const pages = Array.from({ length: MAX_IMPORT_PAGES + 5 }, (_, i) => ({ id: `p${i}`, name: `P${i}` }));
+    const pageData = Object.fromEntries(pages.map((p, i) => [p.id, { widgets: i === 0 ? widgets : widgets.slice(0, 1), layouts: {} }]));
+
+    expect(await storageService.importDashboardData(JSON.stringify({ pages, pageData }))).toBe(true);
+    const state = await storageService.getPagesState();
+    expect(state.pages).toHaveLength(MAX_IMPORT_PAGES);
+    expect(state.pageData.p0.widgets).toHaveLength(MAX_IMPORT_WIDGETS_PER_PAGE);
+
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const before = await storageService.getPagesState();
+    const huge = JSON.stringify({ pages, pageData, padding: 'x'.repeat(MAX_IMPORT_BYTES) });
+    expect(await storageService.importDashboardData(huge)).toBe(false);
+    expect((await storageService.getPagesState()).pages).toEqual(before.pages);
+  });
 });

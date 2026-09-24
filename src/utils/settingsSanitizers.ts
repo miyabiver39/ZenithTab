@@ -1,4 +1,5 @@
 import type { WallpaperSettings, AppearanceSettings, DockItem, KeyboardShortcutBinding, WallpaperSource, WallpaperCategory } from '../types/settings';
+import type { DashboardPageMeta } from '../types/widget';
 import { isSafeHttpUrl } from './url';
 
 /**
@@ -154,6 +155,34 @@ export function sanitizeKeyboardShortcuts(raw: unknown): KeyboardShortcutBinding
         !!item && typeof item === 'object' && typeof item.id === 'string' && typeof item.combo === 'string' && typeof item.label === 'string' && isSafeHttpUrl(item.url)
     )
     .map((item) => ({ id: item.id, combo: item.combo, label: item.label, url: item.url, openInNewTab: item.openInNewTab !== false }));
+}
+
+/** Longest page name kept; matches what a share code carries. */
+export const MAX_PAGE_NAME_LENGTH = 60;
+
+// Keys that, used as a page id, would reach Object.prototype through the
+// `pageData[id]` lookups instead of an own record.
+const RESERVED_PAGE_IDS = new Set(['__proto__', 'constructor', 'prototype']);
+
+/**
+ * The page list (tab strip): every entry needs a usable string id — the
+ * key into pageData — and a string name, since the tab renders the name
+ * directly and a non-string there crashes the whole dashboard on every
+ * load. Duplicate ids would make rename/remove/switch hit two tabs at
+ * once, so the first one wins.
+ */
+export function sanitizePages(raw: unknown): DashboardPageMeta[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const out: DashboardPageMeta[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const { id, name } = item as Record<string, unknown>;
+    if (typeof id !== 'string' || id === '' || RESERVED_PAGE_IDS.has(id) || seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, name: typeof name === 'string' ? name.slice(0, MAX_PAGE_NAME_LENGTH) : '' });
+  }
+  return out;
 }
 
 /**

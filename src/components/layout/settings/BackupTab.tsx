@@ -9,6 +9,7 @@ import {
   type SnapshotReason,
 } from '../../../services/snapshotService';
 import { useDashboardStore } from '../../../store/useDashboardStore';
+import { MAX_IMPORT_BYTES } from '../../../services/storageService';
 import { useTranslation } from '../../../i18n/i18n';
 import type { ConfirmApi } from './confirm';
 import { ShareSettings } from './ShareSettings';
@@ -68,6 +69,13 @@ export const BackupTab: React.FC<ConfirmApi> = ({ requestConfirm, closeConfirm }
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Checked before reading: a huge file would otherwise be read and
+    // parsed in full (freezing the tab) only to be rejected afterwards.
+    if (file.size > MAX_IMPORT_BYTES) {
+      setImportStatus(t.settings.importTooLarge.replace('{size}', String(MAX_IMPORT_BYTES / (1024 * 1024))));
+      e.target.value = '';
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = (event) => {

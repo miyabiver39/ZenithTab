@@ -23,9 +23,20 @@ import {
   sanitizeAppearance,
   sanitizeDockItems,
   sanitizeKeyboardShortcuts,
+  sanitizePages,
 } from '../utils/settingsSanitizers';
 
-export { DEFAULT_WALLPAPER, DEFAULT_APPEARANCE, sanitizeWallpaper, sanitizeAppearance, sanitizeDockItems, sanitizeKeyboardShortcuts };
+export { DEFAULT_WALLPAPER, DEFAULT_APPEARANCE, sanitizeWallpaper, sanitizeAppearance, sanitizeDockItems, sanitizeKeyboardShortcuts, sanitizePages };
+
+/**
+ * Caps on an imported config file. A real export is a few hundred KB at
+ * most; these only stop a huge or hand-crafted file from freezing the tab
+ * while it is parsed, or filling storage with thousands of entries.
+ * (Share codes have their own, tighter caps in shareService.)
+ */
+export const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
+export const MAX_IMPORT_PAGES = 50;
+export const MAX_IMPORT_WIDGETS_PER_PAGE = 200;
 
 /** The running extension version, so exports carry the version that produced them. */
 export function currentVersion(): string {
@@ -380,10 +391,12 @@ export const storageService = {
     activePageId: string;
     pageData: Record<string, DashboardPageData>;
   }> {
-    const pages = await storageGet<DashboardPageMeta[]>(STORAGE_KEYS.PAGES, undefined);
+    // Checked on every load too, not just on import: storage written by an
+    // older version (or a pre-validation import) may already hold a bad entry.
+    const pages = sanitizePages(await storageGet<unknown>(STORAGE_KEYS.PAGES, undefined));
     const pageData = await storageGet<Record<string, DashboardPageData>>(STORAGE_KEYS.PAGE_DATA, undefined);
 
-    if (pages && pages.length > 0 && pageData && Object.keys(pageData).length > 0) {
+    if (pages.length > 0 && pageData && Object.keys(pageData).length > 0) {
       const storedActiveId = await storageGet<string>(STORAGE_KEYS.ACTIVE_PAGE_ID, undefined);
       const activePageId = storedActiveId && pages.some((p) => p.id === storedActiveId)
         ? storedActiveId
@@ -473,6 +486,9 @@ export const storageService = {
 
   async importDashboardData(jsonData: string): Promise<boolean> {
     try {
+      // UTF-16 length: never more than the file's UTF-8 byte count, so a
+      // file BackupTab let through (by size) always passes this as well.
+      if (jsonData.length > MAX_IMPORT_BYTES) throw new Error('Imported file is too large');
       const data: DashboardExportData = JSON.parse(jsonData);
       if (!data || typeof data !== 'object') throw new Error('Imported file is not an object');
 
@@ -484,10 +500,13 @@ export const storageService = {
       if (Array.isArray(data.pages) && data.pageData && typeof data.pageData === 'object') {
         // Multi-page (1.3+) export shape.
         const sanitizedPageData: Record<string, DashboardPageData> = {};
-        for (const page of data.pages) {
+        const pages = sanitizePages(data.pages).slice(0, MAX_IMPORT_PAGES);
+        for (const page of pages) {
+          if (!Object.prototype.hasOwnProperty.call(data.pageData, page.id)) continue;
           const raw = data.pageData[page.id];
           if (!raw || !Array.isArray(raw.widgets)) continue;
           const pageWidgets = raw.widgets
+            .slice(0, MAX_IMPORT_WIDGETS_PER_PAGE)
             .map(sanitizeWidget)
             .filter((w): w is DashboardWidget => w !== null);
           sanitizedPageData[page.id] = {
@@ -496,7 +515,7 @@ export const storageService = {
           };
         }
 
-        const validPages = data.pages.filter((p) => sanitizedPageData[p.id]);
+        const validPages = pages.filter((p) => sanitizedPageData[p.id]);
         if (validPages.length === 0) {
           throw new Error('Imported file contained no usable pages');
         }
@@ -518,6 +537,7 @@ export const storageService = {
         }
 
         const widgets = data.widgets
+          .slice(0, MAX_IMPORT_WIDGETS_PER_PAGE)
           .map(sanitizeWidget)
           .filter((w): w is DashboardWidget => w !== null);
 

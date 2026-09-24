@@ -325,6 +325,22 @@ describe('SettingsPanel', () => {
     await confirmWith('Reset All to Defaults');
     await waitFor(() => expect(state().widgets[0].title).toBe('Quick Search'));
   });
+
+  it('バックアップタブ: 上限を超えるファイルは読み込まずに理由を表示すること (#79)', async () => {
+    const user = setupUser();
+    const importConfig = vi.spyOn(state(), 'importConfig');
+    openSettings();
+    await user.click(screen.getByText('Backup & Sync'));
+
+    const big = new File(['{}'], 'huge.json', { type: 'application/json' });
+    // A real 10 MB+ file would make the test slow; only its size is read.
+    Object.defineProperty(big, 'size', { value: 11 * 1024 * 1024 });
+    await user.upload(screen.getByLabelText('Import JSON File'), big);
+
+    expect(await screen.findByText('This file is too large to import (limit: 10 MB).')).toBeInTheDocument();
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+    expect(importConfig).not.toHaveBeenCalled();
+  });
 });
 
 describe('AppDrawerModal', () => {

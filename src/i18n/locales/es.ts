@@ -755,6 +755,7 @@ export const es: typeof en = {
     importBtn: 'Importar JSON',
     importSuccess: '¡Configuración importada con éxito!',
     importFail: 'Archivo de configuración no válido.',
+    importTooLarge: 'El archivo es demasiado grande para importarlo (límite: {size} MB).',
     resetTitle: 'Restablecer valores predeterminados',
     resetDesc: 'Restaura todos los widgets y opciones originales.',
     resetBtn: 'Restablecer todo',

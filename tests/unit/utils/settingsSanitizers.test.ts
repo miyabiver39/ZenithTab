@@ -4,6 +4,7 @@ import {
   sanitizeAppearance,
   sanitizeDockItems,
   sanitizeKeyboardShortcuts,
+  sanitizePages,
   isSafeGradient,
   isDataImageUrl,
   isSafeWallpaperUrl,
@@ -176,5 +177,37 @@ describe('settingsSanitizers › sanitizeDockItems / sanitizeKeyboardShortcuts',
     ]);
     expect(out.map((s) => s.id)).toEqual(['a']);
     expect(out[0].openInNewTab).toBe(true);
+  });
+});
+
+describe('sanitizePages (#79)', () => {
+  it('配列以外は空配列になること', () => {
+    expect(sanitizePages(undefined)).toEqual([]);
+    expect(sanitizePages({ id: 'p1' })).toEqual([]);
+  });
+
+  it('id が空/非文字列/予約語のエントリと重複 id を落とし、name を文字列に正規化すること', () => {
+    expect(
+      sanitizePages([
+        { id: 'a', name: 'A' },
+        { id: 'a', name: 'dup' },
+        { id: '', name: 'empty' },
+        { id: 1, name: 'num' },
+        { id: 'constructor', name: 'c' },
+        { id: 'b', name: ['x'] },
+        { id: 'c' },
+        'garbage',
+        null,
+      ])
+    ).toEqual([
+      { id: 'a', name: 'A' },
+      { id: 'b', name: '' },
+      { id: 'c', name: '' },
+    ]);
+  });
+
+  it('name は 60 文字で切り詰め、余分なフィールドは持ち込まないこと', () => {
+    const [page] = sanitizePages([{ id: 'a', name: 'n'.repeat(100), extra: '<script>' }]);
+    expect(page).toEqual({ id: 'a', name: 'n'.repeat(60) });
   });
 });

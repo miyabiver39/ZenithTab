@@ -755,6 +755,7 @@ export const de: typeof en = {
     importBtn: 'JSON-Datei importieren',
     importSuccess: 'Konfiguration erfolgreich importiert!',
     importFail: 'Ungültige Konfigurationsdatei.',
+    importTooLarge: 'Die Datei ist zu groß zum Importieren (Limit: {size} MB).',
     resetTitle: 'Auf Standard zurücksetzen',
     resetDesc: 'Setzt alle Widgets und Optionen auf Werkseinstellungen zurück.',
     resetBtn: 'Alles zurücksetzen',

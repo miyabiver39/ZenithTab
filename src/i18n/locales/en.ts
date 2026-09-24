@@ -753,6 +753,7 @@ export const en = {
     importBtn: 'Import JSON File',
     importSuccess: 'Configuration imported successfully!',
     importFail: 'Failed to import invalid configuration file.',
+    importTooLarge: 'This file is too large to import (limit: {size} MB).',
     resetTitle: 'Reset to Defaults',
     resetDesc: 'Restore default widgets, layouts, and appearance settings. This cannot be undone.',
     resetBtn: 'Reset All to Defaults',

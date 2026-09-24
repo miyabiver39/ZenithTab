@@ -755,6 +755,7 @@ export const ko: typeof en = {
     importBtn: 'JSON 파일 가져오기',
     importSuccess: '설정을 성공적으로 불러왔습니다!',
     importFail: '유효하지 않은 설정 파일입니다.',
+    importTooLarge: '파일이 너무 커서 불러올 수 없습니다(최대 {size}MB).',
     resetTitle: '기본값으로 초기화',
     resetDesc: '모든 위젯과 설정을 초기 상태로 되돌립니다 (되돌릴 수 없음).',
     resetBtn: '모두 기본값으로 초기화',

@@ -755,6 +755,7 @@ export const zh: typeof en = {
     importBtn: '导入 JSON 文件',
     importSuccess: '配置导入成功！',
     importFail: '无效的配置文件，导入失败。',
+    importTooLarge: '文件过大，无法导入（上限: {size} MB）。',
     resetTitle: '恢复默认设置',
     resetDesc: '将所有组件与外观重置为出厂默认值（不可撤回）。',
     resetBtn: '全部恢复默认',

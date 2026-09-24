@@ -753,6 +753,7 @@ export const ja = {
     importBtn: 'JSONファイルをインポート',
     importSuccess: '設定を正常にインポートしました！',
     importFail: '無効な設定ファイルのためインポートに失敗しました。',
+    importTooLarge: 'ファイルが大きすぎるためインポートできません（上限: {size} MB）。',
     resetTitle: '初期設定にリセット',
     resetDesc: 'ウィジェット配置や設定をすべて初期状態に戻します（元に戻せません）。',
     resetBtn: 'すべて初期状態に戻す',
